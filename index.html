@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fluency Studio — Portal do Aluno</title>
 
+  <!-- GitHub Pages + Babel (JSX) precisa liberar eval -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;" />
+
   <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -12,171 +15,340 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .animate-enter { animation: fadeIn 0.4s ease-out forwards; }
+    .animate-enter { animation: fadeIn 0.45s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 
-  <!-- React 18 (prod) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { deep: '#0B1F33', light: '#162F4A' },
+            teal: { dark: '#0F3A45', accent: '#114B5F', light: '#2C7A8E' },
+            bordo: { academico: '#5A1F2B' },
+            sand: { base: '#F4F1EA' }
+          },
+          boxShadow: {
+            soft: '0 12px 30px rgba(0,0,0,0.10)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- React 18 -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-  <!-- Babel Standalone (necessário porque você está usando JSX dentro do HTML) -->
+  <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="text-slate-900 select-none">
+
+<body class="text-slate-900">
   <div id="root"></div>
 
-  <!--
-    IMPORTANTE (GitHub Pages):
-    - O GitHub Pages serve com header de segurança que bloqueia "eval".
-    - O Babel Standalone usa "eval" internamente.
-    - Portanto: SEM essas 2 meta tags abaixo, o site pode ficar em branco.
-
-    Solução correta e profissional seria: build com Vite/React.
-    Mas como você quer HTML único, esta é a correção mínima para funcionar no Pages.
-  -->
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;" />
-
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useEffect, useMemo, useState } = React;
 
-    // --- BANCO DE DADOS LOCAL (Aqui ficam seus alunos) ---
+    // ======= ASSETS (seus arquivos no GitHub) =======
+    const ASSETS = {
+      logo: "./assets/logo.png",
+      coverPhoto: "./assets/victor.png",
+      avatarPhoto: "./assets/victor.png"
+    };
+
+    const DEFAULT_CLASSROOM_LINK = "https://classroom.google.com";
+
     const DB = {
       users: [
-        // ALUNO 01: Kaio Lara
         {
-          email: 'kaiolaraamado14@gmail.com',
-          pass: 'fluencystudio',
-          name: 'Kaio Lara',
-          level: 'Student - Fluency Studio'
+          email: "kaiolaraamado14@gmail.com",
+          pass: "fluencystudio",
+          name: "Kaio Lara",
+          level: "Student — Fluency Studio",
+          classroom: DEFAULT_CLASSROOM_LINK
         }
-      ],
-      lessons: [
-        { id: 1, title: 'Welcome Class', date: '18 Fev', status: 'done', summary: 'Alinhamento de objetivos e setup.', link: 'https://classroom.google.com' },
-        { id: 2, title: 'Present Perfect', date: '20 Fev', status: 'active', summary: 'Have/Has + Past Participle na prática.', link: 'https://classroom.google.com' },
-        { id: 3, title: 'Business English', date: '25 Fev', status: 'locked', summary: 'Vocabulário para reuniões.', link: '#' }
       ]
     };
 
-    // --- ÍCONES ---
+    const makeLessons = () => {
+      const lessons = [];
+      for (let i = 1; i <= 150; i++) {
+        let status = "locked";
+        let summary = "Conteúdo ainda não liberado.";
+        let link = "#";
+
+        if (i <= 24) {
+          status = "locked";
+          summary = "Conteúdo ainda não liberado.";
+          link = "#";
+        } else if (i === 25) {
+          status = "done";
+          summary = "Presença registrada. Conteúdo será adicionado.";
+          link = DEFAULT_CLASSROOM_LINK;
+        } else if (i === 26) {
+          status = "done";
+          summary = "Presença registrada. Conteúdo será adicionado.";
+          link = DEFAULT_CLASSROOM_LINK;
+        } else if (i === 27) {
+          status = "active";
+          summary = "Próxima aula (placeholder).";
+          link = DEFAULT_CLASSROOM_LINK;
+        }
+
+        lessons.push({
+          id: i,
+          title: `Lição ${i}`,
+          module: i <= 50 ? 1 : i <= 100 ? 2 : 3,
+          status,
+          summary,
+          link
+        });
+      }
+      return lessons;
+    };
+
     const Icon = ({ name }) => {
       const icons = {
-        user: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
         lock: <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
         check: <><polyline points="20 6 9 17 4 12"/></>,
         play: <><polygon points="5 3 19 12 5 21 5 3"/></>,
-        logOut: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>
+        logOut: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+        link: <><path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1"/><path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1"/></>,
+        file: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></>,
+        book: <><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20"/><path d="M20 2H6.5A2.5 2.5 0 0 0 4 4.5v15"/><path d="M20 22V2"/></>
       };
       return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           {icons[name]}
         </svg>
       );
     };
 
-    // --- TELA DE LOGIN ---
+    const BrandGradient = () => (
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 50% 10%, rgba(44,122,142,0.28) 0%, rgba(17,75,95,0.22) 35%, rgba(15,58,69,0.25) 60%, rgba(11,31,51,0.92) 100%), linear-gradient(135deg, #0B1F33 0%, #0F3A45 55%, #114B5F 100%)"
+        }}
+      />
+    );
+
     const LoginScreen = ({ onLogin, error }) => (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-900">
-        <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 animate-enter">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-black text-slate-800 tracking-tight">Fluency Studio</h1>
-            <p className="text-slate-500 text-sm font-medium">Portal do Aluno</p>
+      <div className="min-h-screen relative overflow-hidden">
+        <BrandGradient />
+
+        <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+          <div className="w-full max-w-sm rounded-3xl shadow-soft overflow-hidden animate-enter bg-white">
+
+            <div className="relative h-40">
+              <img src={ASSETS.coverPhoto} alt="Capa" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-navy-deep/55" />
+              <div className="absolute left-5 bottom-5 flex items-end gap-3">
+                <img src={ASSETS.logo} alt="Logo" className="h-9 w-auto" />
+                <div>
+                  <div className="text-white text-lg font-black leading-tight">Fluency Studio</div>
+                  <div className="text-white/80 text-xs font-semibold">Acesso do aluno</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-7">
+              <form onSubmit={onLogin} className="space-y-4">
+                <div>
+                  <label className="text-[11px] font-extrabold text-slate-500 uppercase">E-mail</label>
+                  <input name="email" type="email" defaultValue="kaiolaraamado14@gmail.com"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-3 mt-1 focus:ring-2 focus:ring-teal-light/30 focus:border-teal-light outline-none" />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-extrabold text-slate-500 uppercase">Senha</label>
+                  <input name="password" type="password"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-3 mt-1 focus:ring-2 focus:ring-teal-light/30 focus:border-teal-light outline-none" />
+                </div>
+
+                {error && (
+                  <p className="text-red-600 text-xs font-extrabold text-center bg-red-50 p-2 rounded-xl">
+                    {error}
+                  </p>
+                )}
+
+                <button className="w-full bg-bordo-academico text-white font-extrabold py-3.5 rounded-2xl shadow-lg hover:brightness-110 active:scale-[0.99] transition">
+                  Entrar
+                </button>
+              </form>
+            </div>
+
           </div>
-          <form onSubmit={onLogin} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase">E-mail</label>
-              <input name="email" type="email" defaultValue="kaiolaraamado14@gmail.com" className="w-full border-b-2 border-slate-200 py-2 focus:border-indigo-600 outline-none bg-transparent" />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase">Senha</label>
-              <input name="password" type="password" className="w-full border-b-2 border-slate-200 py-2 focus:border-indigo-600 outline-none bg-transparent" />
-            </div>
-            {error && <p className="text-red-500 text-xs font-bold text-center bg-red-50 p-2 rounded">{error}</p>}
-            <button className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-transform mt-4">Acessar Portal</button>
-          </form>
         </div>
       </div>
     );
 
-    // --- TELA PRINCIPAL ---
-    const Dashboard = ({ user, onLogout }) => (
-      <div className="max-w-md mx-auto min-h-screen bg-slate-50 pb-12 animate-enter">
-        <header className="bg-white px-6 pt-12 pb-6 shadow-sm border-b border-slate-100 flex justify-between items-end sticky top-0 z-10">
-          <div>
-            <p className="text-xs font-bold text-indigo-600 uppercase mb-1">Student Portal</p>
-            <h1 className="text-2xl font-bold text-slate-900">Olá, {user.name.split(' ')[0]} 👋</h1>
+    const ModuleHeader = ({ module }) => (
+      <div className="mt-7 mb-3">
+        <div className="text-[11px] font-extrabold tracking-wide uppercase text-slate-500">Módulo {module}</div>
+        <div className="h-px bg-slate-200 mt-2" />
+      </div>
+    );
+
+    const LessonItem = ({ lesson }) => {
+      const isLocked = lesson.status === "locked";
+      const isDone = lesson.status === "done";
+      const isActive = lesson.status === "active";
+
+      return (
+        <div className={"relative flex gap-4 py-3 " + (isLocked ? "opacity-70" : "")} style={{ filter: isLocked ? "grayscale(0.25)" : "none" }}>
+
+          <div className="absolute left-[18px] top-0 bottom-0 w-0.5 bg-slate-200" />
+
+          <div className={
+            "w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border-4 border-sand-base transition-colors " +
+            (isDone ? "bg-teal-light text-white" : isActive ? "bg-bordo-academico text-white" : "bg-slate-200 text-slate-500")
+          }>
+            {isDone ? <Icon name="check" /> : <span className="font-extrabold text-sm">{lesson.id}</span>}
           </div>
-          <button onClick={onLogout} className="bg-slate-100 p-2 rounded-full text-slate-500 hover:text-red-500">
-            <Icon name="logOut" />
-          </button>
-        </header>
-        <main className="p-6">
-          <div className="bg-indigo-600 rounded-2xl p-6 text-white shadow-xl shadow-indigo-200 mb-8 relative overflow-hidden">
-            <div className="relative z-10">
-              <p className="text-indigo-200 text-xs font-bold uppercase mb-1">Seu Nível</p>
-              <h2 className="text-xl font-bold">{user.level}</h2>
+
+          <div className="flex-1 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-extrabold text-slate-800">{lesson.title}</div>
+              <span className={
+                "text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase " +
+                (isDone ? "bg-teal-light/15 text-teal-dark" : isActive ? "bg-bordo-academico/10 text-bordo-academico" : "bg-slate-100 text-slate-500")
+              }>
+                {isDone ? "Presente" : isActive ? "Próxima" : "Bloqueada"}
+              </span>
             </div>
-            <div className="absolute -right-4 -bottom-10 w-32 h-32 bg-indigo-500 rounded-full opacity-50 blur-2xl"></div>
+
+            <p className="text-xs text-slate-500 mt-2 leading-relaxed">{lesson.summary}</p>
+
+            <div className="mt-4 flex items-center gap-2">
+              {isLocked ? (
+                <span className="inline-flex items-center gap-2 text-xs font-extrabold text-slate-400">
+                  <Icon name="lock" /> Indisponível
+                </span>
+              ) : (
+                <a href={lesson.link} target="_blank" rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-navy-deep text-white text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-lg">
+                  <Icon name="link" /> Abrir no Classroom
+                </a>
+              )}
+            </div>
           </div>
+        </div>
+      );
+    };
 
-          <h3 className="font-bold text-lg text-slate-800 mb-4">Sua Trilha</h3>
+    const TrilhasView = ({ lessons }) => {
+      const m1 = lessons.filter(l => l.module === 1);
+      const m2 = lessons.filter(l => l.module === 2);
+      const m3 = lessons.filter(l => l.module === 3);
 
-          <div className="space-y-0 relative">
-            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-slate-200"></div>
+      return (
+        <div className="p-6">
+          <h2 className="text-lg font-black text-slate-900">Trilha da Fluência</h2>
+          <p className="text-sm text-slate-600 mt-1">Linha do tempo vertical por módulos (1–50, 51–100, 101–150).</p>
 
-            {DB.lessons.map((lesson, idx) => (
-              <div key={lesson.id} className={`relative flex gap-5 py-4 ${lesson.status === 'locked' ? 'opacity-60 grayscale' : ''}`}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border-4 border-slate-50 transition-colors ${lesson.status === 'done' ? 'bg-green-500 text-white' : lesson.status === 'active' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
-                  {lesson.status === 'done' ? <Icon name="check"/> : <span className="font-bold text-sm">{idx + 1}</span>}
+          <ModuleHeader module={1} />
+          {m1.map(l => <LessonItem key={l.id} lesson={l} />)}
+
+          <ModuleHeader module={2} />
+          {m2.map(l => <LessonItem key={l.id} lesson={l} />)}
+
+          <ModuleHeader module={3} />
+          {m3.map(l => <LessonItem key={l.id} lesson={l} />)}
+        </div>
+      );
+    };
+
+    const Dashboard = ({ user, lessons, onLogout }) => (
+      <div className="min-h-screen bg-sand-base">
+        <div className="max-w-md mx-auto px-6 pt-6">
+          <div className="relative overflow-hidden rounded-3xl shadow-soft">
+            <div className="relative h-44">
+              <BrandGradient />
+              <div className="absolute inset-0 bg-black/15" />
+
+              <div className="absolute left-6 bottom-6 right-6 flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-white/80 text-[11px] font-extrabold uppercase tracking-wide">Student Portal</div>
+                  <div className="text-white text-2xl font-black leading-tight mt-1">Olá, {user.name.split(" ")[0]} 👋</div>
+                  <div className="text-white/80 text-sm font-semibold mt-1">{user.level}</div>
                 </div>
 
-                <div className="flex-1 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase bg-indigo-50 text-indigo-600">{lesson.date}</span>
-                  <h4 className="font-bold text-slate-800 text-lg mb-1">{lesson.title}</h4>
-                  <p className="text-sm text-slate-500 mb-4">{lesson.summary}</p>
-
-                  {lesson.status !== 'locked' && (
-                    <a href={lesson.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-lg">
-                      Acessar Aula
-                    </a>
-                  )}
+                <div className="flex items-center gap-3">
+                  <img src={ASSETS.avatarPhoto} alt="Victor" className="w-14 h-14 rounded-2xl object-cover border border-white/25" />
+                  <button onClick={onLogout} className="bg-white/15 hover:bg-white/20 text-white p-3 rounded-2xl">
+                    <Icon name="logOut" />
+                  </button>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-white px-6 py-4 border-t border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-extrabold text-slate-600">Atalho: Classroom</div>
+                <a href={user.classroom} target="_blank" rel="noreferrer" className="text-xs font-extrabold text-bordo-academico inline-flex items-center gap-2">
+                  <Icon name="link" /> Abrir
+                </a>
+              </div>
+            </div>
           </div>
-        </main>
+        </div>
+
+        <div className="max-w-md mx-auto">
+          <TrilhasView lessons={lessons} />
+        </div>
+
+        <div className="max-w-md mx-auto px-6 pb-10">
+          <div className="mt-8 text-center text-[11px] text-slate-500 font-semibold">
+            © {new Date().getFullYear()} The Fluency Studio
+          </div>
+        </div>
       </div>
     );
 
     const App = () => {
       const [user, setUser] = useState(null);
-      const [error, setError] = useState('');
+      const [error, setError] = useState("");
+
+      const lessons = useMemo(() => makeLessons(), []);
 
       useEffect(() => {
-        const saved = localStorage.getItem('fluency_user');
+        const saved = localStorage.getItem("fluency_user");
         if (saved) setUser(JSON.parse(saved));
       }, []);
 
       const handleLogin = (e) => {
         e.preventDefault();
-        const found = DB.users.find(u => u.email === e.target.email.value && u.pass === e.target.password.value);
+        const email = e.target.email.value.trim();
+        const pass = e.target.password.value;
+        const found = DB.users.find(u => u.email === email && u.pass === pass);
+
         if (found) {
           setUser(found);
-          localStorage.setItem('fluency_user', JSON.stringify(found));
-          setError('');
+          localStorage.setItem("fluency_user", JSON.stringify(found));
+          setError("");
         } else {
-          setError('E-mail ou senha incorretos.');
+          setError("E-mail ou senha incorretos.");
         }
       };
 
+      const logout = () => {
+        setUser(null);
+        localStorage.removeItem("fluency_user");
+      };
+
       return user
-        ? <Dashboard user={user} onLogout={() => { setUser(null); localStorage.removeItem('fluency_user'); }} />
+        ? <Dashboard user={user} lessons={lessons} onLogout={logout} />
         : <LoginScreen onLogin={handleLogin} error={error} />;
     };
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
+    const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<App />);
   </script>
 </body>
