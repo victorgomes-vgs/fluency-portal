@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluency Studio — Portal do Aluno</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #0B1F33; }
+
+    .animate-enter { animation: fadeUp 0.4s ease-out forwards; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-glass {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+    }
+    .card-white {
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+    /* Timeline line */
+    .timeline-line {
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(79,209,197,0.4), rgba(79,209,197,0.05));
+    }
+
+    /* Admin scrollable list */
+    .admin-list { max-height: 70vh; overflow-y: auto; }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0B1F33, #114B5F);
+      color: white; font-weight: 700;
+      border-radius: 12px; padding: 12px 20px;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; }
+
+    .btn-teal {
+      background: #4FD1C5;
+      color: #0B1F33; font-weight: 700;
+      border-radius: 12px; padding: 12px 20px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #f8fafc;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #4FD1C5;
+      box-shadow: 0 0 0 3px rgba(79,209,197,0.15);
+      background: white;
+    }
+  </style>
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- React 18 + Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+
+    // ─── Firebase ───────────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
+      authDomain: "fluency-studio-portal.firebaseapp.com",
+      projectId: "fluency-studio-portal",
+      storageBucket: "fluency-studio-portal.firebasestorage.app",
+      messagingSenderId: "568224359300",
+      appId: "1:568224359300:web:6f4e283315deb93224b3d1"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+
+    // ─── Curriculum (150 lições, estático) ──────────────────────
+    const CURRICULUM = Array.from({ length: 150 }, (_, i) => {
+      const n = i + 1;
+      const isReview = n % 10 === 0;
+      const module   = n <= 50 ? 1 : n <= 100 ? 2 : 3;
+      return { number: n, module, isReview, title: isReview ? `Review ${n} — Revisão em casa` : `Lesson ${n}` };
+    });
+
+    // ─── Helpers ────────────────────────────────────────────────
+    const ATTENDANCE_MAP = {
+      present:     { label: 'Presente',   bg: 'bg-emerald-100', text: 'text-emerald-700' },
+      absent:      { label: 'Faltou',     bg: 'bg-red-100',     text: 'text-red-600'    },
+      reposition:  { label: 'Reposição',  bg: 'bg-amber-100',   text: 'text-amber-700'  },
+    };
+
+    const STATUS_MAP = {
+      done:   { label: 'Concluída', dot: 'bg-teal-400' },
+      active: { label: 'Próxima',   dot: 'bg-white border-2 border-teal-400' },
+      locked: { label: 'Aguardando', dot: 'bg-white/20' },
+    };
+
+    // ─── Loading ─────────────────────────────────────────────────
+    const LoadingScreen = () => (
+      <div className="min-h-screen flex items-center justify-center" style={{background:'linear-gradient(135deg,#0B1F33,#114B5F)'}}>
+        <div className="text-center animate-enter">
+          <div className="w-12 h-12 rounded-full border-2 border-teal-400 border-t-transparent animate-spin mx-auto mb-4"></div>
+          <p className="text-white/50 text-sm">Carregando...</p>
+        </div>
+      </div>
+    );
+
+    // ─── Login ───────────────────────────────────────────────────
+    const LoginScreen = ({ onLogin, loading, error }) => (
+      <div className="min-h-screen flex items-center justify-center p-4"
+        style={{background:'linear-gradient(135deg,#0B1F33 0%,#0F3A45 50%,#2C7A8E 100%)'}}>
+        <div className="w-full max-w-sm animate-enter">
+          {/* Card */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            {/* Header visual */}
+            <div className="relative h-40 flex items-end p-6"
+              style={{background:'linear-gradient(135deg,#0B1F33,#114B5F)'}}>
+              <div className="absolute inset-0 opacity-10"
+                style={{backgroundImage:'radial-gradient(circle at 30% 50%, rgba(79,209,197,0.6) 0%, transparent 60%)'}}></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-1">
+                  <img src="./assets/logo.png" alt="Logo" className="h-8 w-auto" onError={e=>e.target.style.display='none'} />
+                  <span className="text-white font-black text-xl tracking-tight">Fluency Studio</span>
+                </div>
+                <p className="text-white/60 text-sm">Portal do Aluno</p>
+              </div>
+            </div>
+
+            {/* Form */}
+            <div className="p-7">
+              <form onSubmit={onLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-1">E-mail</label>
+                  <input name="email" type="email" required placeholder="seu@email.com" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Senha</label>
+                  <input name="password" type="password" required placeholder="••••••••" />
+                </div>
+                {error && (
+                  <p className="text-red-500 text-xs bg-red-50 border border-red-100 p-3 rounded-xl">{error}</p>
+                )}
+                <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
+                  {loading ? 'Entrando...' : 'Entrar'}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <p className="text-center text-white/30 text-xs mt-6">© 2026 Fluency Studio</p>
+        </div>
+      </div>
+    );
+
+    // ─── Lesson Card (Student view) ──────────────────────────────
+    const LessonCard = ({ lesson, data }) => {
+      const status     = data?.status || 'locked';
+      const attendance = data?.attendance;
+      const att        = ATTENDANCE_MAP[attendance];
+      const isLocked   = status === 'locked';
+      const isDone     = status === 'done';
+      const isActive   = status === 'active';
+      const hasLinks   = !isLocked && (data?.callLink || data?.classroomLink);
+
+      return (
+        <div className={`relative flex gap-3 pb-4 ${isLocked ? 'opacity-35' : ''}`}>
+          {/* Dot */}
+          <div className="flex flex-col items-center shrink-0 pt-0.5">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10
+              ${isDone ? 'bg-teal-400 text-white' : isActive ? 'bg-white border-2 border-teal-400 text-teal-600' : 'bg-white/10 text-white/30 border border-white/10'}`}>
+              {isDone ? '✓' : lesson.number}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className={`flex-1 rounded-xl p-4 ${isDone || isActive ? 'card-white' : 'card-glass'}`}>
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <div className="min-w-0">
+                {data?.date && <p className="text-xs text-gray-400 font-medium mb-0.5">{data.date}</p>}
+                <h4 className={`font-bold text-sm leading-snug ${isLocked ? 'text-white/40' : isDone || isActive ? 'text-gray-800' : 'text-white/60'}`}>
+                  {lesson.title}
+                </h4>
+                {lesson.isReview && (
+                  <span className="inline-block mt-1 text-xs bg-purple-100 text-purple-600 font-semibold px-2 py-0.5 rounded-full">
+                    📚 Revisão em casa
+                  </span>
+                )}
+              </div>
+              {att && (
+                <span className={`shrink-0 text-xs font-bold px-2 py-1 rounded-lg ${att.bg} ${att.text}`}>
+                  {att.label}
+                </span>
+              )}
+            </div>
+
+            {data?.notes && (
+              <p className="text-xs text-gray-500 italic mt-2 leading-relaxed border-l-2 border-teal-200 pl-2">
+                {data.notes}
+              </p>
+            )}
+
+            {hasLinks && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {data.callLink && (
+                  <a href={data.callLink} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg text-white"
+                    style={{background:'#0B1F33'}}>
+                    📹 Entrar na Aula
+                  </a>
+                )}
+                {data.classroomLink && (
+                  <a href={data.classroomLink} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg bg-teal-500 text-white">
+                    📂 Material / Tarefa
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Student Portal ──────────────────────────────────────────
+    const StudentPortal = ({ userData, onLogout }) => {
+      const [lessonsData, setLessonsData] = useState({});
+      const [loading, setLoading]         = useState(true);
+      const [activeModule, setActiveModule] = useState(1);
+
+      useEffect(() => {
+        if (!userData?.studentId) { setLoading(false); return; }
+        const unsub = db.collection('students').doc(userData.studentId)
+          .collection('lessons').onSnapshot(snap => {
+            const d = {};
+            snap.forEach(doc => { d[doc.id] = doc.data(); });
+            setLessonsData(d);
+            setLoading(false);
+          }, () => setLoading(false));
+        return unsub;
+      }, [userData?.studentId]);
+
+      const moduleLessons = CURRICULUM.filter(l => l.module === activeModule);
+      const moduleRanges  = { 1: '1–50', 2: '51–100', 3: '101–150' };
+
+      // Count done lessons for progress
+      const done = Object.values(lessonsData).filter(d => d.status === 'done').length;
+      const pct  = Math.round((done / 150) * 100);
+
+      return (
+        <div className="min-h-screen pb-12" style={{background:'linear-gradient(160deg,#0B1F33 0%,#0F3A45 40%,#114B5F 70%,#1a5c72 100%)'}}>
+
+          {/* Header */}
+          <div className="sticky top-0 z-20" style={{background:'rgba(11,31,51,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
+            <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="./assets/logo.png" alt="" className="h-7 w-auto" onError={e=>e.target.style.display='none'} />
+                <div>
+                  <p className="text-white/50 text-xs leading-none">Olá,</p>
+                  <p className="text-white font-black text-base leading-tight">{userData?.name?.split(' ')[0]} 👋</p>
+                </div>
+              </div>
+              <button onClick={onLogout} className="text-white/50 text-xs border border-white/15 hover:border-white/30 px-3 py-1.5 rounded-lg transition">
+                Sair
+              </button>
+            </div>
+          </div>
+
+          <div className="max-w-lg mx-auto px-4 pt-6">
+
+            {/* Progress bar */}
+            <div className="card-glass rounded-2xl p-5 mb-6 animate-enter">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-white/50 text-xs font-semibold uppercase tracking-wide">Progresso geral</p>
+                  <p className="text-white font-black text-2xl mt-0.5">{pct}% <span className="text-white/40 text-sm font-normal">completo</span></p>
+                </div>
+                <div className="text-right">
+                  <p className="text-teal-400 font-black text-2xl">{done}</p>
+                  <p className="text-white/40 text-xs">de 150 aulas</p>
+                </div>
+              </div>
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-teal-400 rounded-full transition-all duration-500" style={{width:`${pct}%`}}></div>
+              </div>
+            </div>
+
+            {/* Module Tabs */}
+            <div className="flex gap-2 mb-5">
+              {[1,2,3].map(m => (
+                <button key={m} onClick={() => setActiveModule(m)}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition ${activeModule === m ? 'bg-teal-400 text-gray-900' : 'card-glass text-white/60 hover:text-white/80'}`}>
+                  Módulo {m}
+                  <span className={`block text-xs font-normal ${activeModule === m ? 'text-gray-700' : 'text-white/40'}`}>{moduleRanges[m]}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Trilha header */}
+            <h2 className="text-white font-black text-lg mb-4">
+              Trilha da Fluência
+            </h2>
+
+            {/* Lessons */}
+            {loading ? (
+              <div className="text-center py-12 text-white/40">Carregando trilha...</div>
+            ) : (
+              <div className="relative">
+                <div className="timeline-line"></div>
+                <div className="pl-0">
+                  {moduleLessons.map(lesson => (
+                    <LessonCard key={lesson.number} lesson={lesson} data={lessonsData[String(lesson.number)]} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Admin Edit Modal ────────────────────────────────────────
+    const EditModal = ({ lesson, existing, studentId, onClose }) => {
+      const [form, setForm]   = useState({
+        status:         existing?.status         || 'locked',
+        attendance:     existing?.attendance     || '',
+        date:           existing?.date           || '',
+        callLink:       existing?.callLink       || '',
+        classroomLink:  existing?.classroomLink  || '',
+        notes:          existing?.notes          || '',
+      });
+      const [saving, setSaving] = useState(false);
+      const [msg, setMsg]       = useState('');
+
+      const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+      const save = async () => {
+        setSaving(true);
+        try {
+          await db.collection('students').doc(studentId).collection('lessons')
+            .doc(String(lesson.number)).set(form, { merge: true });
+          setMsg('Salvo com sucesso ✓');
+          setTimeout(onClose, 900);
+        } catch(e) {
+          setMsg('Erro: ' + e.message);
+        }
+        setSaving(false);
+      };
+
+      return (
+        <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4 animate-enter max-h-[90vh] overflow-y-auto">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-black text-gray-800 text-lg">Lição {lesson.number}</h3>
+                <p className="text-gray-500 text-sm">{lesson.title}</p>
+              </div>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none mt-1">×</button>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
+              <select value={form.status} onChange={e => set('status', e.target.value)}>
+                <option value="locked">🔒 Bloqueada</option>
+                <option value="active">🎯 Próxima / Ativa</option>
+                <option value="done">✅ Concluída</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Presença</label>
+              <select value={form.attendance} onChange={e => set('attendance', e.target.value)}>
+                <option value="">— Não registrado —</option>
+                <option value="present">✅ Presente</option>
+                <option value="absent">❌ Faltou</option>
+                <option value="reposition">🔄 Reposição</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Data da aula</label>
+              <input type="date" value={form.date} onChange={e => set('date', e.target.value)} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Link da Chamada (Meet)</label>
+              <input type="url" value={form.callLink} onChange={e => set('callLink', e.target.value)} placeholder="https://meet.google.com/..." />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Link Classroom (material / tarefa)</label>
+              <input type="url" value={form.classroomLink} onChange={e => set('classroomLink', e.target.value)} placeholder="https://classroom.google.com/..." />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Direcionamentos / Observações</label>
+              <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Ex: ótima pronúncia hoje, foco em conectivos..." />
+            </div>
+
+            {msg && <p className={`text-sm font-bold ${msg.startsWith('Erro') ? 'text-red-500' : 'text-teal-600'}`}>{msg}</p>}
+
+            <div className="flex gap-2 pt-2">
+              <button onClick={onClose} className="flex-1 border border-gray-200 rounded-xl py-3 text-sm font-bold text-gray-600 hover:bg-gray-50">
+                Cancelar
+              </button>
+              <button onClick={save} disabled={saving} className="flex-1 btn-primary">
+                {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Admin Panel ─────────────────────────────────────────────
+    const AdminPanel = ({ onLogout }) => {
+      const [students,        setStudents]        = useState([]);
+      const [selectedStudent, setSelectedStudent] = useState(null);
+      const [lessonsData,     setLessonsData]     = useState({});
+      const [editingLesson,   setEditingLesson]   = useState(null);
+      const [filterModule,    setFilterModule]    = useState(0); // 0 = all
+      const [search,          setSearch]          = useState('');
+
+      // Load students
+      useEffect(() => {
+        db.collection('students').get().then(snap => {
+          setStudents(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        });
+      }, []);
+
+      // Load lessons when student selected
+      useEffect(() => {
+        if (!selectedStudent) return;
+        const unsub = db.collection('students').doc(selectedStudent.id).collection('lessons')
+          .onSnapshot(snap => {
+            const d = {};
+            snap.forEach(doc => { d[doc.id] = doc.data(); });
+            setLessonsData(d);
+          });
+        return unsub;
+      }, [selectedStudent]);
+
+      const filteredLessons = CURRICULUM.filter(l => {
+        if (filterModule && l.module !== filterModule) return false;
+        if (search && !l.title.toLowerCase().includes(search.toLowerCase())) return false;
+        return true;
+      });
+
+      return (
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <div className="bg-white border-b sticky top-0 z-20">
+            <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="./assets/logo.png" alt="" className="h-7 w-auto" onError={e=>e.target.style.display='none'} />
+                <div>
+                  <h1 className="font-black text-gray-800 text-base leading-tight">Painel Admin</h1>
+                  <p className="text-gray-400 text-xs">Fluency Studio</p>
+                </div>
+              </div>
+              <button onClick={onLogout} className="text-sm text-gray-500 border px-3 py-1.5 rounded-lg hover:bg-gray-50">
+                Sair
+              </button>
+            </div>
+          </div>
+
+          <div className="max-w-3xl mx-auto p-4">
+
+            {/* Student selector */}
+            <div className="bg-white rounded-2xl border p-5 mb-5">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Selecionar Aluno</label>
+              <select onChange={e => {
+                const s = students.find(s => s.id === e.target.value);
+                setSelectedStudent(s || null);
+                setLessonsData({});
+              }} className="text-sm">
+                <option value="">— Escolha um aluno —</option>
+                {students.map(s => (
+                  <option key={s.id} value={s.id}>{s.name}{s.email ? ` (${s.email})` : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            {selectedStudent && (
+              <div className="animate-enter">
+                {/* Student info bar */}
+                <div className="bg-white rounded-2xl border p-4 mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-black text-gray-800">{selectedStudent.name}</p>
+                    <p className="text-gray-400 text-sm">{selectedStudent.email}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-teal-600 font-black text-xl">
+                      {Object.values(lessonsData).filter(d => d.status === 'done').length}
+                    </p>
+                    <p className="text-gray-400 text-xs">aulas concluídas</p>
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="flex gap-2 mb-4 flex-wrap">
+                  {[{v:0,l:'Todas'},{v:1,l:'Módulo 1'},{v:2,l:'Módulo 2'},{v:3,l:'Módulo 3'}].map(({v,l}) => (
+                    <button key={v} onClick={() => setFilterModule(v)}
+                      className={`text-xs font-bold px-3 py-2 rounded-xl transition ${filterModule === v ? 'bg-gray-800 text-white' : 'bg-white border text-gray-600 hover:bg-gray-50'}`}>
+                      {l}
+                    </button>
+                  ))}
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Buscar lição..."
+                    className="text-xs flex-1 min-w-32 py-2 px-3"
+                  />
+                </div>
+
+                {/* Lessons list */}
+                <div className="space-y-2 admin-list">
+                  {filteredLessons.map(lesson => {
+                    const data = lessonsData[String(lesson.number)] || {};
+                    const att  = ATTENDANCE_MAP[data.attendance];
+                    const hasData = data.status && data.status !== 'locked';
+
+                    return (
+                      <div key={lesson.number} className="bg-white rounded-xl border p-3 flex items-center gap-3">
+                        {/* Number */}
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-black shrink-0
+                          ${data.status === 'done' ? 'bg-teal-100 text-teal-600' : data.status === 'active' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                          {data.status === 'done' ? '✓' : lesson.number}
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-800 truncate">{lesson.title}</p>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            {data.date && <span className="text-xs text-gray-400">{data.date}</span>}
+                            {att && <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${att.bg} ${att.text}`}>{att.label}</span>}
+                            {lesson.isReview && <span className="text-xs text-purple-500 font-medium">📚 Review</span>}
+                            {(data.callLink || data.classroomLink) && <span className="text-xs text-teal-500 font-medium">🔗 Links</span>}
+                          </div>
+                        </div>
+
+                        {/* Edit button */}
+                        <button onClick={() => setEditingLesson(lesson)}
+                          className="shrink-0 text-xs font-bold text-teal-600 border border-teal-200 hover:bg-teal-50 px-3 py-2 rounded-lg transition">
+                          Editar
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {!selectedStudent && (
+              <div className="text-center py-16 text-gray-400">
+                <p className="text-4xl mb-3">👆</p>
+                <p className="text-sm">Selecione um aluno para gerenciar a trilha</p>
+              </div>
+            )}
+          </div>
+
+          {/* Edit Modal */}
+          {editingLesson && (
+            <EditModal
+              lesson={editingLesson}
+              existing={lessonsData[String(editingLesson.number)]}
+              studentId={selectedStudent.id}
+              onClose={() => setEditingLesson(null)}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // ─── App Root ────────────────────────────────────────────────
+    const App = () => {
+      const [authState, setAuthState] = useState('loading');
+      const [userData,  setUserData]  = useState(null);
+      const [loginError, setLoginError] = useState('');
+      const [loginLoading, setLoginLoading] = useState(false);
+
+      useEffect(() => {
+        const unsub = auth.onAuthStateChanged(async u => {
+          if (u) {
+            try {
+              const doc = await db.collection('users').doc(u.uid).get();
+              if (doc.exists) {
+                setUserData({ uid: u.uid, ...doc.data() });
+                setAuthState('in');
+              } else {
+                await auth.signOut();
+                setAuthState('out');
+              }
+            } catch {
+              setAuthState('out');
+            }
+          } else {
+            setAuthState('out');
+            setUserData(null);
+          }
+        });
+        return unsub;
+      }, []);
+
+      const handleLogin = async e => {
+        e.preventDefault();
+        setLoginLoading(true);
+        setLoginError('');
+        try {
+          await auth.signInWithEmailAndPassword(e.target.email.value.trim(), e.target.password.value);
+        } catch {
+          setLoginError('E-mail ou senha incorretos.');
+          setLoginLoading(false);
+        }
+      };
+
+      const handleLogout = async () => {
+        await auth.signOut();
+      };
+
+      if (authState === 'loading') return <LoadingScreen />;
+      if (authState === 'out')
+        return <LoginScreen onLogin={handleLogin} loading={loginLoading} error={loginError} />;
+      if (userData?.role === 'admin')
+        return <AdminPanel onLogout={handleLogout} />;
+
+      return <StudentPortal userData={userData} onLogout={handleLogout} />;
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
