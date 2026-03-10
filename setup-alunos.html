@@ -25,10 +25,11 @@
     .table td:last-child { width: 20%; text-align: right; }
     button.run { width: 100%; background: linear-gradient(135deg, #0B1F33, #114B5F); color: white; font-weight: 800; font-size: 15px; padding: 16px; border: none; border-radius: 12px; cursor: pointer; }
     button.run:disabled { opacity: 0.5; cursor: not-allowed; }
-    .log { background: #0f172a; border-radius: 12px; padding: 16px; font-family: monospace; font-size: 12px; color: #94a3b8; max-height: 240px; overflow-y: auto; margin-top: 16px; }
+    .log { background: #0f172a; border-radius: 12px; padding: 16px; font-family: monospace; font-size: 12px; color: #94a3b8; max-height: 300px; overflow-y: auto; margin-top: 16px; }
     .log .ok   { color: #34d399; }
     .log .err  { color: #f87171; }
     .log .info { color: #60a5fa; }
+    .log .warn { color: #fbbf24; }
     .warning { background: #fef9c3; border: 1px solid #fde047; border-radius: 12px; padding: 16px; font-size: 13px; color: #854d0e; margin-bottom: 20px; line-height: 1.6; }
     .warning strong { display: block; margin-bottom: 4px; font-size: 14px; }
     input { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 14px; outline: none; margin-bottom: 10px; display: block; }
@@ -44,9 +45,8 @@
 <div class="container">
 
   <h1>⚙️ Setup de Alunos</h1>
-  <p class="sub">Fluency Studio Portal — use esta página uma única vez para cadastrar todos os alunos.</p>
+  <p class="sub">Fluency Studio Portal — recriando documentos no Firestore para alunos já existentes.</p>
 
-  <!-- LOGIN -->
   <div id="loginBox" class="card">
     <h2>Login Admin</h2>
     <input id="adminEmail" type="email" placeholder="Seu e-mail admin" />
@@ -55,20 +55,18 @@
     <button class="btn-login" onclick="doLogin()">Entrar</button>
   </div>
 
-  <!-- CONTEÚDO (aparece após login) -->
   <div id="mainBox" style="display:none;">
     <div class="warning">
-      <strong>⚠️ Atenção</strong>
-      Esta página cria os logins de todos os alunos no Firebase e os documentos no Firestore.
-      Use <strong>uma única vez</strong>. Após concluir pode deletar este arquivo.
+      <strong>ℹ️ Modo recuperação</strong>
+      Os usuários já existem no Authentication. Esta versão faz login como cada aluno para obter o UID e cria os documentos no Firestore.
     </div>
 
     <div class="card">
-      <h2>Alunos que serão criados — senha padrão: <span style="color:#0B1F33">fluency2026</span></h2>
+      <h2>Alunos — senha padrão: <span style="color:#0B1F33">fluency2026</span></h2>
       <table class="table"><tbody id="tbody"></tbody></table>
     </div>
 
-    <button class="run" id="btnRun" onclick="runSetup()">▶ Criar todos os alunos agora</button>
+    <button class="run" id="btnRun" onclick="runSetup()">▶ Criar documentos no Firestore</button>
     <div class="log" id="log" style="display:none;"></div>
   </div>
 
@@ -101,6 +99,7 @@
   ];
 
   const DEFAULT_PASS = 'fluency2026';
+  let adminEmail = '', adminPass = '';
 
   const tbody = document.getElementById('tbody');
   STUDENTS.forEach((s, i) => {
@@ -118,6 +117,8 @@
     errEl.textContent = '';
     try {
       await auth.signInWithEmailAndPassword(email, pass);
+      adminEmail = email;
+      adminPass  = pass;
       document.getElementById('loginBox').style.display = 'none';
       document.getElementById('mainBox').style.display  = 'block';
     } catch(e) {
@@ -138,55 +139,87 @@
     el.className = `status ${type}`;
   }
 
+  async function writeFirestoreDocs(uid, student) {
+    await db.collection('users').doc(uid).set({
+      name: student.name, email: student.email, role: 'student', studentId: uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('students').doc(uid).set({
+      name: student.name, email: student.email, uid: uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
   async function runSetup() {
     const btn = document.getElementById('btnRun');
     btn.disabled = true;
-    btn.textContent = '⏳ Criando...';
-    log('Iniciando setup...', 'info');
+    btn.textContent = '⏳ Processando...';
+    log('Iniciando...', 'info');
 
     let ok = 0, errs = 0;
 
     for (let i = 0; i < STUDENTS.length; i++) {
       const s = STUDENTS[i];
-      setStatus(i, 'Criando...', 'creating');
+      setStatus(i, 'Processando...', 'creating');
       log(`→ ${s.name}`, 'info');
 
+      let uid = null;
+
+      // Tenta criar; se já existe, faz login para pegar o UID
       try {
         const appName = `setup-${i}`;
         const secondApp = firebase.apps.find(a => a.name === appName)
           || firebase.initializeApp(firebaseConfig, appName);
         const secondAuth = secondApp.auth();
 
-        const cred = await secondAuth.createUserWithEmailAndPassword(s.email, DEFAULT_PASS);
-        const uid  = cred.user.uid;
+        try {
+          const cred = await secondAuth.createUserWithEmailAndPassword(s.email, DEFAULT_PASS);
+          uid = cred.user.uid;
+          log(`  Auth criado: ${uid}`, 'ok');
+        } catch(authErr) {
+          if (authErr.code === 'auth/email-already-in-use') {
+            // Faz login para obter o UID
+            const cred2 = await secondAuth.signInWithEmailAndPassword(s.email, DEFAULT_PASS);
+            uid = cred2.user.uid;
+            log(`  Auth já existe, UID obtido: ${uid}`, 'warn');
+          } else {
+            throw authErr;
+          }
+        }
+
         await secondAuth.signOut();
 
-        await db.collection('users').doc(uid).set({
-          name: s.name, email: s.email, role: 'student', studentId: uid,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // Reconecta admin principal antes de escrever no Firestore
+        if (!auth.currentUser) {
+          await auth.signInWithEmailAndPassword(adminEmail, adminPass);
+        }
 
-        await db.collection('students').doc(uid).set({
-          name: s.name, email: s.email, uid: uid,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // Escreve no Firestore
+        await writeFirestoreDocs(uid, s);
 
-        setStatus(i, 'Criado ✓', 'done');
-        log(`✓ ${s.name}`, 'ok');
+        setStatus(i, 'Salvo ✓', 'done');
+        log(`✓ ${s.name} — Firestore OK`, 'ok');
         ok++;
+
       } catch(e) {
-        const msg = e.code === 'auth/email-already-in-use' ? 'Já existe' : e.message;
-        setStatus(i, msg, 'error');
-        log(`✗ ${s.name} — ${msg}`, 'err');
+        setStatus(i, 'Erro', 'error');
+        log(`✗ ${s.name} — ${e.message}`, 'err');
         errs++;
       }
 
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 600));
     }
 
+    // Reconecta admin no final
+    try {
+      if (!auth.currentUser) {
+        await auth.signInWithEmailAndPassword(adminEmail, adminPass);
+      }
+    } catch(e) {}
+
     log(`─────────────────────`, 'info');
-    log(`Concluído: ${ok} criados, ${errs} erros.`, ok > 0 ? 'ok' : 'err');
-    btn.textContent = `✓ Concluído — ${ok} alunos criados`;
+    log(`Concluído: ${ok} salvos, ${errs} erros.`, ok > 0 ? 'ok' : 'err');
+    btn.textContent = `✓ Concluído — ${ok} documentos salvos`;
   }
 </script>
 </body>
