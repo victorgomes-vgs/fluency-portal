@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluency Studio | Student Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Firebase Init -->
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyARQfoifYSDycd37gXw4sofwPu7tHkiip0",
+      authDomain: "fluency-studio-portal.firebaseapp.com",
+      projectId: "fluency-studio-portal",
+      storageBucket: "fluency-studio-portal.firebasestorage.app",
+      messagingSenderId: "568224359300",
+      appId: "1:568224359300:web:6f4e283315deb93224b3d1",
+    });
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root{ --navy:#0B1F33; --teal1:#0F3A45; --teal2:#114B5F; --teal3:#2C7A8E; --bord:#5A1F2B; }
+    html,body{ height:100%; }
+    body{
+      font-family: Inter, system-ui, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(44,122,142,.35), transparent 55%),
+                  radial-gradient(900px 700px at 80% 0%, rgba(17,75,95,.35), transparent 60%),
+                  linear-gradient(180deg, var(--navy), #071627 70%);
+      color: #eaf2f7;
+    }
+    .glass{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); box-shadow:0 20px 60px rgba(0,0,0,.35); backdrop-filter:blur(10px); }
+    .muted{ color:rgba(234,242,247,.65); }
+    .chip{ border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); }
+    .btn{ border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); transition:transform .08s,background .12s; cursor:pointer; }
+    .btn:hover{ background:rgba(255,255,255,.13); }
+    .btn:active{ transform:translateY(1px); }
+    .btn-primary{ border:1px solid rgba(44,122,142,.50); background:linear-gradient(135deg,rgba(44,122,142,.55),rgba(17,75,95,.45)); }
+    .btn-primary:hover{ background:linear-gradient(135deg,rgba(44,122,142,.70),rgba(17,75,95,.55)); }
+    .btn-danger{ border:1px solid rgba(90,31,43,.55); background:rgba(90,31,43,.22); }
+    .btn-danger:hover{ background:rgba(90,31,43,.35); }
+    .btn-ok{ border:1px solid rgba(44,142,105,.55); background:rgba(44,142,105,.18); }
+    .input{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.12); outline:none; color:#eaf2f7; }
+    .input:focus{ border-color:rgba(44,122,142,.75); box-shadow:0 0 0 4px rgba(44,122,142,.18); }
+    .input-light{ background:rgba(11,31,51,.06); border:1px solid rgba(11,31,51,.18); outline:none; color:var(--navy); border-radius:8px; padding:5px 10px; font-size:13px; width:100%; }
+    .input-light:focus{ border-color:rgba(44,122,142,.6); box-shadow:0 0 0 3px rgba(44,122,142,.12); }
+    .table-row{ border-bottom:1px solid rgba(255,255,255,.08); }
+    .link{ color:rgba(170,230,255,.95); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(170,230,255,.35); }
+    /* Book */
+    .book-header{ background:linear-gradient(135deg,rgba(44,122,142,.18),rgba(17,75,95,.12)); border:1px solid rgba(44,122,142,.30); transition:background .15s; }
+    .book-header:hover{ background:linear-gradient(135deg,rgba(44,122,142,.28),rgba(17,75,95,.20)); }
+    /* Lesson card light */
+    .lesson-card{ background:rgba(255,255,255,.83); border-bottom:1px solid rgba(11,31,51,.07); color:var(--navy); transition:background .12s; }
+    .lesson-card:hover{ background:rgba(255,255,255,.92); }
+    .lesson-card:last-child{ border-bottom:none; }
+    /* Review row dark */
+    .review-card{ background:rgba(44,122,142,.22); border-bottom:1px solid rgba(44,122,142,.15); color:#eaf2f7; transition:background .12s; }
+    .review-card:hover{ background:rgba(44,122,142,.32); }
+    .review-card:last-child{ border-bottom:none; }
+    /* Tags */
+    .tag-input{ background:rgba(15,58,69,.12); color:#0F3A45; border:1px solid rgba(15,58,69,.28); font-size:10px; font-weight:700; letter-spacing:.05em; padding:2px 7px; border-radius:99px; text-transform:uppercase; white-space:nowrap; }
+    .tag-output{ background:rgba(90,31,43,.10); color:#5A1F2B; border:1px solid rgba(90,31,43,.28); font-size:10px; font-weight:700; letter-spacing:.05em; padding:2px 7px; border-radius:99px; text-transform:uppercase; white-space:nowrap; }
+    /* Trilha status — light */
+    .ls-pendente{ background:rgba(11,31,51,.07); border:1px solid rgba(11,31,51,.18); color:#5a7a90; font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    .ls-andamento{ background:rgba(190,135,20,.12); border:1px solid rgba(190,135,20,.40); color:#8a6010; font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    .ls-concluida{ background:rgba(44,142,105,.14); border:1px solid rgba(44,142,105,.42); color:#1b6e48; font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    /* dark (review) */
+    .ls-pendente-d{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:rgba(234,242,247,.65); font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    .ls-andamento-d{ background:rgba(210,160,60,.18); border:1px solid rgba(210,160,60,.50); color:#f0d080; font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    .ls-concluida-d{ background:rgba(44,142,105,.22); border:1px solid rgba(44,142,105,.55); color:#a0eec8; font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; }
+    /* Diário status */
+    .ds-realizada{ background:rgba(44,142,105,.14); border:1px solid rgba(44,142,105,.42); color:#1b6e48; }
+    .ds-andamento{ background:rgba(44,122,142,.14); border:1px solid rgba(44,122,142,.40); color:#0e4a5a; }
+    .ds-ausente{ background:rgba(90,31,43,.18); border:1px solid rgba(90,31,43,.42); color:#9a2a38; }
+    .ds-desmarcada{ background:rgba(120,120,120,.14); border:1px solid rgba(120,120,120,.35); color:#555; }
+    .ds-rep-gratis{ background:rgba(44,80,142,.12); border:1px solid rgba(44,80,142,.35); color:#1a3a8a; }
+    .ds-rep-paga{ background:rgba(140,80,0,.12); border:1px solid rgba(140,80,0,.35); color:#8a4a00; }
+    .ds-cancelada{ background:rgba(130,30,60,.12); border:1px solid rgba(130,30,60,.35); color:#8a1a3a; }
+    .diario-badge{ font-size:11px; padding:3px 10px; border-radius:99px; font-weight:600; white-space:nowrap; display:inline-block; }
+    /* Number badges */
+    .num-light{ background:rgba(11,31,51,.07); border:1px solid rgba(11,31,51,.14); color:var(--navy); min-width:2.8rem; text-align:center; border-radius:10px; padding:5px 8px; font-weight:700; font-size:13px; flex-shrink:0; }
+    .num-dark{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.20); color:#eaf2f7; min-width:2.8rem; text-align:center; border-radius:10px; padding:5px 8px; font-weight:700; font-size:13px; flex-shrink:0; }
+    .num-aula{ background:linear-gradient(135deg,rgba(44,122,142,.80),rgba(17,75,95,.80)); border:1px solid rgba(44,122,142,.50); color:#eaf2f7; min-width:3.2rem; text-align:center; border-radius:10px; padding:6px 8px; font-weight:700; font-size:12px; flex-shrink:0; line-height:1.3; }
+    /* Lesson expand detail */
+    .lesson-detail{ background:rgba(240,245,250,.95); border-top:1px solid rgba(11,31,51,.08); padding:12px 16px 14px; }
+    .detail-label{ font-size:11px; font-weight:700; color:#4a6a82; text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; }
+    /* Diário */
+    .dtable-row{ border-bottom:1px solid rgba(255,255,255,.07); }
+    .dtable-row:last-child{ border-bottom:none; }
+    .dtable-row:hover{ background:rgba(255,255,255,.03); }
+    select.ds-select{ background:rgba(0,0,0,.30); border:1px solid rgba(255,255,255,.14); color:#eaf2f7; border-radius:8px; padding:4px 8px; font-size:12px; outline:none; cursor:pointer; min-width:170px; }
+    select.ds-select:focus{ border-color:rgba(44,122,142,.7); }
+    textarea.obs-input{ background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:#eaf2f7; border-radius:8px; padding:5px 10px; font-size:12px; outline:none; resize:vertical; min-height:36px; width:100%; font-family:inherit; }
+    textarea.obs-input:focus{ border-color:rgba(44,122,142,.7); }
+    .chevron-icon{ transition:transform .2s; }
+    .chevron-open{ transform:rotate(90deg); }
+    /* Admin student card */
+    .student-card{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; padding:16px; cursor:pointer; transition:background .15s; }
+    .student-card:hover{ background:rgba(255,255,255,.11); }
+    /* Error */
+    .err-box{ background:rgba(90,31,43,.22); border:1px solid rgba(90,31,43,.55); border-radius:12px; padding:10px 14px; font-size:13px; color:#f0a0b0; }
+  </style>
+  <script>
+    tailwind.config={ theme:{ extend:{ fontFamily:{ sans:['Inter','ui-sans-serif'] } } } }
+  </script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+// ─── Firebase ─────────────────────────────────────────────────────────────────
+const auth = firebase.auth();
+const db   = firebase.firestore();
+const ADMIN_UID = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
+const WPP_VICTOR = "https://wa.me/5511919756733";
+const SCHED_URL  = "https://calendar.app.google/t19iBmkthDc6Ev8N7";
+
+// ─── Lesson titles ────────────────────────────────────────────────────────────
+const LESSON_TITLES = {
+   1:"Eating & Drinking",           2:"Eating & Drinking — Practice",
+   3:"Likes & Dislikes",            4:"Likes & Dislikes — Practice",
+   5:"Preferences & Choices",       6:"Preferences & Choices — Practice",
+   7:"Languages of the World",      8:"Languages of the World — Practice",
+   9:"Where Are You From?",        10:"Where Are You From? — Practice",
+  11:"Family & Places",            12:"Family & Places — Practice",
+  13:"What I Have & Need",         14:"What I Have & Need — Practice",
+  15:"City Life & Digital World",  16:"City Life & Digital World — Practice",
+  17:"My Daily Routine",           18:"My Daily Routine — Practice",
+  19:"Home & Time",                20:"Home & Time — Practice",
+  21:"My Week",                    22:"My Week — Practice",
+  23:"Skills & Knowledge",         24:"Skills & Knowledge — Practice",
+  25:"Shopping & Traveling",       26:"Shopping & Traveling — Practice",
+  27:"Around the City",            28:"Around the City — Practice",
+  29:"On the Move",                30:"On the Move — Practice",
+};
+function getLessonTitle(n){ return LESSON_TITLES[n] || `Lição ${n}`; }
+
+// ─── Build trilha template ────────────────────────────────────────────────────
+function generateBooks(){
+  const books=[]; let gp=0,ln=0;
+  for(let bi=1;bi<=6;bi++){
+    const items=[];
+    for(let rv=1;rv<=10;rv++){
+      for(let i=0;i<6;i++){
+        ln++; gp++;
+        items.push({ id:`b${bi}-l${ln}`, pos:gp, type:"lesson",
+          lessonType:ln%2!==0?"input":"output", num:ln,
+          title:getLessonTitle(ln), status:"pendente", date:"", obs:"", link:"" });
+      }
+      gp++;
+      items.push({ id:`b${bi}-r${rv}`, pos:gp, type:"review",
+        title:"Revisão", status:"pendente", date:"", obs:"" });
+    }
+    books.push({ bookIdx:bi, items });
+  }
+  return books;
+}
+const BOOKS_TEMPLATE = generateBooks();
+
+function mergeBooks(trilhaData){
+  return BOOKS_TEMPLATE.map(b=>({
+    ...b,
+    items: b.items.map(i=>({ ...i, ...(trilhaData[i.id]||{}) }))
+  }));
+}
+
+// ─── Diário status config ─────────────────────────────────────────────────────
+const DIARIO_STATUS = [
+  { value:"realizada",   label:"Realizada",              cls:"ds-realizada" },
+  { value:"andamento",   label:"Em Andamento",           cls:"ds-andamento" },
+  { value:"ausente",     label:"Ausente",                cls:"ds-ausente" },
+  { value:"desmarcada",  label:"Desmarcada",             cls:"ds-desmarcada" },
+  { value:"rep_gratis",  label:"Reposição Gratuita",     cls:"ds-rep-gratis" },
+  { value:"rep_paga",    label:"Reposição Paga",         cls:"ds-rep-paga" },
+  { value:"cancelada",   label:"Cancelada pelo Prof.",   cls:"ds-cancelada" },
+];
+const dStatusMap = Object.fromEntries(DIARIO_STATUS.map(s=>[s.value,s]));
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function Icon({ name, size=18, className="", style={} }){
+  return <i data-lucide={name} className={className} style={{width:size,height:size,...style}} />;
+}
+function LessonBadge({ status, dark }){
+  const m = dark
+    ? { pendente:"ls-pendente-d", andamento:"ls-andamento-d", concluida:"ls-concluida-d" }
+    : { pendente:"ls-pendente",   andamento:"ls-andamento",   concluida:"ls-concluida" };
+  const l = { pendente:"Pendente", andamento:"Em Andamento", concluida:"Concluída" };
+  return <span className={m[status]||m.pendente}>{l[status]||"Pendente"}</span>;
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+function LoadingScreen(){
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass">
+        <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <p className="muted text-sm">Carregando...</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Login ────────────────────────────────────────────────────────────────────
+function Login(){
+  const [email,setEmail]=useState("");
+  const [pass,setPass]=useState("");
+  const [err,setErr]=useState("");
+  const [loading,setLoading]=useState(false);
+
+  async function handleLogin(){
+    if(!email||!pass){ setErr("Preencha email e senha."); return; }
+    setLoading(true); setErr("");
+    try{
+      await auth.signInWithEmailAndPassword(email,pass);
+    }catch(e){
+      setErr("Email ou senha incorretos.");
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-5">
+      <div className="w-full max-w-md glass rounded-2xl p-7">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm muted">FLUENCY STUDIO</p>
+            <h1 className="text-2xl font-extrabold tracking-tight mt-1">Student Portal</h1>
+            <p className="muted mt-2 text-sm">Acesso ao seu progresso, aulas e materiais.</p>
+          </div>
+          <div className="chip rounded-xl px-3 py-2 text-center">
+            <div className="text-xs muted">Programa</div>
+            <div className="text-sm font-semibold">18 meses</div>
+          </div>
+        </div>
+        <div className="mt-6 space-y-3">
+          <div>
+            <label className="block text-sm muted mb-1">Email</label>
+            <input className="w-full input rounded-xl px-4 py-3" placeholder="seuemail@exemplo.com"
+              value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email" />
+          </div>
+          <div>
+            <label className="block text-sm muted mb-1">Senha</label>
+            <input type="password" className="w-full input rounded-xl px-4 py-3" placeholder="••••••••"
+              value={pass} onChange={e=>setPass(e.target.value)} autoComplete="current-password"
+              onKeyDown={e=>e.key==="Enter"&&handleLogin()} />
+          </div>
+          {err && <div className="err-box">{err}</div>}
+          <button className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2 mt-1"
+            onClick={handleLogin} disabled={loading}>
+            {loading
+              ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              : <Icon name="log-in" size={16} />}
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Lesson Item (expandable) ─────────────────────────────────────────────────
+function LessonItem({ item, uid, isAdmin }){
+  const [open,setOpen]=useState(false);
+  const isReview = item.type==="review";
+
+  async function updateField(field,val){
+    const patch = {};
+    patch[`trilha.${item.id}.${field}`] = val;
+    await db.collection("students").doc(uid).update(patch);
+  }
+
+  async function setStatus(s){
+    await updateField("status",s);
+  }
+
+  return (
+    <div className={isReview?"review-card":"lesson-card"}>
+      <div className="flex items-center gap-3 px-5 py-3 cursor-pointer" onClick={()=>setOpen(o=>!o)}>
+        <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
+        <div className="flex-1 min-w-0">
+          <div className={"font-semibold text-sm flex items-center gap-2 flex-wrap"+(isReview?" text-teal-100":"")}>
+            {isReview && <Icon name="rotate-ccw" size={13} style={{opacity:.75,flexShrink:0}} />}
+            {item.title}
+            {!isReview && (
+              <span className={item.lessonType==="input"?"tag-input":"tag-output"}>
+                {item.lessonType==="input"?"Input":"Output"}
+              </span>
+            )}
+          </div>
+          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap">
+            <span style={{color:isReview?"rgba(234,242,247,.5)":"#4a6a82"}}>
+              {isReview?"Revisão espaçada — últimas 6 lições":`Lição ${item.num} · CEFR`}
+            </span>
+            {item.date && (
+              <span className="flex items-center gap-1" style={{color:isReview?"rgba(234,242,247,.5)":"#6a8a9a"}}>
+                <Icon name="calendar" size={11} /> {item.date}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <LessonBadge status={item.status} dark={isReview} />
+          <Icon name="chevron-down" size={14} className={"chevron-icon"+(open?" chevron-open":"")}
+            style={{color:isReview?"rgba(234,242,247,.4)":"#7a9aaa"}} />
+        </div>
+      </div>
+
+      {open && (
+        <div className="lesson-detail">
+          {isAdmin ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Status buttons */}
+              <div>
+                <div className="detail-label">Status</div>
+                <div className="flex gap-2 flex-wrap mt-1">
+                  {["pendente","andamento","concluida"].map(s=>(
+                    <button key={s} onClick={()=>setStatus(s)}
+                      className={"px-3 py-1 rounded-full text-xs font-semibold border transition "+
+                        (item.status===s
+                          ? s==="concluida" ? "bg-green-100 border-green-400 text-green-800"
+                          : s==="andamento" ? "bg-amber-100 border-amber-400 text-amber-800"
+                          : "bg-slate-200 border-slate-400 text-slate-700"
+                          : "bg-white/50 border-slate-200 text-slate-500 hover:bg-white/80")}>
+                      {s==="pendente"?"Pendente":s==="andamento"?"Em Andamento":"Concluída"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* Data */}
+              <div>
+                <div className="detail-label">Data de realização</div>
+                <input type="date" className="input-light mt-1" value={item.date||""}
+                  onChange={e=>updateField("date",e.target.value)} />
+              </div>
+              {/* Link */}
+              <div>
+                <div className="detail-label">Link (Classroom / Drive)</div>
+                <input type="url" className="input-light mt-1" placeholder="https://"
+                  value={item.link||""} onChange={e=>updateField("link",e.target.value)} />
+              </div>
+              {/* Obs */}
+              <div className="sm:col-span-2">
+                <div className="detail-label">Observações</div>
+                <textarea className="input-light mt-1" rows={2} placeholder="Notas sobre esta lição..."
+                  value={item.obs||""} onChange={e=>updateField("obs",e.target.value)}
+                  style={{resize:"vertical"}} />
+              </div>
+            </div>
+          ) : (
+            /* Student: read-only view */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <div className="detail-label">Status</div>
+                <LessonBadge status={item.status} dark={false} />
+              </div>
+              {item.date && (
+                <div>
+                  <div className="detail-label">Data</div>
+                  <p className="text-sm" style={{color:"#2a4a62"}}>{item.date}</p>
+                </div>
+              )}
+              {item.link && (
+                <div className="sm:col-span-2">
+                  <div className="detail-label">Material</div>
+                  <a href={item.link} target="_blank" rel="noreferrer" className="link text-sm">{item.link}</a>
+                </div>
+              )}
+              {item.obs && (
+                <div className="sm:col-span-2">
+                  <div className="detail-label">Observações do professor</div>
+                  <p className="text-sm" style={{color:"#2a4a62"}}>{item.obs}</p>
+                </div>
+              )}
+              {!item.date && !item.link && !item.obs && (
+                <p className="text-xs sm:col-span-2" style={{color:"#7a9aaa"}}>Nenhuma informação adicional ainda.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Book Accordion ───────────────────────────────────────────────────────────
+function BookAccordion({ book, allItems, uid, isAdmin }){
+  const [open,setOpen]=useState(false);
+  const total=allItems.length;
+  const done=allItems.filter(i=>i.status==="concluida").length;
+  const pct=Math.round((done/total)*100);
+  const startL=allItems.find(i=>i.type==="lesson");
+  const endL=[...allItems].reverse().find(i=>i.type==="lesson");
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/10 mb-3">
+      <button className="w-full text-left px-5 py-4 book-header flex items-center justify-between gap-4"
+        onClick={()=>setOpen(o=>!o)}>
+        <div className="flex items-center gap-4">
+          <div className="chip rounded-xl px-3 py-2 text-center min-w-[56px]">
+            <div className="text-xs muted">Livro</div>
+            <div className="font-bold text-base">{book}</div>
+          </div>
+          <div>
+            <div className="font-bold text-base">
+              Livro {book}
+              <span className="muted text-sm font-normal ml-2">
+                — Lições {startL?startL.num:"?"} a {endL?endL.num:"?"}
+              </span>
+            </div>
+            <div className="text-xs muted mt-1 flex items-center gap-3 flex-wrap">
+              <span>{total} itens · {done} concluídos</span>
+              <span className="inline-block w-24 h-1.5 rounded-full bg-black/30 overflow-hidden align-middle">
+                <span className="block h-full rounded-full" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}} />
+              </span>
+              <span>{pct}%</span>
+            </div>
+          </div>
+        </div>
+        <Icon name="chevron-right" className={"chevron-icon"+(open?" chevron-open":"")} />
+      </button>
+      {open && (
+        <div>
+          {allItems.map(item=>(
+            <LessonItem key={item.id} item={item} uid={uid} isAdmin={isAdmin} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Trilha Section ───────────────────────────────────────────────────────────
+function TrilhaSection({ uid, isAdmin, profile }){
+  const [trilhaData,setTrilhaData]=useState(null);
+
+  useEffect(()=>{
+    return db.collection("students").doc(uid).onSnapshot(doc=>{
+      if(doc.exists) setTrilhaData(doc.data().trilha||{});
+      else setTrilhaData({});
+    });
+  },[uid]);
+
+  const books = useMemo(()=> trilhaData ? mergeBooks(trilhaData) : [], [trilhaData]);
+
+  const {totalDone,totalItems} = useMemo(()=>{
+    let done=0,total=0;
+    books.forEach(b=>b.items.forEach(i=>{ total++; if(i.status==="concluida") done++; }));
+    return {totalDone:done,totalItems:total};
+  },[books]);
+
+  const progress = totalItems ? Math.round((totalDone/totalItems)*100) : 0;
+
+  if(!trilhaData) return <LoadingScreen />;
+
+  return (
+    <section className="glass rounded-2xl p-6 lg:col-span-2">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold">Trilha da Fluência</h2>
+          <p className="muted text-sm mt-1">{profile.program} · Coach: {profile.coach}</p>
+        </div>
+        <div className="chip rounded-2xl p-4 min-w-[220px]">
+          <div className="flex items-center justify-between">
+            <div className="text-sm muted">Progresso geral</div>
+            <div className="text-sm font-semibold">{progress}%</div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-black/30 overflow-hidden">
+            <div className="h-full rounded-full" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}} />
+          </div>
+          <p className="muted text-xs mt-2">{totalDone} de {totalItems} itens concluídos</p>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-bold">Lições</h3>
+          {isAdmin && <span className="text-xs muted">Clique em uma lição para editar</span>}
+        </div>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-1.5"><span className="tag-input">Input</span><span className="text-xs muted">Conteúdo novo</span></div>
+          <div className="flex items-center gap-1.5"><span className="tag-output">Output</span><span className="text-xs muted">Prática</span></div>
+        </div>
+        {books.map(b=>(
+          <BookAccordion key={b.bookIdx} book={b.bookIdx} allItems={b.items} uid={uid} isAdmin={isAdmin} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Diário de Aulas ──────────────────────────────────────────────────────────
+function DiarioSection({ uid, isAdmin }){
+  const [entries,setEntries]=useState(null);
+
+  useEffect(()=>{
+    return db.collection("students").doc(uid).collection("diario")
+      .orderBy("num","asc")
+      .onSnapshot(snap=>{
+        setEntries(snap.docs.map(d=>({id:d.id,...d.data()})));
+      });
+  },[uid]);
+
+  async function addEntry(){
+    const nextNum = entries&&entries.length>0 ? Math.max(...entries.map(e=>e.num))+1 : 1;
+    await db.collection("students").doc(uid).collection("diario").add({
+      num:nextNum, date:new Date().toISOString().slice(0,10),
+      licaoNum:1, status:"andamento", obs:"",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  }
+
+  async function updateEntry(id,patch){
+    await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);
+  }
+
+  async function deleteEntry(id){
+    if(!confirm("Remover esta aula?")) return;
+    await db.collection("students").doc(uid).collection("diario").doc(id).delete();
+  }
+
+  if(!entries) return null;
+
+  return (
+    <section className="glass rounded-2xl p-6 lg:col-span-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-5">
+        <div>
+          <h3 className="text-lg font-bold">Diário de Aulas</h3>
+          <p className="muted text-sm mt-1">Registro por aula — acompanhamento financeiro e contratual.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="chip rounded-2xl px-4 py-2.5 text-sm">
+            <span className="muted">Total:</span>{" "}
+            <span className="font-semibold">{entries.length} aulas</span>
+          </div>
+          {isAdmin && (
+            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold"
+              onClick={addEntry}>
+              <Icon name="plus" size={16} /> Nova Aula
+            </button>
+          )}
+        </div>
+      </div>
+
+      {entries.length===0 ? (
+        <div className="text-center py-12 muted">
+          <Icon name="book-open" size={32} className="mx-auto mb-3 opacity-30" />
+          <p>Nenhuma aula lançada ainda.</p>
+          {isAdmin && <p className="text-xs mt-1">Clique em "Nova Aula" para começar.</p>}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left muted text-xs">
+                <th className="py-3 pr-3">Aula</th>
+                <th className="py-3 pr-3">Data</th>
+                <th className="py-3 pr-3">Lição</th>
+                <th className="py-3 pr-3">Status</th>
+                <th className="py-3 pr-3">Observações</th>
+                {isAdmin && <th className="py-3"></th>}
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map(e=>{
+                const ds = dStatusMap[e.status]||DIARIO_STATUS[0];
+                return (
+                  <tr key={e.id} className="dtable-row align-top">
+                    <td className="py-3 pr-3">
+                      <div className="num-aula inline-flex flex-col items-center">
+                        <span className="text-xs opacity-70">Aula</span>
+                        <span>{e.num}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 pr-3 whitespace-nowrap">
+                      {isAdmin ? (
+                        <input type="date" value={e.date||""}
+                          onChange={ev=>updateEntry(e.id,{date:ev.target.value})}
+                          style={{background:"rgba(0,0,0,.22)",border:"1px solid rgba(255,255,255,.12)",color:"#eaf2f7",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",width:130}} />
+                      ) : (
+                        <span className="muted">{e.date||"—"}</span>
+                      )}
+                    </td>
+                    <td className="py-3 pr-3">
+                      {isAdmin ? (
+                        <>
+                          <input type="number" min={1} max={420} value={e.licaoNum||1}
+                            onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})}
+                            style={{background:"rgba(0,0,0,.22)",border:"1px solid rgba(255,255,255,.12)",color:"#eaf2f7",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",width:65,textAlign:"center"}} />
+                          <div className="text-xs muted mt-1 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-semibold">Lição {e.licaoNum}</span>
+                          <div className="text-xs muted mt-0.5 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div>
+                        </>
+                      )}
+                    </td>
+                    <td className="py-3 pr-3 whitespace-nowrap">
+                      {isAdmin ? (
+                        <>
+                          <select className="ds-select" value={e.status}
+                            onChange={ev=>updateEntry(e.id,{status:ev.target.value})}>
+                            {DIARIO_STATUS.map(s=>(
+                              <option key={s.value} value={s.value}>{s.label}</option>
+                            ))}
+                          </select>
+                          <div className="mt-1.5">
+                            <span className={"diario-badge "+ds.cls}>{ds.label}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <span className={"diario-badge "+ds.cls}>{ds.label}</span>
+                      )}
+                    </td>
+                    <td className="py-3 pr-3" style={{minWidth:200}}>
+                      {isAdmin ? (
+                        <textarea className="obs-input" rows={2}
+                          placeholder="Resumo, notas, observações..."
+                          value={e.obs||""}
+                          onChange={ev=>updateEntry(e.id,{obs:ev.target.value})} />
+                      ) : (
+                        <span className="muted text-xs">{e.obs||"—"}</span>
+                      )}
+                    </td>
+                    {isAdmin && (
+                      <td className="py-3">
+                        <button className="btn btn-danger rounded-lg px-2.5 py-2"
+                          onClick={()=>deleteEntry(e.id)} title="Remover">
+                          <Icon name="trash-2" size={14} />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+function Sidebar({ uid, isAdmin, links, books }){
+  const [editLinks,setEditLinks]=useState(false);
+  const [localLinks,setLocalLinks]=useState(links);
+
+  useEffect(()=>{ setLocalLinks(links); },[links]);
+
+  async function saveLinks(){
+    await db.collection("students").doc(uid).update({ links:localLinks });
+    setEditLinks(false);
+  }
+
+  function updateLink(idx,field,val){
+    setLocalLinks(prev=>prev.map((l,i)=> i===idx ? {...l,[field]:val} : l));
+  }
+  function addLink(){
+    setLocalLinks(prev=>[...prev,{id:Date.now(),label:"Novo link",url:""}]);
+  }
+  function removeLink(idx){
+    setLocalLinks(prev=>prev.filter((_,i)=>i!==idx));
+  }
+
+  const progByBook = books.map(b=>{
+    const done=b.items.filter(i=>i.status==="concluida").length;
+    return { bookIdx:b.bookIdx, pct:Math.round((done/b.items.length)*100) };
+  });
+
+  return (
+    <aside className="glass rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-lg font-bold">Links rápidos</h3>
+        {isAdmin && !editLinks && (
+          <button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>setEditLinks(true)}>
+            <Icon name="pencil" size={12} /> Editar
+          </button>
+        )}
+      </div>
+      <p className="muted text-sm mt-1 mb-4">Acesso ao que você usa toda semana.</p>
+
+      {editLinks ? (
+        <div className="space-y-2">
+          {localLinks.map((lk,idx)=>(
+            <div key={lk.id} className="chip rounded-xl p-3 space-y-1.5">
+              <input className="w-full input rounded-lg px-3 py-2 text-sm" placeholder="Nome"
+                value={lk.label} onChange={e=>updateLink(idx,"label",e.target.value)} />
+              <div className="flex gap-2">
+                <input className="flex-1 input rounded-lg px-3 py-2 text-sm" placeholder="https://"
+                  value={lk.url} onChange={e=>updateLink(idx,"url",e.target.value)} />
+                <button className="btn btn-danger rounded-lg px-2.5" onClick={()=>removeLink(idx)}>
+                  <Icon name="trash-2" size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
+          <button className="btn rounded-xl px-4 py-2 text-sm w-full inline-flex items-center justify-center gap-2" onClick={addLink}>
+            <Icon name="plus" size={14} /> Adicionar link
+          </button>
+          <div className="flex gap-2 mt-2">
+            <button className="btn btn-primary rounded-xl px-4 py-2 text-sm flex-1 font-semibold" onClick={saveLinks}>Salvar</button>
+            <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{ setLocalLinks(links); setEditLinks(false); }}>Cancelar</button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {links.map(lk=>(
+            <a key={lk.id} href={lk.url} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="chip w-10 h-10 rounded-xl flex items-center justify-center"><Icon name="link" /></div>
+                  <div>
+                    <div className="font-semibold">{lk.label}</div>
+                    <div className="text-xs muted truncate max-w-[140px]">{lk.url}</div>
+                  </div>
+                </div>
+                <Icon name="external-link" size={15} className="muted" />
+              </div>
+            </a>
+          ))}
+
+          {/* WhatsApp fixo */}
+          <a href={WPP_VICTOR} target="_blank" rel="noreferrer"
+            className="btn rounded-2xl px-4 py-4 block" style={{borderColor:"rgba(37,211,102,.35)",background:"rgba(37,211,102,.08)"}}>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background:"rgba(37,211,102,.18)",border:"1px solid rgba(37,211,102,.35)"}}>
+                  <Icon name="message-circle" style={{color:"#25d366"}} />
+                </div>
+                <div>
+                  <div className="font-semibold">WhatsApp — Victor</div>
+                  <div className="text-xs muted">Falar com o professor</div>
+                </div>
+              </div>
+              <Icon name="external-link" size={15} className="muted" />
+            </div>
+          </a>
+        </div>
+      )}
+
+      <div className="mt-6 chip rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="graduation-cap" size={16} />
+          <div className="font-semibold text-sm">Foco da semana</div>
+        </div>
+        <p className="muted text-sm">Consistência diária (10–15 min) + revisão espaçada.</p>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="font-semibold text-sm mb-3">Progresso por Livro</h4>
+        <div className="space-y-2">
+          {progByBook.map(({bookIdx,pct})=>(
+            <div key={bookIdx} className="chip rounded-xl px-3 py-2">
+              <div className="flex justify-between text-xs mb-1">
+                <span className="muted">Livro {bookIdx}</span>
+                <span className="font-semibold">{pct}%</span>
+              </div>
+              <div className="h-1 rounded-full bg-black/30 overflow-hidden">
+                <div className="h-full rounded-full" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ─── Student Detail (used by both admin and student) ─────────────────────────
+function StudentDetail({ uid, isAdmin, onBack }){
+  const [profile,setProfile]=useState(null);
+  const [links,setLinks]=useState([]);
+  const [trilhaData,setTrilhaData]=useState({});
+
+  useEffect(()=>{
+    const ref = db.collection("students").doc(uid);
+    // Create default doc if not exists
+    ref.get().then(doc=>{
+      if(!doc.exists){
+        ref.set({
+          name:"Aluno", level:"A1", program:"Fluência Real em 18 Meses", coach:"Victor Gomes",
+          links:[
+            {id:1,label:"Google Classroom",url:"https://classroom.google.com/"},
+            {id:2,label:"Materiais (Drive)",url:"https://drive.google.com/"},
+            {id:3,label:"Agendamento",url:SCHED_URL},
+          ],
+          trilha:{},
+        });
+      }
+    });
+
+    return ref.onSnapshot(doc=>{
+      if(doc.exists){
+        const d=doc.data();
+        setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach});
+        setLinks(d.links||[]);
+        setTrilhaData(d.trilha||{});
+      }
+    });
+  },[uid]);
+
+  const books = useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
+
+  if(!profile) return <LoadingScreen />;
+
+  return (
+    <div className="min-h-screen">
+      <header className="px-5 py-5">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {isAdmin && onBack && (
+              <button className="btn rounded-xl px-3 py-2.5 inline-flex items-center gap-2" onClick={onBack}>
+                <Icon name="arrow-left" size={16} />
+              </button>
+            )}
+            <div>
+              <p className="text-xs muted tracking-widest">FLUENCY STUDIO {isAdmin && "· ADMIN"}</p>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">
+                {isAdmin ? profile.name : "Portal do Aluno"}
+              </h1>
+              <p className="muted mt-1 text-sm">Inglês personalizado e estratégico · acompanhamento · consistência</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex chip rounded-xl px-4 py-3 items-center gap-3">
+              <div className="w-9 h-9 rounded-full chip flex items-center justify-center"><Icon name="user" /></div>
+              <div className="leading-tight">
+                <div className="font-semibold">{profile.name}</div>
+                <div className="text-xs muted">Nível {profile.level}</div>
+              </div>
+            </div>
+            {!isAdmin && (
+              <button className="btn rounded-xl px-4 py-3 inline-flex items-center gap-2" onClick={()=>auth.signOut()}>
+                <Icon name="log-out" /><span className="hidden sm:inline">Sair</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <main className="px-5 pb-10">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <TrilhaSection uid={uid} isAdmin={isAdmin} profile={profile} />
+          <Sidebar uid={uid} isAdmin={isAdmin} links={links} books={books} />
+          <DiarioSection uid={uid} isAdmin={isAdmin} />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// ─── Admin App (lista de alunos) ──────────────────────────────────────────────
+function AdminApp({ user }){
+  const [students,setStudents]=useState(null);
+  const [selectedUid,setSelectedUid]=useState(null);
+  const [showAdd,setShowAdd]=useState(false);
+  const [newUid,setNewUid]=useState("");
+  const [newName,setNewName]=useState("");
+  const [newLevel,setNewLevel]=useState("A1");
+  const [addErr,setAddErr]=useState("");
+
+  useEffect(()=>{
+    return db.collection("students").onSnapshot(snap=>{
+      setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})));
+    });
+  },[]);
+
+  async function createStudent(){
+    if(!newUid.trim()||!newName.trim()){ setAddErr("Preencha UID e nome."); return; }
+    const ref = db.collection("students").doc(newUid.trim());
+    const doc = await ref.get();
+    if(doc.exists){ setAddErr("Este UID já existe."); return; }
+    await ref.set({
+      name:newName.trim(), level:newLevel, program:"Fluência Real em 18 Meses", coach:"Victor Gomes",
+      links:[
+        {id:1,label:"Google Classroom",url:"https://classroom.google.com/"},
+        {id:2,label:"Materiais (Drive)",url:"https://drive.google.com/"},
+        {id:3,label:"Agendamento",url:SCHED_URL},
+      ],
+      trilha:{},
+    });
+    setNewUid(""); setNewName(""); setNewLevel("A1"); setAddErr(""); setShowAdd(false);
+  }
+
+  if(selectedUid){
+    return <StudentDetail uid={selectedUid} isAdmin onBack={()=>setSelectedUid(null)} />;
+  }
+
+  return (
+    <div className="min-h-screen">
+      <header className="px-5 py-5">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs muted tracking-widest">FLUENCY STUDIO · ADMIN</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">Painel do Professor</h1>
+            <p className="muted mt-1 text-sm">Gerencie alunos, trilhas e diários.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold"
+              onClick={()=>setShowAdd(o=>!o)}>
+              <Icon name="user-plus" size={16} /> Novo Aluno
+            </button>
+            <button className="btn rounded-xl px-4 py-3 inline-flex items-center gap-2" onClick={()=>auth.signOut()}>
+              <Icon name="log-out" /><span className="hidden sm:inline">Sair</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="px-5 pb-10 max-w-6xl mx-auto">
+        {/* Add student form */}
+        {showAdd && (
+          <div className="glass rounded-2xl p-6 mb-5">
+            <h3 className="font-bold text-lg mb-4">Adicionar Aluno</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-1">
+                <label className="block text-xs muted mb-1">UID do Firebase (Authentication)</label>
+                <input className="w-full input rounded-xl px-4 py-3 text-sm" placeholder="UID do aluno"
+                  value={newUid} onChange={e=>setNewUid(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-xs muted mb-1">Nome do aluno</label>
+                <input className="w-full input rounded-xl px-4 py-3 text-sm" placeholder="Nome completo"
+                  value={newName} onChange={e=>setNewName(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-xs muted mb-1">Nível</label>
+                <select className="w-full input rounded-xl px-4 py-3 text-sm" value={newLevel} onChange={e=>setNewLevel(e.target.value)}>
+                  {["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}
+                </select>
+              </div>
+            </div>
+            {addErr && <div className="err-box mt-3">{addErr}</div>}
+            <div className="flex gap-3 mt-4">
+              <button className="btn btn-primary rounded-xl px-5 py-2.5 font-semibold text-sm" onClick={createStudent}>Criar</button>
+              <button className="btn rounded-xl px-5 py-2.5 text-sm" onClick={()=>{setShowAdd(false);setAddErr("");}}>Cancelar</button>
+            </div>
+          </div>
+        )}
+
+        {/* Student list */}
+        {!students ? <LoadingScreen /> : students.length===0 ? (
+          <div className="glass rounded-2xl p-12 text-center muted">
+            <Icon name="users" size={40} className="mx-auto mb-4 opacity-30" />
+            <p>Nenhum aluno cadastrado ainda.</p>
+            <p className="text-xs mt-1">Clique em "Novo Aluno" para começar.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {students.map(s=>{
+              const merged = mergeBooks(s.trilha||{});
+              let done=0,total=0;
+              merged.forEach(b=>b.items.forEach(i=>{ total++; if(i.status==="concluida") done++; }));
+              const pct = total ? Math.round((done/total)*100) : 0;
+              return (
+                <div key={s.uid} className="student-card" onClick={()=>setSelectedUid(s.uid)}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0">
+                      <Icon name="user" size={18} />
+                    </div>
+                    <div>
+                      <div className="font-bold">{s.name||"Aluno"}</div>
+                      <div className="text-xs muted">Nível {s.level||"—"}</div>
+                    </div>
+                    <Icon name="chevron-right" size={16} className="muted ml-auto" />
+                  </div>
+                  <div className="flex items-center justify-between text-xs muted mb-1">
+                    <span>Progresso</span><span className="font-semibold">{pct}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-black/30 overflow-hidden">
+                    <div className="h-full rounded-full" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}} />
+                  </div>
+                  <div className="text-xs muted mt-2">{done} de {total} lições concluídas</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+// ─── App root ─────────────────────────────────────────────────────────────────
+function App(){
+  const [user,setUser]=useState(undefined);
+
+  useEffect(()=>{
+    return auth.onAuthStateChanged(u=>setUser(u||null));
+  },[]);
+
+  useEffect(()=>{
+    if(window.lucide?.createIcons) window.lucide.createIcons();
+  });
+
+  if(user===undefined) return <LoadingScreen />;
+  if(!user)            return <Login />;
+  if(user.uid===ADMIN_UID) return <AdminApp user={user} />;
+  return <StudentDetail uid={user.uid} isAdmin={false} />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
