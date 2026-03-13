@@ -150,43 +150,41 @@ function Icon({ name, size=18, className="", style={} }){
   );
 }
 
-// ─── Lesson titles ────────────────────────────────────────────────────────────
-const LESSON_TITLES = {
-   1:"Eating & Drinking",           2:"Eating & Drinking — Practice",
-   3:"Likes & Dislikes",            4:"Likes & Dislikes — Practice",
-   5:"Preferences & Choices",       6:"Preferences & Choices — Practice",
-   7:"Languages of the World",      8:"Languages of the World — Practice",
-   9:"Where Are You From?",        10:"Where Are You From? — Practice",
-  11:"Family & Places",            12:"Family & Places — Practice",
-  13:"What I Have & Need",         14:"What I Have & Need — Practice",
-  15:"City Life & Digital World",  16:"City Life & Digital World — Practice",
-  17:"My Daily Routine",           18:"My Daily Routine — Practice",
-  19:"Home & Time",                20:"Home & Time — Practice",
-  21:"My Week",                    22:"My Week — Practice",
-  23:"Skills & Knowledge",         24:"Skills & Knowledge — Practice",
-  25:"Shopping & Traveling",       26:"Shopping & Traveling — Practice",
-  27:"Around the City",            28:"Around the City — Practice",
-  29:"On the Move",                30:"On the Move — Practice",
-};
-function getLessonTitle(n){ return LESSON_TITLES[n] || `Lição ${n}`; }
+// ─── Lesson title helper ──────────────────────────────────────────────────────
+// 300 lessons total (Lesson 1–300). Titles can be customised per lesson below.
+function getLessonTitle(n){ return `Lesson ${n}`; }
 
 // ─── Build trilha template ────────────────────────────────────────────────────
+// Structure: 6 Livros × 5 Blocos × 10 items (9 lessons + 1 review) = 300 items
+// Within each Bloco, seq positions 3, 6, 9 = Output Unificado; rest = Input
+// Every 10th item (seq 10) is a Review Unificada (Assíncrona)
 function generateBooks(){
-  const books=[]; let gp=0,ln=0;
-  for(let bi=1;bi<=6;bi++){
-    const items=[];
-    for(let rv=1;rv<=10;rv++){
-      for(let i=0;i<6;i++){
-        ln++; gp++;
-        items.push({ id:`b${bi}-l${ln}`, pos:gp, type:"lesson",
-          lessonType:ln%2!==0?"input":"output", num:ln,
-          title:getLessonTitle(ln), status:"pendente", date:"", obs:"", link:"" });
+  const books = [];
+  let globalNum = 0; // counts ALL items 1–300 (lessons + reviews)
+
+  for(let bi = 1; bi <= 6; bi++){
+    const items = [];
+    for(let bloco = 1; bloco <= 5; bloco++){
+      for(let seq = 1; seq <= 10; seq++){
+        globalNum++;
+        const isReview = (seq === 10);
+        const lessonType = isReview ? null : ([3,6,9].includes(seq) ? "output" : "input");
+
+        items.push({
+          id:         isReview ? `b${bi}-r${bloco}` : `b${bi}-l${globalNum}`,
+          pos:        globalNum,
+          type:       isReview ? "review" : "lesson",
+          lessonType,
+          num:        globalNum,
+          title:      getLessonTitle(globalNum),
+          status:     "pendente",
+          date:       "",
+          obs:        "",
+          link:       "",
+        });
       }
-      gp++;
-      items.push({ id:`b${bi}-r${rv}`, pos:gp, type:"review",
-        title:"Revisão", status:"pendente", date:"", obs:"" });
     }
-    books.push({ bookIdx:bi, items });
+    books.push({ bookIdx: bi, items });
   }
   return books;
 }
@@ -314,13 +312,13 @@ function LessonItem({ item, uid, isAdmin }){
             {item.title}
             {!isReview && (
               <span className={item.lessonType==="input"?"tag-input":"tag-output"}>
-                {item.lessonType==="input"?"Input":"Output"}
+                {item.lessonType==="input"?"Input":"Output Unificado"}
               </span>
             )}
           </div>
           <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap">
             <span style={{color:isReview?"rgba(234,242,247,.5)":"#4a6a82"}}>
-              {isReview?"Revisão espaçada — últimas 6 lições":`Lição ${item.num} · CEFR`}
+              {isReview?"Review Unificada · Assíncrona":`Lesson ${item.num} · CEFR`}
             </span>
             {item.date && (
               <span className="flex items-center gap-1" style={{color:isReview?"rgba(234,242,247,.5)":"#6a8a9a"}}>
@@ -430,7 +428,7 @@ function BookAccordion({ book, allItems, uid, isAdmin }){
             <div className="font-bold text-base">
               Livro {book}
               <span className="muted text-sm font-normal ml-2">
-                — Lições {startL?startL.num:"?"} a {endL?endL.num:"?"}
+                — Lessons {startL?startL.num:"?"} a {endL?endL.num:"?"}
               </span>
             </div>
             <div className="text-xs muted mt-1 flex items-center gap-3 flex-wrap">
@@ -504,7 +502,7 @@ function TrilhaSection({ uid, isAdmin, profile }){
         </div>
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-1.5"><span className="tag-input">Input</span><span className="text-xs muted">Conteúdo novo</span></div>
-          <div className="flex items-center gap-1.5"><span className="tag-output">Output</span><span className="text-xs muted">Prática</span></div>
+          <div className="flex items-center gap-1.5"><span className="tag-output">Output Unificado</span><span className="text-xs muted">Prática</span></div>
         </div>
         {books.map(b=>(
           <BookAccordion key={b.bookIdx} book={b.bookIdx} allItems={b.items} uid={uid} isAdmin={isAdmin} />
@@ -609,14 +607,14 @@ function DiarioSection({ uid, isAdmin }){
                     <td className="py-3 pr-3">
                       {isAdmin ? (
                         <>
-                          <input type="number" min={1} max={420} value={e.licaoNum||1}
+                          <input type="number" min={1} max={300} value={e.licaoNum||1}
                             onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})}
                             style={{background:"rgba(0,0,0,.22)",border:"1px solid rgba(255,255,255,.12)",color:"#eaf2f7",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",width:65,textAlign:"center"}} />
                           <div className="text-xs muted mt-1 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div>
                         </>
                       ) : (
                         <>
-                          <span className="font-semibold">Lição {e.licaoNum}</span>
+                          <span className="font-semibold">Lesson {e.licaoNum}</span>
                           <div className="text-xs muted mt-0.5 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div>
                         </>
                       )}
