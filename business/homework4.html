@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2a4a;
+    --navy-mid: #2d4a7a;
+    --navy-light: #4a72b8;
+    --accent: #f5c842;
+    --bg: #f2f4f8;
+    --text: #1a1a1a;
+    --muted: #555;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    padding: 40px 24px 60px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .badge {
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .section { margin-bottom: 28px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--card-bg);
+    background: var(--navy);
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  .section-body {
+    background: var(--card-bg);
+    border: 2px solid var(--navy);
+    border-radius: 0 6px 6px 6px;
+    padding: 20px 24px;
+  }
+
+  /* AUDIO PLAYER */
+  .audio-player {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--navy);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+
+  .play-btn:hover { opacity: 0.85; }
+  .play-btn svg { width: 18px; height: 18px; }
+
+  .audio-info { flex: 1; }
+  .audio-title { font-size: 13px; font-weight: 600; color: #fff; }
+  .audio-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .audio-status { font-size: 11px; font-weight: 600; color: var(--accent); min-width: 60px; text-align: right; }
+
+  /* READING TEXT */
+  .reading-text {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .reading-text em {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--navy);
+    text-decoration: underline;
+    text-decoration-color: var(--navy-light);
+    text-underline-offset: 2px;
+  }
+
+  .reading-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  /* ORGANIZE */
+  .organize-instruction {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--navy-mid);
+    margin-bottom: 12px;
+  }
+
+  .org-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .org-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    padding: 9px 12px;
+    background: #eef1f8;
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 4px 4px 0;
+    line-height: 1.55;
+    cursor: grab;
+    transition: background 0.15s;
+  }
+
+  .org-item:hover { background: #dde4f4; }
+  .org-item.dragging { opacity: 0.45; }
+  .org-item.drag-over { border-left-color: var(--accent); background: #fef9e0; }
+
+  .org-handle {
+    color: var(--navy-light);
+    font-size: 16px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    user-select: none;
+  }
+
+  .org-num {
+    min-width: 22px;
+    height: 22px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .check-btn {
+    margin-top: 14px;
+    padding: 9px 24px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+
+  /* EMAIL */
+  .email-instruction {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: #eef1f8;
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 4px 4px 0;
+    font-style: italic;
+  }
+
+  .email-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .email-field label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--navy-mid);
+    min-width: 40px;
+  }
+
+  .email-field input {
+    flex: 1;
+    border: none;
+    border-bottom: 1.5px solid #c5cde0;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 3px 2px;
+    outline: none;
+    color: var(--text);
+  }
+
+  .email-body {
+    width: 100%;
+    min-height: 180px;
+    border: 1.5px solid #c5cde0;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 10px 12px;
+    outline: none;
+    color: var(--text);
+    resize: vertical;
+    line-height: 1.9;
+    background: #fafbfd;
+  }
+
+  /* LISTENING MC */
+  .mc-list { display: flex; flex-direction: column; gap: 18px; }
+
+  .mc-question .q-text {
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .mc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 20px;
+  }
+
+  .mc-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1.5px solid #dde2ed;
+    background: #f7f9fd;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+
+  .mc-option:hover { border-color: var(--navy-light); background: #eef1f8; }
+  .mc-option input[type="radio"] { accent-color: var(--navy); }
+  .mc-option.correct { background: #e6f4ee; border-color: #2e7d52; color: #1a5c38; font-weight: 600; }
+  .mc-option.wrong { background: #fdecea; border-color: #c0392b; color: #922b21; text-decoration: line-through; }
+
+  /* PICTURE LABEL */
+  .picture-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 16px;
+    padding: 7px 12px;
+    background: #eef1f8;
+    border-radius: 4px;
+  }
+
+  /* PARAGRAPH */
+  .word-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .chip {
+    padding: 5px 14px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .para-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .para-line {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #c5cde0;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 4px 2px;
+    outline: none;
+    color: var(--text);
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 24px;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--navy-light); opacity: 0.35; }
+  .divider-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--navy-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Homework</h1>
+  <div class="badge">4</div>
+</div>
+
+<!-- READING + AUDIO -->
+<div class="section">
+  <div class="section-title">Reading</div>
+  <div class="section-body">
+
+    <div class="audio-player">
+      <button class="play-btn" id="playBtn" onclick="toggleReading()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <polygon id="playIcon" points="6,4 20,12 6,20" fill="#1a2a4a"/>
+        </svg>
+      </button>
+      <div class="audio-info">
+        <div class="audio-title">Team Player or Lone Wolf?</div>
+        <div class="audio-sub">Listen to the text</div>
+      </div>
+      <div class="audio-status" id="readingStatus">▶ Play</div>
+    </div>
+
+    <div class="reading-title">Team Player or Lone Wolf?</div>
+    <div class="reading-text">
+      <p style="margin-bottom:10px;">Although working in groups is nice and often quite beneficial, every once in a while you will meet someone who has little interest in working with his or her peers. Sometimes people prefer solitude rather than constant association with others.</p>
+      <p style="margin-bottom:10px;">Some people would rather spend time alone to think or relax. They may use this alone time for reflection and meditation. Some people <em>thrive</em> on their privacy and quiet time. Group work often becomes a <em>burden</em> to those who prefer to work alone. Depending on the person, work can be accomplished faster and better when working by themselves.</p>
+      <p style="margin-bottom:10px;">Is it healthy to always be alone? Is it healthy to always be in constant association with other people? The most probable answer is no, to both questions. Balance in all things brings happiness and success.</p>
+      <p>Working alone, relaxing and meditating allows us to reflect and learn from ourselves. But, when we work with others we learn how to deal successfully with many different people; besides the fact that being able to collaborate with others is a requirement in mostly all workplaces, where one will need to be able to share ideas and accept criticism.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ORGANIZE THE TEXT -->
+<div class="section">
+  <div class="section-title">Organize the Text</div>
+  <div class="section-body">
+    <div class="organize-instruction">Drag the sentences into the correct order</div>
+    <div class="org-list" id="orgList">
+      <div class="org-item" draggable="true" data-order="3">
+        <span class="org-handle">⠿</span>
+        <span class="org-num" id="n1">?</span>
+        <span>Sedona and Oak Creek Canyon feature some of the most beautiful campgrounds in Arizona.</span>
+      </div>
+      <div class="org-item" draggable="true" data-order="5">
+        <span class="org-handle">⠿</span>
+        <span class="org-num" id="n2">?</span>
+        <span>The scenic views, lush settings and tranquil environments make these Sedona camping spots popular destinations for the outdoor enthusiasts.</span>
+      </div>
+      <div class="org-item" draggable="true" data-order="1">
+        <span class="org-handle">⠿</span>
+        <span class="org-num" id="n3">?</span>
+        <span>Fish, hike, swim and camp near the shimmering waters of Oak Creek and soak up the views of the majestic red rocks of Sedona, Arizona.</span>
+      </div>
+      <div class="org-item" draggable="true" data-order="4">
+        <span class="org-handle">⠿</span>
+        <span class="org-num" id="n4">?</span>
+        <span>Contact the Red Rock District of Coconino National Forest for the latest fees and the most convenient place to purchase passes.</span>
+      </div>
+      <div class="org-item" draggable="true" data-order="2">
+        <span class="org-handle">⠿</span>
+        <span class="org-num" id="n5">?</span>
+        <span>Campgrounds can become quite crowded during the summer months and particularly on weekends and holidays. So make reservations promptly or get there early to claim the best non-reserved camping spots.</span>
+      </div>
+    </div>
+    <button class="check-btn" onclick="checkOrder()">Check order</button>
+  </div>
+</div>
+
+<!-- WRITE AN EMAIL -->
+<div class="section">
+  <div class="section-title">Write an Email</div>
+  <div class="section-body">
+    <div class="email-instruction">
+      Use the text above to write an email to a friend or spouse. Convince him/her to go camping for the weekend. Include extra incentives — like how safe and attractive Oak Creek Canyon is, the variety of activities you could do together, etc.
+    </div>
+    <div class="email-field">
+      <label>Dear</label>
+      <input type="text" placeholder="…">
+    </div>
+    <textarea class="email-body" placeholder="Write your email here…"></textarea>
+  </div>
+</div>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">Listening</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- LISTENING -->
+<div class="section">
+  <div class="section-title">Listening</div>
+  <div class="section-body">
+
+    <div class="audio-player">
+      <button class="play-btn" id="playBtn2" onclick="toggleListening()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <polygon id="playIcon2" points="6,4 20,12 6,20" fill="#1a2a4a"/>
+        </svg>
+      </button>
+      <div class="audio-info">
+        <div class="audio-title">Listening — Homework 4</div>
+        <div class="audio-sub">Press play to listen</div>
+      </div>
+      <div class="audio-status" id="listeningStatus">▶ Play</div>
+    </div>
+
+    <div class="picture-note">🖼 Your teacher will show the images in class. Choose the option that best describes each picture.</div>
+
+    <div class="mc-list">
+
+      <div class="mc-question">
+        <div class="q-text"><span>1.</span> What are the people doing?</div>
+        <div class="mc-options" id="lq1">
+          <label class="mc-option"><input type="radio" name="lq1" value="a"> a) They are hugging each other.</label>
+          <label class="mc-option"><input type="radio" name="lq1" value="b"> b) They are arguing with each other.</label>
+          <label class="mc-option"><input type="radio" name="lq1" value="c"> c) They are shaking hands.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>2.</span> What is the person doing?</div>
+        <div class="mc-options" id="lq2">
+          <label class="mc-option"><input type="radio" name="lq2" value="a"> a) He is getting ready to run.</label>
+          <label class="mc-option"><input type="radio" name="lq2" value="b"> b) He won the competition.</label>
+          <label class="mc-option"><input type="radio" name="lq2" value="c"> c) He is putting something on the floor.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>3.</span> What happened?</div>
+        <div class="mc-options" id="lq3">
+          <label class="mc-option"><input type="radio" name="lq3" value="a"> a) They lost the game once again.</label>
+          <label class="mc-option"><input type="radio" name="lq3" value="b"> b) He took first place in the competition.</label>
+          <label class="mc-option"><input type="radio" name="lq3" value="c"> c) This sport is too hard for me. I quit.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>4.</span> What is she feeling?</div>
+        <div class="mc-options" id="lq4">
+          <label class="mc-option"><input type="radio" name="lq4" value="a"> a) She is very happy about the new project.</label>
+          <label class="mc-option"><input type="radio" name="lq4" value="b"> b) She can't believe her laptop is not working yet.</label>
+          <label class="mc-option"><input type="radio" name="lq4" value="c"> c) She doesn't know what to do.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>5.</span> What can you say about the group?</div>
+        <div class="mc-options" id="lq5">
+          <label class="mc-option"><input type="radio" name="lq5" value="a"> a) They can never reach an agreement.</label>
+          <label class="mc-option"><input type="radio" name="lq5" value="b"> b) They are so successful because they are all team players.</label>
+          <label class="mc-option"><input type="radio" name="lq5" value="c"> c) They are very negative about everything.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>6.</span> What is happening in the scene?</div>
+        <div class="mc-options" id="lq6">
+          <label class="mc-option"><input type="radio" name="lq6" value="a"> a) The coach is very mad at the players.</label>
+          <label class="mc-option"><input type="radio" name="lq6" value="b"> b) Even though they had explained the rules, the players still became violent.</label>
+          <label class="mc-option"><input type="radio" name="lq6" value="c"> c) The coach has been discussing a new strategy with the players.</label>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="check-btn" onclick="checkListening()">Check answers</button>
+
+  </div>
+</div>
+
+<!-- WRITE A PARAGRAPH -->
+<div class="section">
+  <div class="section-title">Write a Paragraph</div>
+  <div class="section-body">
+    <div class="word-chips">
+      <span class="chip">to handle</span>
+      <span class="chip">crisis</span>
+      <span class="chip">intuition</span>
+      <span class="chip">difficult</span>
+      <span class="chip">sometimes</span>
+    </div>
+    <div class="para-lines">
+      <input class="para-line" type="text" placeholder="Use all five words in your paragraph…">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+      <input class="para-line" type="text">
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── READING AUDIO ────────────────────────────────────────────
+  const readingText = `Team Player or Lone Wolf?
+
+Although working in groups is nice and often quite beneficial, every once in a while you will meet someone who has little interest in working with his or her peers. Sometimes people prefer solitude rather than constant association with others.
+
+Some people would rather spend time alone to think or relax. They may use this alone time for reflection and meditation. Some people thrive on their privacy and quiet time. Group work often becomes a burden to those who prefer to work alone. Depending on the person, work can be accomplished faster and better when working by themselves.
+
+Is it healthy to always be alone? Is it healthy to always be in constant association with other people? The most probable answer is no, to both questions. Balance in all things brings happiness and success.
+
+Working alone, relaxing and meditating allows us to reflect and learn from ourselves. But, when we work with others we learn how to deal successfully with many different people; besides the fact that being able to collaborate with others is a requirement in mostly all workplaces, where one will need to be able to share ideas and accept criticism.`;
+
+  const listeningText = `Number one. Look at the picture carefully and choose the best option.
+Number two. Look at the picture carefully and choose the best option.
+Number three. Look at the picture carefully and choose the best option.
+Number four. Look at the picture carefully and choose the best option.
+Number five. Look at the picture carefully and choose the best option.
+Number six. Look at the picture carefully and choose the best option.`;
+
+  let readingSpeaking = false;
+  let listeningSpeaking = false;
+
+  function speak(text, statusId, iconId, speakingRef, setRef) {
+    if (!window.speechSynthesis) { alert('Your browser does not support text-to-speech.'); return; }
+    if (speakingRef()) {
+      window.speechSynthesis.cancel();
+      setRef(false);
+      document.getElementById(statusId).textContent = '▶ Play';
+      document.getElementById(iconId).setAttribute('points', '6,4 20,12 6,20');
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.88; u.pitch = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('natural'))
+           || voices.find(v => v.lang === 'en-US');
+    if (v) u.voice = v;
+    u.onend = () => {
+      setRef(false);
+      document.getElementById(statusId).textContent = '▶ Play';
+      document.getElementById(iconId).setAttribute('points', '6,4 20,12 6,20');
+    };
+    window.speechSynthesis.speak(u);
+    setRef(true);
+    document.getElementById(statusId).textContent = '⏹ Stop';
+    document.getElementById(iconId).setAttribute('points', '6,4 18,4 18,20 6,20');
+  }
+
+  function toggleReading() {
+    speak(readingText, 'readingStatus', 'playIcon',
+      () => readingSpeaking, v => readingSpeaking = v);
+  }
+
+  function toggleListening() {
+    speak(listeningText, 'listeningStatus', 'playIcon2',
+      () => listeningSpeaking, v => listeningSpeaking = v);
+  }
+
+  // ── LISTENING ANSWER KEY ─────────────────────────────────────
+  const lKey = { lq1: 'c', lq2: 'a', lq3: 'b', lq4: 'c', lq5: 'b', lq6: 'c' };
+
+  function checkListening() {
+    for (let q in lKey) {
+      const selected = document.querySelector(`input[name="${q}"]:checked`);
+      const options = document.querySelectorAll(`#${q} .mc-option`);
+      options.forEach(o => o.classList.remove('correct', 'wrong'));
+      if (selected) {
+        const parent = selected.closest('.mc-option');
+        if (selected.value === lKey[q]) {
+          parent.classList.add('correct');
+        } else {
+          parent.classList.add('wrong');
+          options.forEach(o => { if (o.querySelector('input').value === lKey[q]) o.classList.add('correct'); });
+        }
+      }
+    }
+  }
+
+  // ── ORGANIZE DRAG & DROP ─────────────────────────────────────
+  const correctOrder = [1, 2, 3, 4, 5]; // data-order values in correct sequence
+  let dragSrc = null;
+
+  document.querySelectorAll('.org-item').forEach(item => {
+    item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging'); });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); updateNumbers(); });
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (dragSrc !== item) {
+        const list = document.getElementById('orgList');
+        const items = [...list.querySelectorAll('.org-item')];
+        const srcIdx = items.indexOf(dragSrc);
+        const tgtIdx = items.indexOf(item);
+        if (srcIdx < tgtIdx) list.insertBefore(dragSrc, item.nextSibling);
+        else list.insertBefore(dragSrc, item);
+      }
+      updateNumbers();
+    });
+  });
+
+  function updateNumbers() {
+    document.querySelectorAll('.org-item').forEach((item, i) => {
+      const num = item.querySelector('.org-num');
+      num.textContent = i + 1;
+      num.style.background = 'var(--navy)';
+    });
+  }
+
+  function checkOrder() {
+    const items = document.querySelectorAll('.org-item');
+    items.forEach((item, i) => {
+      const num = item.querySelector('.org-num');
+      const correct = parseInt(item.dataset.order) === i + 1;
+      num.style.background = correct ? '#2e7d52' : '#c0392b';
+    });
+  }
+
+  // Init numbers
+  updateNumbers();
+</script>
+
+</body>
+</html>

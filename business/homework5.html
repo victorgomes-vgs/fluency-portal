@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2a4a;
+    --navy-mid: #2d4a7a;
+    --navy-light: #4a72b8;
+    --accent: #f5c842;
+    --bg: #f2f4f8;
+    --text: #1a1a1a;
+    --muted: #555;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    padding: 40px 24px 60px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .badge {
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .section { margin-bottom: 28px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--card-bg);
+    background: var(--navy);
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  .section-body {
+    background: var(--card-bg);
+    border: 2px solid var(--navy);
+    border-radius: 0 6px 6px 6px;
+    padding: 20px 24px;
+  }
+
+  /* PATTERN BOX */
+  .pattern-box {
+    background: #eef1f8;
+    border-left: 4px solid var(--navy-light);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .pattern-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--navy-mid);
+    margin-bottom: 6px;
+  }
+
+  .pattern-box em {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  /* EXERCISE LIST */
+  .exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .exercise-item {
+    font-size: 13.5px;
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: #eef1f8;
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .exercise-item .q-num {
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 18px;
+    flex-shrink: 0;
+  }
+
+  .exercise-item .hint {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: var(--navy);
+    color: #fff;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin: 0 4px;
+    vertical-align: middle;
+  }
+
+  /* LISTENING PLAYER */
+  .audio-player {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--navy);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+
+  .play-btn:hover { opacity: 0.85; }
+
+  .play-btn svg { width: 18px; height: 18px; }
+
+  .audio-info {
+    flex: 1;
+  }
+
+  .audio-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .audio-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+
+  .audio-status {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* MULTIPLE CHOICE */
+  .mc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mc-question {
+    font-size: 13.5px;
+  }
+
+  .mc-question .q-text {
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .mc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 20px;
+  }
+
+  .mc-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1.5px solid #dde2ed;
+    background: #f7f9fd;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+
+  .mc-option:hover {
+    border-color: var(--navy-light);
+    background: #eef1f8;
+  }
+
+  .mc-option input[type="radio"] { accent-color: var(--navy); }
+
+  .mc-option.correct {
+    background: #e6f4ee;
+    border-color: #2e7d52;
+    color: #1a5c38;
+    font-weight: 600;
+  }
+
+  .mc-option.wrong {
+    background: #fdecea;
+    border-color: #c0392b;
+    color: #922b21;
+    text-decoration: line-through;
+  }
+
+  .check-btn {
+    margin-top: 18px;
+    padding: 9px 24px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+
+  /* FILL IN THE GAPS */
+  .gap-text {
+    font-size: 13.5px;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .gap-select {
+    display: inline-block;
+    min-width: 44px;
+    padding: 2px 8px;
+    border: none;
+    border-bottom: 2px solid var(--navy-light);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+  }
+
+  .gap-select option { background: #fff; color: var(--text); }
+
+  .sentences-box {
+    background: #eef1f8;
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 4px 4px 0;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+  }
+
+  .sentences-box .s-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--navy-mid);
+    margin-bottom: 8px;
+  }
+
+  .sentences-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .sentence-row {
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .sentence-row .s-num {
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 16px;
+  }
+
+  /* SUMMARY */
+  .summary-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .summary-line {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #c5cde0;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 4px 2px;
+    outline: none;
+    color: var(--text);
+  }
+
+  .summary-line::placeholder { color: #bbb; }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 28px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--navy-light);
+    opacity: 0.35;
+  }
+
+  .divider-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--navy-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Homework</h1>
+  <div class="badge">5</div>
+</div>
+
+<!-- FOLLOW THE PATTERN -->
+<div class="section">
+  <div class="section-title">Follow the Pattern</div>
+  <div class="section-body">
+
+    <div class="pattern-box">
+      <div class="label">Example</div>
+      Do you (to remember – to check) with the hotel manager?<br>
+      <em>Do you remember checking with the hotel manager?</em>
+    </div>
+
+    <div class="exercise-list">
+      <div class="exercise-item">
+        <span class="q-num">1.</span>
+        <span>I told my mom that she should really <span class="hint">to stop · to smoke</span> if she wants to live longer.</span>
+      </div>
+      <div class="exercise-item">
+        <span class="q-num">2.</span>
+        <span>That driver was at the gas station because he had <span class="hint">to stop · to smoke</span>.</span>
+      </div>
+      <div class="exercise-item">
+        <span class="q-num">3.</span>
+        <span><span class="hint">to deal</span> with a crisis effectively takes a lot of skill; you have to remain calm.</span>
+      </div>
+      <div class="exercise-item">
+        <span class="q-num">4.</span>
+        <span>He said that he <span class="hint">to try · to deal</span> with his stress, but he eventually had a breakdown.</span>
+      </div>
+      <div class="exercise-item">
+        <span class="q-num">5.</span>
+        <span><span class="hint">to be</span> enthusiastic, no matter what happens at work, is a great quality.</span>
+      </div>
+      <div class="exercise-item">
+        <span class="q-num">6.</span>
+        <span>I <span class="hint">to remember · to file</span> for bankruptcy at the bank. It was a terrible process.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LISTENING -->
+<div class="section">
+  <div class="section-title">Listening</div>
+  <div class="section-body">
+
+    <div class="audio-player">
+      <button class="play-btn" id="playBtn" onclick="toggleAudio()">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon id="playIcon" points="6,4 20,12 6,20" fill="#1a2a4a"/>
+        </svg>
+      </button>
+      <div class="audio-info">
+        <div class="audio-title">Listening — Homework 5</div>
+        <div class="audio-sub">Press play to listen</div>
+      </div>
+      <div class="audio-status" id="audioStatus">▶ Play</div>
+    </div>
+
+    <div class="mc-list">
+
+      <div class="mc-question">
+        <div class="q-text"><span>1.</span> Because of the economic crisis, what have many businesses done in the United States?</div>
+        <div class="mc-options" id="q1">
+          <label class="mc-option"><input type="radio" name="q1" value="a"> a) Given their employees raises.</label>
+          <label class="mc-option"><input type="radio" name="q1" value="b"> b) Filed for bankruptcy.</label>
+          <label class="mc-option"><input type="radio" name="q1" value="c"> c) Paid higher taxes.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>2.</span> What have many people had to do for the first time in years?</div>
+        <div class="mc-options" id="q2">
+          <label class="mc-option"><input type="radio" name="q2" value="a"> a) Quit their jobs.</label>
+          <label class="mc-option"><input type="radio" name="q2" value="b"> b) Go on vacations.</label>
+          <label class="mc-option"><input type="radio" name="q2" value="c"> c) Go job hunting.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>3.</span> What are financial advisors saying about the future?</div>
+        <div class="mc-options" id="q3">
+          <label class="mc-option"><input type="radio" name="q3" value="a"> a) That people shouldn't worry about the economy.</label>
+          <label class="mc-option"><input type="radio" name="q3" value="b"> b) That the economy will get better.</label>
+          <label class="mc-option"><input type="radio" name="q3" value="c"> c) That the economy will get worse.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>4.</span> What did Joe do at the retail store?</div>
+        <div class="mc-options" id="q4">
+          <label class="mc-option"><input type="radio" name="q4" value="a"> a) He was a clerk.</label>
+          <label class="mc-option"><input type="radio" name="q4" value="b"> b) He was the cashier.</label>
+          <label class="mc-option"><input type="radio" name="q4" value="c"> c) He was the manager.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>5.</span> What problems did Joe have to deal with at work?</div>
+        <div class="mc-options" id="q5">
+          <label class="mc-option"><input type="radio" name="q5" value="a"> a) The employees were always sick or late.</label>
+          <label class="mc-option"><input type="radio" name="q5" value="b"> b) The employees were always complaining.</label>
+          <label class="mc-option"><input type="radio" name="q5" value="c"> c) The employees were stealing.</label>
+        </div>
+      </div>
+
+      <div class="mc-question">
+        <div class="q-text"><span>6.</span> How did Joe handle the problems at work?</div>
+        <div class="mc-options" id="q6">
+          <label class="mc-option"><input type="radio" name="q6" value="a"> a) He got angry all the time.</label>
+          <label class="mc-option"><input type="radio" name="q6" value="b"> b) He gave the employees new responsibilities.</label>
+          <label class="mc-option"><input type="radio" name="q6" value="c"> c) He tried to stay calm and make good decisions.</label>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="check-btn" onclick="checkAnswers()">Check answers</button>
+
+  </div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">Reading</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- FILL IN THE GAPS -->
+<div class="section">
+  <div class="section-title">Fill in the Gaps</div>
+  <div class="section-body">
+
+    <div class="sentences-box">
+      <div class="s-label">Sentences to use</div>
+      <div class="sentences-list">
+        <div class="sentence-row"><span class="s-num">1.</span> where they could place text and graphics to sell products</div>
+        <div class="sentence-row"><span class="s-num">2.</span> The Department of Defense of the United States</div>
+        <div class="sentence-row"><span class="s-num">3.</span> colleges and universities posted research data on the Internet</div>
+        <div class="sentence-row"><span class="s-num">4.</span> being able to operate one computer from another terminal</div>
+        <div class="sentence-row"><span class="s-num">5.</span> the world wide web was developed</div>
+      </div>
+    </div>
+
+    <div class="gap-text">
+      <select class="gap-select" id="gap1"><option value="">__</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      developed the Internet during the 1970s. Military advisers suggested the advantage of
+      <select class="gap-select" id="gap2"><option value="">__</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      in the case of an attack. In the first years after its creation, the Internet was used mainly by scientists to communicate with other scientists. The Internet remained under government control until 1984. In the early 1990s,
+      <select class="gap-select" id="gap3"><option value="">__</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      mostly for commercial purposes. Corporations created their own websites
+      <select class="gap-select" id="gap4"><option value="">__</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>.
+      Soon, airline tickets, hotel reservations, books, and even cars and homes could be purchased online. Eventually
+      <select class="gap-select" id="gap5"><option value="">__</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      so that students would be able to find valuable information without having to leave their dormitories. Companies soon discovered that work could be done at home and unshaven and wearing pajamas.
+    </div>
+
+    <button class="check-btn" onclick="checkGaps()">Check answers</button>
+
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="section">
+  <div class="section-title">Write a Summary</div>
+  <div class="section-body">
+    <div class="summary-lines">
+      <input class="summary-line" type="text" placeholder="Write your summary here…">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+      <input class="summary-line" type="text" placeholder="">
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── LISTENING TEXT ──────────────────────────────────────────
+  const listeningText = `Due to the economic crisis in the past few years, many individuals and businesses in the United States have had to file for bankruptcy. Many people have lost their jobs and have been forced to go job hunting for the first time in years. Even extremely knowledgeable people find it difficult to feel enthusiastic about the future, but some financial advisors say that their intuition tells them that the economy will get better soon.
+
+When Joe was a manager of a retail store, he had to deal with many problems. Employees were always sick or late, and Joe was constantly firing them and hiring new people. Customers were always complaining, and he had to think of ways to make them happy. Many times Joe wasn't sure how to handle a problem, but he tried to stay calm and make good decisions.`;
+
+  let utterance = null;
+  let speaking = false;
+
+  function toggleAudio() {
+    if (!window.speechSynthesis) {
+      alert('Your browser does not support text-to-speech.');
+      return;
+    }
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      speaking = false;
+      document.getElementById('audioStatus').textContent = '▶ Play';
+      document.getElementById('playIcon').setAttribute('points', '6,4 20,12 6,20');
+      return;
+    }
+    utterance = new SpeechSynthesisUtterance(listeningText);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.88;
+    utterance.pitch = 1;
+
+    // pick a natural voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('natural'))
+      || voices.find(v => v.lang === 'en-US');
+    if (preferred) utterance.voice = preferred;
+
+    utterance.onend = () => {
+      speaking = false;
+      document.getElementById('audioStatus').textContent = '▶ Play';
+      document.getElementById('playIcon').setAttribute('points', '6,4 20,12 6,20');
+    };
+
+    window.speechSynthesis.speak(utterance);
+    speaking = true;
+    document.getElementById('audioStatus').textContent = '⏹ Stop';
+    document.getElementById('playIcon').setAttribute('points', '6,4 18,4 18,20 6,20');
+  }
+
+  // ── ANSWER KEY ──────────────────────────────────────────────
+  const answerKey = { q1: 'b', q2: 'c', q3: 'b', q4: 'c', q5: 'a', q6: 'c' };
+
+  function checkAnswers() {
+    for (let q in answerKey) {
+      const selected = document.querySelector(`input[name="${q}"]:checked`);
+      const options = document.querySelectorAll(`#${q} .mc-option`);
+      options.forEach(opt => { opt.classList.remove('correct', 'wrong'); });
+      if (selected) {
+        const parent = selected.closest('.mc-option');
+        if (selected.value === answerKey[q]) {
+          parent.classList.add('correct');
+        } else {
+          parent.classList.add('wrong');
+          // highlight correct
+          options.forEach(opt => {
+            if (opt.querySelector('input').value === answerKey[q]) opt.classList.add('correct');
+          });
+        }
+      }
+    }
+  }
+
+  // ── GAPS ANSWER KEY ─────────────────────────────────────────
+  // order in text: gap1=2, gap2=4, gap3=5, gap4=1, gap5=3
+  const gapKey = { gap1: '2', gap2: '4', gap3: '5', gap4: '1', gap5: '3' };
+
+  function checkGaps() {
+    for (let g in gapKey) {
+      const sel = document.getElementById(g);
+      if (sel.value === gapKey[g]) {
+        sel.style.borderBottomColor = '#2e7d52';
+        sel.style.color = '#1a5c38';
+      } else if (sel.value !== '') {
+        sel.style.borderBottomColor = '#c0392b';
+        sel.style.color = '#922b21';
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

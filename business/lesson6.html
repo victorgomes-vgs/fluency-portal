@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark: #0d4f55;
+    --teal-mid: #1a7a82;
+    --teal-light: #2aabb5;
+    --accent: #f5c842;
+    --bg: #f4f1ec;
+    --text: #1a1a1a;
+    --muted: #555;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    padding: 40px 24px 60px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .badge {
+    background: var(--accent);
+    color: var(--teal-dark);
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .section { margin-bottom: 28px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--card-bg);
+    background: var(--teal-dark);
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  .section-body {
+    background: var(--card-bg);
+    border: 2px solid var(--teal-dark);
+    border-radius: 0 6px 6px 6px;
+    padding: 20px 24px;
+  }
+
+  /* EXPRESSIONS — 2 colunas */
+  .expr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .expr-tag {
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 14px;
+    background: var(--teal-dark);
+    color: #fff;
+    border-radius: 20px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  /* STORY QUESTIONS */
+  .story-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .story-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 13.5px;
+    padding: 7px 12px;
+    background: #f0f7f8;
+    border-left: 3px solid var(--teal-light);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .story-label {
+    font-weight: 600;
+    color: var(--teal-dark);
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+
+  .story-answer {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .story-blank {
+    flex: 1;
+    border-bottom: 1px dashed var(--teal-light);
+    min-height: 16px;
+  }
+
+  /* NUMBERED LIST */
+  .grammar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .grammar-sentence {
+    font-size: 13.5px;
+    padding: 7px 12px;
+    border-left: 3px solid var(--teal-light);
+    background: #f0f7f8;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+
+  .grammar-sentence .q-num {
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-right: 6px;
+  }
+
+  .grammar-sentence em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--teal-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--teal-light);
+    text-underline-offset: 2px;
+  }
+
+  /* THESIS */
+  .definition-box {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .definition-box em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--teal-dark);
+  }
+
+  .quote-box {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: #e6f4f5;
+    border-left: 4px solid var(--teal-mid);
+    border-radius: 0 4px 4px 0;
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .thesis-question {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal-mid);
+    margin-top: 8px;
+  }
+
+  /* DEBATE */
+  .debate-box {
+    font-size: 13.5px;
+    text-align: center;
+    padding: 14px 20px;
+    background: #f0f7f8;
+    border: 1.5px dashed var(--teal-light);
+    border-radius: 6px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* WRITE THE SENTENCES */
+  .write-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .write-item {
+    font-size: 13.5px;
+    padding: 10px 14px;
+    background: #f0f7f8;
+    border-left: 3px solid var(--teal-light);
+    border-radius: 0 4px 4px 0;
+    line-height: 1.6;
+  }
+
+  .write-item .q-num {
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-right: 6px;
+  }
+
+  .write-item .keyword {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--card-bg);
+    background: var(--teal-mid);
+    padding: 1px 8px;
+    border-radius: 10px;
+  }
+
+  /* FOR REAL — role card */
+  .role-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .role-card {
+    display: flex;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #f0f7f8;
+    border-left: 3px solid var(--teal-light);
+    border-radius: 0 4px 4px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .role-label {
+    font-weight: 700;
+    color: var(--teal-dark);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .position-row {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .position-row span {
+    font-weight: 700;
+    color: var(--teal-dark);
+  }
+
+  .position-blank {
+    flex: 1;
+    border-bottom: 1px dashed var(--teal-light);
+    min-height: 16px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 28px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--teal-light);
+    opacity: 0.4;
+  }
+
+  .divider-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Lesson Summary</h1>
+  <div class="badge">6</div>
+</div>
+
+<!-- EXPRESSIONS -->
+<div class="section">
+  <div class="section-title">Expressions</div>
+  <div class="section-body">
+    <div class="expr-grid">
+      <span class="expr-tag">to feel overwhelmed</span>
+      <span class="expr-tag">to have one's hands full</span>
+      <span class="expr-tag">to call it a day</span>
+      <span class="expr-tag">against the clock</span>
+      <span class="expr-tag">all bark and no bite</span>
+      <span class="expr-tag">time flies</span>
+    </div>
+
+    <div class="story-grid">
+      <div class="story-row"><span class="story-label">who</span><div class="story-blank"></div></div>
+      <div class="story-row"><span class="story-label">when</span><span class="story-answer">at night / after a working day</span></div>
+      <div class="story-row"><span class="story-label">where</span><span class="story-answer">at a company</span></div>
+      <div class="story-row"><span class="story-label">what</span><div class="story-blank"></div></div>
+      <div class="story-row"><span class="story-label">how does the story end</span><div class="story-blank"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRONUNCIATION AND INTONATION -->
+<div class="section">
+  <div class="section-title">Pronunciation and Intonation</div>
+  <div class="section-body">
+    <div class="grammar-list">
+      <div class="grammar-sentence"><span class="q-num">1.</span>I'd <em>appreciate</em> your help in the meeting.</div>
+      <div class="grammar-sentence"><span class="q-num">2.</span>We have to <em>calculate</em> the costs of the trip.</div>
+      <div class="grammar-sentence"><span class="q-num">3.</span>Let's <em>celebrate</em> your birthday with a party.</div>
+      <div class="grammar-sentence"><span class="q-num">4.</span>I want to <em>create</em> a blog about my life.</div>
+      <div class="grammar-sentence"><span class="q-num">5.</span>Don't forget to put the <em>date</em> on your reports.</div>
+      <div class="grammar-sentence"><span class="q-num">6.</span>Can you <em>participate</em> in the lesson tomorrow?</div>
+      <div class="grammar-sentence"><span class="q-num">7.</span>He wants to <em>graduate</em> from college.</div>
+      <div class="grammar-sentence"><span class="q-num">8.</span>They can't <em>compensate</em> me while I'm gone.</div>
+      <div class="grammar-sentence"><span class="q-num">9.</span>A raise would help <em>motivate</em> employees.</div>
+      <div class="grammar-sentence"><span class="q-num">10.</span>They are going to <em>allocate</em> jobs to everyone.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">In Practice</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- THESIS STATEMENT -->
+<div class="section">
+  <div class="section-title">Thesis Statement</div>
+  <div class="section-body">
+    <div class="definition-box">
+      The <em>thesis statement</em> must be a <em>strong sentence</em> that reveals the <em>main idea</em> of the speech. Using personal experiences is sometimes a good way to show your audience that you are speaking from true knowledge and not just creating a hypothesis about something. Look at the example below, based on the speech by Steve Jobs.
+    </div>
+    <div class="quote-box">
+      "Out of all the many aspects of my life and personality that have helped me achieve success in all areas, there is one that has, above all, determined whether my success would be long lasting."
+    </div>
+    <div class="thesis-question">Would you consider that a good thesis statement?</div>
+  </div>
+</div>
+
+<!-- DEBATE -->
+<div class="section">
+  <div class="section-title">Debate</div>
+  <div class="section-body">
+    <div class="debate-box">
+      It is much easier to become successful if you have your own business rather than if you are an employee to a company.
+    </div>
+  </div>
+</div>
+
+<!-- WRITE THE SENTENCES -->
+<div class="section">
+  <div class="section-title">Write the Sentences</div>
+  <div class="section-body">
+    <div class="write-list">
+      <div class="write-item">
+        <span class="q-num">1.</span>He dealt with the issue with no complaints.<span class="keyword">handled</span>
+      </div>
+      <div class="write-item">
+        <span class="q-num">2.</span>They've been trying to find a solution to solve the crisis.<span class="keyword">dilemma</span>
+      </div>
+      <div class="write-item">
+        <span class="q-num">3.</span>Is she knowledgeable about new technologies?<span class="keyword">acquainted</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOR REAL — JOB INTERVIEW -->
+<div class="section">
+  <div class="section-title">For Real</div>
+  <div class="section-body">
+    <div class="position-row"><span>Job Interview</span></div>
+    <div class="position-row">Position: <div class="position-blank"></div></div>
+    <div class="role-grid">
+      <div class="role-card">
+        <span class="role-label">Student A:</span>
+        <span>You are the interviewer. Find out about academic and professional qualifications, experience and personal characteristics you believe might be important for the job.</span>
+      </div>
+      <div class="role-card">
+        <span class="role-label">Student B:</span>
+        <span>You are being interviewed for a job. Answer the interviewer's questions and try to convince him / her to hire you.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

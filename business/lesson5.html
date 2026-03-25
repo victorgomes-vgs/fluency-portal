@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark: #0d4f55;
+    --teal-mid: #1a7a82;
+    --teal-light: #2aabb5;
+    --accent: #f5c842;
+    --bg: #f4f1ec;
+    --text: #1a1a1a;
+    --muted: #555;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    padding: 40px 24px 60px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .badge {
+    background: var(--accent);
+    color: var(--teal-dark);
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--card-bg);
+    background: var(--teal-dark);
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  .section-body {
+    background: var(--card-bg);
+    border: 2px solid var(--teal-dark);
+    border-radius: 0 6px 6px 6px;
+    padding: 20px 24px;
+  }
+
+  /* VERBS — 3 columns */
+  .verbs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px 8px;
+  }
+
+  .verb-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 3px solid var(--teal-light);
+    padding-left: 10px;
+  }
+
+  .verb-item .base {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--teal-dark);
+  }
+
+  .verb-item .forms {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* VOCABULARY — 3 columns grid */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 12px;
+  }
+
+  .vocab-word {
+    font-size: 13.5px;
+    font-weight: 400;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: #f0f7f8;
+    border-left: 3px solid var(--teal-light);
+    color: var(--text);
+  }
+
+  /* EXPRESSIONS — 2 columns */
+  .expr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .expr-tag {
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 14px;
+    background: var(--teal-dark);
+    color: #fff;
+    border-radius: 20px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  /* GRAMMAR */
+  .grammar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .grammar-sentence {
+    font-size: 13.5px;
+    padding: 7px 12px;
+    border-left: 3px solid var(--teal-light);
+    background: #f0f7f8;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+
+  .grammar-sentence em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--teal-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--teal-light);
+    text-underline-offset: 2px;
+  }
+
+  /* GRAMMAR sub-group divider */
+  .grammar-divider {
+    margin: 8px 0 4px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Lesson Summary</h1>
+  <div class="badge">5</div>
+</div>
+
+<!-- VERBS -->
+<div class="section">
+  <div class="section-title">Verbs</div>
+  <div class="section-body">
+    <div class="verbs-grid">
+      <div class="verb-item">
+        <span class="base">to deal</span>
+        <span class="forms">dealt, dealt</span>
+      </div>
+      <div class="verb-item">
+        <span class="base">to handle</span>
+        <span class="forms">handled, handled</span>
+      </div>
+      <div class="verb-item">
+        <span class="base">to negotiate</span>
+        <span class="forms">negotiated, negotiated</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VOCABULARY -->
+<div class="section">
+  <div class="section-title">Vocabulary</div>
+  <div class="section-body">
+    <div class="vocab-grid">
+      <span class="vocab-word">hierarchy</span>
+      <span class="vocab-word">bankruptcy</span>
+      <span class="vocab-word">dynamics</span>
+      <span class="vocab-word">standard</span>
+      <span class="vocab-word">knowledgeable</span>
+      <span class="vocab-word">deadline</span>
+      <span class="vocab-word">definite</span>
+      <span class="vocab-word">enthusiastic</span>
+      <span class="vocab-word">fulfillment</span>
+      <span class="vocab-word">qualitative</span>
+      <span class="vocab-word">acceptance</span>
+      <span class="vocab-word">intuition</span>
+      <span class="vocab-word">crisis</span>
+      <span class="vocab-word">prospective</span>
+    </div>
+  </div>
+</div>
+
+<!-- EXPRESSIONS -->
+<div class="section">
+  <div class="section-title">Expressions</div>
+  <div class="section-body">
+    <div class="expr-grid">
+      <span class="expr-tag">fringe benefits</span>
+      <span class="expr-tag">action-oriented</span>
+      <span class="expr-tag">net wages</span>
+      <span class="expr-tag">job hunting</span>
+      <span class="expr-tag">gross wages</span>
+    </div>
+  </div>
+</div>
+
+<!-- GRAMMAR -->
+<div class="section">
+  <div class="section-title">Grammar</div>
+  <div class="section-body">
+    <div class="grammar-list">
+
+      <div class="grammar-divider">Verb + to / -ing (change in meaning)</div>
+      <div class="grammar-sentence">He asked us to <em>stop taking care</em> of it.</div>
+      <div class="grammar-sentence">They must <em>stop</em> their tasks now <em>to come</em> to the meeting.</div>
+      <div class="grammar-sentence">I remember <em>checking</em> his background information.</div>
+      <div class="grammar-sentence">I remembered <em>to check</em> his background information.</div>
+      <div class="grammar-sentence">Let's try <em>asking</em> our manager for a solution.</div>
+      <div class="grammar-sentence">He tried <em>to open</em> the window, but it was jammed.</div>
+
+      <div class="grammar-divider">Gerund as subject</div>
+      <div class="grammar-sentence"><em>Handling</em> problems efficiently makes her a good employee.</div>
+      <div class="grammar-sentence"><em>Not taking</em> responsibility for his mistakes makes him look bad.</div>
+      <div class="grammar-sentence"><em>Following</em> office politics is a must here.</div>
+      <div class="grammar-sentence"><em>Being</em> a team player is important.</div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- DIVIDER -->
+<div style="display:flex;align-items:center;gap:12px;margin:32px 0 28px;">
+  <div style="flex:1;height:1px;background:var(--teal-light);opacity:0.4;"></div>
+  <span style="font-family:'Playfair Display',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal-mid);">In Practice</span>
+  <div style="flex:1;height:1px;background:var(--teal-light);opacity:0.4;"></div>
+</div>
+
+<!-- VERBS IN CONTEXT -->
+<div class="section">
+  <div class="section-title">Verbs</div>
+  <div class="section-body">
+    <div class="practice-lead">Do you think he can <em>handle</em> this situation?</div>
+    <div class="grammar-list">
+      <div class="grammar-sentence">She <em>handled</em> it perfectly.</div>
+      <div class="grammar-sentence"><em>Dealing</em> with people is essential for success.</div>
+      <div class="grammar-sentence">Who is going to <em>deal</em> with them?</div>
+      <div class="grammar-sentence">You should <em>negotiate</em> a better price for the car.</div>
+      <div class="grammar-sentence">They refused to <em>negotiate on</em> the proposal.</div>
+    </div>
+  </div>
+</div>
+
+<!-- VOCABULARY IN CONTEXT -->
+<div class="section">
+  <div class="section-title">Vocabulary</div>
+  <div class="section-body">
+    <div class="practice-lead">Haven't you received an <em>acceptance</em> letter?</div>
+    <div class="grammar-list">
+      <div class="grammar-sentence">Leaders see things from a different <em>perspective</em>.</div>
+      <div class="grammar-sentence">They have raised their <em>standards</em>.</div>
+      <div class="grammar-sentence">The group is very <em>enthusiastic</em> about the show.</div>
+      <div class="grammar-sentence">Leaders must have a sense of <em>intuition</em>.</div>
+      <div class="grammar-sentence">Some markets are facing a <em>crisis</em> this year.</div>
+      <div class="grammar-sentence">My job gives me a great sense of <em>fulfillment</em>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRAMMAR IN CONTEXT -->
+<div class="section">
+  <div class="section-title">Grammar</div>
+  <div class="section-body">
+    <div class="practice-lead"><em>Buying</em> a new car is her goal now.</div>
+    <div class="grammar-list">
+      <div class="grammar-sentence"><em>Going</em> through this experience helped him grow.</div>
+      <div class="grammar-sentence"><em>Planning</em> a wedding is a lot of fun.</div>
+      <div class="grammar-sentence">I don't <em>remember turning</em> my computer off.</div>
+      <div class="grammar-sentence">I <em>remember to write</em> in my journal every morning.</div>
+      <div class="grammar-sentence">Why don't you <em>try relaxing</em> a little bit?</div>
+      <div class="grammar-sentence">She <em>tries to relax</em> a little bit after lunch every day.</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .practice-lead {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--teal-dark);
+    background: #e6f4f5;
+    border-left: 4px solid var(--teal-mid);
+    padding: 8px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .practice-lead em {
+    font-style: normal;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--teal-light);
+    text-underline-offset: 2px;
+  }
+</style>
+
+</body>
+</html>

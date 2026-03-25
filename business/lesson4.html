@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark: #0d4f55;
+    --teal-mid: #1a7a82;
+    --teal-light: #2aabb5;
+    --accent: #f5c842;
+    --bg: #f4f1ec;
+    --text: #1a1a1a;
+    --muted: #555;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    padding: 40px 24px 60px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .badge {
+    background: var(--accent);
+    color: var(--teal-dark);
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--card-bg);
+    background: var(--teal-dark);
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+
+  .section-body {
+    background: var(--card-bg);
+    border: 2px solid var(--teal-dark);
+    border-radius: 0 6px 6px 6px;
+    padding: 20px 24px;
+  }
+
+  /* READING PASSAGE */
+  .reading-text {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .reading-text em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--teal-dark);
+  }
+
+  .reading-source {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  /* QUESTIONS */
+  .question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .question-item {
+    font-size: 13.5px;
+    padding: 8px 12px;
+    background: #f0f7f8;
+    border-left: 3px solid var(--teal-light);
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+
+  .question-item .q-num {
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-right: 4px;
+  }
+
+  /* VOCABULARY */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .vocab-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f0f7f8;
+    border-radius: 4px;
+    border-left: 3px solid var(--teal-light);
+  }
+
+  .vocab-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal-mid);
+    min-width: 14px;
+  }
+
+  .vocab-word {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* DEFINITION BOX */
+  .definition-box {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .definition-box em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--teal-dark);
+  }
+
+  /* FLUENCY */
+  .practice-lead {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--teal-dark);
+    background: #e6f4f5;
+    border-left: 4px solid var(--teal-mid);
+    padding: 8px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 12px;
+  }
+
+  .practice-lead .q {
+    font-style: italic;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .practice-lead .a em {
+    font-style: normal;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--teal-light);
+    text-underline-offset: 2px;
+  }
+
+  .grammar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .grammar-sentence {
+    font-size: 13.5px;
+    padding: 7px 12px;
+    border-left: 3px solid var(--teal-light);
+    background: #f0f7f8;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+
+  .grammar-sentence .q-num {
+    font-weight: 600;
+    color: var(--teal-dark);
+    margin-right: 4px;
+  }
+
+  /* DISCUSS */
+  .discuss-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 28px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--teal-light);
+    opacity: 0.4;
+  }
+
+  .divider-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Lesson Summary</h1>
+  <div class="badge">4</div>
+</div>
+
+<!-- READING -->
+<div class="section">
+  <div class="section-title">Reading</div>
+  <div class="section-body">
+    <div class="reading-text">
+      "When I was 17, I read a <em>quote</em> that said: 'If you live each day as if it was your last, someday you'll most certainly be right.' It made an impression on me, and since then, for the past 33 years, I have looked in the mirror every morning and asked myself: 'If today were the last day of my life, would I want to do what I am about to do today?' <em>'No'</em> for too many days <em>in a row</em>, I know I need to change something. Remembering that I'll be dead soon is the most important <em>tool</em> I've ever encountered to help me make the big choices in life. Because almost everything — all external expectations, all <em>pride</em>, all fear of embarrassment or failure — these things just fall away in the face of death, leaving only what is truly important.
+      <br><br>
+      (…) Your time is limited, so don't waste it living someone else's life. Don't be <em>trapped</em> by dogma — which is living with the results of other people's thinking. Don't let the noise of others' opinions drown out your own inner voice. (…) Everything else is secondary."
+    </div>
+    <div class="reading-source">Stanford Commencement, Steve Jobs, 2005</div>
+
+    <div class="question-list">
+      <div class="question-item"><span class="q-num">1.</span>How did the quote Steve Jobs read when he was 17 impact his life in the future?</div>
+      <div class="question-item"><span class="q-num">2.</span>What helped him decide to change things in his life?</div>
+      <div class="question-item"><span class="q-num">3.</span>What are 'external expectations' in your life? How do they influence your decision-making?</div>
+      <div class="question-item"><span class="q-num">4.</span>What could 'Everything else', in the last line, mean?</div>
+    </div>
+  </div>
+</div>
+
+<!-- DEVELOPING VOCABULARY -->
+<div class="section">
+  <div class="section-title">Developing Vocabulary</div>
+  <div class="section-body">
+    <div class="vocab-grid">
+      <div class="vocab-item"><span class="vocab-num">1.</span><span class="vocab-word">quote</span></div>
+      <div class="vocab-item"><span class="vocab-num">2.</span><span class="vocab-word">in a row</span></div>
+      <div class="vocab-item"><span class="vocab-num">3.</span><span class="vocab-word">tool</span></div>
+      <div class="vocab-item"><span class="vocab-num">4.</span><span class="vocab-word">pride</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-label">In Practice</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- THESIS STATEMENT -->
+<div class="section">
+  <div class="section-title">Thesis Statement</div>
+  <div class="section-body">
+    <div class="definition-box">
+      The <em>thesis statement</em> is a sequence or two that contains the <em>focus</em> of your speech and tells your reader what it is going to be about. The thesis statement should remain flexible until the paper is actually finished. And it usually appears near the beginning of a paper — it can be the first sentence of an essay, but that often feels like a simplistic, unexciting beginning. It more frequently appears at or near the end of the first paragraph and should make the reader or audience feel like they want to <em>know more</em> about the topic of your speech.
+    </div>
+  </div>
+</div>
+
+<!-- FLUENCY -->
+<div class="section">
+  <div class="section-title">Fluency</div>
+  <div class="section-body">
+    <div class="practice-lead">
+      <span class="q">Did they work together last week?</span>
+      <span class="a"><em>Apparently</em>, they have been working together <em>the whole</em> week.</span>
+    </div>
+    <div class="grammar-list">
+      <div class="grammar-sentence"><span class="q-num">1.</span>Did he look for a new job this month?</div>
+      <div class="grammar-sentence"><span class="q-num">2.</span>Did the chairman supervise this project last year?</div>
+      <div class="grammar-sentence"><span class="q-num">3.</span>Did they eat junk food this week?</div>
+      <div class="grammar-sentence"><span class="q-num">4.</span>Did they discuss our job requirements this week?</div>
+      <div class="grammar-sentence"><span class="q-num">5.</span>Did she read the same book this month?</div>
+      <div class="grammar-sentence"><span class="q-num">6.</span>Did they sing that song this morning?</div>
+      <div class="grammar-sentence"><span class="q-num">7.</span>Did she do her homework today?</div>
+      <div class="grammar-sentence"><span class="q-num">8.</span>Did he play football at school this week?</div>
+    </div>
+  </div>
+</div>
+
+<!-- LISTEN AND DISCUSS -->
+<div class="section">
+  <div class="section-title">Listen and Discuss</div>
+  <div class="section-body">
+    <div class="discuss-label">Team Player or Lone Wolf?</div>
+    <div class="grammar-list">
+      <div class="grammar-sentence">Do you prefer to work alone or in groups? Why?</div>
+      <div class="grammar-sentence">Why do some people prefer to work alone?</div>
+      <div class="grammar-sentence">Why do some people thrive on constant association with others?</div>
+      <div class="grammar-sentence">Why should we balance group work and individual time?</div>
+      <div class="grammar-sentence">What can we learn when working in groups?</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
