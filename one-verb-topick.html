@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To Skip — Fluency Studio</title>
+  <style>
+    :root{
+      --bg:#061329;
+      --bg2:#0a1f3d;
+      --panel:rgba(255,255,255,.06);
+      --panel-2:rgba(255,255,255,.08);
+      --line:rgba(112,220,255,.28);
+      --text:#f5fbff;
+      --muted:#b8c7da;
+      --cyan:#7fe7ff;
+      --cyan-2:#39c8ff;
+      --blue:#2f7dff;
+      --ok:#66e3a5;
+      --bad:#ff8f9a;
+      --warn:#ffd26f;
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(62,148,255,.18), transparent 26%),
+        radial-gradient(circle at 90% 20%, rgba(0,210,255,.15), transparent 20%),
+        radial-gradient(circle at 80% 80%, rgba(65,196,255,.14), transparent 24%),
+        linear-gradient(180deg, #031024 0%, #07172f 42%, #051122 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before, body::after{
+      content:"";
+      position:fixed;
+      inset:auto;
+      pointer-events:none;
+      z-index:0;
+      filter:blur(2px);
+      opacity:.55;
+    }
+    body::before{
+      left:-10vw; right:-10vw; bottom:14vh; height:180px;
+      background:
+        radial-gradient(80% 140% at 50% 100%, rgba(88,220,255,.16), transparent 45%),
+        linear-gradient(90deg, transparent 0%, rgba(88,220,255,.26) 35%, rgba(71,142,255,.12) 55%, transparent 100%);
+      transform:skewY(-8deg);
+    }
+    body::after{
+      top:15vh; right:-12vw; width:55vw; height:120px;
+      background:linear-gradient(90deg, transparent, rgba(50,150,255,.15), rgba(120,240,255,.22), transparent);
+      transform:rotate(-18deg);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      width:min(1120px, calc(100% - 32px));
+      margin:0 auto;
+      padding:28px 0 72px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:1px solid rgba(122,236,255,.45);
+      color:var(--text);
+      padding:12px 24px;
+      border-radius:999px;
+      font-weight:700;
+      letter-spacing:.2px;
+      background:rgba(6, 21, 44, .45);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 0 30px rgba(60,180,255,.06);
+      backdrop-filter: blur(12px);
+    }
+
+    header.hero{
+      padding:28px 8px 16px;
+      display:grid;
+      gap:24px;
+      justify-items:center;
+      text-align:center;
+    }
+
+    .hero-card{
+      width:100%;
+      padding:34px 24px;
+      border-radius:32px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(126,231,255,.16);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:auto -10% -30% -10%;
+      height:180px;
+      background:
+        radial-gradient(60% 120% at 50% 100%, rgba(113,235,255,.14), transparent 55%),
+        linear-gradient(90deg, transparent, rgba(77,188,255,.18), transparent);
+      transform:skewY(-6deg);
+      pointer-events:none;
+    }
+
+    .brand{
+      font-size:14px;
+      color:var(--muted);
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size:clamp(3rem, 8vw, 5.4rem);
+      line-height:.95;
+      letter-spacing:-.04em;
+      font-weight:900;
+    }
+    .gradient{
+      background:linear-gradient(180deg, #baf5ff 0%, #74deff 42%, #2aa8ff 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 26px rgba(79,201,255,.15);
+    }
+    .subtitle{
+      max-width:760px;
+      margin:14px auto 0;
+      color:#ddeaf7;
+      font-size:clamp(1rem, 2.8vw, 1.18rem);
+      line-height:1.7;
+    }
+    .pron{
+      margin-top:18px;
+      color:var(--cyan);
+      font-weight:700;
+      font-size:1rem;
+      letter-spacing:.04em;
+    }
+
+    .grid{
+      display:grid;
+      gap:18px;
+      margin-top:28px;
+    }
+    .grid.cards{
+      grid-template-columns:repeat(2, minmax(0,1fr));
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      border:1px solid rgba(126,231,255,.14);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel h2, .panel h3{
+      margin:0 0 10px;
+      letter-spacing:-.02em;
+    }
+    .panel h2{
+      font-size:clamp(1.45rem, 4vw, 2rem);
+    }
+    .panel h3{
+      font-size:1.12rem;
+    }
+    .muted{color:var(--muted)}
+    .example{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(126,231,255,.1);
+    }
+    .en{
+      font-size:1.02rem;
+      line-height:1.55;
+      color:#ffffff;
+    }
+    .pt{
+      margin-top:6px;
+      color:var(--cyan);
+      line-height:1.6;
+    }
+
+    .speak{
+      border:1px solid rgba(126,231,255,.28);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      width:40px; height:40px;
+      border-radius:999px;
+      display:inline-grid;
+      place-items:center;
+      cursor:pointer;
+      transition:.2s transform,.2s background,.2s border-color;
+      font-size:18px;
+    }
+    .speak:hover{transform:translateY(-1px); background:rgba(255,255,255,.08); border-color:rgba(126,231,255,.42)}
+    .speak:focus-visible{outline:2px solid var(--cyan)}
+    .row-between{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .section-title{
+      margin:26px 0 12px;
+      font-size:clamp(1.6rem, 4vw, 2.2rem);
+      letter-spacing:-.03em;
+    }
+    .section-lead{
+      color:var(--muted);
+      line-height:1.7;
+      margin-bottom:8px;
+    }
+
+    .item{
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(126,231,255,.10);
+      margin-top:14px;
+    }
+    .question{
+      font-weight:700;
+      line-height:1.55;
+      margin-bottom:14px;
+    }
+    .choices{
+      display:grid;
+      gap:10px;
+    }
+    .choice{
+      width:100%;
+      text-align:left;
+      border:1px solid rgba(126,231,255,.14);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:14px;
+      padding:14px 16px;
+      cursor:pointer;
+      transition:.2s ease;
+      font-size:.98rem;
+      line-height:1.5;
+    }
+    .choice:hover{background:rgba(255,255,255,.07); border-color:rgba(126,231,255,.24)}
+    .choice.correct{border-color:rgba(102,227,165,.6); background:rgba(102,227,165,.12)}
+    .choice.wrong{border-color:rgba(255,143,154,.55); background:rgba(255,143,154,.11)}
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      display:none;
+      line-height:1.6;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04);
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color:rgba(102,227,165,.35); background:rgba(102,227,165,.08)}
+    .feedback.bad{border-color:rgba(255,143,154,.35); background:rgba(255,143,154,.08)}
+
+    .reorder-bank, .reorder-answer{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      min-height:56px;
+      padding:12px;
+      border-radius:16px;
+      border:1px dashed rgba(126,231,255,.22);
+      background:rgba(255,255,255,.03);
+      margin-top:10px;
+    }
+    .token{
+      border:1px solid rgba(126,231,255,.18);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 14px;
+      cursor:pointer;
+      user-select:none;
+      font-weight:600;
+    }
+    .token:hover{background:rgba(255,255,255,.09)}
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+    .btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.01em;
+      transition:.2s transform,.2s opacity,.2s background;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{
+      background:linear-gradient(135deg, #8cf0ff 0%, #39c8ff 55%, #2d7eff 100%);
+      color:#03111f;
+      box-shadow:0 12px 30px rgba(48,150,255,.24);
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.07);
+      color:var(--text);
+      border:1px solid rgba(126,231,255,.16);
+    }
+    .btn.ghost{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .translation-grid{
+      display:grid;
+      gap:14px;
+    }
+    .translation-item{
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(126,231,255,.10);
+    }
+    label{display:block;font-weight:700;margin-bottom:8px}
+    input[type="text"]{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(126,231,255,.16);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:14px 14px;
+      font-size:1rem;
+      outline:none;
+    }
+    input[type="text"]:focus{
+      border-color:rgba(126,231,255,.45);
+      box-shadow:0 0 0 4px rgba(57,200,255,.12);
+    }
+    .small{
+      font-size:.92rem;
+      color:var(--muted);
+      line-height:1.55;
+      margin-top:8px;
+    }
+
+    .memory-card{
+      padding:22px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      border:1px solid rgba(126,231,255,.14);
+      box-shadow:var(--shadow);
+      min-height:250px;
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+    .cue{
+      color:var(--cyan);
+      font-weight:800;
+      letter-spacing:.02em;
+      font-size:.96rem;
+      text-transform:uppercase;
+    }
+    .big{
+      font-size:clamp(1.4rem, 4vw, 2.1rem);
+      font-weight:900;
+      line-height:1.28;
+      letter-spacing:-.02em;
+    }
+    .hidden-answer{
+      display:none;
+      padding:14px 16px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(126,231,255,.12);
+    }
+    .hidden-answer.show{display:block}
+    .scorebar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:12px;
+      color:var(--muted);
+    }
+    progress{
+      width:220px;
+      height:10px;
+      accent-color:#55dfff;
+    }
+
+    details{
+      border:1px solid rgba(126,231,255,.12);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      padding:14px 16px;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:800;
+    }
+
+    .key-list{
+      margin:12px 0 0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.8;
+    }
+
+    footer{
+      padding:28px 0 10px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    @media (max-width: 860px){
+      .grid.cards{grid-template-columns:1fr}
+      .wrap{width:min(100% - 20px, 1120px)}
+      .hero-card{padding:28px 18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge">One verb a day</div>
+      <div class="hero-card">
+        <div class="brand">Fluency Studio by Victor Gomes</div>
+        <h1><span style="color:#fff">To</span> <span class="gradient">Skip</span></h1>
+        <p class="subtitle">Pular algo, deixar para depois ou não fazer uma parte, <strong>sem necessariamente abandonar o restante</strong>.</p>
+        <div class="pron">Pronúncia: /skɪp/</div>
+      </div>
+    </header>
+
+    <section class="grid cards">
+      <article class="panel">
+        <div class="row-between">
+          <h3>Sentido básico</h3>
+          <button class="speak" aria-label="Ouvir exemplo em inglês" data-speak="I skipped breakfast this morning.">🔊</button>
+        </div>
+        <p class="muted">Usado quando você pula, não faz ou deixa de lado uma parte específica.</p>
+        <div class="example">
+          <div class="en">I skipped breakfast this morning.</div>
+          <div class="pt">Eu pulei o café da manhã hoje.</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="row-between">
+          <h3>Nuance importante</h3>
+          <button class="speak" aria-label="Ouvir exemplo em inglês" data-speak="He skipped the first question and answered the others.">🔊</button>
+        </div>
+        <p class="muted">Muitas vezes, <strong>skip</strong> significa pular uma parte e continuar o resto — não abandonar tudo.</p>
+        <div class="example">
+          <div class="en">He skipped the first question and answered the others.</div>
+          <div class="pt">Ele pulou a primeira questão e respondeu as outras.</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="row-between">
+          <h3>Related use — skip through</h3>
+          <button class="speak" aria-label="Ouvir exemplo em inglês" data-speak="I skipped through the report before the meeting.">🔊</button>
+        </div>
+        <p class="muted">Dar uma olhada rápida, folhear ou ler superficialmente um documento.</p>
+        <div class="example">
+          <div class="en">I skipped through the report before the meeting.</div>
+          <div class="pt">Eu dei uma olhada rápida no relatório antes da reunião.</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="row-between">
+          <h3>Related use — skip it!</h3>
+          <button class="speak" aria-label="Ouvir exemplo em inglês" data-speak="Forget I said anything. Just skip it!">🔊</button>
+        </div>
+        <p class="muted">Forma informal de dizer “esquece”, “deixa pra lá” ou “não importa mais”.</p>
+        <div class="example">
+          <div class="en">Forget I said anything. Just skip it!</div>
+          <div class="pt">Esquece o que eu disse. Deixa pra lá!</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" id="block-a" style="margin-top:26px">
+      <h2 class="section-title">Exercício A — Discriminação de contexto</h2>
+      <p class="section-lead">Aqui o foco não é traduzir palavra por palavra, e sim perceber <strong>onde skip soa natural</strong> e onde ele não é a melhor escolha.</p>
+      <div id="context-list"></div>
+    </section>
+
+    <section class="panel" id="block-b" style="margin-top:26px">
+      <h2 class="section-title">Exercício B — Reconstrução</h2>
+      <p class="section-lead">Toque nas palavras para montar a frase em inglês. Exercícios com <strong>skip</strong>, <strong>skip through</strong> e <strong>skip it</strong>.</p>
+      <div id="reorder-list"></div>
+    </section>
+
+    <section class="panel" id="block-c" style="margin-top:26px">
+      <h2 class="section-title">Exercício C — Traduza para o inglês</h2>
+      <p class="section-lead">Digite sua resposta usando <strong>to skip</strong>. A correção aceita variações naturais e ignora diferenças pequenas de pontuação e maiúsculas.</p>
+      <div class="translation-grid" id="translation-list"></div>
+      <div class="actions">
+        <button class="btn primary" id="check-translations">Corrigir quiz</button>
+      </div>
+      <div class="scorebar">
+        <div id="translation-score">Pontuação: 0/10</div>
+      </div>
+    </section>
+
+    <section class="panel" id="block-d" style="margin-top:26px">
+      <h2 class="section-title">Exercício D — Memory challenge</h2>
+      <p class="section-lead">Veja a pista em português, tente lembrar a frase em inglês e só depois revele a resposta. Em seguida, avalie seu desempenho para reforçar a memorização.</p>
+      <div class="memory-card">
+        <div class="cue">Pista</div>
+        <div class="big" id="memory-prompt">Eu pulei o café da manhã hoje.</div>
+        <div class="hidden-answer" id="memory-answer"></div>
+        <div class="actions">
+          <button class="btn secondary" id="show-memory-answer">Mostrar resposta</button>
+          <button class="speak" id="speak-memory" aria-label="Ouvir resposta do memory challenge">🔊</button>
+        </div>
+        <div class="actions" id="memory-rating" style="display:none">
+          <button class="btn primary" data-rate="easy">Acertei fácil</button>
+          <button class="btn secondary" data-rate="effort">Acertei com esforço</button>
+          <button class="btn ghost" data-rate="wrong">Errei</button>
+        </div>
+        <div class="scorebar">
+          <div id="memory-progress-text">Card 1 de 6</div>
+          <progress id="memory-progress" max="6" value="1"></progress>
+        </div>
+        <div id="memory-summary" class="small"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:26px">
+      <h2 class="section-title">Revisão final</h2>
+      <div class="grid cards">
+        <div class="panel" style="padding:18px">
+          <h3>1. Skip</h3>
+          <p class="muted">Pular, não fazer ou deixar uma parte de lado.</p>
+        </div>
+        <div class="panel" style="padding:18px">
+          <h3>2. Skip ≠ abandonar</h3>
+          <p class="muted">Na maioria dos contextos, você pula uma parte e continua ou volta depois.</p>
+        </div>
+        <div class="panel" style="padding:18px">
+          <h3>3. Skip through</h3>
+          <p class="muted">Ler por cima, folhear, passar rapidamente por um texto ou material.</p>
+        </div>
+        <div class="panel" style="padding:18px">
+          <h3>4. Skip it!</h3>
+          <p class="muted">Esquece, deixa pra lá, não importa mais.</p>
+        </div>
+      </div>
+
+      <details style="margin-top:18px">
+        <summary>Ver gabarito completo</summary>
+        <div id="answer-key"></div>
+      </details>
+
+      <div class="actions" style="margin-top:18px">
+        <button class="btn primary" id="restart-all">Reiniciar prática</button>
+      </div>
+    </section>
+
+    <footer>Fluency Studio — prática interativa de memorização com correção automática e áudio.</footer>
+  </div>
+
+  <script>
+    const contextQuestions = [
+      {
+        prompt: "Qual frase soa mais natural com <strong>skip</strong> para mostrar que a pessoa pulou uma parte, mas continuou o restante?",
+        choices: [
+          "She skipped the first exercise and did the rest later.",
+          "She skipped her house and went to work.",
+          "She skipped happiness after lunch."
+        ],
+        correct: 0,
+        explanation: "Aqui <em>skip</em> funciona perfeitamente porque ela pulou uma parte específica do conjunto, sem abandonar tudo."
+      },
+      {
+        prompt: "Em qual contexto <strong>skip</strong> NÃO é a melhor escolha?",
+        choices: [
+          "We skipped lunch because we were late.",
+          "He skipped the intro and watched the main part.",
+          "She skipped her friend for five years and that means she loved him."
+        ],
+        correct: 2,
+        explanation: "Nesse caso, a frase tenta usar <em>skip</em> num sentido que não combina. <em>Skip</em> não expressa 'amar alguém' nem cria esse significado abstrato."
+      },
+      {
+        prompt: "Qual frase usa <strong>skip</strong> com a nuance de 'deixar para depois'?",
+        choices: [
+          "Skip this question for now and come back to it later.",
+          "Skip this pencil and drink it later.",
+          "Skip your name because it is blue."
+        ],
+        correct: 0,
+        explanation: "Esse é um uso muito natural: pular por enquanto e voltar depois."
+      },
+      {
+        prompt: "Qual opção mostra o uso certo de <strong>skip through</strong>?",
+        choices: [
+          "I skipped through the report before the presentation.",
+          "I skipped through my sandwich before lunch.",
+          "I skipped through the teacher because the class was hard."
+        ],
+        correct: 0,
+        explanation: "<em>Skip through</em> combina com textos, relatórios, páginas e materiais que você passa rapidamente."
+      },
+      {
+        prompt: "Em qual frase <strong>skip it!</strong> aparece com sentido idiomático natural?",
+        choices: [
+          "I lost my keys. Skip it!",
+          "Forget I said anything. Just skip it!",
+          "The bus is late. Skip it to the station!"
+        ],
+        correct: 1,
+        explanation: "<em>Skip it!</em> aqui significa 'deixa pra lá', muito comum quando você não quer continuar explicando."
+      },
+      {
+        prompt: "Qual frase mostra que <strong>skip</strong> não significa necessariamente abandonar?",
+        choices: [
+          "He skipped the warm-up but still finished the workout.",
+          "He skipped the city and became a cloud.",
+          "He skipped sadness and bought a door."
+        ],
+        correct: 0,
+        explanation: "Ele pulou uma parte específica, mas continuou a atividade."
+      },
+      {
+        prompt: "Qual contexto fica mais idiomático em inglês?",
+        choices: [
+          "Let’s skip this section and focus on the conclusion.",
+          "Let’s skip this refrigerator and focus on the conclusion.",
+          "Let’s skip honesty and wear the conclusion."
+        ],
+        correct: 0,
+        explanation: "Usar <em>skip</em> com <em>section</em> é totalmente natural porque envolve omitir uma parte de algo maior."
+      },
+      {
+        prompt: "Qual opção NÃO soa natural com <strong>skip</strong>?",
+        choices: [
+          "She skipped class yesterday.",
+          "He skipped a step in the process.",
+          "They skipped a friendship into the rain."
+        ],
+        correct: 2,
+        explanation: "As duas primeiras são combinações comuns. A terceira é uma construção sem sentido natural em inglês."
+      }
+    ];
+
+    const reorderData = [
+      {
+        pt: "Eu pulei o café da manhã hoje.",
+        tokens: ["this", "morning.", "I", "skipped", "breakfast"],
+        answer: "I skipped breakfast this morning.",
+        explanation: "A ordem natural é sujeito + verbo + objeto + expressão de tempo."
+      },
+      {
+        pt: "Pule esta pergunta por enquanto e volte depois.",
+        tokens: ["this", "later.", "question", "Skip", "for", "now", "and", "come", "back", "to", "it"],
+        answer: "Skip this question for now and come back to it later.",
+        explanation: "Perceba o imperativo: <em>Skip this question...</em>"
+      },
+      {
+        pt: "Nós demos uma olhada rápida no relatório antes da reunião.",
+        tokens: ["the", "meeting.", "before", "We", "report", "through", "skipped"],
+        answer: "We skipped through the report before the meeting.",
+        explanation: "<em>Skip through</em> funciona para passar rapidamente por um texto."
+      },
+      {
+        pt: "Esquece. Deixa pra lá.",
+        tokens: ["Skip", "it!"],
+        answer: "Skip it!",
+        explanation: "Expressão curta e idiomática."
+      },
+      {
+        pt: "Ele pulou a primeira questão e respondeu as outras.",
+        tokens: ["the", "He", "skipped", "and", "others.", "question", "first", "answered", "the"],
+        answer: "He skipped the first question and answered the others.",
+        explanation: "Aqui o verbo mostra que ele omitiu uma parte, mas continuou."
+      },
+      {
+        pt: "Ela pulou o treino, mas vai fazer depois.",
+        tokens: ["workout,", "She", "do", "skipped", "the", "it", "later.", "but", "she'll"],
+        answer: "She skipped the workout, but she'll do it later.",
+        explanation: "Boa frase para memorizar a nuance de adiamento."
+      }
+    ];
+
+    const translationData = [
+      {
+        pt: "Eu pulei o café da manhã hoje.",
+        preferred: "I skipped breakfast today.",
+        accepted: ["I skipped breakfast today", "I skipped breakfast this morning"]
+      },
+      {
+        pt: "Ela faltou à aula ontem.",
+        preferred: "She skipped class yesterday.",
+        accepted: ["She skipped class yesterday", "She skipped the class yesterday"]
+      },
+      {
+        pt: "Não pule esta etapa.",
+        preferred: "Don't skip this step.",
+        accepted: ["Don't skip this step", "Do not skip this step"]
+      },
+      {
+        pt: "Nós pulamos a introdução e fomos direto ao ponto.",
+        preferred: "We skipped the introduction and went straight to the point.",
+        accepted: ["We skipped the introduction and went straight to the point", "We skipped the introduction and got straight to the point"]
+      },
+      {
+        pt: "Ele pulou a primeira página por enquanto.",
+        preferred: "He skipped the first page for now.",
+        accepted: ["He skipped the first page for now"]
+      },
+      {
+        pt: "Eu dei uma olhada rápida no relatório antes da reunião.",
+        preferred: "I skipped through the report before the meeting.",
+        accepted: ["I skipped through the report before the meeting"]
+      },
+      {
+        pt: "Ela pulou a reunião da manhã, mas vai participar da próxima.",
+        preferred: "She skipped the morning meeting, but she'll attend the next one.",
+        accepted: ["She skipped the morning meeting, but she'll attend the next one", "She skipped the morning meeting, but she will attend the next one"]
+      },
+      {
+        pt: "Se estiver difícil, pule essa questão e volte depois.",
+        preferred: "If it's difficult, skip that question and come back later.",
+        accepted: ["If it's difficult, skip that question and come back later", "If it is difficult, skip that question and come back later"]
+      },
+      {
+        pt: "Esquece o que eu disse. Deixa pra lá.",
+        preferred: "Forget what I said. Skip it.",
+        accepted: ["Forget what I said. Skip it", "Forget what I said. Just skip it", "Forget what I said. Skip it."]
+      },
+      {
+        pt: "Não pule o aquecimento no treino.",
+        preferred: "Don't skip the warm-up in your workout.",
+        accepted: ["Don't skip the warm-up in your workout", "Do not skip the warm-up in your workout", "Don't skip the warm-up during your workout"]
+      }
+    ];
+
+    const memoryData = [
+      { pt: "Eu pulei o café da manhã hoje.", en: "I skipped breakfast today." },
+      { pt: "Ele pulou a primeira questão e respondeu as outras.", en: "He skipped the first question and answered the others." },
+      { pt: "Nós demos uma olhada rápida no relatório antes da reunião.", en: "We skipped through the report before the meeting." },
+      { pt: "Se estiver difícil, pule essa questão e volte depois.", en: "If it's difficult, skip that question and come back later." },
+      { pt: "Ela pulou o treino, mas vai fazer depois.", en: "She skipped the workout, but she'll do it later." },
+      { pt: "Esquece o que eu disse. Deixa pra lá.", en: "Forget what I said. Skip it." }
+    ];
+
+    function normalize(str){
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[’']/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function speakText(text){
+      if(!("speechSynthesis" in window)){
+        alert("Seu navegador não suporta áudio por voz.");
+        return;
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => /en-US/i.test(v.lang) && /Google|Samantha|Jenny|Guy|Aria|Joanna|Matthew|Daniel|Eric/i.test(v.name))
+        || voices.find(v => /en-US/i.test(v.lang))
+        || voices.find(v => /^en/i.test(v.lang));
+      if(preferred) utter.voice = preferred;
+      utter.rate = 0.96;
+      utter.pitch = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    document.querySelectorAll(".speak").forEach(btn=>{
+      if(btn.dataset.speak){
+        btn.addEventListener("click", ()=>speakText(btn.dataset.speak));
+      }
+    });
+    if("speechSynthesis" in window){
+      window.speechSynthesis.onvoiceschanged = ()=>{};
+    }
+
+    const contextList = document.getElementById("context-list");
+    contextQuestions.forEach((q, i)=>{
+      const box = document.createElement("div");
+      box.className = "item";
+      box.innerHTML = `
+        <div class="question">${i+1}. ${q.prompt}</div>
+        <div class="choices">
+          ${q.choices.map((c, idx)=>`<button class="choice" data-i="${i}" data-choice="${idx}">${c}</button>`).join("")}
+        </div>
+        <div class="feedback" id="fb-context-${i}"></div>
+      `;
+      contextList.appendChild(box);
+    });
+
+    contextList.addEventListener("click", e=>{
+      const btn = e.target.closest(".choice");
+      if(!btn) return;
+      const i = Number(btn.dataset.i);
+      const chosen = Number(btn.dataset.choice);
+      const q = contextQuestions[i];
+      const parent = btn.closest(".item");
+      const choices = parent.querySelectorAll(".choice");
+      choices.forEach((c, idx)=>{
+        c.disabled = true;
+        if(idx === q.correct) c.classList.add("correct");
+        if(idx === chosen && idx !== q.correct) c.classList.add("wrong");
+      });
+      const fb = document.getElementById(`fb-context-${i}`);
+      fb.className = "feedback show " + (chosen === q.correct ? "ok" : "bad");
+      fb.innerHTML = (chosen === q.correct ? "<strong>Correto.</strong> " : "<strong>Não foi dessa vez.</strong> ") + q.explanation;
+    });
+
+    const reorderList = document.getElementById("reorder-list");
+    reorderData.forEach((r, i)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      const shuffled = [...r.tokens].sort(()=>Math.random()-0.5);
+      el.innerHTML = `
+        <div class="question">${i+1}. Monte a frase: <span class="muted">${r.pt}</span></div>
+        <div class="reorder-answer" id="answer-zone-${i}" aria-label="Frase montada"></div>
+        <div class="reorder-bank" id="bank-zone-${i}" aria-label="Banco de palavras">
+          ${shuffled.map(tok=>`<button type="button" class="token" data-group="${i}">${tok}</button>`).join("")}
+        </div>
+        <div class="actions">
+          <button class="btn primary check-reorder" data-group="${i}">Verificar</button>
+          <button class="btn secondary reset-reorder" data-group="${i}">Limpar</button>
+          <button class="speak" aria-label="Ouvir frase modelo" data-speak="${r.answer}">🔊</button>
+        </div>
+        <div class="feedback" id="fb-reorder-${i}"></div>
+      `;
+      reorderList.appendChild(el);
+    });
+
+    reorderList.addEventListener("click", e=>{
+      const token = e.target.closest(".token");
+      if(token){
+        const group = token.dataset.group;
+        const answerZone = document.getElementById(`answer-zone-${group}`);
+        const bankZone = document.getElementById(`bank-zone-${group}`);
+        if(token.parentElement === bankZone) answerZone.appendChild(token);
+        else bankZone.appendChild(token);
+      }
+
+      const checkBtn = e.target.closest(".check-reorder");
+      if(checkBtn){
+        const group = Number(checkBtn.dataset.group);
+        const answerZone = document.getElementById(`answer-zone-${group}`);
+        const text = Array.from(answerZone.querySelectorAll(".token")).map(t=>t.textContent).join(" ").replace(/\s+([,.!?])/g, "$1");
+        const correct = reorderData[group].answer;
+        const fb = document.getElementById(`fb-reorder-${group}`);
+        const ok = normalize(text) === normalize(correct);
+        fb.className = "feedback show " + (ok ? "ok" : "bad");
+        fb.innerHTML = ok
+          ? `<strong>Correto.</strong> ${reorderData[group].explanation}`
+          : `<strong>Ainda não.</strong> Resposta modelo: <em>${correct}</em><br>${reorderData[group].explanation}`;
+      }
+
+      const resetBtn = e.target.closest(".reset-reorder");
+      if(resetBtn){
+        const group = resetBtn.dataset.group;
+        const answerZone = document.getElementById(`answer-zone-${group}`);
+        const bankZone = document.getElementById(`bank-zone-${group}`);
+        Array.from(answerZone.querySelectorAll(".token")).forEach(t=>bankZone.appendChild(t));
+        document.getElementById(`fb-reorder-${group}`).className = "feedback";
+        document.getElementById(`fb-reorder-${group}`).innerHTML = "";
+      }
+    });
+
+    const translationList = document.getElementById("translation-list");
+    translationData.forEach((t, i)=>{
+      const el = document.createElement("div");
+      el.className = "translation-item";
+      el.innerHTML = `
+        <label for="tr-${i}">${i+1}. ${t.pt}</label>
+        <input id="tr-${i}" type="text" autocomplete="off" placeholder="Digite sua tradução em inglês" />
+        <div class="actions">
+          <button class="speak" aria-label="Ouvir resposta modelo" data-speak="${t.preferred}">🔊</button>
+        </div>
+        <div class="feedback" id="fb-tr-${i}"></div>
+      `;
+      translationList.appendChild(el);
+    });
+
+    document.getElementById("check-translations").addEventListener("click", ()=>{
+      let score = 0;
+      translationData.forEach((t, i)=>{
+        const input = document.getElementById(`tr-${i}`);
+        const fb = document.getElementById(`fb-tr-${i}`);
+        const user = normalize(input.value);
+        const accepted = t.accepted.map(normalize);
+        const ok = accepted.includes(user);
+        if(ok) score++;
+        fb.className = "feedback show " + (ok ? "ok" : "bad");
+        fb.innerHTML = ok
+          ? `<strong>Correto.</strong> Resposta aceita.`
+          : `<strong>Resposta esperada:</strong> <em>${t.preferred}</em><div class="small">Também aceitas: ${t.accepted.join(" • ")}</div>`;
+      });
+      document.getElementById("translation-score").textContent = `Pontuação: ${score}/10`;
+    });
+
+    let memoryIndex = 0;
+    let memoryScores = {easy:0, effort:0, wrong:0};
+
+    const memoryPrompt = document.getElementById("memory-prompt");
+    const memoryAnswer = document.getElementById("memory-answer");
+    const memoryRating = document.getElementById("memory-rating");
+    const memoryProgressText = document.getElementById("memory-progress-text");
+    const memoryProgress = document.getElementById("memory-progress");
+    const memorySummary = document.getElementById("memory-summary");
+    const speakMemory = document.getElementById("speak-memory");
+
+    function renderMemory(){
+      const item = memoryData[memoryIndex];
+      memoryPrompt.textContent = item.pt;
+      memoryAnswer.className = "hidden-answer";
+      memoryAnswer.innerHTML = `<div class="en">${item.en}</div>`;
+      memoryRating.style.display = "none";
+      memoryProgressText.textContent = `Card ${memoryIndex + 1} de ${memoryData.length}`;
+      memoryProgress.value = memoryIndex + 1;
+      memorySummary.textContent = "";
+    }
+
+    renderMemory();
+
+    document.getElementById("show-memory-answer").addEventListener("click", ()=>{
+      memoryAnswer.classList.add("show");
+      memoryRating.style.display = "flex";
+    });
+
+    speakMemory.addEventListener("click", ()=>{
+      speakText(memoryData[memoryIndex].en);
+    });
+
+    memoryRating.addEventListener("click", e=>{
+      const btn = e.target.closest("[data-rate]");
+      if(!btn) return;
+      const rate = btn.dataset.rate;
+      memoryScores[rate]++;
+      if(memoryIndex < memoryData.length - 1){
+        memoryIndex++;
+        renderMemory();
+      } else {
+        const total = memoryData.length;
+        const points = memoryScores.easy * 2 + memoryScores.effort * 1;
+        let msg = "Bom trabalho.";
+        if(points >= 10) msg = "Excelente retenção. Você já está consolidando o verbo com bastante segurança.";
+        else if(points >= 7) msg = "Ótimo progresso. Mais uma rodada e isso fixa ainda mais.";
+        else msg = "Você já começou a construir memória ativa. Repetir amanhã vai ajudar muito.";
+        memorySummary.innerHTML = `Resultado: fáceis ${memoryScores.easy}, com esforço ${memoryScores.effort}, erros ${memoryScores.wrong}. ${msg}`;
+        memoryRating.style.display = "none";
+        memoryProgressText.textContent = `Concluído — ${total} de ${total}`;
+      }
+    });
+
+    const answerKey = document.getElementById("answer-key");
+    answerKey.innerHTML = `
+      <h3>Exercício A</h3>
+      <ol class="key-list">
+        ${contextQuestions.map((q, i)=>`<li>${q.choices[q.correct]}</li>`).join("")}
+      </ol>
+      <h3>Exercício B</h3>
+      <ol class="key-list">
+        ${reorderData.map(r=>`<li>${r.answer}</li>`).join("")}
+      </ol>
+      <h3>Exercício C</h3>
+      <ol class="key-list">
+        ${translationData.map(t=>`<li>${t.preferred}</li>`).join("")}
+      </ol>
+      <h3>Exercício D</h3>
+      <ol class="key-list">
+        ${memoryData.map(t=>`<li>${t.en}</li>`).join("")}
+      </ol>
+    `;
+
+    document.getElementById("restart-all").addEventListener("click", ()=>{
+      window.scrollTo({top:0, behavior:"smooth"});
+      setTimeout(()=>location.reload(), 250);
+    });
+  </script>
+</body>
+</html>
