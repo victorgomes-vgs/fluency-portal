@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review 1 — The Fluency Studio by Victor Gomes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0B1F33;
+  --bordo: #5A1F2B;
+  --teal-dark: #0F3A45;
+  --teal-accent: #114B5F;
+  --teal-light: #2C7A8E;
+  --white: #FFFFFF;
+  --gray-light: #F8FAFC;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:#1a2332;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--navy);}
+::-webkit-scrollbar-thumb{background:var(--teal-light);border-radius:3px;}
+
+/* PROGRESS */
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--teal-light),#4ecdc4);width:0%;z-index:1000;transition:width .3s;}
+
+/* NAV DOTS */
+#section-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:999;}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:all .3s;border:2px solid transparent;}
+.nav-dot.active{background:var(--teal-light);border-color:white;transform:scale(1.35);}
+.nav-dot:hover{background:rgba(255,255,255,.55);}
+
+/* HEADER */
+.page-header{background:linear-gradient(135deg,var(--navy) 0%,var(--teal-dark) 100%);padding:72px 32px 48px;text-align:center;border-bottom:4px solid var(--bordo);}
+.brand-tag{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--teal-light);text-transform:uppercase;margin-bottom:8px;}
+.page-title{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;color:white;letter-spacing:-1px;}
+.page-subtitle{font-size:.95rem;color:rgba(255,255,255,.55);margin-top:8px;}
+.review-badge{display:inline-block;background:var(--bordo);color:white;font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-top:12px;}
+
+/* SECTIONS */
+.section{padding:64px 24px;opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
+.section.visible{opacity:1;transform:translateY(0);}
+.sec-bg-a{background:linear-gradient(160deg,#0B1F33 0%,#0F3A45 100%);}
+.sec-bg-b{background:linear-gradient(160deg,#0F3A45 0%,#114B5F 100%);}
+.sec-bg-c{background:linear-gradient(160deg,#0B1F33 0%,#5A1F2B22 100%);}
+.section-inner{max-width:920px;margin:0 auto;}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:32px;}
+.sec-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.section-title{font-size:1.65rem;font-weight:800;color:white;}
+.section-title span{color:var(--teal-light);}
+
+/* AUDIO BTN */
+.audio-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:none;background:var(--teal-accent);color:white;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.audio-btn:hover{background:var(--teal-light);transform:translateY(-1px);}
+.audio-btn.playing{background:var(--bordo);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.65;}}
+.audio-btn svg{flex-shrink:0;}
+
+/* CARDS */
+.card{background:white;border-radius:16px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.22);}
+
+/* PRONUNCIATION */
+.pron-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:600px){.pron-grid{grid-template-columns:1fr;}}
+.pron-item{background:white;border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.14);}
+.pron-num{font-size:1rem;font-weight:800;color:var(--teal-accent);min-width:22px;}
+.pron-text{font-size:.93rem;color:#1a2332;line-height:1.55;flex:1;}
+.pron-text strong{color:var(--bordo);font-weight:700;}
+.pron-audio{padding:6px 10px;font-size:.72rem;flex-shrink:0;}
+
+/* HIGHLIGHTS */
+.hl-block{background:white;border-radius:16px;padding:22px 26px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.18);border-left:6px solid;}
+.hl-green{border-color:#4CAF50;}
+.hl-gray{border-color:#9E9E9E;}
+.hl-gold{border-color:#FFC107;}
+.hl-pink{border-color:#E91E63;}
+.hl-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;padding:4px 12px;border-radius:20px;display:inline-block;}
+.hl-green .hl-label{background:#e8f5e9;color:#2e7d32;}
+.hl-gray .hl-label{background:#f5f5f5;color:#555;}
+.hl-gold .hl-label{background:#fff8e1;color:#e65100;}
+.hl-pink .hl-label{background:#fce4ec;color:#c62828;}
+.hl-sentence{font-size:.93rem;color:#1a2332;line-height:1.75;padding:5px 0;border-bottom:1px solid #f0f0f0;}
+.hl-sentence:last-of-type{border-bottom:none;}
+.hl-sentence strong{color:var(--teal-accent);font-weight:700;}
+.hl-footer{margin-top:14px;}
+
+/* FUNNY */
+.funny-card{background:white;border-radius:16px;padding:28px 32px;box-shadow:0 4px 24px rgba(0,0,0,.2);border-top:4px solid var(--bordo);position:relative;}
+.funny-emoji{font-size:1.8rem;margin-bottom:12px;display:block;}
+.funny-text{font-size:1rem;color:#1a2332;line-height:1.75;font-style:italic;}
+.funny-dialog-line{font-size:.95rem;color:#1a2332;line-height:1.9;display:block;}
+.funny-speaker{font-weight:700;color:var(--bordo);}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:650px){.match-grid{grid-template-columns:1fr;}}
+.match-col-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--teal-light);margin-bottom:10px;}
+.match-item{background:white;border-radius:11px;padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.match-num{font-size:.95rem;font-weight:800;color:var(--teal-accent);min-width:20px;}
+.match-letter{font-size:.95rem;font-weight:800;color:var(--bordo);min-width:20px;}
+.match-text{font-size:.88rem;color:#1a2332;flex:1;line-height:1.4;}
+.match-sel{margin-left:auto;padding:5px 10px;border-radius:8px;border:2px solid var(--teal-accent);background:white;color:var(--teal-accent);font-weight:700;font-family:'Inter',sans-serif;font-size:.88rem;cursor:pointer;outline:none;flex-shrink:0;}
+.match-sel:focus{border-color:var(--bordo);}
+.match-sel.correct{border-color:#4CAF50;background:#e8f5e9;color:#2e7d32;}
+.match-sel.wrong{border-color:#f44336;background:#ffebee;color:#c62828;}
+.check-btn{background:var(--bordo);padding:10px 28px;}
+
+/* COMPLETE */
+.complete-item{background:white;border-radius:12px;padding:18px 22px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,.12);}
+.complete-num{font-weight:800;color:var(--teal-accent);min-width:22px;padding-top:2px;}
+.complete-content{font-size:.9rem;color:#1a2332;line-height:1.8;flex:1;}
+.fill{border:none;border-bottom:2px solid var(--teal-accent);background:transparent;padding:2px 6px;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--teal-dark);font-weight:600;width:160px;outline:none;display:inline-block;}
+.fill:focus{border-bottom-color:var(--bordo);}
+
+/* DEBATE */
+.debate-card{background:white;border-radius:16px;padding:30px;box-shadow:0 4px 24px rgba(0,0,0,.2);border-left:6px solid var(--bordo);}
+.debate-quote{font-size:1.05rem;color:#1a2332;font-style:italic;line-height:1.75;font-weight:500;}
+.debate-area{width:100%;margin-top:16px;border:2px solid #e0e0e0;border-radius:10px;padding:14px;font-family:'Inter',sans-serif;font-size:.9rem;color:#1a2332;resize:vertical;min-height:100px;outline:none;}
+.debate-area:focus{border-color:var(--teal-accent);}
+
+/* READING */
+.reading-card{background:white;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.2);}
+.reading-body{font-size:.93rem;color:#1a2332;line-height:1.9;}
+.reading-callout{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border-radius:12px;padding:18px 22px;margin:22px 0;font-size:.95rem;font-style:italic;color:var(--teal-dark);font-weight:600;text-align:center;border:1px solid rgba(44,122,142,.25);}
+
+/* WRITING */
+.writing-card{background:white;border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.2);}
+.writing-line{width:100%;border:none;border-bottom:1.5px solid #ddd;padding:12px 4px;font-family:'Inter',sans-serif;font-size:.9rem;color:#1a2332;background:transparent;outline:none;display:block;}
+.writing-line:focus{border-bottom-color:var(--teal-accent);}
+.writing-line::placeholder{color:#bbb;}
+
+/* iVICTOR */
+#iv-btn{position:fixed;bottom:24px;right:24px;width:66px;height:66px;border-radius:50%;overflow:visible;cursor:pointer;z-index:9999;border:none;background:none;padding:0;}
+#iv-photo{width:66px;height:66px;border-radius:50%;border:3px solid white;object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:iv-float 3s ease-in-out infinite;}
+@keyframes iv-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+#iv-btn:hover #iv-photo{box-shadow:0 6px 28px rgba(44,122,142,.6);}
+#iv-bubble{position:fixed;bottom:102px;right:24px;background:white;border-radius:16px 16px 4px 16px;padding:13px 17px;max-width:230px;box-shadow:0 4px 20px rgba(0,0,0,.22);font-size:.83rem;color:#1a2332;z-index:9998;opacity:0;transform:translateY(8px) scale(.95);transition:all .3s;pointer-events:none;line-height:1.5;}
+#iv-bubble.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+#iv-panel{position:fixed;bottom:102px;right:24px;width:340px;max-height:480px;background:white;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.3);z-index:9998;display:none;flex-direction:column;overflow:hidden;}
+#iv-panel.open{display:flex;}
+.iv-head{background:linear-gradient(135deg,var(--teal-dark),var(--teal-accent));padding:15px 18px;display:flex;align-items:center;gap:12px;}
+.iv-head img{width:40px;height:40px;border-radius:50%;border:2px solid white;object-fit:cover;}
+.iv-head .nm{font-weight:700;color:white;font-size:.93rem;}
+.iv-head .rl{font-size:.72rem;color:rgba(255,255,255,.7);}
+.iv-close{background:none;border:none;color:white;cursor:pointer;font-size:1.15rem;padding:4px;margin-left:auto;}
+.iv-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.iv-msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.83rem;line-height:1.5;}
+.iv-msg.v{background:#f0f4f8;color:#1a2332;align-self:flex-start;border-bottom-left-radius:4px;}
+.iv-msg.s{background:var(--teal-accent);color:white;align-self:flex-end;border-bottom-right-radius:4px;}
+.iv-ia{padding:12px 14px;border-top:1px solid #f0f0f0;display:flex;gap:8px;}
+.iv-input{flex:1;border:1.5px solid #e0e0e0;border-radius:20px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:.83rem;outline:none;}
+.iv-input:focus{border-color:var(--teal-accent);}
+.iv-send{width:36px;height:36px;border-radius:50%;background:var(--teal-accent);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;}
+.iv-send:hover{background:var(--teal-light);}
+@media(max-width:480px){.section{padding:44px 14px;}.match-grid{grid-template-columns:1fr;}#iv-panel{width:calc(100vw - 28px);right:14px;}}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<nav id="section-nav"></nav>
+
+<!-- iVictor -->
+<button id="iv-btn" onclick="toggleIV()" title="iVictor — Your English Assistant">
+  <img id="iv-photo" src="https://i.imgur.com/TFp0C5J.jpeg" alt="iVictor">
+</button>
+<div id="iv-bubble"><strong>iVictor aqui! 👋</strong><br>Clique para me perguntar algo sobre o Review 1!</div>
+<div id="iv-panel">
+  <div class="iv-head">
+    <img src="https://i.imgur.com/TFp0C5J.jpeg" alt="Victor">
+    <div><div class="nm">iVictor</div><div class="rl">Your English Assistant</div></div>
+    <button class="iv-close" onclick="toggleIV()">✕</button>
+  </div>
+  <div class="iv-msgs" id="iv-msgs">
+    <div class="iv-msg v">Hi! I'm iVictor. Ask me anything about today's Review 1 — grammar, pronunciation, vocabulary! 🎓</div>
+  </div>
+  <div class="iv-ia">
+    <input class="iv-input" id="iv-inp" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendIV()">
+    <button class="iv-send" onclick="sendIV()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <div class="brand-tag">The Fluency Studio · Victor Gomes</div>
+  <h1 class="page-title">Review 1</h1>
+  <p class="page-subtitle">Pronunciation · Grammar · Reading · Writing</p>
+  <span class="review-badge">CD 8 · T1</span>
+</header>
+
+<!-- ===== 1. IMPROVE YOUR PRONUNCIATION ===== -->
+<section class="section sec-bg-a" id="s-pron">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(44,122,142,.3);">🔊</div>
+      <h2 class="section-title">Improve your <span>Pronunciation</span></h2>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+      <button class="audio-btn" onclick="playAll(pronData,this)">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Play All
+      </button>
+    </div>
+    <div class="pron-grid" id="pron-grid"></div>
+  </div>
+</section>
+
+<!-- ===== 2. HIGHLIGHTS ===== -->
+<section class="section sec-bg-b" id="s-hl">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(90,31,43,.3);">⚡</div>
+      <h2 class="section-title"><span>Highlights</span></h2>
+    </div>
+    <div id="hl-container"></div>
+  </div>
+</section>
+
+<!-- ===== 3. IT'S FUNNY (1) ===== -->
+<section class="section sec-bg-c" id="s-f1">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(44,122,142,.3);">😄</div>
+      <h2 class="section-title">It's <span>Funny</span></h2>
+    </div>
+    <div class="funny-card">
+      <span class="funny-emoji">😄</span>
+      <p class="funny-text">"The trouble with being punctual is that nobody is there to appreciate it."</p>
+      <div style="margin-top:14px;">
+        <button class="audio-btn" onclick="speak('The trouble with being punctual is that nobody is there to appreciate it.',this)">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Listen
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. MATCH AND FORM SENTENCES ===== -->
+<section class="section sec-bg-a" id="s-match">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(17,75,95,.5);">🔗</div>
+      <h2 class="section-title">Match and Form <span>Sentences</span></h2>
+    </div>
+    <div class="match-grid">
+      <div>
+        <div class="match-col-label">Sentences — choose the answer</div>
+        <div id="match-left"></div>
+      </div>
+      <div>
+        <div class="match-col-label">Answer options (a – f)</div>
+        <div id="match-right"></div>
+      </div>
+    </div>
+    <div style="margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <button class="audio-btn check-btn" onclick="checkMatch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Check Answers
+      </button>
+      <span id="match-result" style="font-weight:700;color:white;font-size:.95rem;"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. IT'S FUNNY (2) ===== -->
+<section class="section sec-bg-b" id="s-f2">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(44,122,142,.3);">😄</div>
+      <h2 class="section-title">It's <span>Funny</span></h2>
+    </div>
+    <div class="funny-card">
+      <span class="funny-emoji">🎭</span>
+      <span class="funny-dialog-line">"Aren't you enjoying it?" Asked the wife, while her husband started complaining about the opera concert.</span>
+      <span class="funny-dialog-line" style="margin-top:8px;"><span class="funny-speaker">—</span> "The tenor sounds horrible!"</span>
+      <span class="funny-dialog-line"><span class="funny-speaker">—</span> "Do you want to leave?"</span>
+      <span class="funny-dialog-line"><span class="funny-speaker">—</span> "No way! He's murdered in the third act. I won't miss it!"</span>
+      <div style="margin-top:14px;">
+        <button class="audio-btn" onclick="speak('Aren\'t you enjoying it? Asked the wife, while her husband started complaining about the opera concert. The tenor sounds horrible! Do you want to leave? No way! He\'s murdered in the third act. I won\'t miss it!',this)">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Listen
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. COMPLETE THE SENTENCES ===== -->
+<section class="section sec-bg-c" id="s-complete">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(90,31,43,.3);">✏️</div>
+      <h2 class="section-title">Complete the <span>Sentences</span></h2>
+    </div>
+    <div id="complete-container"></div>
+  </div>
+</section>
+
+<!-- ===== 7. DEBATE ===== -->
+<section class="section sec-bg-a" id="s-debate">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(44,122,142,.3);">💬</div>
+      <h2 class="section-title"><span>Debate</span></h2>
+    </div>
+    <div class="debate-card">
+      <p class="debate-quote">"It is much easier to become successful if you have your own business rather than if you are an employee to a company."</p>
+      <div style="margin-top:14px;">
+        <button class="audio-btn" onclick="speak('It is much easier to become successful if you have your own business rather than if you are an employee to a company.',this)">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Listen
+        </button>
+      </div>
+      <textarea class="debate-area" id="debate-text" data-lid="debate" placeholder="Share your opinion... Do you agree or disagree? Why?"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. ENGLISH LANGUAGE ===== -->
+<section class="section sec-bg-b" id="s-reading">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(17,75,95,.5);">📖</div>
+      <h2 class="section-title">English <span>Language</span></h2>
+    </div>
+    <div class="reading-card">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+        <button class="audio-btn" id="read-btn" onclick="speak(readingTxt,this)">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Listen to Text
+        </button>
+      </div>
+      <div class="reading-body">
+        <p>Everyone says you should learn a new language and when people talk about it, the first language that crosses our minds is the English language. But why is it so important? Well, firstly, it's spoken by more than 380 million native speakers from countries such as the United States, the U.K., Ireland, Australia, New Zealand, Canada, India, South Africa, Nigeria and many Caribbean islands such as Barbados and Trinidad and Tobago. Moreover, because of the economic importance of most of these countries and the global influence of cinema and music, English is also the most widely learned second language in the world. This means that by learning English you'll be able to travel around the entire world and you'll be understood by most people even if you're not visiting an English-speaking country. Isn't that awesome? Besides traveling, English can certainly open innumerable doors in most professional fields. More than half of the world's technical and scientific periodicals are written in English, and three quarters of all emails worldwide are sent in English, too. So, are you ready to talk to the world?</p>
+      </div>
+      <div class="reading-callout">
+        "Besides traveling, English can certainly open innumerable doors in most professional fields."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 9. EXPRESS YOURSELF ===== -->
+<section class="section sec-bg-c" id="s-express">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(44,122,142,.3);">🗣️</div>
+      <h2 class="section-title">Express <span>Yourself</span></h2>
+    </div>
+    <div class="writing-card">
+      <div id="express-lines"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 10. SECRETS OF SUCCESS ===== -->
+<section class="section sec-bg-a" id="s-secrets">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="sec-icon" style="background:rgba(90,31,43,.3);">🏆</div>
+      <h2 class="section-title">Secrets of <span>Success</span></h2>
+    </div>
+    <div class="writing-card">
+      <div id="secrets-lines"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+
+const pronData = [
+  { n:1, html:"I'd like to <strong>thank</strong> you once again.", txt:"I'd like to thank you once again." },
+  { n:2, html:"More than a hundred <strong>athletes</strong> participated.", txt:"More than a hundred athletes participated." },
+  { n:3, html:"I was given the <strong>thumbs</strong> up to start it.", txt:"I was given the thumbs up to start it." },
+  { n:4, html:"There is a severe <strong>thunderstorm</strong> on the way.", txt:"There is a severe thunderstorm on the way." },
+  { n:5, html:"I know <strong>that</strong> she had the best intentions.", txt:"I know that she had the best intentions." },
+  { n:6, html:"Where did you put all <strong>those</strong> books?", txt:"Where did you put all those books?" },
+  { n:7, html:"A <strong>leather</strong> jacket is quite expensive.", txt:"A leather jacket is quite expensive." },
+  { n:8, html:"I just got new <strong>feather</strong> pillows.", txt:"I just got new feather pillows." }
+];
+
+const hlData = [
+  {
+    cls:'hl-green', label:'Past Perfect',
+    rows:[
+      { html:"They <strong>had never worked</strong> before, but they were exceeding my expectations.", txt:"They had never worked before, but they were exceeding my expectations." },
+      { html:"I <strong>had already bought</strong> it when you told me you didn't want it anymore.", txt:"I had already bought it when you told me you didn't want it anymore." },
+      { html:"I <strong>hadn't understood</strong> a word he said until you explained it to me.", txt:"I hadn't understood a word he said until you explained it to me." },
+      { html:"If she <strong>had given</strong> notice yesterday, I <strong>wouldn't have asked</strong> her to stay.", txt:"If she had given notice yesterday, I wouldn't have asked her to stay." }
+    ]
+  },
+  {
+    cls:'hl-gray', label:'Present Perfect',
+    rows:[
+      { html:"We <strong>could have eaten</strong> much more <strong>if</strong> we <strong>hadn't been</strong> so full from popcorn.", txt:"We could have eaten much more if we hadn't been so full from popcorn." },
+      { html:"I <strong>have asked</strong> you several times already.", txt:"I have asked you several times already." },
+      { html:"They <strong>haven't outlined</strong> their strategy so as not to give away information to their adversaries.", txt:"They haven't outlined their strategy so as not to give away information to their adversaries." },
+      { html:"Why <strong>have you summoned</strong> everyone to another meeting to discuss the same matter?", txt:"Why have you summoned everyone to another meeting to discuss the same matter?" }
+    ]
+  },
+  {
+    cls:'hl-gold', label:'Present Perfect Continuous · Gerund',
+    rows:[
+      { html:"She <strong>has been studying</strong> these animals for over a decade now.", txt:"She has been studying these animals for over a decade now." },
+      { html:"<strong>Haven't</strong> they <strong>been investing</strong> in the stock market since they were teens?", txt:"Haven't they been investing in the stock market since they were teens?" },
+      { html:"I can't <strong>stop running to talk</strong> to you right now. I have to complete my \"5 miles\".", txt:"I can't stop running to talk to you right now. I have to complete my 5 miles." },
+      { html:"I hardly ever <strong>remember to lock</strong> the door, but I <strong>remember turning</strong> the key this morning.", txt:"I hardly ever remember to lock the door, but I remember turning the key this morning." }
+    ]
+  },
+  {
+    cls:'hl-pink', label:'Gerund as Subject',
+    rows:[
+      { html:"It was so hot I <strong>tried opening</strong> the windows.", txt:"It was so hot I tried opening the windows." },
+      { html:"<strong>Handling</strong> problems with the right attitude can put you in a managerial position.", txt:"Handling problems with the right attitude can put you in a managerial position." },
+      { html:"<strong>Reading</strong> magazines from your field of work is a good way to keep up to date.", txt:"Reading magazines from your field of work is a good way to keep up to date." }
+    ]
+  }
+];
+
+const matchLeft = [
+  { n:1, txt:"How have you been?", ans:'d' },
+  { n:2, txt:"I never get to talk to her.", ans:'c' },
+  { n:3, txt:"When will you finally finish it?", ans:'f' },
+  { n:4, txt:"I've been putting on so much weight.", ans:'a' },
+  { n:5, txt:"Did you bring your camera?", ans:'b' },
+  { n:6, txt:"I'm really going to miss this place.", ans:'e' }
+];
+
+const matchRight = [
+  { l:'a', txt:"I should stop having too much fast food." },
+  { l:'b', txt:"I don't remember taking mine." },
+  { l:'c', txt:"She had just left when I arrived." },
+  { l:'d', txt:"It's been months since the last time I saw you." },
+  { l:'e', txt:"I've lived here for many years." },
+  { l:'f', txt:"You've been working on it for months." }
+];
+
+const completeData = [
+  { n:1, html:`I <input class="fill" data-lid="c1" placeholder="____________"> so motivated before I started working here.` },
+  { n:2, html:`How long have you <input class="fill" data-lid="c2" placeholder="____________"> just <input class="fill" data-lid="c2b" placeholder="____________">?` },
+  { n:3, html:`Have you ever tried <input class="fill" data-lid="c3" placeholder="____________"> Chinese food? Would you like to join us to London? That city must be just as wonderful as I imagine.` },
+  { n:4, html:`<input class="fill" data-lid="c4" placeholder="____________"> city must be just as wonderful as I imagine.` },
+  { n:5, html:`You should <input class="fill" data-lid="c5" placeholder="____________"> thinking as a businessman, not just like an employee, and <input class="fill" data-lid="c5b" placeholder="____________">.` },
+  { n:6, html:`<input class="fill" data-lid="c6" placeholder="____________"> moved to Spain? You already <input class="fill" data-lid="c6b" placeholder="____________">.` }
+];
+
+const readingTxt = `Everyone says you should learn a new language and when people talk about it, the first language that crosses our minds is the English language. But why is it so important? Well, firstly, it's spoken by more than 380 million native speakers from countries such as the United States, the U.K., Ireland, Australia, New Zealand, Canada, India, South Africa, Nigeria and many Caribbean islands such as Barbados and Trinidad and Tobago. Moreover, because of the economic importance of most of these countries and the global influence of cinema and music, English is also the most widely learned second language in the world. This means that by learning English you'll be able to travel around the entire world and you'll be understood by most people even if you're not visiting an English-speaking country. Isn't that awesome? Besides traveling, English can certainly open innumerable doors in most professional fields. More than half of the world's technical and scientific periodicals are written in English, and three quarters of all emails worldwide are sent in English, too. So, are you ready to talk to the world?`;
+
+// ── BUILD DOM ─────────────────────────────────────────────────
+
+// Pronunciation
+(()=>{
+  const g = document.getElementById('pron-grid');
+  pronData.forEach(d=>{
+    const t = d.txt.replace(/'/g,"\\'");
+    g.innerHTML += `<div class="pron-item"><span class="pron-num">${d.n}.</span><span class="pron-text">${d.html}</span><button class="audio-btn pron-audio" onclick="speak('${t}',this)"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><polygon points="5 3 19 12 5 21 5 3"/></svg></button></div>`;
+  });
+})();
+
+// Highlights
+(()=>{
+  const c = document.getElementById('hl-container');
+  hlData.forEach(b=>{
+    const allTxt = b.rows.map(r=>r.txt).join(' ').replace(/'/g,"\\'");
+    c.innerHTML += `<div class="hl-block ${b.cls}"><span class="hl-label">${b.label}</span>${b.rows.map(r=>`<p class="hl-sentence">${r.html}</p>`).join('')}<div class="hl-footer"><button class="audio-btn" onclick="speak('${allTxt}',this)"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><polygon points="5 3 19 12 5 21 5 3"/></svg> Listen</button></div></div>`;
+  });
+})();
+
+// Match
+(()=>{
+  const L = document.getElementById('match-left');
+  matchLeft.forEach(d=>{
+    L.innerHTML += `<div class="match-item"><span class="match-num">${d.n}.</span><span class="match-text">${d.txt}</span><select class="match-sel" id="ms${d.n}" onchange="saveInputs()"><option value="">—</option>${matchRight.map(r=>`<option value="${r.l}">${r.l.toUpperCase()}</option>`).join('')}</select></div>`;
+  });
+  const R = document.getElementById('match-right');
+  matchRight.forEach(d=>{
+    const t = d.txt.replace(/'/g,"\\'");
+    R.innerHTML += `<div class="match-item"><span class="match-letter">${d.l}.</span><span class="match-text">${d.txt}</span><button class="audio-btn pron-audio" onclick="speak('${t}',this)"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polygon points="5 3 19 12 5 21 5 3"/></svg></button></div>`;
+  });
+})();
+
+// Complete
+(()=>{
+  const c = document.getElementById('complete-container');
+  completeData.forEach(d=>{
+    c.innerHTML += `<div class="complete-item"><span class="complete-num">${d.n}.</span><span class="complete-content">${d.html}</span></div>`;
+  });
+})();
+
+// Writing lines
+function buildLines(id, n, ph){
+  const c = document.getElementById(id);
+  for(let i=0;i<n;i++){
+    const inp = document.createElement('input');
+    inp.type='text'; inp.className='writing-line';
+    inp.placeholder = i===0?ph:'';
+    inp.dataset.lid = id+'-'+i;
+    c.appendChild(inp);
+  }
+}
+buildLines('express-lines',5,'Write your thoughts here...');
+buildLines('secrets-lines',5,'Share your secret to success...');
+
+// Nav dots
+(()=>{
+  const nav = document.getElementById('section-nav');
+  document.querySelectorAll('.section').forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className='nav-dot'+(i===0?' active':'');
+    d.onclick=()=>document.querySelectorAll('.section')[i].scrollIntoView({behavior:'smooth'});
+    nav.appendChild(d);
+  });
+})();
+
+// ── AUDIO ─────────────────────────────────────────────────────
+
+let curUtt=null, activeAudioBtn=null;
+
+function getVoice(){
+  const vv = speechSynthesis.getVoices();
+  const pref=['Samantha','Karen','Moira','Allison','Susan','Victoria','Alex','Google US English','Microsoft Zira'];
+  for(const nm of pref){
+    const v=vv.find(x=>x.name.includes(nm)&&x.lang.startsWith('en'));
+    if(v)return v;
+  }
+  return vv.find(x=>x.lang==='en-US')||vv.find(x=>x.lang.startsWith('en'))||null;
+}
+
+function speak(txt,btn){
+  if(curUtt){
+    speechSynthesis.cancel();
+    if(activeAudioBtn)activeAudioBtn.classList.remove('playing');
+    if(activeAudioBtn===btn){curUtt=null;activeAudioBtn=null;return;}
+  }
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='en-US'; u.rate=0.88; u.pitch=1;
+  const v=getVoice(); if(v)u.voice=v;
+  btn.classList.add('playing');
+  activeAudioBtn=btn; curUtt=u;
+  u.onend=()=>{btn.classList.remove('playing');curUtt=null;activeAudioBtn=null;};
+  u.onerror=()=>{btn.classList.remove('playing');curUtt=null;activeAudioBtn=null;};
+  if(speechSynthesis.speaking)speechSynthesis.cancel();
+  setTimeout(()=>speechSynthesis.speak(u),50);
+}
+
+function playAll(arr,btn){
+  speak(arr.map(x=>x.txt).join('. '),btn);
+}
+
+speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+// ── MATCH CHECK ───────────────────────────────────────────────
+
+function checkMatch(){
+  let ok=0;
+  matchLeft.forEach(d=>{
+    const s=document.getElementById('ms'+d.n);
+    s.classList.remove('correct','wrong');
+    if(s.value===d.ans){s.classList.add('correct');ok++;}
+    else if(s.value)s.classList.add('wrong');
+  });
+  document.getElementById('match-result').textContent=`${ok}/6 correct!`;
+  document.getElementById('match-result').style.color=ok===6?'#4ade80':ok>=4?'#fbbf24':'#f87171';
+  showBubble(ok===6?'Perfect! All correct! 🎉':''+ok+' out of 6. Keep trying! 💪');
+}
+
+// ── SCROLL / PROGRESS ─────────────────────────────────────────
+
+window.addEventListener('scroll',()=>{
+  const sc=window.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress-bar').style.width=(dh>0?(sc/dh*100):0)+'%';
+  const secs=document.querySelectorAll('.section');
+  const dots=document.querySelectorAll('.nav-dot');
+  let ai=0;
+  secs.forEach((s,i)=>{
+    const r=s.getBoundingClientRect();
+    if(r.top<window.innerHeight*.7&&r.bottom>0)s.classList.add('visible');
+    if(r.top<window.innerHeight/2)ai=i;
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===ai));
+});
+setTimeout(()=>{document.querySelectorAll('.section').forEach(s=>{if(s.getBoundingClientRect().top<window.innerHeight)s.classList.add('visible');});},120);
+
+// ── iVICTOR ───────────────────────────────────────────────────
+
+let ivOpen=false, bubTimer;
+
+function toggleIV(){
+  ivOpen=!ivOpen;
+  document.getElementById('iv-panel').classList.toggle('open',ivOpen);
+  if(ivOpen){document.getElementById('iv-bubble').classList.remove('show');clearTimeout(bubTimer);}
+}
+
+function showBubble(msg){
+  if(ivOpen)return;
+  const b=document.getElementById('iv-bubble');
+  b.innerHTML=msg; b.classList.add('show');
+  clearTimeout(bubTimer);
+  bubTimer=setTimeout(()=>b.classList.remove('show'),4500);
+}
+
+async function sendIV(){
+  const inp=document.getElementById('iv-inp');
+  const txt=inp.value.trim(); if(!txt)return;
+  inp.value='';
+  addIVMsg(txt,'s');
+  const thinking=addIVMsg('...','v');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are iVictor, an English assistant for The Fluency Studio by Victor Gomes. Help students with Review 1: Past Perfect, Present Perfect, Present Perfect Continuous, gerunds, pronunciation of TH and -THER words, matching and completion exercises, English reading about why English is important. Be friendly, concise, encouraging. Answer only English learning questions. Respond in the same language as the student (Portuguese or English).`,
+        messages:[{role:'user',content:txt}]
+      })
+    });
+    const data=await r.json();
+    thinking.textContent=data.content?.[0]?.text||'Try again! 😅';
+  }catch(e){thinking.textContent='Oops! Try again 😅';}
+  const m=document.getElementById('iv-msgs');
+  m.scrollTop=m.scrollHeight;
+}
+
+function addIVMsg(txt,cls){
+  const m=document.getElementById('iv-msgs');
+  const d=document.createElement('div');
+  d.className='iv-msg '+cls; d.textContent=txt;
+  m.appendChild(d); m.scrollTop=m.scrollHeight;
+  return d;
+}
+
+// ── LOCALSTORAGE ──────────────────────────────────────────────
+
+function saveInputs(){
+  const data={};
+  document.querySelectorAll('[data-lid]').forEach(el=>{data[el.dataset.lid]=el.value;});
+  matchLeft.forEach(d=>{
+    const s=document.getElementById('ms'+d.n);
+    if(s)data['ms'+d.n]=s.value;
+  });
+  localStorage.setItem('fluency-review1',JSON.stringify(data));
+}
+
+function loadInputs(){
+  const saved=JSON.parse(localStorage.getItem('fluency-review1')||'{}');
+  document.querySelectorAll('[data-lid]').forEach(el=>{if(saved[el.dataset.lid]!==undefined)el.value=saved[el.dataset.lid];});
+  matchLeft.forEach(d=>{
+    const s=document.getElementById('ms'+d.n);
+    if(s&&saved['ms'+d.n]!==undefined)s.value=saved['ms'+d.n];
+  });
+}
+
+document.addEventListener('input',saveInputs);
+document.addEventListener('change',saveInputs);
+window.addEventListener('load',loadInputs);
+
+setTimeout(()=>showBubble('Olá! Sou o iVictor 😊<br>Me pergunte algo sobre o Review 1!'),2500);
+</script>
+</body>
+</html>
