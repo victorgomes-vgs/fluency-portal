@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To Address • Fluency Studio</title>
+  <style>
+    :root {
+      --bg-1: #03111f;
+      --bg-2: #07243b;
+      --panel: rgba(10, 28, 49, 0.78);
+      --panel-2: rgba(8, 23, 41, 0.88);
+      --line: rgba(84, 211, 255, 0.28);
+      --text: #f4f8ff;
+      --muted: #b7c9da;
+      --accent: #71e6ff;
+      --accent-2: #3ab8ff;
+      --accent-3: #9ef2ff;
+      --success: #8df0d3;
+      --shadow: 0 18px 48px rgba(0,0,0,0.35);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(71, 203, 255, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(32, 153, 255, 0.18), transparent 30%),
+        linear-gradient(180deg, #03111f 0%, #04182a 28%, #061f36 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 52vw;
+      height: 52vw;
+      filter: blur(10px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+      background: radial-gradient(circle, rgba(72,229,255,0.16) 0%, rgba(72,229,255,0.02) 42%, transparent 64%);
+      animation: floatGlow 11s ease-in-out infinite;
+    }
+    body::before { top: -10vw; right: -14vw; }
+    body::after { bottom: -14vw; left: -16vw; animation-delay: -4s; }
+
+    .waves {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+      background:
+        radial-gradient(80% 40% at 50% 105%, rgba(94, 220, 255, 0.18), transparent 60%),
+        linear-gradient(120deg, transparent 0 35%, rgba(68, 214, 255, 0.06) 40%, transparent 46%),
+        linear-gradient(120deg, transparent 0 60%, rgba(68, 214, 255, 0.08) 66%, transparent 71%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 32px 20px 28px;
+      border: 1px solid rgba(114, 230, 255, 0.18);
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(8,24,42,0.82), rgba(8,22,40,0.92));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -12% -28% -12%;
+      height: 46%;
+      background:
+        radial-gradient(70% 90% at 50% 100%, rgba(90, 231, 255, 0.16), transparent 62%),
+        linear-gradient(90deg, transparent 0%, rgba(77,212,255,0.1) 42%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pill {
+      width: fit-content;
+      margin: 0 auto 20px;
+      padding: 12px 22px;
+      border: 1px solid rgba(114, 230, 255, 0.4);
+      border-radius: 999px;
+      color: #f7fbff;
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .title-wrap {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .to {
+      display: block;
+      font-size: clamp(2.7rem, 9vw, 4.7rem);
+      line-height: 0.92;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .verb {
+      display: block;
+      font-size: clamp(3.8rem, 13vw, 7rem);
+      line-height: 0.92;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(180deg, var(--accent-3) 0%, var(--accent) 38%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 30px rgba(76, 206, 255, 0.1);
+    }
+
+    .brush {
+      width: min(280px, 62%);
+      height: 10px;
+      margin: 14px auto 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(61, 192, 255, 0.0), rgba(87, 226, 255, 0.95) 25%, rgba(56, 177, 255, 0.9) 72%, rgba(61, 192, 255, 0.0));
+      filter: blur(0.2px);
+      opacity: 0.95;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: clamp(1rem, 2.4vw, 1.15rem);
+      color: rgba(221, 233, 244, 0.76);
+      letter-spacing: 0.01em;
+      margin-bottom: 24px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(113, 230, 255, 0.38);
+      background: linear-gradient(180deg, rgba(10, 30, 52, 0.92), rgba(8, 24, 42, 0.92));
+      color: var(--text);
+      padding: 16px 22px;
+      min-width: 190px;
+      border-radius: 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      transform: translateY(-2px) scale(1.01);
+      background: linear-gradient(180deg, rgba(21, 54, 88, 0.98), rgba(9, 29, 49, 0.96));
+      border-color: rgba(113, 230, 255, 0.82);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.3), 0 0 0 1px rgba(113, 230, 255, 0.14), 0 0 18px rgba(113, 230, 255, 0.16);
+      filter: saturate(1.08);
+    }
+
+    .intro {
+      width: min(800px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+      border: 1px solid rgba(113, 230, 255, 0.14);
+      border-radius: 20px;
+      background: rgba(7, 21, 37, 0.66);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.65;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 24px;
+      animation: fadeUp .4s ease;
+    }
+    .panel.active { display: block; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .meaning-card,
+    .practice-card,
+    .mini-card {
+      background: linear-gradient(180deg, rgba(8,25,43,0.88), rgba(6,19,34,0.94));
+      border: 1px solid rgba(112, 229, 255, 0.18);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .meaning-header {
+      padding: 18px 18px 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--accent-3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent-3), var(--accent-2));
+      box-shadow: 0 0 16px rgba(113, 230, 255, 0.7);
+    }
+
+    .meaning-title {
+      font-size: 1.15rem;
+      margin: 10px 0 8px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .meaning-pt {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0 0 16px;
+      min-height: 50px;
+    }
+
+    .visual {
+      height: 210px;
+      margin: 0 18px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(113, 230, 255, 0.22);
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.18));
+    }
+
+    .v-problem {
+      background-image:
+        linear-gradient(135deg, rgba(26, 56, 95, 0.68), rgba(8, 21, 35, 0.12)),
+        url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80');
+    }
+    .v-speech {
+      background-image:
+        linear-gradient(135deg, rgba(17, 43, 79, 0.5), rgba(8, 21, 35, 0.08)),
+        url('https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80');
+    }
+    .v-envelope {
+      background-image:
+        linear-gradient(135deg, rgba(22, 50, 82, 0.55), rgba(8, 21, 35, 0.08)),
+        url('https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=1200&q=80');
+    }
+    .v-title {
+      background-image:
+        linear-gradient(135deg, rgba(20, 47, 76, 0.5), rgba(8, 21, 35, 0.08)),
+        url('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80');
+    }
+
+    .sentence-wrap {
+      padding: 18px;
+    }
+
+    .sentence {
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      line-height: 1.2;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    .highlight {
+      color: var(--accent);
+      position: relative;
+      display: inline-block;
+    }
+
+    .highlight::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -5px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(115, 230, 255, 0.18), rgba(72, 213, 255, 0.95), rgba(115, 230, 255, 0.18));
+    }
+
+    .translation {
+      margin: 0;
+      font-size: 1.06rem;
+      color: #7fe6ff;
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    .speak-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(113, 230, 255, 0.26);
+      background: rgba(9, 26, 44, 0.8);
+      color: var(--text);
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 900;
+      margin: 0 0 12px;
+      text-align: center;
+    }
+
+    .section-copy {
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.65;
+      width: min(780px, 100%);
+      margin: 0 auto 18px;
+    }
+
+    .practice-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      align-items: start;
+      margin-top: 24px;
+    }
+
+    .practice-card { padding: 22px; }
+
+    .question {
+      font-size: 1.18rem;
+      font-weight: 800;
+      line-height: 1.4;
+      margin: 0 0 18px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(113, 230, 255, 0.16);
+      background: rgba(10, 30, 50, 0.88);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .option:hover { transform: translateY(-1px); border-color: rgba(113, 230, 255, 0.44); }
+    .option.correct { border-color: rgba(141, 240, 211, 0.78); background: rgba(17, 61, 55, 0.75); }
+    .option.wrong { border-color: rgba(255, 130, 130, 0.6); background: rgba(68, 22, 28, 0.72); }
+
+    .feedback {
+      margin-top: 16px;
+      min-height: 28px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .sentence-builder {
+      display: grid;
+      gap: 14px;
+    }
+
+    .chips,
+    .dropzone {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 64px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px dashed rgba(113, 230, 255, 0.28);
+      background: rgba(7, 20, 35, 0.68);
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(15, 43, 72, 1), rgba(9, 29, 49, 1));
+      border: 1px solid rgba(113, 230, 255, 0.24);
+      font-weight: 800;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    .score-card {
+      padding: 22px;
+    }
+
+    .score-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(113, 230, 255, 0.1);
+      color: var(--muted);
+    }
+
+    .score-line strong {
+      color: var(--text);
+      font-size: 1.08rem;
+    }
+
+    .footer-brand {
+      text-align: center;
+      margin-top: 28px;
+      color: rgba(226, 239, 250, 0.86);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      display: inline-block;
+      margin-right: 8px;
+      background: linear-gradient(90deg, #7ef1ff 0%, #43b7ff 55%, #7ef1ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatGlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(18px); }
+    }
+
+    @media (max-width: 920px) {
+      .card-grid,
+      .practice-grid { grid-template-columns: 1fr; }
+      .visual { height: 230px; }
+    }
+
+    @media (max-width: 620px) {
+      .container { width: min(100% - 16px, 100%); padding-top: 12px; }
+      .hero { padding: 22px 12px 24px; border-radius: 26px; }
+      .pill { padding: 10px 18px; }
+      .controls { gap: 10px; }
+      .tab-btn { min-width: 144px; padding: 12px 14px; }
+      .meaning-header, .sentence-wrap, .practice-card, .score-card { padding-left: 14px; padding-right: 14px; }
+      .visual { margin: 0 14px; height: 190px; }
+      .sentence { font-size: 1.18rem; }
+      .translation { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="waves"></div>
+  <main class="container">
+    <section class="hero">
+      <div class="pill">One verb a day</div>
+      <div class="title-wrap">
+        <span class="to">To</span>
+        <span class="verb">Address</span>
+      </div>
+      <div class="brush"></div>
+      <div class="subtitle">Meaning • Uses • Examples</div>
+
+      <div class="controls" role="tablist" aria-label="Seções do conteúdo">
+        <button class="tab-btn active" data-target="aprofundamento">APROFUNDAMENTO</button>
+        <button class="tab-btn" data-target="pratica">PRÁTICA</button>
+      </div>
+
+      <div class="intro">
+        O verbo <strong>to address</strong> é formal, muito útil e aparece em contextos bem diferentes. Aqui você vai ver os <strong>4 significados principais</strong>, ouvir a pronúncia em inglês americano e praticar com atividades rápidas.
+      </div>
+    </section>
+
+    <section id="aprofundamento" class="panel active">
+      <h2 class="section-title">Aprofundamento</h2>
+      <p class="section-copy">
+        O mesmo verbo pode significar <strong>lidar com um problema</strong>, <strong>falar para um público</strong>, <strong>endereçar uma carta</strong> e <strong>usar uma forma de tratamento</strong>. O segredo é observar o contexto.
+      </p>
+
+      <div class="card-grid">
+        <article class="meaning-card">
+          <div class="meaning-header">
+            <div class="tag"><span class="tag-dot"></span> Core meaning</div>
+            <h3 class="meaning-title">Deal with a problem</h3>
+            <p class="meaning-pt">Usado quando você precisa tratar, enfrentar ou lidar com um problema, assunto ou questão.</p>
+          </div>
+          <div class="visual v-problem" aria-hidden="true"></div>
+          <div class="sentence-wrap">
+            <p class="sentence">We need to <span class="highlight">address</span> the issue immediately.</p>
+            <p class="translation">Precisamos lidar com o problema imediatamente.</p>
+            <button class="speak-btn" data-speak="We need to address the issue immediately.">🔊 Ouvir frase</button>
+          </div>
+        </article>
+
+        <article class="meaning-card">
+          <div class="meaning-header">
+            <div class="tag"><span class="tag-dot"></span> Speaking</div>
+            <h3 class="meaning-title">Speak to a group</h3>
+            <p class="meaning-pt">Muito comum em contexto formal: palestra, reunião, conferência, discurso, apresentação.</p>
+          </div>
+          <div class="visual v-speech" aria-hidden="true"></div>
+          <div class="sentence-wrap">
+            <p class="sentence">She will <span class="highlight">address</span> the audience tomorrow.</p>
+            <p class="translation">Ela vai falar para o público amanhã.</p>
+            <button class="speak-btn" data-speak="She will address the audience tomorrow.">🔊 Ouvir frase</button>
+          </div>
+        </article>
+
+        <article class="meaning-card">
+          <div class="meaning-header">
+            <div class="tag"><span class="tag-dot"></span> Mail</div>
+            <h3 class="meaning-title">Write the address</h3>
+            <p class="meaning-pt">Aqui o sentido é literal: escrever o nome e o endereço de destino em envelope, carta ou pacote.</p>
+          </div>
+          <div class="visual v-envelope" aria-hidden="true"></div>
+          <div class="sentence-wrap">
+            <p class="sentence">Please <span class="highlight">address</span> the envelope to the manager.</p>
+            <p class="translation">Por favor, enderece o envelope ao gerente.</p>
+            <button class="speak-btn" data-speak="Please address the envelope to the manager.">🔊 Ouvir frase</button>
+          </div>
+        </article>
+
+        <article class="meaning-card">
+          <div class="meaning-header">
+            <div class="tag"><span class="tag-dot"></span> Formality</div>
+            <h3 class="meaning-title">Use a title / form of address</h3>
+            <p class="meaning-pt">Quando você quer saber como se dirigir a alguém: Dr., Mr., Ms., Professor, Your Honor etc.</p>
+          </div>
+          <div class="visual v-title" aria-hidden="true"></div>
+          <div class="sentence-wrap">
+            <p class="sentence">How should I <span class="highlight">address</span> him—Dr. or Mr.?</p>
+            <p class="translation">Como devo me dirigir a ele—Dr. ou Sr.?</p>
+            <button class="speak-btn" data-speak="How should I address him? Doctor or Mister?">🔊 Ouvir frase</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="pratica" class="panel">
+      <h2 class="section-title">Prática</h2>
+      <p class="section-copy">
+        Responda às atividades e monte as frases. A ideia é fixar o sentido certo de <strong>address</strong> em contextos diferentes.
+      </p>
+
+      <div class="practice-grid">
+        <article class="practice-card">
+          <p class="question">1. Em “The CEO will address the team at 9 a.m.”, o verbo <strong>address</strong> significa:</p>
+          <div class="options quiz-options" data-answer="1">
+            <button class="option" data-correct="false">escrever o endereço</button>
+            <button class="option" data-correct="true">falar para um grupo</button>
+            <button class="option" data-correct="false">pegar alguém de carro</button>
+            <button class="option" data-correct="false">escolher uma opção</button>
+          </div>
+          <div class="feedback quiz-feedback">Escolha uma resposta.</div>
+        </article>
+
+        <article class="practice-card">
+          <p class="question">2. Em “We must address this complaint today.”, o verbo <strong>address</strong> significa:</p>
+          <div class="options quiz-options" data-answer="2">
+            <button class="option" data-correct="true">lidar com uma questão</button>
+            <button class="option" data-correct="false">colocar no correio</button>
+            <button class="option" data-correct="false">usar um título formal</button>
+            <button class="option" data-correct="false">buscar alguém no aeroporto</button>
+          </div>
+          <div class="feedback quiz-feedback">Escolha uma resposta.</div>
+        </article>
+      </div>
+
+      <div class="practice-grid" style="margin-top:18px;">
+        <article class="practice-card">
+          <p class="question">3. Em “How should I address the judge?”, o verbo <strong>address</strong> significa:</p>
+          <div class="options quiz-options" data-answer="3">
+            <button class="option" data-correct="false">resolver um problema</button>
+            <button class="option" data-correct="false">escrever o endereço do juiz</button>
+            <button class="option" data-correct="true">usar uma forma de tratamento</button>
+            <button class="option" data-correct="false">fazer uma escolha</button>
+          </div>
+          <div class="feedback quiz-feedback">Escolha uma resposta.</div>
+        </article>
+
+        <article class="practice-card score-card">
+          <h3 style="margin-top:0; font-size:1.2rem;">Resumo rápido</h3>
+          <div class="score-line"><span>1. tratar um problema</span><strong>deal with</strong></div>
+          <div class="score-line"><span>2. falar para um grupo</span><strong>speak to</strong></div>
+          <div class="score-line"><span>3. endereçar</span><strong>write on mail</strong></div>
+          <div class="score-line"><span>4. forma de tratamento</span><strong>use a title</strong></div>
+          <p class="small-note" style="margin:16px 0 0;">Dica: em textos formais, reuniões, e-mails, palestras e contexto corporativo, <strong>address</strong> aparece bastante.</p>
+        </article>
+      </div>
+
+      <div class="practice-grid" style="margin-top:18px; grid-template-columns: 1fr;">
+        <article class="practice-card">
+          <h3 style="margin-top:0; font-size:1.16rem;">Monte as frases</h3>
+          <p class="small-note">Arraste ou toque nas palavras na ordem certa para formar cada frase.</p>
+
+          <div class="sentence-builder" data-target="Please address the envelope to the manager.">
+            <p class="question" style="font-size:1rem; margin-bottom:10px;">A. Monte a frase correta.</p>
+            <div class="dropzone"></div>
+            <div class="chips">
+              <div class="chip" draggable="true">the</div>
+              <div class="chip" draggable="true">address</div>
+              <div class="chip" draggable="true">Please</div>
+              <div class="chip" draggable="true">to</div>
+              <div class="chip" draggable="true">the</div>
+              <div class="chip" draggable="true">manager.</div>
+              <div class="chip" draggable="true">envelope</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button class="tab-btn check-builder" style="min-width:unset;">Conferir</button>
+              <button class="tab-btn reset-builder" style="min-width:unset;">Reiniciar</button>
+            </div>
+            <div class="feedback builder-feedback">Frase alvo: “Please address the envelope to the manager.”</div>
+          </div>
+
+          <div class="sentence-builder" data-target="She will address the audience tomorrow.">
+            <p class="question" style="font-size:1rem; margin:18px 0 10px;">B. Monte a frase correta.</p>
+            <div class="dropzone"></div>
+            <div class="chips">
+              <div class="chip" draggable="true">address</div>
+              <div class="chip" draggable="true">tomorrow.</div>
+              <div class="chip" draggable="true">the</div>
+              <div class="chip" draggable="true">will</div>
+              <div class="chip" draggable="true">audience</div>
+              <div class="chip" draggable="true">She</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button class="tab-btn check-builder" style="min-width:unset;">Conferir</button>
+              <button class="tab-btn reset-builder" style="min-width:unset;">Reiniciar</button>
+            </div>
+            <div class="feedback builder-feedback">Frase alvo: “She will address the audience tomorrow.”</div>
+          </div>
+
+          <div class="sentence-builder" data-target="We need to address the issue immediately.">
+            <p class="question" style="font-size:1rem; margin:18px 0 10px;">C. Monte a frase correta.</p>
+            <div class="dropzone"></div>
+            <div class="chips">
+              <div class="chip" draggable="true">need</div>
+              <div class="chip" draggable="true">the</div>
+              <div class="chip" draggable="true">We</div>
+              <div class="chip" draggable="true">to</div>
+              <div class="chip" draggable="true">address</div>
+              <div class="chip" draggable="true">issue</div>
+              <div class="chip" draggable="true">immediately.</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button class="tab-btn check-builder" style="min-width:unset;">Conferir</button>
+              <button class="tab-btn reset-builder" style="min-width:unset;">Reiniciar</button>
+            </div>
+            <div class="feedback builder-feedback">Frase alvo: “We need to address the issue immediately.”</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="practice-grid" style="margin-top:18px;">
+        <article class="practice-card">
+          <h3 style="margin-top:0; font-size:1.16rem;">Pronúncia</h3>
+          <p class="small-note">Toque para ouvir o verbo isolado e frases modelo em inglês americano.</p>
+          <div style="display:grid; gap:10px; margin-top:14px;">
+            <button class="speak-btn" data-speak="address">🔊 address</button>
+            <button class="speak-btn" data-speak="We need to address the issue immediately.">🔊 We need to address the issue immediately.</button>
+            <button class="speak-btn" data-speak="She will address the audience tomorrow.">🔊 She will address the audience tomorrow.</button>
+            <button class="speak-btn" data-speak="How should I address him? Doctor or Mister?">🔊 How should I address him?</button>
+          </div>
+        </article>
+
+        <article class="practice-card">
+          <h3 style="margin-top:0; font-size:1.16rem;">Observação útil</h3>
+          <div class="small-note">Na fala rápida, <strong>address</strong> pode ter variação de pronúncia dependendo do uso e do sotaque, mas neste arquivo a voz está configurada para <strong>en-US</strong>.</div>
+          
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer-brand"><span class="brand-mark">»»</span> Fluency Studio • By Victor Gomes</div>
+  </main>
+
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-btn[data-target]');
+    const panels = document.querySelectorAll('.panel');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.94;
+      utterance.pitch = 1;
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /en-US/i.test(v.lang)) || voices.find(v => /en/i.test(v.lang));
+      if (preferred) utterance.voice = preferred;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+      btn.addEventListener('click', () => speakText(btn.dataset.speak));
+    });
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {};
+    }
+
+        document.querySelectorAll('.quiz-options').forEach(group => {
+      const feedback = group.parentElement.querySelector('.quiz-feedback');
+      const options = group.querySelectorAll('.option');
+
+      options.forEach(option => {
+        option.addEventListener('click', () => {
+          if ([...options].some(o => o.disabled)) return;
+          options.forEach(o => o.disabled = true);
+          const correct = option.dataset.correct === 'true';
+          option.classList.add(correct ? 'correct' : 'wrong');
+          if (!correct) {
+            const right = [...options].find(o => o.dataset.correct === 'true');
+            if (right) right.classList.add('correct');
+            feedback.textContent = 'Ainda não. Revise o contexto e tente de novo no próximo exercício.';
+          } else {
+            feedback.textContent = 'Correto.';
+          }
+        });
+      });
+    });
+
+    let dragged = null;
+
+    function bindChip(chip) {
+      chip.addEventListener('dragstart', () => dragged = chip);
+      chip.addEventListener('click', () => {
+        const builder = chip.closest('.sentence-builder');
+        const chips = builder.querySelector('.chips');
+        const dropzone = builder.querySelector('.dropzone');
+        const parent = chip.parentElement;
+        if (parent === chips) dropzone.appendChild(chip);
+        else chips.appendChild(chip);
+      });
+    }
+
+    document.querySelectorAll('.sentence-builder').forEach(builder => {
+      const chips = builder.querySelector('.chips');
+      const dropzone = builder.querySelector('.dropzone');
+      const feedback = builder.querySelector('.builder-feedback');
+      const target = builder.dataset.target;
+      const originalOrder = [...chips.querySelectorAll('.chip')].map(chip => chip.textContent.trim());
+
+      [...builder.querySelectorAll('.chip')].forEach(bindChip);
+
+      [chips, dropzone].forEach(zone => {
+        zone.addEventListener('dragover', e => e.preventDefault());
+        zone.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragged) zone.appendChild(dragged);
+        });
+      });
+
+      builder.querySelector('.check-builder').addEventListener('click', () => {
+        const built = [...dropzone.querySelectorAll('.chip')].map(c => c.textContent.trim()).join(' ');
+        if (built === target) {
+          feedback.textContent = 'Perfeito. Frase correta.';
+        } else {
+          feedback.textContent = `Ainda não. Tente: ${target}`;
+        }
+      });
+
+      builder.querySelector('.reset-builder').addEventListener('click', () => {
+        chips.innerHTML = '';
+        originalOrder.forEach(word => {
+          const chip = document.createElement('div');
+          chip.className = 'chip';
+          chip.draggable = true;
+          chip.textContent = word;
+          chips.appendChild(chip);
+          bindChip(chip);
+        });
+        dropzone.innerHTML = '';
+        feedback.textContent = `Frase alvo: “${target}”`;
+      });
+    });
+  </script>
+</body>
+</html>
