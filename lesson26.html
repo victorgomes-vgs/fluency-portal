@@ -1,683 +1,462 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+      <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fluency Studio | Student Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
-      authDomain: "fluency-studio-portal.firebaseapp.com",
-      projectId: "fluency-studio-portal",
-      storageBucket: "fluency-studio-portal.firebasestorage.app",
-      messagingSenderId: "568224359300",
-      appId: "1:568224359300:web:6f4e283315deb93224b3d1",
-    });
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <title>Lesson 26</title>
   <style>
-    *,*::before,*::after{box-sizing:border-box;}
-    html,body{height:100%;margin:0;padding:0;}
-    body{font-family:'Outfit',system-ui,sans-serif;background:#f0f4f8;color:#0c1524;min-height:100vh;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:radial-gradient(ellipse 900px 600px at 5% 0%,rgba(44,122,142,.06),transparent 60%),
-      radial-gradient(ellipse 700px 500px at 95% 90%,rgba(17,75,95,.05),transparent 60%);}
-    #root{position:relative;z-index:1;}
-    .glass{background:rgba(255,255,255,.97);border:1px solid rgba(11,31,51,.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
-    .muted{color:rgba(12,21,36,.52);}
-    .chip{background:rgba(11,31,51,.06);border:1px solid rgba(11,31,51,.10);}
-    .btn{border:1px solid rgba(11,31,51,.14);background:rgba(11,31,51,.05);transition:transform .08s,background .12s;cursor:pointer;color:#0c1524;}
-    .btn:hover{background:rgba(11,31,51,.09);}
-    .btn:active{transform:translateY(1px);}
-    .btn-primary{border:1px solid rgba(44,122,142,.50);background:linear-gradient(135deg,rgba(44,122,142,.90),rgba(17,75,95,.85));color:white;}
-    .btn-primary:hover{background:linear-gradient(135deg,rgba(44,122,142,1),rgba(17,75,95,.95));}
-    .btn-danger{border:1px solid rgba(90,31,43,.40);background:rgba(90,31,43,.08);color:#8a1a3a;}
-    .btn-danger:hover{background:rgba(90,31,43,.16);}
-    .input{background:rgba(255,255,255,.95);border:1px solid rgba(11,31,51,.15);outline:none;color:#0c1524;font-family:'Outfit',sans-serif;}
-    .input:focus{border-color:rgba(44,122,142,.75);box-shadow:0 0 0 3px rgba(44,122,142,.12);}
-    .input-light{background:white;border:1px solid rgba(11,31,51,.15);outline:none;color:#0c1524;border-radius:8px;padding:5px 10px;font-size:13px;width:100%;font-family:'Outfit',sans-serif;}
-    .input-light:focus{border-color:rgba(44,122,142,.6);box-shadow:0 0 0 3px rgba(44,122,142,.10);}
-    .err-box{background:rgba(90,31,43,.08);border:1px solid rgba(90,31,43,.35);border-radius:12px;padding:10px 14px;font-size:13px;color:#8a1a3a;}
-    .tab-bar{display:flex;background:rgba(11,31,51,.06);border:1px solid rgba(11,31,51,.08);border-radius:14px;padding:4px;gap:3px;overflow-x:auto;}
-    .tab-btn{flex:1;padding:9px 10px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.02em;cursor:pointer;border:none;background:transparent;color:rgba(12,21,36,.45);transition:all .18s;white-space:nowrap;min-width:fit-content;}
-    .tab-btn:hover{color:rgba(12,21,36,.75);background:rgba(11,31,51,.05);}
-    .tab-btn-active{background:linear-gradient(135deg,rgba(44,122,142,.90),rgba(17,75,95,.80));color:white;border:1px solid rgba(44,122,142,.40)!important;box-shadow:0 2px 12px rgba(44,122,142,.20);}
-    .book-m1{background:linear-gradient(135deg,rgba(26,138,158,.16),rgba(13,82,98,.10));border:1px solid rgba(26,138,158,.28);}
-    .book-m1:hover{background:linear-gradient(135deg,rgba(26,138,158,.24),rgba(13,82,98,.16));}
-    .book-m2{background:linear-gradient(135deg,rgba(42,100,170,.16),rgba(26,58,120,.10));border:1px solid rgba(42,100,170,.28);}
-    .book-m2:hover{background:linear-gradient(135deg,rgba(42,100,170,.24),rgba(26,58,120,.16));}
-    .book-m3{background:linear-gradient(135deg,rgba(26,154,122,.16),rgba(13,90,72,.10));border:1px solid rgba(26,154,122,.28);}
-    .book-m3:hover{background:linear-gradient(135deg,rgba(26,154,122,.24),rgba(13,90,72,.16));}
-    .book-m4{background:linear-gradient(135deg,rgba(90,74,170,.16),rgba(42,26,120,.10));border:1px solid rgba(90,74,170,.28);}
-    .book-m4:hover{background:linear-gradient(135deg,rgba(90,74,170,.24),rgba(42,26,120,.16));}
-    .book-m5{background:linear-gradient(135deg,rgba(42,122,170,.16),rgba(26,74,120,.10));border:1px solid rgba(42,122,170,.28);}
-    .book-m5:hover{background:linear-gradient(135deg,rgba(42,122,170,.24),rgba(26,74,120,.16));}
-    .book-m6{background:linear-gradient(135deg,rgba(58,90,138,.16),rgba(26,42,80,.10));border:1px solid rgba(58,90,138,.28);}
-    .book-m6:hover{background:linear-gradient(135deg,rgba(58,90,138,.24),rgba(26,42,80,.16));}
-    .lesson-card{background:rgba(255,255,255,.90);border-bottom:1px solid rgba(11,31,51,.07);color:#0c1524;transition:background .12s;}
-    .lesson-card:hover{background:rgba(255,255,255,1);}
-    .lesson-card:last-child{border-bottom:none;}
-    .review-card{background:rgba(44,122,142,.10);border-bottom:1px solid rgba(44,122,142,.13);color:#0c1524;transition:background .12s;}
-    .review-card:hover{background:rgba(44,122,142,.17);}
-    .review-card:last-child{border-bottom:none;}
-    .lesson-detail{background:rgba(248,250,252,.98);border-top:1px solid rgba(11,31,51,.08);padding:14px 18px 16px;}
-    .detail-label{font-size:11px;font-weight:700;color:#4a6a82;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-    .num-light{background:rgba(11,31,51,.08);border:1px solid rgba(11,31,51,.14);color:#1a3a52;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    .num-dark{background:rgba(44,122,142,.18);border:1px solid rgba(44,122,142,.32);color:#0e4a5a;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    .tag-input{background:rgba(15,58,69,.10);color:#0F3A45;border:1px solid rgba(15,58,69,.24);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-output{background:rgba(90,31,43,.08);color:#5A1F2B;border:1px solid rgba(90,31,43,.24);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .chevron-icon{transition:transform .2s;}
-    .chevron-open{transform:rotate(180deg);}
-    .ls-pendente{background:rgba(11,31,51,.07);border:1px solid rgba(11,31,51,.14);color:#5a7a90;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
-    .ls-andamento{background:rgba(190,135,20,.10);border:1px solid rgba(190,135,20,.34);color:#8a6010;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
-    .ls-concluida{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
-    .att-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .att-inactive{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .att-inactive:hover{background:rgba(11,31,51,.10);}
-    .att-presente{background:rgba(44,142,105,.12);border-color:rgba(44,142,105,.38);color:#1b6e48;}
-    .att-ausente{background:rgba(90,31,43,.10);border-color:rgba(90,31,43,.38);color:#9a2a38;}
-    .att-desmarcada{background:rgba(120,120,120,.09);border-color:rgba(120,120,120,.28);color:#555;}
-    .eval-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .eval-inactive{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .eval-inactive:hover{background:rgba(11,31,51,.10);}
-    .eval-revisao{background:rgba(190,135,20,.10);border-color:rgba(190,135,20,.38);color:#8a6010;}
-    .eval-atingiu{background:rgba(42,100,170,.10);border-color:rgba(42,100,170,.38);color:#1a3a7a;}
-    .eval-superou{background:rgba(44,142,105,.12);border-color:rgba(44,142,105,.38);color:#1b6e48;}
-    .sbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .sbtn-off{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .sbtn-off:hover{background:rgba(11,31,51,.10);}
-    .sbtn-pendente{background:rgba(11,31,51,.08);border-color:rgba(11,31,51,.20);color:#3a6a82;}
-    .sbtn-andamento{background:rgba(190,135,20,.13);border-color:rgba(190,135,20,.44);color:#7a5000;}
-    .sbtn-concluida{background:rgba(44,142,105,.14);border-color:rgba(44,142,105,.48);color:#155a38;}
-    .ds-realizada{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;}
-    .ds-andamento{background:rgba(44,122,142,.12);border:1px solid rgba(44,122,142,.33);color:#0e4a5a;}
-    .ds-ausente{background:rgba(90,31,43,.12);border:1px solid rgba(90,31,43,.36);color:#9a2a38;}
-    .ds-desmarcada{background:rgba(120,120,120,.09);border:1px solid rgba(120,120,120,.28);color:#555;}
-    .ds-rep-gratis{background:rgba(44,80,142,.10);border:1px solid rgba(44,80,142,.28);color:#1a3a8a;}
-    .ds-rep-paga{background:rgba(140,80,0,.10);border:1px solid rgba(140,80,0,.28);color:#8a4a00;}
-    .ds-cancelada{background:rgba(130,30,60,.10);border:1px solid rgba(130,30,60,.28);color:#8a1a3a;}
-    .diario-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;display:inline-block;}
-    .num-aula{background:linear-gradient(135deg,rgba(44,122,142,.85),rgba(17,75,95,.85));border:1px solid rgba(44,122,142,.50);color:white;min-width:3rem;text-align:center;border-radius:9px;padding:5px 8px;font-weight:700;font-size:12px;flex-shrink:0;line-height:1.3;}
-    .dtable-row{border-bottom:1px solid rgba(11,31,51,.06);}
-    .dtable-row:last-child{border-bottom:none;}
-    .dtable-row:hover{background:rgba(11,31,51,.02);}
-    select.ds-select{background:white;border:1px solid rgba(11,31,51,.15);color:#0c1524;border-radius:8px;padding:4px 8px;font-size:12px;outline:none;cursor:pointer;min-width:170px;font-family:'Outfit',sans-serif;}
-    select.ds-select:focus{border-color:rgba(44,122,142,.7);}
-    textarea.obs-input{background:white;border:1px solid rgba(11,31,51,.12);color:#0c1524;border-radius:8px;padding:5px 10px;font-size:12px;outline:none;resize:vertical;min-height:36px;width:100%;font-family:'Outfit',sans-serif;}
-    textarea.obs-input:focus{border-color:rgba(44,122,142,.7);}
-    .fin-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;}
-    .fin-paga{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;}
-    .fin-avencer{background:rgba(190,135,20,.10);border:1px solid rgba(190,135,20,.36);color:#8a6010;}
-    .fin-vencida{background:rgba(90,31,43,.12);border:1px solid rgba(90,31,43,.36);color:#9a2a38;}
-    .fin-aberto{background:rgba(42,100,170,.10);border:1px solid rgba(42,100,170,.28);color:#1a3a7a;}
-    .fin-creditos{background:rgba(90,74,170,.10);border:1px solid rgba(90,74,170,.28);color:#4a2a8a;}
-    .ivictor-btn{position:fixed;bottom:22px;right:22px;z-index:900;width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid rgba(44,122,142,.6);box-shadow:0 4px 24px rgba(0,0,0,.18),0 0 0 4px rgba(44,122,142,.10);cursor:pointer;transition:transform .18s;background:#0c2030;}
-    .ivictor-btn:hover{transform:scale(1.07);}
-    .ivictor-panel{position:fixed;bottom:92px;right:22px;z-index:900;width:280px;border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.20);animation:slideUp .22s ease-out;}
-    @keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-    .ivictor-header{background:linear-gradient(135deg,rgba(44,122,142,.92),rgba(17,75,95,.88));padding:12px 14px;display:flex;align-items:center;gap:10px;color:white;}
-    .ivictor-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.3);flex-shrink:0;background:#0c2030;}
-    .ivictor-body{background:rgba(255,255,255,.98);border:1px solid rgba(44,122,142,.18);backdrop-filter:blur(16px);padding:14px;}
-    .ivictor-msg{background:rgba(44,122,142,.08);border:1px solid rgba(44,122,142,.16);border-radius:12px 12px 12px 3px;padding:10px 13px;font-size:13px;line-height:1.5;color:#0c1524;}
-    .ivictor-date{font-size:11px;color:rgba(12,21,36,.38);margin-top:8px;text-align:center;}
-    .student-card{background:rgba(255,255,255,.95);border:1px solid rgba(11,31,51,.10);border-radius:16px;padding:16px;cursor:pointer;transition:all .15s;}
-    .student-card:hover{background:white;box-shadow:0 4px 16px rgba(11,31,51,.08);transform:translateY(-1px);}
-    ::-webkit-scrollbar{width:5px;height:5px;}
-    ::-webkit-scrollbar-track{background:transparent;}
-    ::-webkit-scrollbar-thumb{background:rgba(44,122,142,.22);border-radius:99px;}
-    .progress-fill{transition:width .6s ease;}
-  </style>
-  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useMemo } = React;
-const auth = firebase.auth();
-const db   = firebase.firestore();
-const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
-const WPP_VICTOR = "https://wa.me/5511919756733";
-const SCHED_URL  = "https://calendar.app.google/t19iBmkthDc6Ev8N7";
-const LOGO_URL   = "https://thefluency.studio/logo.png";
-const VICTOR_PHOTO = "";
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --border: #dbe3ee;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
 
-const MODULES = [
-  {id:1,name:"Immediate Conversation Studio",group:"Fluency Foundation",bookClass:"book-m1",accent:"rgba(26,138,158,"},
-  {id:2,name:"Professionalism Studio",group:"Fluency Foundation",bookClass:"book-m2",accent:"rgba(42,100,170,"},
-  {id:3,name:"Freedom Studio",group:"Fluency Foundation",bookClass:"book-m3",accent:"rgba(26,154,122,"},
-  {id:4,name:"Speech Studio",group:"Fluency Mastery",bookClass:"book-m4",accent:"rgba(90,74,170,"},
-  {id:5,name:"Proficient Studio",group:"Fluency Mastery",bookClass:"book-m5",accent:"rgba(42,122,170,"},
-  {id:6,name:"Master Studio",group:"Fluency Mastery",bookClass:"book-m6",accent:"rgba(58,90,138,"},
-];
-const GROUPS = ["Fluency Foundation","Fluency Mastery"];
+    * { box-sizing: border-box; }
 
-const ICONS = {
-  "log-in":        <><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></>,
-  "log-out":       <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
-  "rotate-ccw":    <><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></>,
-  "calendar":      <><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
-  "chevron-down":  <polyline points="6 9 12 15 18 9"/>,
-  "chevron-right": <polyline points="9 18 15 12 9 6"/>,
-  "book-open":     <><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>,
-  "plus":          <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
-  "trash-2":       <><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>,
-  "arrow-left":    <><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></>,
-  "user":          <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
-  "users":         <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
-  "user-plus":     <><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></>,
-  "link":          <><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>,
-  "external-link": <><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></>,
-  "message-circle":<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>,
-  "pencil":        <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
-  "x":             <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
-  "dollar-sign":   <><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>,
-  "credit-card":   <><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></>,
-  "file-text":     <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></>,
-};
-function Icon({name,size=18,className="",style={}}){
-  const p=ICONS[name]; if(!p) return null;
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{display:"inline-block",flexShrink:0,...style}}>{p}</svg>;
-}
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
 
-function getLessonTitle(n){return `Lesson ${n}`;}
-function getTodayPT(){return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-function formatDateBR(iso){if(!iso)return "—";const[y,m,d]=iso.split("-");return `${d}/${m}/${y}`;}
-function formatCurrency(val){if(val===null||val===undefined||val===""||isNaN(val))return "—";return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(val);}
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: 24px auto 48px;
+    }
 
-function playLessonSound(){
-  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();
-  [[440,0],[660,.07],[880,.13]].forEach(([freq,delay])=>{
-    const osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type='sine';
-    osc.frequency.setValueAtTime(freq,ctx.currentTime+delay);osc.frequency.exponentialRampToValueAtTime(freq*1.5,ctx.currentTime+delay+.1);
-    gain.gain.setValueAtTime(.07,ctx.currentTime+delay);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+.28);
-    osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+.3);});}catch(e){}
-}
+    .header {
+      margin-bottom: 20px;
+    }
 
-function generateBooks(){
-  const books=[];let g=0;
-  for(let bi=1;bi<=6;bi++){
-    const items=[];
-    for(let bl=1;bl<=5;bl++){
-      for(let sq=1;sq<=10;sq++){
-        g++;const isReview=(sq===10);const lt=isReview?null:([3,6,9].includes(sq)?"output":"input");
-        items.push({id:isReview?`b${bi}-r${bl}`:`b${bi}-l${g}`,pos:g,type:isReview?"review":"lesson",lessonType:lt,num:g,title:getLessonTitle(g),status:"pendente",date:"",obs:"",link:"",attendance:"",evaluation:"",linkMaterial:"",linkAula:"",linkChamada:"",linkTarefa:""});
+    .title {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .hero,
+    .glossary,
+    .story,
+    .practice,
+    .notes {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hero-media {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #e5e7eb;
+    }
+
+    .hero-media img {
+      display: block;
+      width: 100%;
+      max-height: 560px;
+      object-fit: cover;
+    }
+
+    .main-play {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(to top, rgba(0,0,0,.35), rgba(0,0,0,.12));
+      border: none;
+      cursor: pointer;
+    }
+
+    .main-play .circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+      transition: transform .18s ease, background .18s ease;
+      font-size: 2.6rem;
+      color: var(--primary-dark);
+      padding-left: 8px;
+    }
+
+    .main-play:hover .circle {
+      transform: scale(1.03);
+      background: #fff;
+    }
+
+    .hero-help {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin: 0 0 14px;
+    }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px 16px;
+    }
+
+    .glossary-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fbfdff;
+    }
+
+    .glossary-item strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .glossary-item span {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .story-text {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      white-space: pre-line;
+    }
+
+    .line-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .line-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .line-number {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .line-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: .95rem;
+      font-weight: 700;
+    }
+
+    .speak-btn,
+    .reveal-btn,
+    .hide-btn,
+    .clear-btn {
+      background: #e6fffb;
+      color: var(--primary-dark);
+      border: 1px solid #b7efe8;
+    }
+
+    .student-line {
+      width: 100%;
+      min-height: 62px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      outline: none;
+    }
+
+    .student-line:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .12);
+    }
+
+    .answer {
+      display: none;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #14532d;
+      font-weight: 600;
+    }
+
+    .answer.show {
+      display: block;
+    }
+
+    .notes ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    audio { display: none; }
+
+    @media (max-width: 640px) {
+      .main-play .circle {
+        width: 90px;
+        height: 90px;
+        font-size: 2.2rem;
+      }
+
+      .container {
+        width: min(100% - 20px, 1100px);
       }
     }
-    books.push({bookIdx:bi,items});
-  }
-  return books;
-}
-const BOOKS_TEMPLATE=generateBooks();
-function mergeBooks(trilhaData){return BOOKS_TEMPLATE.map(b=>({...b,items:b.items.map(i=>({...i,...(trilhaData[i.id]||{})}))}));}
-function getCurrentModule(books){for(let i=books.length-1;i>=0;i--){if(books[i].items.some(it=>it.status==="andamento"||it.status==="concluida"))return i+1;}return 1;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="title">Lesson 26</h1>
+      <p class="subtitle">Listen to the audio, write each sentence, and reveal the text only when needed.</p>
+    </header>
 
-const DIARIO_STATUS=[
-  {value:"realizada",label:"Realizada",cls:"ds-realizada"},
-  {value:"andamento",label:"Em Andamento",cls:"ds-andamento"},
-  {value:"ausente",label:"Ausente",cls:"ds-ausente"},
-  {value:"desmarcada",label:"Desmarcada",cls:"ds-desmarcada"},
-  {value:"rep_gratis",label:"Reposição Gratuita",cls:"ds-rep-gratis"},
-  {value:"rep_paga",label:"Reposição Paga",cls:"ds-rep-paga"},
-  {value:"cancelada",label:"Cancelada pelo Prof.",cls:"ds-cancelada"},
-];
-const dStatusMap=Object.fromEntries(DIARIO_STATUS.map(s=>[s.value,s]));
-
-const FIN_STATUS=[
-  {value:"paga",label:"Paga",cls:"fin-paga"},
-  {value:"a_vencer",label:"A Vencer",cls:"fin-avencer"},
-  {value:"vencida",label:"Vencida",cls:"fin-vencida"},
-  {value:"em_aberto",label:"Em Aberto",cls:"fin-aberto"},
-];
-const finStatusMap=Object.fromEntries(FIN_STATUS.map(s=>[s.value,s]));
-const FINANCEIRO_DEFAULT={tipo:"mensalidade",creditosTotal:0,creditosUsados:0,parcelas:[]};
-
-function LoadingScreen(){
-  return <div className="min-h-screen flex items-center justify-center"><div className="chip rounded-2xl px-8 py-6 text-center glass"><div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"/><p className="muted text-sm">Carregando...</p></div></div>;
-}
-
-function Login(){
-  const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const [loading,setLoading]=useState(false);const [imgOk,setImgOk]=useState(true);
-  async function handleLogin(){if(!email||!pass){setErr("Preencha email e senha.");return;}setLoading(true);setErr("");try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){setErr("Email ou senha incorretos.");setLoading(false);}}
-  return(
-    <div className="min-h-screen flex items-center justify-center px-5">
-      <div className="w-full max-w-md glass rounded-2xl p-7">
-        <div className="text-center mb-6">
-          {imgOk?<img src={LOGO_URL} alt="Fluency Studio" className="h-14 mx-auto mb-2" onError={()=>setImgOk(false)}/>:<h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>Fluency Studio</h1>}
-          <p className="muted text-sm mt-1">Student Portal · Fluência Real em 18 Meses</p>
-        </div>
-        <div className="space-y-3">
-          <div><label className="block text-sm muted mb-1">Email</label><input className="w-full input rounded-xl px-4 py-3" placeholder="seuemail@exemplo.com" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></div>
-          <div><label className="block text-sm muted mb-1">Senha</label><input type="password" className="w-full input rounded-xl px-4 py-3" placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} autoComplete="current-password" onKeyDown={e=>e.key==="Enter"&&handleLogin()}/></div>
-          {err&&<div className="err-box">{err}</div>}
-          <button className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" onClick={handleLogin} disabled={loading}>
-            {loading?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="log-in" size={16}/>}{loading?"Entrando...":"Entrar"}
-          </button>
-        </div>
+    <section class="hero">
+      <h2 class="section-title">Main Audio</h2>
+      <div class="hero-media">
+        <img src="lesson26a" alt="Brazilian college student" />
+        <button class="main-play" id="mainPlayBtn" aria-label="Play main audio">
+          <span class="circle">▶</span>
+        </button>
       </div>
-    </div>
-  );
-}
+      <p class="hero-help">Click the big play button to listen to the main audio from the repository.</p>
+      <audio id="mainAudio" src="lesson26audio" preload="metadata"></audio>
+    </section>
 
-function LessonBadge({status}){
-  const m={pendente:"ls-pendente",andamento:"ls-andamento",concluida:"ls-concluida"};
-  const l={pendente:"Pendente",andamento:"Em Andamento",concluida:"Concluída"};
-  return <span className={m[status]||m.pendente}>{l[status]||"Pendente"}</span>;
-}
-
-function AdminLessonPanel({item,updateField,setStatus}){
-  const AT=[{v:"presente",l:"Presente",c:"att-presente"},{v:"ausente",l:"Ausente",c:"att-ausente"},{v:"desmarcada",l:"Desmarcada",c:"att-desmarcada"}];
-  const EV=[{v:"revisao",l:"Precisa de Revisão"},{v:"atingiu",l:"Atingiu"},{v:"superou",l:"Superou"}];
-  const ST=[{v:"pendente",l:"Pendente"},{v:"andamento",l:"Em Andamento"},{v:"concluida",l:"Concluída"}];
-  const LK=[{f:"linkMaterial",l:"Material"},{f:"linkAula",l:"Aula Interativa"},{f:"linkChamada",l:"Chamada"},{f:"linkTarefa",l:"Tarefa"}];
-  return(
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div><div className="detail-label">Status</div><div className="flex gap-2 flex-wrap mt-1">{ST.map(s=><button key={s.v} onClick={()=>setStatus(s.v)} className={"sbtn "+(item.status===s.v?"sbtn-"+s.v:"sbtn-off")}>{s.l}</button>)}</div></div>
-        <div><div className="detail-label">Data</div><input type="date" className="input-light mt-1" value={item.date||""} onChange={e=>updateField("date",e.target.value)}/></div>
+    <section class="glossary">
+      <h2 class="section-title">Glossary</h2>
+      <div class="glossary-grid">
+        <div class="glossary-item"><strong>college student</strong><span>estudante universitário</span></div>
+        <div class="glossary-item"><strong>business</strong><span>negócios</span></div>
+        <div class="glossary-item"><strong>semester</strong><span>semestre</span></div>
+        <div class="glossary-item"><strong>course</strong><span>curso</span></div>
+        <div class="glossary-item"><strong>project</strong><span>projeto</span></div>
+        <div class="glossary-item"><strong>exam</strong><span>prova / exame</span></div>
+        <div class="glossary-item"><strong>meeting</strong><span>reunião</span></div>
+        <div class="glossary-item"><strong>deadline</strong><span>prazo final</span></div>
+        <div class="glossary-item"><strong>schedule</strong><span>agenda / cronograma</span></div>
+        <div class="glossary-item"><strong>task</strong><span>tarefa</span></div>
+        <div class="glossary-item"><strong>homework</strong><span>lição de casa</span></div>
+        <div class="glossary-item"><strong>review notes</strong><span>revisar anotações</span></div>
+        <div class="glossary-item"><strong>hour</strong><span>hora</span></div>
+        <div class="glossary-item"><strong>minute</strong><span>minuto</span></div>
+        <div class="glossary-item"><strong>finish strong</strong><span>terminar bem / com força</span></div>
+        <div class="glossary-item"><strong>step by step</strong><span>passo a passo</span></div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div><div className="detail-label">Presença</div><div className="flex gap-2 flex-wrap mt-1">{AT.map(a=><button key={a.v} onClick={()=>updateField("attendance",a.v)} className={"att-btn "+(item.attendance===a.v?a.c:"att-inactive")}>{a.l}</button>)}</div></div>
-        <div><div className="detail-label">Avaliação</div><div className="flex gap-2 flex-wrap mt-1">{EV.map(e=><button key={e.v} onClick={()=>updateField("evaluation",e.v)} className={"eval-btn "+(item.evaluation===e.v?"eval-"+e.v:"eval-inactive")}>{e.l}</button>)}</div></div>
-      </div>
-      <div><div className="detail-label mb-2">Links</div><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{LK.map(lk=><div key={lk.f}><div className="text-xs font-semibold mb-1" style={{color:"#6a8aaa"}}>{lk.l}</div><input type="url" className="input-light" placeholder="https://" value={item[lk.f]||(lk.f==="linkMaterial"?item.link||"":"")} onChange={e=>updateField(lk.f,e.target.value)}/></div>)}</div></div>
-      <div><div className="detail-label">Observações</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="Notas..." value={item.obs||""} onChange={e=>updateField("obs",e.target.value)}/></div>
-    </div>
-  );
-}
+    </section>
 
-function StudentLessonView({item}){
-  const AL={presente:"Presente",ausente:"Ausente",desmarcada:"Desmarcada"};
-  const AS={presente:"att-presente",ausente:"att-ausente",desmarcada:"att-desmarcada"};
-  const EL={revisao:"Precisa de Revisão",atingiu:"Atingiu",superou:"Superou"};
-  const ES={revisao:"eval-revisao",atingiu:"eval-atingiu",superou:"eval-superou"};
-  const LK=[{f:"linkMaterial",l:"Material"},{f:"linkAula",l:"Aula Interativa"},{f:"linkChamada",l:"Chamada"},{f:"linkTarefa",l:"Tarefa"}];
-  const anyLinks=LK.some(lk=>item[lk.f]||(lk.f==="linkMaterial"&&item.link));
-  const hasInfo=item.date||item.attendance||item.evaluation||item.obs||anyLinks;
-  if(!hasInfo)return <p className="text-xs muted">Nenhuma informação disponível ainda.</p>;
-  return(
-    <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        {item.date&&<div><div className="detail-label">Data</div><p className="text-sm font-medium" style={{color:"#2a4a62"}}>{formatDateBR(item.date)}</p></div>}
-        {item.status&&<div><div className="detail-label">Status</div><LessonBadge status={item.status}/></div>}
-        {item.attendance&&<div><div className="detail-label">Presença</div><span className={"att-btn "+AS[item.attendance]}>{AL[item.attendance]}</span></div>}
-        {item.evaluation&&<div><div className="detail-label">Avaliação</div><span className={"eval-btn "+ES[item.evaluation]}>{EL[item.evaluation]}</span></div>}
-      </div>
-      {item.obs&&<div><div className="detail-label">Observações</div><p className="text-sm" style={{color:"#2a4a62"}}>{item.obs}</p></div>}
-      {anyLinks&&<div><div className="detail-label mb-2">Links</div><div className="flex gap-2 flex-wrap">{LK.map(lk=>{const url=item[lk.f]||(lk.f==="linkMaterial"?item.link:"");if(!url)return null;return <a key={lk.f} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.26)",color:"#0e4a5a"}}><Icon name="external-link" size={11}/>{lk.l}</a>;})}</div></div>}
-    </div>
-  );
-}
+    <section class="practice">
+      <h2 class="section-title">Listen, Write, and Reveal</h2>
+      <div id="practiceList"></div>
+    </section>
 
-function LessonItem({item,uid,isAdmin}){
-  const [open,setOpen]=useState(false);const isReview=item.type==="review";
-  function handleToggle(){if(!open)playLessonSound();setOpen(o=>!o);}
-  async function updateField(field,val){const patch={};patch[`trilha.${item.id}.${field}`]=val;await db.collection("students").doc(uid).update(patch);}
-  async function setStatus(s){await updateField("status",s);}
-  return(
-    <div className={isReview?"review-card":"lesson-card"}>
-      <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={handleToggle}>
-        <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
-            {isReview&&<Icon name="rotate-ccw" size={12} style={{opacity:.55,flexShrink:0}}/>}
-            {item.title}
-            {!isReview&&<span className={item.lessonType==="input"?"tag-input":"tag-output"}>{item.lessonType==="input"?"Input":"Output"}</span>}
-          </div>
-          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap muted">
-            <span>{isReview?"Review Unificada · Assíncrona":`Lesson ${item.num}`}</span>
-            {item.date&&<span className="flex items-center gap-1"><Icon name="calendar" size={10}/>{formatDateBR(item.date)}</span>}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0"><LessonBadge status={item.status}/><Icon name="chevron-down" size={14} className={"chevron-icon muted"+(open?" chevron-open":"")}/></div>
-      </div>
-      {open&&<div className="lesson-detail">{isAdmin?<AdminLessonPanel item={item} updateField={updateField} setStatus={setStatus}/>:<StudentLessonView item={item}/>}</div>}
-    </div>
-  );
-}
+    <section class="notes">
+      <h2 class="section-title">Teacher Notes</h2>
+      <ul>
+        <li>The main image file should be named <strong>lesson26a</strong>.</li>
+        <li>The main audio file should be named <strong>lesson26audio</strong>.</li>
+        <li>The big play button uses the repository file <strong>lesson26audio</strong>.</li>
+        <li>Each small speaker button reads one sentence in American English for copying practice.</li>
+      </ul>
+    </section>
+  </div>
 
-function BookAccordion({bookIdx,items,uid,isAdmin}){
-  const [open,setOpen]=useState(false);const mod=MODULES[bookIdx-1];
-  const done=items.filter(i=>i.status==="concluida").length;const pct=Math.round((done/items.length)*100);
-  return(
-    <div className="overflow-hidden rounded-2xl mb-3" style={{border:"1px solid rgba(11,31,51,.08)"}}>
-      <button className={"w-full text-left px-5 py-4 flex items-center justify-between gap-4 transition-all "+mod.bookClass} onClick={()=>setOpen(o=>!o)}>
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="chip rounded-xl px-3 py-2 text-center min-w-[52px] shrink-0"><div className="text-xs muted">Módulo</div><div className="font-bold text-base">{bookIdx}</div></div>
-          <div className="flex-1 min-w-0">
-            <div className="font-bold text-base truncate">{mod.name}</div>
-            <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{background:"rgba(0,0,0,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:`linear-gradient(90deg,${mod.accent}.85),${mod.accent}.55))`}}/></div>
-          </div>
-        </div>
-        <Icon name="chevron-down" size={16} className={"chevron-icon muted"+(open?" chevron-open":"")}/>
-      </button>
-      {open&&<div>{items.map(item=><LessonItem key={item.id} item={item} uid={uid} isAdmin={isAdmin}/>)}</div>}
-    </div>
-  );
-}
+  <script>
+    const lines = [
+      "Lucas is a college student.",
+      "This year, he wants to study business.",
+      "It is a new semester, and everything feels new.",
+      "This morning, he starts a new course.",
+      "He has a big project, an exam, and a meeting with his teacher.",
+      "There is also a deadline next week.",
+      "When he looks at his schedule, he knows he has to start the project today.",
+      "He opens his notebook and begins his task.",
+      "On weekends, Lucas studies more.",
+      "He does his homework and reviews his notes.",
+      "Sometimes it is difficult, but he thinks it is great to learn new things.",
+      "Each day, he studies a little more.",
+      "He uses every hour and every minute carefully.",
+      "Step by step, he completes everything.",
+      "At the end of the week, Lucas feels proud.",
+      "He is tired, but happy.",
+      "He still wants to finish the semester strong, and he knows he can do it."
+    ];
 
-function TrilhaSection({uid,isAdmin}){
-  const [trilhaData,setTrilhaData]=useState(null);
-  useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>setTrilhaData(doc.exists?doc.data().trilha||{}:{})),[uid]);
-  const books=useMemo(()=>trilhaData?mergeBooks(trilhaData):[],[trilhaData]);
-  const {totalDone,totalItems}=useMemo(()=>{let done=0,total=0;books.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida")done++;}));return{totalDone:done,totalItems:total};},[books]);
-  const progress=totalItems?Math.round((totalDone/totalItems)*100):0;
-  if(!trilhaData)return <LoadingScreen/>;
-  return(
-    <div>
-      <div className="glass rounded-2xl p-5 mb-6 text-center">
-        <h2 className="text-xl font-bold mb-1" style={{fontFamily:"'Sora',sans-serif"}}>Trilha da Fluência</h2>
-        <p className="muted text-sm mb-4">Fluência Real em 18 Meses</p>
-        <div className="max-w-sm mx-auto">
-          <div className="flex justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{progress}%</span></div>
-          <div className="h-2.5 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
-        </div>
-      </div>
-      {GROUPS.map(group=>{
-        const gm=MODULES.filter(m=>m.group===group);
-        return <div key={group} className="mb-6">
-          <div className="flex items-center gap-3 mb-3"><div className="h-px flex-1" style={{background:"rgba(11,31,51,.10)"}}/><span className="text-xs font-bold tracking-widest muted uppercase px-2">{group}</span><div className="h-px flex-1" style={{background:"rgba(11,31,51,.10)"}}/></div>
-          {gm.map(mod=><BookAccordion key={mod.id} bookIdx={mod.id} items={books.find(b=>b.bookIdx===mod.id)?.items||[]} uid={uid} isAdmin={isAdmin}/>)}
-        </div>;
-      })}
-    </div>
-  );
-}
+    const practiceList = document.getElementById('practiceList');
 
-function RecursosSection({uid,isAdmin,links}){
-  const [editLinks,setEditLinks]=useState(false);const [localLinks,setLocalLinks]=useState(links);
-  useEffect(()=>setLocalLinks(links),[links]);
-  function updateLink(idx,field,val){setLocalLinks(prev=>prev.map((l,i)=>i===idx?{...l,[field]:val}:l));}
-  function addLink(){setLocalLinks(prev=>[...prev,{id:Date.now(),label:"Novo link",url:""}]);}
-  function removeLink(idx){setLocalLinks(prev=>prev.filter((_,i)=>i!==idx));}
-  async function saveLinks(){await db.collection("students").doc(uid).update({links:localLinks});setEditLinks(false);}
-  return(
-    <div className="max-w-lg mx-auto"><div className="glass rounded-2xl p-5">
-      <div className="flex items-center justify-between mb-4"><h3 className="font-bold text-lg">Recursos</h3>{isAdmin&&!editLinks&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>setEditLinks(true)}><Icon name="pencil" size={12}/> Editar</button>}</div>
-      {editLinks?(
-        <div className="space-y-2">
-          {localLinks.map((lk,idx)=><div key={lk.id} className="chip rounded-xl p-3 space-y-1.5"><input className="w-full input rounded-lg px-3 py-2 text-sm" placeholder="Nome" value={lk.label} onChange={e=>updateLink(idx,"label",e.target.value)}/><div className="flex gap-2"><input className="flex-1 input rounded-lg px-3 py-2 text-sm" placeholder="https://" value={lk.url} onChange={e=>updateLink(idx,"url",e.target.value)}/><button className="btn btn-danger rounded-lg px-2.5" onClick={()=>removeLink(idx)}><Icon name="trash-2" size={13}/></button></div></div>)}
-          <button className="btn rounded-xl px-4 py-2 text-sm w-full inline-flex items-center justify-center gap-2" onClick={addLink}><Icon name="plus" size={14}/> Adicionar</button>
-          <div className="flex gap-2 mt-2"><button className="btn btn-primary rounded-xl px-4 py-2 text-sm flex-1 font-semibold" onClick={saveLinks}>Salvar</button><button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setLocalLinks(links);setEditLinks(false);}}>Cancelar</button></div>
-        </div>
-      ):(
-        <div className="space-y-3">
-          {links.map(lk=><a key={lk.id} href={lk.url} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="link"/></div><div><div className="font-semibold">{lk.label}</div><div className="text-xs muted truncate max-w-[180px]">{lk.url}</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>)}
-          <a href={WPP_VICTOR} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block" style={{borderColor:"rgba(37,211,102,.28)",background:"rgba(37,211,102,.05)"}}><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{background:"rgba(37,211,102,.12)",border:"1px solid rgba(37,211,102,.26)"}}><Icon name="message-circle" style={{color:"#25d366"}}/></div><div><div className="font-semibold">WhatsApp — Victor</div><div className="text-xs muted">Falar com o professor</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
-          <a href={SCHED_URL} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="calendar"/></div><div><div className="font-semibold">Agendar Aula</div><div className="text-xs muted">Google Calendar</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
-        </div>
-      )}
-    </div></div>
-  );
-}
+    function createLineCard(text, index) {
+      const card = document.createElement('div');
+      card.className = 'line-card';
 
-function DiarioSection({uid,isAdmin}){
-  const [entries,setEntries]=useState(null);
-  useEffect(()=>db.collection("students").doc(uid).collection("diario").orderBy("num","asc").onSnapshot(snap=>setEntries(snap.docs.map(d=>({id:d.id,...d.data()})))),[uid]);
-  async function addEntry(){const nextNum=entries&&entries.length>0?Math.max(...entries.map(e=>e.num))+1:1;await db.collection("students").doc(uid).collection("diario").add({num:nextNum,date:new Date().toISOString().slice(0,10),licaoNum:1,status:"andamento",obs:"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
-  async function updateEntry(id,patch){await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);}
-  async function deleteEntry(id){if(!confirm("Remover esta aula?"))return;await db.collection("students").doc(uid).collection("diario").doc(id).delete();}
-  if(!entries)return null;
-  const iS={background:"white",border:"1px solid rgba(11,31,51,.15)",color:"#0c1524",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",fontFamily:"'Outfit',sans-serif"};
-  return(
-    <div><div className="glass rounded-2xl p-5">
-      <div className="flex items-center justify-between gap-3 flex-wrap mb-5">
-        <div><h3 className="text-lg font-bold">Diário de Aulas</h3><p className="muted text-sm mt-0.5">Registro por aula.</p></div>
-        <div className="flex items-center gap-3"><div className="chip rounded-2xl px-4 py-2 text-sm"><span className="muted">Total:</span> <span className="font-semibold">{entries.length} aulas</span></div>{isAdmin&&<button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={addEntry}><Icon name="plus" size={16}/> Nova Aula</button>}</div>
-      </div>
-      {entries.length===0?<div className="text-center py-12 muted"><Icon name="book-open" size={32} className="mx-auto mb-3 opacity-30"/><p>Nenhuma aula lançada ainda.</p></div>:(
-        <div className="overflow-x-auto"><table className="w-full text-sm">
-          <thead><tr className="text-left muted text-xs"><th className="py-3 pr-3">Aula</th><th className="py-3 pr-3">Data</th><th className="py-3 pr-3">Lição</th><th className="py-3 pr-3">Status</th><th className="py-3 pr-3">Observações</th>{isAdmin&&<th className="py-3"/>}</tr></thead>
-          <tbody>{entries.map(e=>{const ds=dStatusMap[e.status]||DIARIO_STATUS[0];return(
-            <tr key={e.id} className="dtable-row align-top">
-              <td className="py-3 pr-3"><div className="num-aula inline-flex flex-col items-center"><span className="text-xs opacity-70">Aula</span><span>{e.num}</span></div></td>
-              <td className="py-3 pr-3 whitespace-nowrap">{isAdmin?<input type="date" value={e.date||""} onChange={ev=>updateEntry(e.id,{date:ev.target.value})} style={{...iS,width:130}}/>:<span className="muted">{formatDateBR(e.date)||"—"}</span>}</td>
-              <td className="py-3 pr-3">{isAdmin?<><input type="number" min={1} max={300} value={e.licaoNum||1} onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})} style={{...iS,width:65,textAlign:"center"}}/><div className="text-xs muted mt-1 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div></>:<><span className="font-semibold">Lesson {e.licaoNum}</span><div className="text-xs muted mt-0.5 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div></>}</td>
-              <td className="py-3 pr-3 whitespace-nowrap">{isAdmin?<><select className="ds-select" value={e.status} onChange={ev=>updateEntry(e.id,{status:ev.target.value})}>{DIARIO_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select><div className="mt-1.5"><span className={"diario-badge "+ds.cls}>{ds.label}</span></div></>:<span className={"diario-badge "+ds.cls}>{ds.label}</span>}</td>
-              <td className="py-3 pr-3" style={{minWidth:200}}>{isAdmin?<textarea className="obs-input" rows={2} placeholder="Resumo..." value={e.obs||""} onChange={ev=>updateEntry(e.id,{obs:ev.target.value})}/>:<span className="muted text-xs">{e.obs||"—"}</span>}</td>
-              {isAdmin&&<td className="py-3"><button className="btn btn-danger rounded-lg px-2.5 py-2" onClick={()=>deleteEntry(e.id)} title="Remover"><Icon name="trash-2" size={14}/></button></td>}
-            </tr>);})}</tbody>
-        </table></div>
-      )}
-    </div></div>
-  );
-}
+      const header = document.createElement('div');
+      header.className = 'line-header';
 
-function FinanceiroStrip({financeiro,onGoToFinanceiro}){
-  const tipo=financeiro?.tipo||"mensalidade";const parcelas=financeiro?.parcelas||[];const creditosTotal=financeiro?.creditosTotal||0;
-  const hasData=parcelas.length>0||(tipo==="creditos"&&creditosTotal>0);
-  if(!hasData)return null;
-  const sorted=[...parcelas].sort((a,b)=>a.dataVencimento>b.dataVencimento?1:-1);
-  const lastPaid=[...sorted].reverse().find(p=>p.status==="paga");
-  const next=sorted.find(p=>p.status!=="paga");
-  let statusLabel="",statusCls="";
-  if(tipo==="creditos"){const r=creditosTotal-(financeiro?.creditosUsados||0);statusLabel=`${r} Crédito${r!==1?"s":""} Restante${r!==1?"s":""}`;statusCls="fin-creditos";}
-  else if(sorted.some(p=>p.status==="vencida")){statusLabel="Atrasado";statusCls="fin-vencida";}
-  else if(sorted.some(p=>p.status==="paga")){statusLabel="Em Dia";statusCls="fin-paga";}
-  return(
-    <div onClick={onGoToFinanceiro} style={{background:"#0c1524",borderRadius:12,padding:"10px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:10,marginTop:12,flexWrap:"wrap"}}>
-      <div style={{display:"flex",alignItems:"center",gap:7,flexShrink:0}}><Icon name="dollar-sign" size={13} style={{color:"rgba(44,122,142,1)"}}/><span style={{color:"#eaf2f7",fontWeight:700,fontSize:11,letterSpacing:"0.07em",textTransform:"uppercase"}}>Financeiro</span></div>
-      <div style={{width:1,height:14,background:"rgba(255,255,255,.15)",flexShrink:0}}/>
-      {lastPaid&&<span style={{color:"rgba(234,242,247,.65)",fontSize:12}}>Última: <strong style={{color:"#eaf2f7"}}>{lastPaid.mes}</strong> <span className="fin-badge fin-paga" style={{fontSize:10}}>Paga</span></span>}
-      {next&&<><div style={{width:1,height:14,background:"rgba(255,255,255,.15)",flexShrink:0}}/><span style={{color:"rgba(234,242,247,.65)",fontSize:12}}>Próx: <strong style={{color:"#eaf2f7"}}>{next.mes}</strong>{next.dataVencimento&&<span> · {formatDateBR(next.dataVencimento)}</span>}</span></>}
-      {statusLabel&&<span className={"fin-badge "+statusCls} style={{marginLeft:"auto",fontSize:10}}>{statusLabel}</span>}
-    </div>
-  );
-}
+      const number = document.createElement('div');
+      number.className = 'line-number';
+      number.textContent = `Line ${index + 1}`;
 
-function FinanceiroSection({uid,isAdmin,financeiro}){
-  const tipo=financeiro?.tipo||"mensalidade";const parcelas=financeiro?.parcelas||[];
-  const creditosTotal=financeiro?.creditosTotal||0;const creditosUsados=financeiro?.creditosUsados||0;const creditosRestantes=creditosTotal-creditosUsados;
-  const sorted=[...parcelas].sort((a,b)=>a.dataVencimento>b.dataVencimento?1:-1);
-  async function setTipo(t){await db.collection("students").doc(uid).update({"financeiro.tipo":t});}
-  async function setCredito(field,val){await db.collection("students").doc(uid).update({[`financeiro.${field}`]:parseInt(val)||0});}
-  async function addParcela(){const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:""};await db.collection("students").doc(uid).update({"financeiro.parcelas":[...parcelas,nova]});}
-  async function updateParcela(id,field,val){await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.map(p=>p.id===id?{...p,[field]:val}:p)});}
-  async function deleteParcela(id){if(!confirm("Remover esta parcela?"))return;await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});}
-  return(
-    <div className="space-y-4">
-      {isAdmin&&<div className="glass rounded-2xl p-5">
-        <h3 className="font-bold text-base mb-3">Tipo de Contrato</h3>
-        <div className="flex gap-2 mb-4">
-          <button onClick={()=>setTipo("mensalidade")} className={"sbtn "+(tipo==="mensalidade"?"sbtn-concluida":"sbtn-off")}>Mensalidade</button>
-          <button onClick={()=>setTipo("creditos")} className={"sbtn "+(tipo==="creditos"?"sbtn-andamento":"sbtn-off")}>Créditos</button>
-        </div>
-        {tipo==="creditos"&&<div className="grid grid-cols-2 gap-4">
-          <div><div className="detail-label">Total de Créditos</div><input type="number" min={0} className="input-light mt-1" value={creditosTotal} onChange={e=>setCredito("creditosTotal",e.target.value)}/></div>
-          <div><div className="detail-label">Créditos Usados</div><input type="number" min={0} className="input-light mt-1" value={creditosUsados} onChange={e=>setCredito("creditosUsados",e.target.value)}/></div>
-        </div>}
-      </div>}
-      {tipo==="creditos"&&!isAdmin&&<div className="glass rounded-2xl p-5">
-        <div className="flex items-center justify-between"><div><h3 className="font-bold text-base">Seus Créditos</h3><p className="muted text-sm">{creditosUsados} usados de {creditosTotal}</p></div><div className="text-center"><div className="text-3xl font-extrabold" style={{color:"rgba(44,122,142,1)"}}>{creditosRestantes}</div><div className="text-xs muted">restantes</div></div></div>
-        {creditosTotal>0&&<div className="mt-3 h-2 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:Math.round((creditosUsados/creditosTotal)*100)+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>}
-      </div>}
-      {tipo==="creditos"&&isAdmin&&creditosTotal>0&&<div className="chip rounded-2xl p-4 flex items-center justify-between"><span className="text-sm font-semibold">Créditos Restantes</span><span className="fin-badge fin-creditos" style={{fontSize:13}}>{creditosRestantes} de {creditosTotal}</span></div>}
-      <div className="glass rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-base">{tipo==="creditos"?"Lançamentos":"Parcelas"}</h3>
-          {isAdmin&&<button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={addParcela}><Icon name="plus" size={14}/> Adicionar</button>}
-        </div>
-        {sorted.length===0?<div className="text-center py-8 muted"><Icon name="credit-card" size={28} className="mx-auto mb-2 opacity-30"/><p className="text-sm">Nenhum lançamento cadastrado ainda.</p></div>:(
-          <div className="space-y-3">{sorted.map(p=>{const fs=finStatusMap[p.status]||FIN_STATUS[3];return(
-            <div key={p.id} className="chip rounded-2xl p-4">
-              {isAdmin?(
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div><div className="detail-label">Mês / Referência</div><input className="input-light mt-1" placeholder="Ex: Abril 2026" value={p.mes} onChange={e=>updateParcela(p.id,"mes",e.target.value)}/></div>
-                    <div><div className="detail-label">Vencimento</div><input type="date" className="input-light mt-1" value={p.dataVencimento} onChange={e=>updateParcela(p.id,"dataVencimento",e.target.value)}/></div>
-                    <div><div className="detail-label">Status</div><select className="ds-select mt-1" value={p.status} onChange={e=>updateParcela(p.id,"status",e.target.value)}>{FIN_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-                    <div><div className="detail-label">Valor (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valor} onChange={e=>updateParcela(p.id,"valor",parseFloat(e.target.value)||0)}/></div>
-                    <div><div className="detail-label">Com Desconto (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valorDesconto} onChange={e=>updateParcela(p.id,"valorDesconto",parseFloat(e.target.value)||0)}/></div>
-                    <div><div className="detail-label">Comprovante (Link)</div><input type="url" className="input-light mt-1" placeholder="https://drive.google.com/..." value={p.comprovante} onChange={e=>updateParcela(p.id,"comprovante",e.target.value)}/></div>
-                  </div>
-                  <div className="flex justify-end"><button className="btn btn-danger rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>deleteParcela(p.id)}><Icon name="trash-2" size={12}/> Remover</button></div>
-                </div>
-              ):(
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-3"><div><div className="font-bold text-base">{p.mes||"—"}</div>{p.dataVencimento&&<div className="text-xs muted mt-0.5">Vencimento: {formatDateBR(p.dataVencimento)}</div>}</div><span className={"fin-badge "+fs.cls}>{fs.label}</span></div>
-                  <div className="flex items-center gap-5 flex-wrap">
-                    {p.valor>0&&<div><div className="detail-label">Valor</div><div className="font-semibold text-sm">{formatCurrency(p.valor)}</div></div>}
-                    {p.valorDesconto>0&&<div><div className="detail-label">Com Desconto</div><div className="font-semibold text-sm" style={{color:"rgba(44,122,142,1)"}}>{formatCurrency(p.valorDesconto)}</div></div>}
-                    {p.comprovante&&<a href={p.comprovante} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.24)",color:"#0e4a5a"}}><Icon name="file-text" size={11}/> Ver Comprovante</a>}
-                  </div>
-                </div>
-              )}
-            </div>);
-          })}</div>
-        )}
-      </div>
-    </div>
-  );
-}
+      const actions = document.createElement('div');
+      actions.className = 'line-actions';
 
-function IVictor(){
-  const [open,setOpen]=useState(false);const [imgOk,setImgOk]=useState(!!VICTOR_PHOTO);
-  const today=getTodayPT();const todayDisplay=today.charAt(0).toUpperCase()+today.slice(1);
-  return(<>
-    {open&&<div className="ivictor-panel">
-      <div className="ivictor-header"><div className="ivictor-avatar">{imgOk&&VICTOR_PHOTO?<img src={VICTOR_PHOTO} alt="Victor" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>:<div className="w-full h-full flex items-center justify-center text-lg font-bold" style={{color:"rgba(44,122,142,1)"}}>V</div>}</div><div><div className="font-bold text-sm">iVictor</div><div className="text-xs" style={{color:"rgba(234,242,247,.65)"}}>Seu coach virtual</div></div><button className="ml-auto btn rounded-lg p-1.5" onClick={()=>setOpen(false)}><Icon name="x" size={14}/></button></div>
-      <div className="ivictor-body"><div className="ivictor-msg">Sou o iVictor, pode perguntar o que quiser 😊</div><div className="ivictor-date">{todayDisplay}</div></div>
-    </div>}
-    <button className="ivictor-btn" onClick={()=>setOpen(o=>!o)} title="iVictor">{imgOk&&VICTOR_PHOTO?<img src={VICTOR_PHOTO} alt="Victor" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>:<div className="w-full h-full flex items-center justify-center font-bold text-xl" style={{color:"rgba(44,122,142,1)",fontFamily:"'Sora',sans-serif"}}>V</div>}</button>
-  </>);
-}
+      const speakBtn = document.createElement('button');
+      speakBtn.className = 'speak-btn';
+      speakBtn.type = 'button';
+      speakBtn.innerHTML = '🔊 Play sentence';
+      speakBtn.addEventListener('click', () => speakText(text));
 
-function StudentDetail({uid,isAdmin,onBack}){
-  const [profile,setProfile]=useState(null);const [links,setLinks]=useState([]);const [trilhaData,setTrilhaData]=useState({});const [financeiro,setFinanceiro]=useState(null);const [activeTab,setActiveTab]=useState("financeiro");const [editProfile,setEditProfile]=useState(false);const [editFields,setEditFields]=useState({});const [imgOk,setImgOk]=useState(true);
-  useEffect(()=>{
-    const ref=db.collection("students").doc(uid);
-    ref.get().then(doc=>{if(!doc.exists)ref.set({name:"Aluno",level:"A1",program:"Fluência Real em 18 Meses",coach:"Victor Gomes",profession:"",birthday:"",links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],trilha:{},financeiro:FINANCEIRO_DEFAULT});});
-    return ref.onSnapshot(doc=>{if(doc.exists){const d=doc.data();setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach,profession:d.profession||"",birthday:d.birthday||""});setLinks(d.links||[]);setTrilhaData(d.trilha||{});setFinanceiro(d.financeiro||FINANCEIRO_DEFAULT);}});
-  },[uid]);
-  const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
-  const currentMod=useMemo(()=>getCurrentModule(books),[books]);
-  async function saveProfile(){await db.collection("students").doc(uid).update(editFields);setEditProfile(false);}
-  function startEditProfile(){setEditFields({name:profile.name,level:profile.level,profession:profile.profession,birthday:profile.birthday});setEditProfile(true);}
-  function calcAge(bday){if(!bday)return null;const[y,m,d]=bday.split("-").map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m||(today.getMonth()+1===m&&today.getDate()<d))age--;return age;}
-  if(!profile)return <LoadingScreen/>;
-  const age=calcAge(profile.birthday);
-  const tabs=[{id:"financeiro",label:"Financeiro"},{id:"trilha",label:"Trilha"},{id:"recursos",label:"Recursos"},{id:"diario",label:"Diário"}];
-  return(
-    <div className="min-h-screen pb-20">
-      <header className="px-4 py-4 sticky top-0 z-50" style={{background:"rgba(240,244,248,.92)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(11,31,51,.08)"}}>
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            {isAdmin&&onBack&&<button className="btn rounded-xl px-3 py-2.5 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={16}/></button>}
-            {imgOk?<img src={LOGO_URL} alt="Fluency Studio" className="h-8" onError={()=>setImgOk(false)}/>:<span className="font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>Fluency Studio</span>}
-          </div>
-          <div className="flex items-center gap-2">
-            {isAdmin&&<span className="text-xs font-bold tracking-widest px-3 py-1.5 rounded-full" style={{background:"rgba(44,122,142,.12)",border:"1px solid rgba(44,122,142,.32)",color:"rgba(44,122,142,1)"}}>ADMIN</span>}
-            <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm" onClick={()=>auth.signOut()}><Icon name="log-out" size={16}/><span className="hidden sm:inline">Sair</span></button>
-          </div>
-        </div>
-      </header>
-      <main className="px-4 pt-6 max-w-3xl mx-auto">
-        <div className="glass rounded-2xl p-5 mb-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>{profile.name}</h1>
-              {!editProfile&&<div className="flex flex-wrap gap-2 mt-2">
-                {profile.profession&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{profile.profession}</span>}
-                {age!==null&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{age} anos</span>}
-                {profile.birthday&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">🎂 {formatDateBR(profile.birthday).slice(0,5)}</span>}
-                <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:MODULES[currentMod-1]?.accent+".12)",border:"1px solid "+MODULES[currentMod-1]?.accent+".30)"}}>Módulo {currentMod} · {MODULES[currentMod-1]?.name}</span>
-              </div>}
-              {!editProfile&&financeiro&&<FinanceiroStrip financeiro={financeiro} onGoToFinanceiro={()=>setActiveTab("financeiro")}/>}
-            </div>
-            {isAdmin&&!editProfile&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5 shrink-0" onClick={startEditProfile}><Icon name="pencil" size={12}/> Perfil</button>}
-          </div>
-          {editProfile&&<div className="mt-4 space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div><div className="detail-label">Nome</div><input className="input-light mt-1" value={editFields.name||""} onChange={e=>setEditFields(p=>({...p,name:e.target.value}))}/></div>
-              <div><div className="detail-label">Nível (CEFR)</div><select className="input-light mt-1" value={editFields.level||"A1"} onChange={e=>setEditFields(p=>({...p,level:e.target.value}))}>{["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}</select></div>
-              <div><div className="detail-label">Profissão</div><input className="input-light mt-1" placeholder="Ex: Médica..." value={editFields.profession||""} onChange={e=>setEditFields(p=>({...p,profession:e.target.value}))}/></div>
-              <div><div className="detail-label">Data de Nascimento</div><input type="date" className="input-light mt-1" value={editFields.birthday||""} onChange={e=>setEditFields(p=>({...p,birthday:e.target.value}))}/></div>
-            </div>
-            <div className="flex gap-2"><button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveProfile}>Salvar</button><button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setEditProfile(false)}>Cancelar</button></div>
-          </div>}
-        </div>
-        <div className="tab-bar mb-5">{tabs.map(t=><button key={t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTab(t.id)}>{t.label}</button>)}</div>
-        {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={isAdmin} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
-        {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={isAdmin}/>}
-        {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={isAdmin} links={links}/>}
-        {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={isAdmin}/>}
-      </main>
-      <IVictor/>
-    </div>
-  );
-}
+      const revealBtn = document.createElement('button');
+      revealBtn.className = 'reveal-btn';
+      revealBtn.type = 'button';
+      revealBtn.textContent = 'Reveal text';
 
-function AdminApp({user}){
-  const [students,setStudents]=useState(null);const [selectedUid,setSelectedUid]=useState(null);const [showAdd,setShowAdd]=useState(false);const [newUid,setNewUid]=useState("");const [newName,setNewName]=useState("");const [newLevel,setNewLevel]=useState("A1");const [addErr,setAddErr]=useState("");const [imgOk,setImgOk]=useState(true);
-  useEffect(()=>db.collection("students").onSnapshot(snap=>setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})))),[]);
-  async function createStudent(){
-    if(!newUid.trim()||!newName.trim()){setAddErr("Preencha UID e nome.");return;}
-    const ref=db.collection("students").doc(newUid.trim());const doc=await ref.get();
-    if(doc.exists){setAddErr("Este UID já existe.");return;}
-    await ref.set({name:newName.trim(),level:newLevel,program:"Fluência Real em 18 Meses",coach:"Victor Gomes",profession:"",birthday:"",links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],trilha:{},financeiro:FINANCEIRO_DEFAULT});
-    setNewUid("");setNewName("");setNewLevel("A1");setAddErr("");setShowAdd(false);
-  }
-  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin onBack={()=>setSelectedUid(null)}/>;
-  return(
-    <div className="min-h-screen">
-      <header className="px-5 py-5" style={{background:"rgba(240,244,248,.92)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(11,31,51,.08)"}}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {imgOk?<img src={LOGO_URL} alt="Fluency Studio" className="h-9" onError={()=>setImgOk(false)}/>:<span className="text-xl font-extrabold" style={{fontFamily:"'Sora',sans-serif"}}>Fluency Studio</span>}
-            <div><h1 className="text-xl font-bold">Painel do Professor</h1><p className="muted text-xs">Gerencie alunos, trilhas e diários.</p></div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowAdd(o=>!o)}><Icon name="user-plus" size={16}/> Novo Aluno</button>
-            <button className="btn rounded-xl px-4 py-3 inline-flex items-center gap-2" onClick={()=>auth.signOut()}><Icon name="log-out"/><span className="hidden sm:inline text-sm">Sair</span></button>
-          </div>
-        </div>
-      </header>
-      <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
-        {showAdd&&<div className="glass rounded-2xl p-6 mb-5">
-          <h3 className="font-bold text-lg mb-4">Adicionar Aluno</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div><label className="block text-xs muted mb-1">UID do Firebase</label><input className="w-full input rounded-xl px-4 py-3 text-sm" placeholder="UID" value={newUid} onChange={e=>setNewUid(e.target.value)}/></div>
-            <div><label className="block text-xs muted mb-1">Nome</label><input className="w-full input rounded-xl px-4 py-3 text-sm" placeholder="Nome completo" value={newName} onChange={e=>setNewName(e.target.value)}/></div>
-            <div><label className="block text-xs muted mb-1">Nível</label><select className="w-full input rounded-xl px-4 py-3 text-sm" value={newLevel} onChange={e=>setNewLevel(e.target.value)}>{["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}</select></div>
-          </div>
-          {addErr&&<div className="err-box mt-3">{addErr}</div>}
-          <div className="flex gap-3 mt-4"><button className="btn btn-primary rounded-xl px-5 py-2.5 font-semibold text-sm" onClick={createStudent}>Criar</button><button className="btn rounded-xl px-5 py-2.5 text-sm" onClick={()=>{setShowAdd(false);setAddErr("");}}>Cancelar</button></div>
-        </div>}
-        {!students?<LoadingScreen/>:students.length===0?<div className="glass rounded-2xl p-12 text-center muted"><Icon name="users" size={40} className="mx-auto mb-4 opacity-30"/><p>Nenhum aluno cadastrado ainda.</p></div>:(
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {students.map(s=>{
-              const merged=mergeBooks(s.trilha||{});let done=0,total=0;merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida")done++;}));const pct=total?Math.round((done/total)*100):0;const mod=getCurrentModule(merged);const finVencida=s.financeiro?.parcelas?.some(p=>p.status==="vencida");
-              return(<div key={s.uid} className="student-card" onClick={()=>setSelectedUid(s.uid)}>
-                <div className="flex items-center gap-3 mb-3"><div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div><div className="flex-1 min-w-0"><div className="font-bold truncate">{s.name||"Aluno"}</div><div className="text-xs muted">Módulo {mod} · Nível {s.level||"—"}</div></div>{finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}<Icon name="chevron-right" size={16} className="muted shrink-0"/></div>
-                <div className="flex items-center justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{pct}%</span></div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
-                <div className="text-xs muted mt-2">{done} de {total} lições concluídas</div>
-              </div>);
-            })}
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'hide-btn';
+      hideBtn.type = 'button';
+      hideBtn.textContent = 'Hide text';
 
-function App(){
-  const [user,setUser]=useState(undefined);
-  useEffect(()=>auth.onAuthStateChanged(u=>setUser(u||null)),[]);
-  if(user===undefined)return <LoadingScreen/>;
-  if(!user)return <Login/>;
-  if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
-  return <StudentDetail uid={user.uid} isAdmin={false}/>;
-}
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
-</script>
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'clear-btn';
+      clearBtn.type = 'button';
+      clearBtn.textContent = 'Clear';
+
+      actions.appendChild(speakBtn);
+      actions.appendChild(revealBtn);
+      actions.appendChild(hideBtn);
+      actions.appendChild(clearBtn);
+
+      header.appendChild(number);
+      header.appendChild(actions);
+
+      const textarea = document.createElement('textarea');
+      textarea.className = 'student-line';
+      textarea.placeholder = 'Type the sentence here...';
+
+      const answer = document.createElement('div');
+      answer.className = 'answer';
+      answer.textContent = text;
+
+      revealBtn.addEventListener('click', () => answer.classList.add('show'));
+      hideBtn.addEventListener('click', () => answer.classList.remove('show'));
+      clearBtn.addEventListener('click', () => {
+        textarea.value = '';
+        textarea.focus();
+      });
+
+      card.appendChild(header);
+      card.appendChild(textarea);
+      card.appendChild(answer);
+
+      return card;
+    }
+
+    lines.forEach((line, index) => {
+      practiceList.appendChild(createLineCard(line, index));
+    });
+
+    const mainAudio = document.getElementById('mainAudio');
+    const mainPlayBtn = document.getElementById('mainPlayBtn');
+
+    mainPlayBtn.addEventListener('click', async () => {
+      try {
+        if (mainAudio.paused) {
+          await mainAudio.play();
+        } else {
+          mainAudio.pause();
+        }
+      } catch (error) {
+        alert('Main audio not found. Add the file "lesson26audio" to the repository.');
+      }
+    });
+
+    mainAudio.addEventListener('play', () => {
+      mainPlayBtn.querySelector('.circle').textContent = '❚❚';
+      mainPlayBtn.querySelector('.circle').style.paddingLeft = '0';
+    });
+
+    mainAudio.addEventListener('pause', () => {
+      mainPlayBtn.querySelector('.circle').textContent = '▶';
+      mainPlayBtn.querySelector('.circle').style.paddingLeft = '8px';
+    });
+
+    mainAudio.addEventListener('ended', () => {
+      mainPlayBtn.querySelector('.circle').textContent = '▶';
+      mainPlayBtn.querySelector('.circle').style.paddingLeft = '8px';
+    });
+
+    let voices = [];
+
+    function loadVoices() {
+      voices = window.speechSynthesis.getVoices();
+    }
+
+    loadVoices();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function pickAmericanVoice() {
+      const preferred = voices.find(v => /en-US/i.test(v.lang) && /Google|Samantha|Aaron|Jenny|Guy|Joey|Matthew|Ivy|Joanna/i.test(v.name));
+      if (preferred) return preferred;
+      const usVoice = voices.find(v => /en-US/i.test(v.lang));
+      if (usVoice) return usVoice;
+      const englishVoice = voices.find(v => /^en/i.test(v.lang));
+      return englishVoice || null;
+    }
+
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Text-to-speech is not supported in this browser.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.92;
+      utterance.pitch = 1;
+      const voice = pickAmericanVoice();
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
 </body>
 </html>
