@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluency Practice - Health & Appointments</title>
+    <!-- Tailwind CSS for elegant styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons for modern icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Audio playing animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        .playing { animation: pulse-ring 1.5s infinite; background-color: #4f46e5 !important; color: white !important;}
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        /* Input styling */
+        input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .input-correct { border-color: #10b981; background-color: #ecfdf5; color: #065f46; pointer-events: none;}
+        .input-incorrect { border-color: #ef4444; animation: shake 0.4s; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+<div class="max-w-5xl mx-auto space-y-12">
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+        <span class="bg-indigo-600 text-white text-sm font-bold tracking-widest uppercase px-4 py-1.5 rounded-full shadow-sm">
+            Real Life
+        </span>
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Health & Appointments</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto">Listen to the audio, focus on the pronunciation, and repeat out loud. Building muscle memory is key to fluency.</p>
+    </header>
+
+    <!-- Part 1: Listen and Repeat -->
+    <section class="glass-panel rounded-2xl p-6 md:p-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <!-- Column 1 -->
+            <div class="space-y-3">
+                <button onclick="playAudio(this, 'I have a headache.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">I have a headache.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'She has an appointment at the dentist today.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">She has an appointment at the dentist today.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'Does he have a fever?')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">Does he have a fever?</span>
+                </button>
+
+                <button onclick="playAudio(this, 'Take a painkiller for your toothache.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">Take a painkiller for your toothache.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'I think she has a stomachache.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">I think she has a stomachache.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'I still take that medicine every day.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">I still take that medicine every day.</span>
+                </button>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-3">
+                <button onclick="playAudio(this, 'I\'m in pain. I need to go to the hospital.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">I'm in pain. I need to go to the hospital.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'He is at the train station.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">He is at the train station.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'Drink a lot of water. It\'s good for your health.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">Drink a lot of water. It's good for your health.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'The children are at home because they\'re sick.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">The children are at home because they're sick.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'Please take those reports to the doctor.')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">Please take those reports to the doctor.</span>
+                </button>
+
+                <button onclick="playAudio(this, 'Do you have to take these pills?')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all text-left group">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                    </div>
+                    <span class="text-lg font-medium text-slate-700">Do you have to take these pills?</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Part 2: Check it out (Vocabulary & Structure) -->
+    <section>
+        <div class="flex items-center gap-3 mb-6">
+            <span class="bg-slate-800 text-white text-xs font-bold tracking-wider uppercase px-3 py-1 rounded">Check it out!</span>
+            <div class="h-px bg-slate-200 flex-grow"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Block 1 -->
+            <button onclick="playAudio(this, 'Get well soon. Bless you!')" class="glass-panel p-6 rounded-xl flex flex-col justify-center text-center hover:-translate-y-1 transition-transform cursor-pointer border-t-4 border-t-purple-500">
+                <p class="font-medium text-slate-700">• Get well soon.</p>
+                <p class="font-medium text-slate-700">• Bless you!</p>
+            </button>
+            
+            <!-- Block 2 -->
+            <button onclick="playAudio(this, 'this is, becomes, these are. that is, becomes, those are.')" class="glass-panel p-6 rounded-xl flex flex-col justify-center text-center hover:-translate-y-1 transition-transform cursor-pointer border-t-4 border-t-sky-400 bg-sky-50/30">
+                <p class="font-medium text-slate-700">this <strong>is</strong> &rarr; these <strong>are</strong></p>
+                <p class="font-medium text-slate-700">that <strong>is</strong> &rarr; those <strong>are</strong></p>
+            </button>
+
+            <!-- Block 3 -->
+            <button onclick="playAudio(this, 'I want to make an appointment to see a dentist.')" class="glass-panel p-6 rounded-xl flex flex-col justify-center text-center hover:-translate-y-1 transition-transform cursor-pointer border-t-4 border-t-blue-500 bg-blue-50/30">
+                <p class="font-medium text-slate-700">I want to <strong>make</strong> an appointment <strong>to</strong> see a dentist.</p>
+            </button>
+
+            <!-- Block 4 -->
+            <button onclick="playAudio(this, 'What\'s the matter? I have a toothache.')" class="glass-panel p-6 rounded-xl flex flex-col justify-center text-center hover:-translate-y-1 transition-transform cursor-pointer border-t-4 border-t-slate-300">
+                <p class="font-medium text-slate-700">– What's the matter?</p>
+                <p class="font-medium text-slate-700">– I have a toothache.</p>
+            </button>
+
+            <!-- Block 5 -->
+            <button onclick="playAudio(this, 'I\'m. You\'re. He\'s. She\'s. It\'s. We\'re. You\'re. They\'re.')" class="glass-panel p-6 rounded-xl flex flex-col justify-center text-center hover:-translate-y-1 transition-transform cursor-pointer border-t-4 border-t-purple-700 bg-purple-50/30 md:col-span-2">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-slate-700 font-medium">
+                    <span>I'm</span><span>You're</span><span>He's</span><span>She's</span>
+                    <span>It's</span><span>We're</span><span>You're</span><span>They're</span>
+                </div>
+            </button>
+        </div>
+    </section>
+
+    <!-- Part 3: Dictation Challenge -->
+    <section class="glass-panel rounded-2xl p-6 md:p-10 border-t-4 border-t-indigo-500">
+        <header class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                <i class="ph-fill ph-headphones text-indigo-600"></i>
+                Listening Challenge
+            </h2>
+            <p class="text-slate-500 mt-2">Listen to the new phrases carefully and type exactly what you hear. Press <kbd class="px-2 py-1 bg-slate-100 rounded text-xs font-mono border">Enter</kbd> to check.</p>
+        </header>
+
+        <div id="dictation-container" class="space-y-4">
+            <!-- JavaScript will populate the exercises here -->
+        </div>
+
+        <div class="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-xl flex items-start gap-4">
+            <i class="ph-fill ph-lightbulb text-3xl text-indigo-500 mt-1 shrink-0"></i>
+            <div>
+                <h4 class="font-bold text-indigo-900">Teacher's Note</h4>
+                <p class="text-indigo-800/80 text-sm mt-1">Mistakes are proof that you are trying! If you miss a word, don't worry. Listen to it again, fix it, and read the sentence out loud to train your brain.</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // Audio Player Function
+    function playAudio(btnElement, text) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85; // Slightly slower, clear pronunciation
+
+        // Visual feedback when playing
+        const iconContainer = btnElement.querySelector('div') || btnElement;
+        
+        utterance.onstart = () => iconContainer.classList.add('playing');
+        utterance.onend = () => iconContainer.classList.remove('playing');
+        utterance.onerror = () => iconContainer.classList.remove('playing');
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Dictation Data (New phrases based on the vocabulary)
+    const dictationSentences = [
+        "I need to make an appointment today.",
+        "What's the matter with those reports?",
+        "He's at the hospital because he's sick.",
+        "Do you have to take that medicine every day?",
+        "Take a painkiller for your headache.",
+        "I'm in pain and I have a fever."
+    ];
+
+    // Clean string for fair validation
+    function cleanString(str) {
+        // Removes punctuation and extra spaces, makes it lowercase
+        return str.toLowerCase().replace(/[.,?!'’]/g, '').trim().replace(/\s+/g, ' ');
+    }
+
+    function checkAnswer(index) {
+        const inputEl = document.getElementById(`input-${index}`);
+        const feedbackEl = document.getElementById(`feedback-${index}`);
+        const iconEl = document.getElementById(`icon-${index}`);
+        
+        const userInput = inputEl.value;
+        const correctAnswer = dictationSentences[index];
+
+        if (userInput.trim() === '') return;
+
+        if (cleanString(userInput) === cleanString(correctAnswer)) {
+            // Correct State
+            inputEl.classList.remove('input-incorrect');
+            inputEl.classList.add('input-correct');
+            feedbackEl.innerHTML = "Excellent! Nailed it.";
+            feedbackEl.className = "text-sm text-emerald-600 font-medium mt-2";
+            iconEl.innerHTML = '<i class="ph-fill ph-check-circle text-emerald-500 text-2xl"></i>';
+        } else {
+            // Incorrect State
+            inputEl.classList.remove('input-incorrect'); // reset animation
+            void inputEl.offsetWidth; // trigger reflow for animation
+            inputEl.classList.add('input-incorrect');
+            
+            feedbackEl.innerHTML = "Almost there! Listen closely and try again.";
+            feedbackEl.className = "text-sm text-rose-500 font-medium mt-2";
+            iconEl.innerHTML = '<i class="ph-fill ph-x-circle text-rose-400 text-2xl"></i>';
+        }
+    }
+
+    // Render Dictation Exercises
+    const container = document.getElementById('dictation-container');
+    
+    dictationSentences.forEach((sentence, index) => {
+        const html = `
+            <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center">
+                
+                <button onclick="playAudio(this, '${sentence.replace(/'/g, "\\'")}')" class="shrink-0 w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer group">
+                    <i class="ph-fill ph-play text-xl group-hover:scale-110 transition-transform"></i>
+                </button>
+                
+                <div class="flex-grow w-full relative">
+                    <input 
+                        type="text" 
+                        id="input-${index}" 
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-lg rounded-lg px-4 py-3 transition-all"
+                        placeholder="Type what you hear..."
+                        autocomplete="off"
+                        onkeydown="if(event.key === 'Enter') checkAnswer(${index})"
+                    >
+                    <div id="feedback-${index}"></div>
+                </div>
+
+                <div id="icon-${index}" class="shrink-0 w-8 flex justify-center hidden md:flex">
+                    <!-- Icon placeholder -->
+                </div>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+</script>
+
+</body>
+</html>
