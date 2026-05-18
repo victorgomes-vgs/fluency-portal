@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="VDN9W-oudeFv8IKATD1TyvOP64VCcLWx_B9KKa9C22s" />
+<title>Fluency Studio | Inglês Personalizado e Estratégico — Fluência em 18 Meses</title>
+<meta name="description" content="Aprenda inglês com método científico, personalizado para o seu perfil cognitivo. Programa de fluência em 18 meses com acompanhamento real.">
+<meta name="author" content="Fluency Studio — Professor Victor Gomes">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thefluency.studio/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://thefluency.studio/">
+<meta property="og:title" content="Fluency Studio | Fluência em Inglês em 18 Meses">
+<meta property="og:description" content="Método personalizado baseado no seu estilo de aprendizagem. Inglês para profissionais e adultos.">
+<meta property="og:image" content="https://thefluency.studio/assets/capa.jpg">
+<meta property="og:locale" content="pt_BR">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Fluency Studio","url":"https://thefluency.studio","telephone":"+5511921423578","founder":{"@type":"Person","name":"Victor Gomes"},"sameAs":["https://www.instagram.com/teacher_victorgomes/"]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --black:#07090c;--black-soft:#0c1018;--navy:#0B1F33;--navy-mid:#0f2640;--navy-light:#163354;
+  --gray-light:#e8eaed;--gray-card:#f0f2f5;--white:#ffffff;
+  --teal:#00b8a9;--teal-dark:#008f84;--green-wpp:#25D366;--green-wpp-d:#1aab55;
+  --text-light:#f0f2f5;--text-muted-light:#94a3b8;--text-dark:#0c1018;--text-muted-dark:#374151;
+  --border-dark:rgba(255,255,255,0.08);--border-light:rgba(11,31,51,0.12);
+  --shadow-dark:0 20px 60px rgba(0,0,0,0.5);--shadow-light:0 8px 40px rgba(11,31,51,0.15);
+  --r:6px;--r-lg:14px;--r-full:9999px;--ease:cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text-light);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none;}
+a{text-decoration:none;color:inherit;transition:all .3s var(--ease);}
+ul{list-style:none;}
+img{max-width:100%;display:block;}
+
+/* CURSOR */
+.cursor{position:fixed;width:10px;height:10px;background:var(--teal);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,width .25s,height .25s;mix-blend-mode:screen;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(0,184,169,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s;}
+
+/* LAYOUT */
+.container{max-width:1180px;margin:0 auto;padding:0 2rem;}
+.section{padding:7rem 0;position:relative;}
+.bg-dark{background:linear-gradient(160deg,var(--black) 0%,var(--black-soft) 60%,#0d1829 100%);}
+.bg-light{background:var(--gray-light);}
+.bg-navy{background:linear-gradient(150deg,var(--navy) 0%,var(--navy-mid) 50%,#0c2238 100%);}
+.sep{height:1px;background:linear-gradient(90deg,transparent,rgba(0,184,169,0.25),transparent);}
+
+/* TIPOGRAFIA */
+h1,h2,h3,h4{font-family:'Inter',sans-serif;font-weight:800;line-height:1.1;letter-spacing:-0.02em;text-transform:uppercase;color:var(--white);}
+h1{font-size:clamp(2.8rem,6vw,5rem);}
+h2{font-size:clamp(2rem,4vw,3.2rem);}
+h3{font-size:1.5rem;}
+h4{font-size:1.05rem;}
+.bg-light h1,.bg-light h2,.bg-light h3,.bg-light h4{color:var(--navy);}
+.label-tag{display:inline-flex;align-items:center;gap:.5rem;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);border:1px solid rgba(0,184,169,.3);padding:5px 14px;border-radius:var(--r-full);background:rgba(0,184,169,.06);margin-bottom:1.25rem;}
+.bg-light .label-tag{background:rgba(0,184,169,.1);border-color:rgba(0,184,169,.35);}
+p.lead{font-size:1.05rem;color:var(--text-muted-light);line-height:1.85;max-width:580px;}
+.bg-light p.lead{color:var(--text-muted-dark);}
+
+/* BOTÕES */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;padding:13px 28px;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s var(--ease);position:relative;overflow:hidden;white-space:nowrap;border:none;}
+.btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .25s;}
+.btn:hover::before{background:rgba(255,255,255,.08);}
+.btn:active{transform:scale(.97);}
+.btn-wpp{background:linear-gradient(135deg,var(--green-wpp),var(--green-wpp-d));color:#fff;box-shadow:0 4px 20px rgba(37,211,102,.3);}
+.btn-wpp:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.45);}
+.btn-agenda{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;box-shadow:0 4px 20px rgba(0,184,169,.3);}
+.btn-agenda:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,184,169,.45);}
+.btn-ghost-light{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,.2);}
+.btn-ghost-light:hover{border-color:rgba(255,255,255,.5);transform:translateY(-2px);}
+.btn-ghost-dark{background:transparent;color:var(--navy);border:1.5px solid rgba(11,31,51,.3);}
+.btn-ghost-dark:hover{border-color:var(--navy);transform:translateY(-2px);}
+.btn-lg{padding:16px 36px;font-size:.8rem;}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;width:100%;z-index:500;padding:.9rem 0;background:rgba(7,9,12,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-dark);transition:all .35s var(--ease);}
+header.scrolled{background:rgba(5,7,10,.97);box-shadow:0 4px 30px rgba(0,0,0,.4);}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;gap:2rem;}
+.logo{display:flex;align-items:center;}
+.logo img{height:38px;width:auto;}
+.nav-links{display:flex;align-items:center;gap:2.2rem;}
+.nav-links a{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted-light);position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1.5px;background:var(--teal);transition:width .3s var(--ease);}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:100%;}
+.nav-actions{display:flex;align-items:center;gap:.65rem;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:601;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s var(--ease);}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.mobile-nav{display:none;position:fixed;inset:0;background:rgba(5,7,10,.98);backdrop-filter:blur(24px);z-index:600;flex-direction:column;align-items:center;justify-content:center;gap:2rem;text-align:center;}
+.mobile-nav.open{display:flex;}
+.mobile-nav a.mob-link{font-size:2rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted-light);}
+.mobile-nav a.mob-link:hover{color:var(--white);}
+.mobile-cta{display:flex;flex-direction:column;gap:.75rem;margin-top:1rem;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:88px;background:linear-gradient(145deg,#07090c 0%,#0a1220 40%,#0d1e32 70%,#0B1F33 100%);position:relative;overflow:hidden;}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;background:rgba(0,184,169,.15);animation:float linear infinite;}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(0,184,169,.07) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.hero-glow{position:absolute;top:-10%;right:-5%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(0,184,169,.07) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;align-items:center;position:relative;z-index:1;width:100%;}
+.hero-eyebrow{display:flex;align-items:center;gap:.75rem;margin-bottom:1.75rem;opacity:0;animation:fadeUp .7s var(--ease) .1s forwards;}
+.eyebrow-line{width:32px;height:2px;background:var(--teal);}
+.eyebrow-text{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);}
+.hero h1{opacity:0;animation:fadeUp .8s var(--ease) .2s forwards;margin-bottom:2rem;}
+.hero-desc{font-size:1rem;color:var(--text-muted-light);max-width:460px;line-height:1.9;margin-bottom:2.75rem;border-left:2px solid rgba(0,184,169,.4);padding-left:1.5rem;opacity:0;animation:fadeUp .8s var(--ease) .35s forwards;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:.85rem;margin-bottom:3.5rem;opacity:0;animation:fadeUp .8s var(--ease) .5s forwards;}
+.hero-metrics{display:flex;gap:2.5rem;opacity:0;animation:fadeUp .8s var(--ease) .65s forwards;}
+.metric-num{font-size:2.4rem;font-weight:900;color:var(--white);line-height:1;letter-spacing:-.03em;}
+.metric-num sup{font-size:1rem;color:var(--teal);}
+.metric-label{font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted-light);margin-top:4px;}
+.metric-div{width:1px;background:var(--border-dark);align-self:stretch;}
+.hero-visual{display:flex;justify-content:flex-end;align-items:center;position:relative;opacity:0;animation:fadeIn 1.2s var(--ease) .3s forwards;}
+.photo-wrap{position:relative;max-width:440px;width:100%;}
+.photo-wrap::before{content:'';position:absolute;top:-16px;left:-16px;right:16px;bottom:16px;border:1px solid rgba(0,184,169,.2);border-radius:var(--r-lg);z-index:0;transition:all .5s var(--ease);}
+.photo-wrap:hover::before{top:-10px;left:-10px;right:10px;bottom:10px;border-color:rgba(0,184,169,.5);}
+.hero-photo{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top center;border-radius:var(--r-lg);z-index:1;position:relative;box-shadow:var(--shadow-dark);filter:contrast(1.05)saturate(.95);transition:transform .6s var(--ease);}
+.photo-wrap:hover .hero-photo{transform:scale(1.02)translateY(-4px);}
+.photo-badge{position:absolute;bottom:-22px;left:-22px;z-index:2;background:var(--navy-mid);border:1px solid rgba(0,184,169,.3);border-radius:var(--r-lg);padding:1rem 1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.4);}
+.badge-num{font-size:2.2rem;font-weight:900;color:var(--teal);line-height:1;}
+.badge-lbl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted-light);margin-top:4px;}
+
+/* PROGRAMAS */
+.programs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem;}
+.prog-card{border-radius:var(--r-lg);padding:2.75rem 2.25rem;position:relative;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
+.prog-card:hover{transform:translateY(-6px);}
+.bg-light .prog-card{background:var(--navy);border:1px solid rgba(11,31,51,.06);box-shadow:0 4px 24px rgba(11,31,51,.15);}
+.bg-light .prog-card:hover{box-shadow:0 16px 40px rgba(11,31,51,.25);}
+.bg-light .prog-card h3{color:var(--white);}
+.bg-light .prog-card p{color:var(--text-muted-light);}
+.prog-num{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;display:block;}
+.prog-card h3{margin-bottom:.85rem;font-size:1.5rem;}
+.prog-card p{font-size:.9rem;line-height:1.8;margin-bottom:1.75rem;}
+.prog-note{font-size:.72rem;color:rgba(148,163,184,.6);font-style:italic;display:block;margin-bottom:1.5rem;}
+.prog-actions{display:flex;flex-direction:column;gap:.6rem;}
+.prog-actions .btn{width:100%;justify-content:center;}
+
+/* PRINCÍPIOS */
+.principles-head{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem;}
+.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.bg-navy .prin-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:2.5rem 2rem;transition:all .35s var(--ease);}
+.bg-navy .prin-card:hover{background:rgba(255,255,255,.12);transform:translateY(-5px);border-color:rgba(0,184,169,.3);}
+.prin-icon{width:46px;height:46px;border-radius:50%;background:rgba(0,184,169,.12);border:1px solid rgba(0,184,169,.25);display:flex;align-items:center;justify-content:center;color:var(--teal);margin-bottom:1.5rem;}
+.prin-card h3{font-size:1.2rem;margin-bottom:.75rem;}
+.prin-card p{font-size:.88rem;color:var(--text-muted-light);line-height:1.8;}
+
+/* PROFESSOR */
+.teacher-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:6rem;align-items:center;}
+.teacher-img-wrap{position:relative;}
+.teacher-img-wrap::after{content:'';position:absolute;top:22px;right:-22px;width:100%;height:100%;border:1px solid rgba(0,184,169,.3);border-radius:var(--r-lg);z-index:0;}
+.teacher-photo{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:var(--r-lg);filter:contrast(1.05)saturate(.9);box-shadow:var(--shadow-light);position:relative;z-index:1;}
+.bg-light .teacher-role{font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-dark);display:inline-block;margin-bottom:1.75rem;padding-bottom:.4rem;border-bottom:1.5px solid rgba(0,143,132,.3);}
+.bg-light .teacher-content p{font-size:.97rem;color:var(--text-muted-dark);line-height:1.9;margin-bottom:1.25rem;}
+.teacher-quote{border-left:3px solid var(--teal);padding:1rem 1.5rem;margin:1.75rem 0;background:rgba(0,184,169,.06);border-radius:0 var(--r) var(--r) 0;}
+.teacher-quote p{font-size:1rem;color:var(--navy)!important;line-height:1.7;font-weight:500;}
+.credentials{display:flex;flex-direction:column;gap:.65rem;margin-top:2rem;padding-top:1.75rem;border-top:1px solid var(--border-light);}
+.cred{display:flex;align-items:center;gap:.75rem;font-size:.87rem;color:var(--text-muted-dark);font-weight:500;}
+.cred i{color:var(--teal-dark);flex-shrink:0;}
+.teacher-btns{display:flex;gap:.75rem;margin-top:2rem;flex-wrap:wrap;}
+
+/* MÉTODO */
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.cycle-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;}
+.bg-dark .cycle-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:1.75rem;text-align:center;transition:all .3s var(--ease);}
+.bg-dark .cycle-card:hover{background:rgba(255,255,255,.12);border-color:rgba(0,184,169,.3);transform:translateY(-4px);}
+.bg-dark .cycle-card i{color:var(--teal);margin-bottom:.65rem;}
+.bg-dark .cycle-card strong{display:block;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.3rem;}
+.bg-dark .cycle-card span{font-size:.78rem;color:var(--text-muted-light);line-height:1.5;}
+.quote-box{background:rgba(0,184,169,.06);border:1px solid rgba(0,184,169,.2);border-radius:var(--r-lg);padding:1.75rem;}
+.quote-box p{font-size:1rem;color:var(--text-light);line-height:1.75;font-weight:400;}
+.sci-list{display:flex;flex-direction:column;gap:.85rem;margin-top:1.5rem;}
+.sci-item{display:flex;gap:.75rem;align-items:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:1.1rem 1.25rem;}
+.sci-item i{color:var(--teal);flex-shrink:0;margin-top:2px;}
+.sci-item span{font-size:.83rem;color:var(--text-muted-light);line-height:1.65;}
+.sci-item strong{color:var(--white);}
+
+/* PERSONALIZAÇÃO */
+.pyramid-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+.bg-light .pyr-step{display:flex;gap:1.25rem;align-items:flex-start;padding:1.5rem;border-radius:var(--r-lg);background:var(--navy);border:1px solid rgba(11,31,51,.06);margin-bottom:1rem;transition:all .3s var(--ease);box-shadow:0 2px 12px rgba(11,31,51,.1);}
+.bg-light .pyr-step:hover{transform:translateX(6px);box-shadow:0 6px 20px rgba(11,31,51,.2);border-color:rgba(0,184,169,.3);}
+.ps-num{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:rgba(0,184,169,.15);border:1.5px solid rgba(0,184,169,.4);display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;color:var(--teal);}
+.bg-light .pyr-step strong{display:block;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.2rem;}
+.bg-light .pyr-step span{font-size:.8rem;color:var(--text-muted-light);line-height:1.6;}
+
+/* FREQUÊNCIA */
+.freq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem;}
+.bg-navy .freq-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:2.75rem 2rem;text-align:center;transition:all .3s var(--ease);}
+.bg-navy .freq-card:hover{background:rgba(255,255,255,.12);transform:translateY(-5px);border-color:rgba(0,184,169,.3);}
+.freq-h{font-size:3.8rem;font-weight:900;color:var(--white);line-height:1;letter-spacing:-.04em;}
+.freq-h sup{font-size:1.2rem;color:var(--teal);}
+.freq-lbl{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin:.5rem 0 1.25rem;display:block;}
+.bg-navy .freq-card p{font-size:.87rem;color:var(--text-muted-light);line-height:1.8;}
+
+/* MATERIAL */
+.material-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
+.mat-img-wrap{position:relative;}
+.mat-img-wrap::before{content:'';position:absolute;top:-18px;left:-18px;width:100%;height:100%;border:1px solid rgba(0,184,169,.15);border-radius:var(--r-lg);z-index:0;}
+.mat-img-wrap img{width:100%;border-radius:var(--r-lg);filter:contrast(1.05)saturate(.85)brightness(.9);box-shadow:var(--shadow-dark);position:relative;z-index:1;}
+
+/* CTA */
+.cta-block{text-align:center;max-width:680px;margin:0 auto;}
+.cta-block h2{margin-bottom:1.5rem;}
+.cta-block p.lead{margin:0 auto 3rem;color:var(--text-muted-light);}
+.cta-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:1rem;}
+
+/* iVi FLUTUANTE */
+.ivi-float{position:fixed;bottom:2rem;right:2rem;z-index:800;display:flex;flex-direction:column;align-items:flex-end;gap:.65rem;}
+.ivi-float-btn{width:70px;height:70px;border-radius:50%;overflow:hidden;cursor:pointer;border:2.5px solid var(--teal);box-shadow:0 0 0 4px rgba(0,184,169,.15),0 8px 30px rgba(0,0,0,.5);transition:all .35s var(--ease);background:var(--navy-mid);position:relative;}
+.ivi-float-btn::after{content:'';position:absolute;inset:0;border-radius:50%;animation:ivipulse 2.5s ease-in-out infinite;}
+.ivi-float-btn img{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:50%;}
+.ivi-float-btn:hover{transform:scale(1.08);box-shadow:0 0 0 6px rgba(0,184,169,.25),0 12px 40px rgba(0,0,0,.6);}
+.ivi-float-label{background:rgba(7,9,12,.92);border:1px solid rgba(0,184,169,.3);padding:7px 14px;border-radius:var(--r-full);font-size:.7rem;font-weight:700;color:var(--white);letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(10px);white-space:nowrap;opacity:0;transform:translateX(10px);transition:all .3s var(--ease);pointer-events:none;}
+.ivi-float:hover .ivi-float-label{opacity:1;transform:translateX(0);}
+
+/* iVi JANELA */
+.ivi-chat-window{position:fixed;bottom:7.5rem;right:2rem;width:380px;max-height:560px;background:var(--navy-mid);border:1px solid rgba(0,184,169,.25);border-radius:var(--r-lg);box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:799;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(20px) scale(.96);transition:all .35s var(--ease);}
+.ivi-chat-window.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1);}
+.ivi-chat-header{display:flex;align-items:center;gap:.85rem;padding:1.25rem 1.5rem;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+.ivi-avatar-sm{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid var(--teal);flex-shrink:0;}
+.ivi-avatar-sm img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.ivi-header-info{flex:1;}
+.ivi-header-name{font-size:.9rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--white);}
+.ivi-header-sub{font-size:.7rem;color:var(--teal);letter-spacing:.06em;}
+.ivi-status{width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,.5);animation:blink 1.8s ease-in-out infinite;}
+.ivi-close{width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted-light);border-radius:50%;transition:all .2s;flex-shrink:0;}
+.ivi-close:hover{background:rgba(255,255,255,.1);color:var(--white);}
+.ivi-msgs{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.85rem;scroll-behavior:smooth;}
+.ivi-msgs::-webkit-scrollbar{width:4px;}
+.ivi-msgs::-webkit-scrollbar-thumb{background:rgba(0,184,169,.3);border-radius:4px;}
+.msg{max-width:85%;border-radius:14px;padding:.75rem 1rem;font-size:.85rem;line-height:1.65;animation:msgIn .3s var(--ease) forwards;}
+.msg-ivi{align-self:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:var(--text-light);border-bottom-left-radius:4px;}
+.msg-user{align-self:flex-end;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;border-bottom-right-radius:4px;}
+.msg-typing{align-self:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-bottom-left-radius:4px;padding:.75rem 1.25rem;display:flex;gap:4px;align-items:center;}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:typingBounce .9s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:.15s;}
+.typing-dot:nth-child(3){animation-delay:.3s;}
+.ivi-chips{display:flex;flex-wrap:wrap;gap:.5rem;padding:0 1.25rem 1rem;}
+.chip{padding:6px 14px;border-radius:var(--r-full);border:1px solid rgba(0,184,169,.35);background:rgba(0,184,169,.06);color:var(--teal);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s var(--ease);}
+.chip:hover{background:rgba(0,184,169,.15);color:var(--white);}
+.ivi-input-wrap{display:flex;gap:.65rem;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.2);flex-shrink:0;}
+.ivi-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-full);padding:10px 16px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--white);outline:none;transition:border-color .2s;}
+.ivi-input:focus{border-color:rgba(0,184,169,.5);}
+.ivi-input::placeholder{color:rgba(148,163,184,.5);}
+.ivi-send{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-dark));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:all .25s var(--ease);}
+.ivi-send:hover{transform:scale(1.08);}
+
+/* iVi SEÇÃO */
+.ivi-section-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:5rem;align-items:center;}
+.ivi-section-photo{position:relative;display:flex;justify-content:center;}
+.ivi-section-photo-inner{position:relative;width:320px;}
+.ivi-ring{position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(0,184,169,.2);animation:rotatering 8s linear infinite;}
+.ivi-ring-2{position:absolute;inset:-36px;border-radius:50%;border:1px dashed rgba(0,184,169,.1);animation:rotatering 14s linear infinite reverse;}
+.ivi-circle-photo{width:320px;height:320px;border-radius:50%;overflow:hidden;border:3px solid var(--teal);box-shadow:0 0 0 8px rgba(0,184,169,.08),0 20px 60px rgba(0,0,0,.5);position:relative;z-index:1;}
+.ivi-circle-photo img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.ivi-tag{position:absolute;z-index:2;background:var(--navy-mid);border:1px solid rgba(0,184,169,.3);border-radius:var(--r-full);padding:7px 16px;font-size:.7rem;font-weight:700;color:var(--teal);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 15px rgba(0,0,0,.3);animation:floattag 3s ease-in-out infinite;}
+.ivi-tag:nth-child(2){top:12%;right:-20px;animation-delay:0s;}
+.ivi-tag:nth-child(3){bottom:20%;left:-20px;animation-delay:1.5s;}
+.ivi-features{display:flex;flex-direction:column;gap:.75rem;margin:2rem 0 2.5rem;}
+.ivi-feat{display:flex;gap:.85rem;align-items:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:1rem 1.25rem;transition:all .3s var(--ease);}
+.ivi-feat:hover{background:rgba(255,255,255,.09);border-color:rgba(0,184,169,.25);transform:translateX(4px);}
+.ivi-feat i{color:var(--teal);flex-shrink:0;margin-top:1px;}
+.ivi-feat span{font-size:.87rem;color:var(--text-muted-light);line-height:1.65;}
+.ivi-feat strong{color:var(--white);}
+
+/* WPP FLUTUANTE */
+.wpp-float{position:fixed;bottom:2rem;left:2rem;z-index:700;display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;}
+.wpp-float-btn{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--green-wpp),var(--green-wpp-d));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);cursor:pointer;transition:all .3s var(--ease);text-decoration:none;}
+.wpp-float-btn:hover{transform:scale(1.1) translateY(-2px);box-shadow:0 8px 30px rgba(37,211,102,.5);}
+.wpp-float-btn svg{width:28px;height:28px;fill:#fff;}
+.wpp-float-label{background:rgba(7,9,12,.9);border:1px solid var(--border-dark);padding:6px 12px;border-radius:var(--r-full);font-size:.68rem;font-weight:600;color:var(--white);white-space:nowrap;letter-spacing:.05em;opacity:0;transform:translateX(-10px);transition:all .3s var(--ease);pointer-events:none;}
+.wpp-float:hover .wpp-float-label{opacity:1;transform:translateX(0);}
+
+/* FOOTER */
+footer{background:#04060a;padding:5rem 0 3rem;border-top:1px solid var(--border-dark);}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:4rem;margin-bottom:3.5rem;}
+.foot-brand p{font-size:.85rem;color:var(--text-muted-light);line-height:1.8;max-width:280px;margin-top:1rem;}
+.foot-brand .logo{margin-bottom:1.25rem;}
+.foot-col h4{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1.25rem;}
+.foot-col ul{display:flex;flex-direction:column;gap:.65rem;}
+.foot-col li a{font-size:.85rem;color:var(--text-muted-light);}
+.foot-col li a:hover{color:var(--white);}
+.foot-btns{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1.5rem;}
+.foot-btns .btn{padding:9px 16px;font-size:.7rem;}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding-top:2rem;border-top:1px solid var(--border-dark);}
+.foot-bottom span{font-size:.75rem;color:rgba(255,255,255,.15);}
+.footer-refs{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-dark);}
+.footer-refs h4{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(148,163,184,.5);margin-bottom:.85rem;}
+.footer-refs ul{display:flex;flex-direction:column;gap:.4rem;}
+.footer-refs li{font-size:.72rem;color:rgba(148,163,184,.4);line-height:1.5;display:flex;gap:.5rem;}
+
+/* ANIMAÇÕES */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes float{0%{transform:translateY(0) rotate(0);}50%{transform:translateY(-30px) rotate(180deg);}100%{transform:translateY(0) rotate(360deg);}}
+@keyframes ivipulse{0%,100%{box-shadow:0 0 0 0 rgba(0,184,169,.4);}50%{box-shadow:0 0 0 14px rgba(0,184,169,0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes rotatering{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes floattag{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}
+
+/* RESPONSIVO */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;text-align:center;gap:3.5rem;}
+  .hero-content{display:flex;flex-direction:column;align-items:center;}
+  .hero-desc{border-left:none;padding-left:0;}
+  .hero-visual{justify-content:center;max-width:380px;margin:0 auto;}
+  .photo-badge{left:0;bottom:-18px;}
+  .programs-grid,.principles-grid,.freq-grid{grid-template-columns:1fr;}
+  .principles-head{grid-template-columns:1fr;gap:2rem;}
+  .teacher-grid{grid-template-columns:1fr;gap:3rem;text-align:center;}
+  .teacher-img-wrap{max-width:340px;margin:0 auto;}
+  .teacher-img-wrap::after{display:none;}
+  .teacher-btns,.credentials{justify-content:center;align-items:center;}
+  .teacher-quote{border-left:none;border-top:2px solid var(--teal);border-bottom:2px solid var(--teal);border-radius:0;padding:1rem 0;}
+  .method-grid,.pyramid-layout,.material-grid{grid-template-columns:1fr;gap:3rem;}
+  .mat-img-wrap{max-width:480px;margin:0 auto;}
+  .ivi-section-grid{grid-template-columns:1fr;gap:3rem;text-align:center;}
+  .ivi-section-photo{max-width:260px;margin:0 auto;}
+  .ivi-circle-photo{width:240px;height:240px;}
+  .ivi-ring,.ivi-ring-2{display:none;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .nav-links,.nav-actions{display:none;}
+  .hamburger{display:flex;}
+}
+@media(max-width:768px){
+  .hero h1{font-size:2.6rem;}
+  .section{padding:5rem 0;}
+  .footer-grid{grid-template-columns:1fr;gap:2.5rem;}
+  .ivi-chat-window{width:calc(100vw - 3rem);right:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- WPP Flutuante -->
+<div class="wpp-float">
+  <span class="wpp-float-label">Falar pelo WhatsApp</span>
+  <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20quero%20conhecer%20a%20Fluency%20Studio" target="_blank" rel="noopener" class="wpp-float-btn" aria-label="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<!-- iVi Flutuante -->
+<div class="ivi-float">
+  <span class="ivi-float-label">iVi — Pergunte sobre os cursos</span>
+  <div class="ivi-float-btn" id="ivi-toggle" role="button" aria-label="Abrir iVi">
+    <img src="assets/victor.png" alt="iVi" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=color:white;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%>iVi</span>'">
+  </div>
+</div>
+
+<!-- Chat iVi -->
+<div class="ivi-chat-window" id="ivi-window">
+  <div class="ivi-chat-header">
+    <div class="ivi-avatar-sm">
+      <img src="assets/victor.png" alt="iVi">
+    </div>
+    <div class="ivi-header-info">
+      <div class="ivi-header-name">iVi</div>
+      <div class="ivi-header-sub">Cérebro Virtual do Prof. Victor</div>
+    </div>
+    <div class="ivi-status"></div>
+    <div class="ivi-close" id="ivi-close"><i data-lucide="x" style="width:16px;height:16px;"></i></div>
+  </div>
+  <div class="ivi-msgs" id="ivi-msgs"></div>
+  <div class="ivi-chips" id="ivi-chips">
+    <span class="chip" data-q="Quais são os cursos?">Ver cursos</span>
+    <span class="chip" data-q="Quanto custa?">Preços</span>
+    <span class="chip" data-q="Como agendar uma aula?">Agendar</span>
+    <span class="chip" data-q="Tem aula em grupo?">Modalidades</span>
+  </div>
+  <div class="ivi-input-wrap">
+    <input class="ivi-input" id="ivi-input" type="text" placeholder="Digite sua pergunta..." autocomplete="off">
+    <button class="ivi-send" id="ivi-send"><i data-lucide="send" style="width:16px;height:16px;"></i></button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="container">
+    <nav class="nav-wrap">
+      <a href="#" class="logo"><img src="assets/logo.png" alt="Fluency Studio"></a>
+      <ul class="nav-links">
+        <li><a href="#programas">Programas</a></li>
+        <li><a href="#metodo">Método</a></li>
+        <li><a href="#professor">Professor</a></li>
+        <li><a href="#ivi">iVi</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda"><i data-lucide="calendar" style="width:13px;height:13px;"></i> Agendar Aula</a>
+        <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20quero%20conhecer%20a%20Fluency%20Studio" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> WhatsApp</a>
+      </div>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </nav>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <a href="#programas" class="mob-link">Programas</a>
+  <a href="#metodo" class="mob-link">Método</a>
+  <a href="#professor" class="mob-link">Professor</a>
+  <a href="#ivi" class="mob-link">iVi</a>
+  <div class="mobile-cta">
+    <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda btn-lg"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Agendar Aula Demo</a>
+    <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20quero%20conhecer%20a%20Fluency%20Studio" target="_blank" class="btn btn-wpp btn-lg"><i data-lucide="message-circle" style="width:15px;height:15px;"></i> Falar pelo WhatsApp</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero bg-dark">
+  <div class="hero-glow"></div>
+  <div class="hero-particles" id="particles"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow"><span class="eyebrow-line"></span><span class="eyebrow-text">São Paulo · Online · Brasil</span></div>
+        <h1>INGLÊS<br>PERSONALIZADO<br>E ESTRATÉGICO</h1>
+        <p class="hero-desc">Um método construído sobre ciência cognitiva, calibrado para o seu perfil de aprendizagem. Não existe abordagem universal porque não existe aluno universal.</p>
+        <div class="hero-actions">
+          <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda btn-lg"><i data-lucide="calendar" style="width:16px;height:16px;"></i> Agendar Aula Demo</a>
+          <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20quero%20conhecer%20a%20Fluency%20Studio" target="_blank" class="btn btn-wpp btn-lg"><i data-lucide="message-circle" style="width:16px;height:16px;"></i> Conversar Agora</a>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric"><div class="metric-num">18<sup>+</sup></div><div class="metric-label">Anos de Experiência</div></div>
+          <div class="metric-div"></div>
+          <div class="metric"><div class="metric-num">18</div><div class="metric-label">Meses para Fluência</div></div>
+          <div class="metric-div"></div>
+          <div class="metric"><div class="metric-num">CEFR</div><div class="metric-label">Padrão Internacional</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="photo-wrap">
+          <img src="assets/capa.jpg" alt="Professor Victor Gomes" class="hero-photo" onerror="this.src='assets/victor.png'">
+          <div class="photo-badge"><div class="badge-num">18</div><div class="badge-lbl">Meses para<br>Fluência Real</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- PROGRAMAS — BG CLARO -->
+<section class="section bg-light" id="programas">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag"><i data-lucide="layers" style="width:9px;height:9px;"></i> Trilhas</span>
+      <h2>ESCOLHA SEU PROGRAMA</h2>
+      <p class="lead" style="margin-top:1rem;">Cada trilha foi desenhada para um estágio e objetivo específico. O ponto de partida é determinado pelo seu diagnóstico individual.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="prog-card reveal rd1">
+        <span class="prog-num">Trilha 01</span>
+        <h3>FLUENCY 18</h3>
+        <p>Programa estruturado do zero à fluência em 18 meses. Currículo próprio com progressão baseada em CEFR, input significativo e revisões espaçadas. Para quem quer um plano completo com acompanhamento real.</p>
+        <div class="prog-actions">
+          <a href="https://wa.me/5511921423578?text=Quero%20saber%20sobre%20o%20Fluency%2018" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Saber Mais</a>
+          <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda"><i data-lucide="calendar" style="width:13px;height:13px;"></i> Agendar Aula Demo</a>
+        </div>
+      </div>
+      <div class="prog-card reveal rd2">
+        <span class="prog-num">Trilha 02</span>
+        <h3>TALKING STUDIO</h3>
+        <p>Prática conversacional focada. O aluno escolhe os temas mais relevantes para o seu contexto dentro do seu nível atual. Ideal para quem já tem uma base e quer fluência oral com confiança.</p>
+        <div class="prog-actions">
+          <a href="https://wa.me/5511921423578?text=Quero%20saber%20sobre%20o%20Talking%20Studio" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Saber Mais</a>
+          <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda"><i data-lucide="calendar" style="width:13px;height:13px;"></i> Agendar Aula Demo</a>
+        </div>
+      </div>
+      <div class="prog-card reveal rd3">
+        <span class="prog-num">Trilha 03 — Avançado</span>
+        <h3>SPEECH BUSINESS</h3>
+        <p>Inglês de prestígio para o mercado corporativo. Linguagem executiva, negociação, apresentações e comunicação estratégica. Acesso mediante diagnóstico prévio de nível.</p>
+        <span class="prog-note">* Necessário nivelamento prévio</span>
+        <div class="prog-actions">
+          <a href="https://wa.me/5511921423578?text=Quero%20saber%20sobre%20o%20Speech%20Business" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Saber Mais</a>
+          <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda"><i data-lucide="calendar" style="width:13px;height:13px;"></i> Agendar Diagnóstico</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- PRINCÍPIOS — BG NAVY -->
+<section class="section bg-navy">
+  <div class="container">
+    <div class="principles-head">
+      <div class="reveal">
+        <span class="label-tag"><i data-lucide="compass" style="width:9px;height:9px;"></i> Fundamentos</span>
+        <h2>O QUE ORIENTA CADA DECISÃO PEDAGÓGICA</h2>
+      </div>
+      <div class="reveal rd1">
+        <p class="lead">Personalização não é mudar o tema da aula. É construir um plano que combina objetivo real, perfil cognitivo verificado e estratégia de progressão para cada aluno.</p>
+        <div style="margin-top:2rem;"><a href="https://wa.me/5511921423578?text=Quero%20entender%20o%20m%C3%A9todo" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Entender o Método</a></div>
+      </div>
+    </div>
+    <div class="principles-grid">
+      <div class="prin-card reveal">
+        <div class="prin-icon"><i data-lucide="user" style="width:18px;height:18px;"></i></div>
+        <h3>PERSONALIZADO</h3>
+        <p>Diagnóstico completo antes de qualquer aula — necessidades, interesses, tempo disponível. Sua abordagem é moldada para você, não para uma turma genérica.</p>
+      </div>
+      <div class="prin-card reveal rd1">
+        <div class="prin-icon"><i data-lucide="target" style="width:18px;height:18px;"></i></div>
+        <h3>ESTRATÉGICO</h3>
+        <p>Detectamos seu estilo de aprender e sua inteligência dominante para montar um programa que realmente funciona — não para todos, para você especificamente.</p>
+      </div>
+      <div class="prin-card reveal rd2">
+        <div class="prin-icon"><i data-lucide="shield" style="width:18px;height:18px;"></i></div>
+        <h3>HUMANIZADO</h3>
+        <p>Ambiente seguro para errar, perguntar e tentar. Segurança psicológica é condição para o aprendizado real de uma língua — não um diferencial de marketing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- PROFESSOR — BG CLARO -->
+<section class="section bg-light" id="professor">
+  <div class="container">
+    <div class="teacher-grid">
+      <div class="teacher-img-wrap reveal"><img src="assets/victor.png" alt="Professor Victor Gomes" class="teacher-photo"></div>
+      <div class="teacher-content reveal rd1">
+        <span class="label-tag"><i data-lucide="award" style="width:9px;height:9px;"></i> Quem Ensina</span>
+        <h2>PROFESSOR<br>VICTOR GOMES</h2>
+        <span class="teacher-role">Head Teacher & Founder — Fluency Studio</span>
+        <p>Formado em Letras e pós-graduado em Especialista em Ensino de Língua Inglesa, Tecnologias Educacionais e Metodologias Ativas (UFSCar). Certificação TOEFL e 18 anos de prática docente.</p>
+        <p>Aprender um novo idioma é, antes de tudo, um ato de coragem e vulnerabilidade. Criar o ambiente certo para isso acontecer é responsabilidade do professor.</p>
+        <div class="teacher-quote"><p>"Fluência não é um dom. É o resultado de estratégia cognitiva, consistência orientada e respeito ao tempo individual de cada aluno."</p></div>
+        <div class="credentials">
+          <div class="cred"><i data-lucide="check-circle" style="width:15px;height:15px;"></i><span>Graduação em Letras</span></div>
+          <div class="cred"><i data-lucide="check-circle" style="width:15px;height:15px;"></i><span>Pós-graduação: Metodologias Ativas e Tecnologias Educacionais — UFSCar</span></div>
+          <div class="cred"><i data-lucide="check-circle" style="width:15px;height:15px;"></i><span>Certificação Internacional TOEFL</span></div>
+          <div class="cred"><i data-lucide="check-circle" style="width:15px;height:15px;"></i><span>18+ anos de experiência docente</span></div>
+        </div>
+        <div class="teacher-btns">
+          <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20Professor%20Victor" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Falar com Victor</a>
+          <a href="https://www.instagram.com/teacher_victorgomes/" target="_blank" class="btn btn-ghost-dark"><i data-lucide="instagram" style="width:13px;height:13px;"></i> Instagram</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- MÉTODO — BG DARK -->
+<section class="section bg-dark" id="metodo">
+  <div class="container">
+    <div class="method-grid">
+      <div class="reveal">
+        <span class="label-tag"><i data-lucide="refresh-cw" style="width:9px;height:9px;"></i> Método</span>
+        <h2>O CICLO DE APRENDIZAGEM</h2>
+        <p class="lead" style="margin:1.25rem 0 2rem;">Sem promessas de fluência acelerada. Existe método, constância e um plano academicamente estruturado.</p>
+        <div class="cycle-grid">
+          <div class="cycle-card"><i data-lucide="download" style="width:24px;height:24px;"></i><strong>INPUT</strong><span>Compreensão guiada e contextualizada</span></div>
+          <div class="cycle-card"><i data-lucide="mic" style="width:24px;height:24px;"></i><strong>OUTPUT</strong><span>Produção orientada com estrutura</span></div>
+          <div class="cycle-card"><i data-lucide="message-square" style="width:24px;height:24px;"></i><strong>FEEDBACK</strong><span>Correção estratégica e imediata</span></div>
+          <div class="cycle-card"><i data-lucide="refresh-cw" style="width:24px;height:24px;"></i><strong>REVISÃO</strong><span>Retenção e automatização real</span></div>
+        </div>
+        <div class="quote-box"><p>"Fluência acontece quando você entende o essencial com naturalidade, se expressa sem travar e evolui com autonomia crescente."</p></div>
+      </div>
+      <div class="reveal rd1">
+        <span class="label-tag"><i data-lucide="book-open" style="width:9px;height:9px;"></i> Embasamento</span>
+        <h2>FUNDAMENTAÇÃO CIENTÍFICA</h2>
+        <p class="lead" style="margin:1.25rem 0 1.75rem;">Cada decisão metodológica tem respaldo em pesquisa validada em linguística aplicada e ciências cognitivas.</p>
+        <div class="sci-list">
+          <div class="sci-item"><i data-lucide="brain" style="width:14px;height:14px;"></i><span><strong>Testing Effect</strong> — Roediger & Karpicke (2006): recuperação ativa fortalece a memória de longo prazo mais que releitura passiva.</span></div>
+          <div class="sci-item"><i data-lucide="calendar-clock" style="width:14px;height:14px;"></i><span><strong>Revisão Espaçada</strong> — PMC/NIH: intervalos planejados reduzem o esquecimento e aumentam a estabilidade do aprendido.</span></div>
+          <div class="sci-item"><i data-lucide="globe" style="width:14px;height:14px;"></i><span><strong>CEFR</strong> — Council of Europe: progressão por níveis verificáveis com metas claras por etapa.</span></div>
+          <div class="sci-item"><i data-lucide="layers" style="width:14px;height:14px;"></i><span><strong>Four Strands</strong> — Paul Nation: equilíbrio entre input, output, foco linguístico e fluência.</span></div>
+          <div class="sci-item"><i data-lucide="users" style="width:14px;height:14px;"></i><span><strong>Inteligências Múltiplas</strong> — Howard Gardner: diagnóstico de inteligência predominante orienta a personalização.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- PERSONALIZAÇÃO — BG CLARO -->
+<section class="section bg-light">
+  <div class="container">
+    <div class="pyramid-layout">
+      <div class="reveal">
+        <span class="label-tag"><i data-lucide="sliders" style="width:9px;height:9px;"></i> Personalização Real</span>
+        <h2>O QUE MOLDA O SEU PLANO</h2>
+        <p class="lead" style="margin:1.25rem 0 2.5rem;">Cinco variáveis mapeadas no diagnóstico inicial determinam cada detalhe do seu programa de estudos.</p>
+        <a href="https://wa.me/5511921423578?text=Quero%20fazer%20meu%20diagn%C3%B3stico" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Fazer Meu Diagnóstico</a>
+      </div>
+      <div class="reveal rd1">
+        <div class="pyr-step"><div class="ps-num">1</div><div><strong>Necessidades</strong><span>Trabalho, viagens, entrevistas, rotina — o que você realmente precisa fazer em inglês.</span></div></div>
+        <div class="pyr-step"><div class="ps-num">2</div><div><strong>Interesses</strong><span>O que te mantém consistente quando a rotina pressiona.</span></div></div>
+        <div class="pyr-step"><div class="ps-num">3</div><div><strong>Base Acadêmica</strong><span>Lacunas, pontos fortes e profundidade necessária para o próximo nível.</span></div></div>
+        <div class="pyr-step"><div class="ps-num">4</div><div><strong>Inteligências Predominantes</strong><span>Como você processa e retém — linguística, lógica, interpessoal, intrapessoal.</span></div></div>
+        <div class="pyr-step"><div class="ps-num">5</div><div><strong>Estilo de Aprendizagem</strong><span>Visual, auditivo ou cinestésico — qual canal gera maior retenção para você.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- FREQUÊNCIA — BG NAVY -->
+<section class="section bg-navy">
+  <div class="container">
+    <div style="text-align:center;max-width:580px;margin:0 auto;" class="reveal">
+      <span class="label-tag"><i data-lucide="clock" style="width:9px;height:9px;"></i> Intensidade</span>
+      <h2>FREQUÊNCIA RECOMENDADA</h2>
+      <p class="lead" style="margin:1rem auto 0;text-align:center;">Você escolhe a intensidade. A frequência muda a velocidade — o método mantém a direção.</p>
+    </div>
+    <div class="freq-grid">
+      <div class="freq-card reveal"><div class="freq-h">2<sup>h</sup></div><span class="freq-lbl">por semana</span><p>Evolução sólida com consistência. Ideal para quem tem rotina restrita e prioriza qualidade e regularidade.</p></div>
+      <div class="freq-card reveal rd1"><div class="freq-h">3<sup>h</sup></div><span class="freq-lbl">por semana</span><p>Aceleração com profundidade. Equilíbrio entre ritmo e desenvolvimento — o formato mais adotado.</p></div>
+      <div class="freq-card reveal rd2"><div class="freq-h">4<sup>h</sup></div><span class="freq-lbl">por semana</span><p>Alta performance. Mais output, mais correção e mais revisão. Para quem tem meta de prazo definida.</p></div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- MATERIAL — BG DARK -->
+<section class="section bg-dark">
+  <div class="container">
+    <div class="material-grid">
+      <div class="reveal">
+        <span class="label-tag"><i data-lucide="book-open" style="width:9px;height:9px;"></i> Currículo</span>
+        <h2>MATERIAL ALINHADO AOS PADRÕES INTERNACIONAIS</h2>
+        <p class="lead" style="margin:1.5rem 0;">Estruturado com base no CEFR. Currículo próprio: Fluency Foundation (Livros 1–3) e Fluency Mastery (Livros 4–6). Nada de livros infantis ou metodologias repetitivas. Material denso, relevante e adulto.</p>
+        <a href="https://wa.me/5511921423578?text=Quero%20conhecer%20o%20material" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:13px;height:13px;"></i> Conhecer o Material</a>
+      </div>
+      <div class="mat-img-wrap reveal rd1">
+        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Material de Estudo Fluency Studio">
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- iVi SEÇÃO — BG DARK -->
+<section class="section bg-dark" id="ivi">
+  <div class="container">
+    <div class="ivi-section-grid">
+      <div class="ivi-section-photo reveal">
+        <div class="ivi-section-photo-inner">
+          <div class="ivi-ring"></div>
+          <div class="ivi-ring-2"></div>
+          <div class="ivi-circle-photo"><img src="assets/victor.png" alt="iVi — Assistente Virtual"></div>
+          <span class="ivi-tag">IA Conversacional</span>
+          <span class="ivi-tag" style="top:auto;bottom:15%;right:-20px;left:auto;animation-delay:.8s;">Disponível 24/7</span>
+        </div>
+      </div>
+      <div class="reveal rd1">
+        <span class="label-tag"><i data-lucide="cpu" style="width:9px;height:9px;"></i> Inteligência Artificial</span>
+        <h2>CONHEÇA O iVi</h2>
+        <p class="lead" style="margin:1rem 0 0;">O cérebro virtual do Professor Victor. Uma IA treinada para responder todas as suas dúvidas sobre os programas, valores e como funciona a Fluency Studio — em tempo real.</p>
+        <div class="ivi-features">
+          <div class="ivi-feat"><i data-lucide="message-circle" style="width:16px;height:16px;"></i><span><strong>Tire dúvidas sobre os cursos</strong> — programas, modalidades, nível de entrada e estrutura curricular.</span></div>
+          <div class="ivi-feat"><i data-lucide="dollar-sign" style="width:16px;height:16px;"></i><span><strong>Saiba sobre investimento</strong> — planos a partir de R$199, individual e em grupo, flexibilidade de horário.</span></div>
+          <div class="ivi-feat"><i data-lucide="calendar" style="width:16px;height:16px;"></i><span><strong>Agende sua aula demo</strong> — o iVi te direciona para a agenda do professor com um clique.</span></div>
+          <div class="ivi-feat"><i data-lucide="brain" style="width:16px;height:16px;"></i><span><strong>Dúvidas pedagógicas gerais</strong> — método, estilo de aprendizagem, fluência e muito mais.</span></div>
+        </div>
+        <button class="btn btn-agenda btn-lg" onclick="document.getElementById('ivi-toggle').click()"><i data-lucide="message-circle" style="width:15px;height:15px;"></i> Falar com o iVi Agora</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- CTA FINAL — BG NAVY -->
+<section class="section bg-navy">
+  <div class="container">
+    <div class="cta-block reveal">
+      <span class="label-tag"><i data-lucide="send" style="width:9px;height:9px;"></i> Próximo Passo</span>
+      <h2>PRONTO PARA COMEÇAR DO JEITO CERTO?</h2>
+      <p class="lead">A aula demonstrativa é o ponto de partida. Sem compromisso, sem pressão. É onde entendemos quem você é, o que precisa e se somos a combinação certa.</p>
+      <div class="cta-actions">
+        <a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank" class="btn btn-agenda btn-lg"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Agendar Aula Demonstrativa</a>
+        <a href="https://wa.me/5511921423578?text=Ol%C3%A1%2C%20quero%20conhecer%20a%20Fluency%20Studio" target="_blank" class="btn btn-wpp btn-lg"><i data-lucide="message-circle" style="width:15px;height:15px;"></i> Falar pelo WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sep"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="foot-brand">
+        <div class="logo"><img src="assets/logo.png" alt="Fluency Studio" style="height:36px;"></div>
+        <p>Educação é construção. Ensino fundamentado em pesquisa, sem promessas mágicas. Com método, trabalho e acompanhamento real.</p>
+        <div class="foot-btns">
+          <a href="https://www.instagram.com/teacher_victorgomes/" target="_blank" class="btn btn-ghost-light"><i data-lucide="instagram" style="width:12px;height:12px;"></i> @teacher_victorgomes</a>
+          <a href="https://wa.me/5511921423578" target="_blank" class="btn btn-wpp"><i data-lucide="message-circle" style="width:12px;height:12px;"></i> 11 92142-3578</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Programas</h4>
+        <ul>
+          <li><a href="https://wa.me/5511921423578?text=Fluency%2018">Fluency 18</a></li>
+          <li><a href="https://wa.me/5511921423578?text=Talking%20Studio">Talking Studio</a></li>
+          <li><a href="https://wa.me/5511921423578?text=Speech%20Business">Speech Business</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="https://calendar.app.google/p6cYcSxG8onc2med9" target="_blank">Agenda do Professor</a></li>
+          <li><a href="https://wa.me/5511921423578" target="_blank">WhatsApp Direto</a></li>
+          <li><a href="https://www.instagram.com/teacher_victorgomes/" target="_blank">Instagram</a></li>
+          <li><a href="mailto:contato@thefluency.studio">contato@thefluency.studio</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-refs">
+      <h4>Referências Científicas</h4>
+      <ul>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>CEFR — Council of Europe</li>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>Paul Nation — Four Strands</li>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>Roediger & Karpicke (2006) — Testing Effect</li>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>PMC/NIH — Revisões espaçadas e retenção de memória</li>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>Howard Gardner — Teoria das Inteligências Múltiplas</li>
+        <li><i data-lucide="book-open" style="width:10px;height:10px;"></i>Neil Fleming — VARK Model</li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      <span>Fluency Studio © 2026 — Todos os direitos reservados.</span>
+      <span>thefluency.studio</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+
+/* CURSOR */
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.chip,.prog-card,.prin-card,.cycle-card,.freq-card,.pyr-step').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='18px';cursor.style.height='18px';ring.style.width='50px';ring.style.height='50px';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});
+});
+
+/* HAMBURGER */
+const ham=document.getElementById('hamburger'),mob=document.getElementById('mobile-nav');
+ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');document.body.style.overflow=mob.classList.contains('open')?'hidden':'';});
+mob.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');mob.classList.remove('open');document.body.style.overflow='';}));
+
+/* HEADER SCROLL */
+const hdr=document.getElementById('header');
+window.addEventListener('scroll',()=>hdr.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+
+/* SCROLL REVEAL */
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){const t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});
+});
+
+/* PARTÍCULAS */
+const pc=document.getElementById('particles');
+for(let i=0;i<18;i++){
+  const p=document.createElement('div');p.className='particle';
+  const sz=Math.random()*5+3;
+  p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*10}s;opacity:${Math.random()*.4+.1}`;
+  pc.appendChild(p);
+}
+
+/* iVi CHAT */
+const iviToggle=document.getElementById('ivi-toggle'),iviWindow=document.getElementById('ivi-window'),iviClose=document.getElementById('ivi-close'),iviMsgs=document.getElementById('ivi-msgs'),iviInput=document.getElementById('ivi-input'),iviSend=document.getElementById('ivi-send'),iviChips=document.getElementById('ivi-chips');
+let iviOpen=false,greeted=false,history=[];
+
+function toggleIvi(){
+  iviOpen=!iviOpen;iviWindow.classList.toggle('open',iviOpen);
+  if(iviOpen&&!greeted){greeted=true;setTimeout(()=>addIviMsg("Hello! Eu sou o iVi, o cérebro virtual do Prof. Victor. 😊\n\nPode me perguntar qualquer coisa sobre os cursos da Fluency Studio — programas, preços, modalidades ou como agendar sua aula.\n\nComo posso te ajudar?"),400);}
+}
+iviToggle.addEventListener('click',toggleIvi);
+iviClose.addEventListener('click',()=>{iviOpen=false;iviWindow.classList.remove('open');});
+
+function addIviMsg(text){
+  const d=document.createElement('div');d.className='msg msg-ivi';
+  d.innerHTML=text.replace(/\n/g,'<br>');
+  iviMsgs.appendChild(d);iviMsgs.scrollTop=iviMsgs.scrollHeight;
+}
+function addUserMsg(text){
+  const d=document.createElement('div');d.className='msg msg-user';d.textContent=text;
+  iviMsgs.appendChild(d);iviMsgs.scrollTop=iviMsgs.scrollHeight;
+}
+function showTyping(){
+  const d=document.createElement('div');d.className='msg msg-typing';d.id='ivi-typing';
+  d.innerHTML='<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  iviMsgs.appendChild(d);iviMsgs.scrollTop=iviMsgs.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('ivi-typing');if(t)t.remove();}
+
+async function sendMsg(userText){
+  if(!userText.trim())return;
+  addUserMsg(userText);iviInput.value='';
+  showTyping();iviChips.style.display='none';
+  history.push({role:'user',content:userText});
+
+  const system=`Você é o iVi, o assistente virtual inteligente do Professor Victor Gomes da Fluency Studio. Fale com a voz do próprio Victor — autoridade gentil, clareza, sem enrolação e sem jargões.
+
+IDENTIDADE: Você é o iVi, o cérebro virtual do Prof. Victor. Quando perguntarem quem é você, diga que é o iVi.
+
+SOBRE A FLUENCY STUDIO:
+- Escola de inglês online para adultos e profissionais, São Paulo/Brasil
+- Programas: Fluency 18 (do zero à fluência em 18 meses), Talking Studio (conversação prática), Speech Business (inglês corporativo avançado — requer nivelamento)
+- Preços: a partir de R$199,00
+- Modalidades: individual e em grupo, com flexibilidade de horário
+- WhatsApp: (11) 92142-3578 — https://wa.me/5511921423578
+- Agenda para aula demonstrativa: https://calendar.app.google/p6cYcSxG8onc2med9
+- Site: thefluency.studio
+- Instagram: @teacher_victorgomes
+
+VOCÊ PODE E DEVE:
+- Explicar os programas com detalhes e entusiasmo genuíno
+- Informar que os cursos são a partir de R$199
+- Diferenciar modalidade individual vs grupo
+- Falar sobre o método (personalizado, baseado em CEFR, diagnóstico inicial, inteligências múltiplas)
+- Responder dúvidas pedagógicas gerais sobre aprendizado de inglês (motivação, tempo de estudo, como progredir)
+- Perguntar ao visitante sobre seus objetivos para sugerir o programa ideal — seja proativo nisto
+- Direcionar para WhatsApp ou agenda quando quiserem avançar
+- Usar os links diretos quando relevante
+
+FORA DO ESCOPO:
+- Qualquer assunto fora da Fluency Studio ou do aprendizado de inglês
+- Se fugirem do assunto: "Esse não é o meu espaço para isso — mas posso te ajudar com tudo sobre os cursos da Fluency Studio. O que você gostaria de saber?"
+
+ESTILO: Direto, acolhedor, humano, sem asteriscos para negrito. Máximo 3 parágrafos curtos por resposta. Use emojis com moderação. Seja proativo — pergunte sobre os objetivos do visitante para ajudar melhor.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages:history})
+    });
+    const data=await res.json();
+    removeTyping();
+    const reply=data.content?.[0]?.text||'Tive um problema técnico. Pode tentar novamente?';
+    addIviMsg(reply);
+    history.push({role:'assistant',content:reply});
+  }catch(e){
+    removeTyping();
+    addIviMsg('Tive um problema de conexão. Você pode falar diretamente com o Prof. Victor pelo WhatsApp: (11) 92142-3578');
+  }
+}
+
+iviSend.addEventListener('click',()=>sendMsg(iviInput.value));
+iviInput.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg(iviInput.value);});
+iviChips.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>sendMsg(c.dataset.q)));
+
+/* SOM SUTIL */
+function playClick(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.setValueAtTime(660,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+0.06);
+    g.gain.setValueAtTime(.03,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+0.08);
+    o.start();o.stop(ctx.currentTime+0.08);
+  }catch(e){}
+}
+document.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',playClick));
+</script>
+</body>
+</html>
