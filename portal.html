@@ -27,116 +27,196 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;padding:0;}
-    body{font-family:'Outfit',system-ui,sans-serif;background:#f0f4f8;color:#0c1524;min-height:100vh;}
+
+    /* ── TEMA: variáveis CSS injetadas via JS após carregar do Firebase ── */
+    :root{
+      --bg:       linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%);
+      --font:     #dde6f0;
+      --card:     #1c2438;
+      --lesson:   #1a2236;
+      --detail:   #111927;
+      --header:   rgba(10,18,38,.94);
+      --tabbar:   rgba(255,255,255,.04);
+      --badge:    rgba(255,255,255,.07);
+      --btn:      rgba(255,255,255,.07);
+      --done:     rgba(30,160,110,.28);
+      --done-border: rgba(30,160,110,.55);
+      --done-text:   #60daa8;
+    }
+    body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--font);min-height:100vh;}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:radial-gradient(ellipse 900px 600px at 5% 0%,rgba(44,122,142,.06),transparent 60%),
-      radial-gradient(ellipse 700px 500px at 95% 90%,rgba(17,75,95,.05),transparent 60%);}
+      background:radial-gradient(ellipse 900px 600px at 10% 0%,rgba(32,120,150,.07),transparent 65%),
+                 radial-gradient(ellipse 700px 500px at 90% 95%,rgba(20,60,110,.09),transparent 65%);}
     #root{position:relative;z-index:1;}
-    .glass{background:rgba(255,255,255,.97);border:1px solid rgba(11,31,51,.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
-    .muted{color:rgba(12,21,36,.52);}
-    .chip{background:rgba(11,31,51,.06);border:1px solid rgba(11,31,51,.10);}
-    .btn{border:1px solid rgba(11,31,51,.14);background:rgba(11,31,51,.05);transition:transform .08s,background .12s;cursor:pointer;color:#0c1524;}
-    .btn:hover{background:rgba(11,31,51,.09);}
+
+    /* ── CARDS ── */
+    .glass{background:var(--card);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+    .muted{color:rgba(180,200,220,.55);}
+    .chip{background:var(--badge);border:1px solid rgba(255,255,255,.10);}
+    .btn{border:1px solid rgba(255,255,255,.12);background:var(--btn);transition:transform .08s,background .12s;cursor:pointer;color:var(--font);}
+    .btn:hover{filter:brightness(1.12);}
     .btn:active{transform:translateY(1px);}
-    .btn-primary{border:1px solid rgba(44,122,142,.50);background:linear-gradient(135deg,rgba(44,122,142,.90),rgba(17,75,95,.85));color:white;}
-    .btn-primary:hover{background:linear-gradient(135deg,rgba(44,122,142,1),rgba(17,75,95,.95));}
-    .btn-danger{border:1px solid rgba(90,31,43,.40);background:rgba(90,31,43,.08);color:#8a1a3a;}
-    .btn-danger:hover{background:rgba(90,31,43,.16);}
-    .input{background:rgba(255,255,255,.95);border:1px solid rgba(11,31,51,.15);outline:none;color:#0c1524;font-family:'Outfit',sans-serif;}
-    .input:focus{border-color:rgba(44,122,142,.75);box-shadow:0 0 0 3px rgba(44,122,142,.12);}
-    .input-light{background:white;border:1px solid rgba(11,31,51,.15);outline:none;color:#0c1524;border-radius:8px;padding:5px 10px;font-size:13px;width:100%;font-family:'Outfit',sans-serif;}
-    .input-light:focus{border-color:rgba(44,122,142,.6);box-shadow:0 0 0 3px rgba(44,122,142,.10);}
-    .err-box{background:rgba(90,31,43,.08);border:1px solid rgba(90,31,43,.35);border-radius:12px;padding:10px 14px;font-size:13px;color:#8a1a3a;}
-    .tab-bar{display:flex;background:rgba(11,31,51,.06);border:1px solid rgba(11,31,51,.08);border-radius:14px;padding:4px;gap:3px;overflow-x:auto;}
-    .tab-btn{flex:1;padding:9px 10px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.02em;cursor:pointer;border:none;background:transparent;color:rgba(12,21,36,.45);transition:all .18s;white-space:nowrap;min-width:fit-content;}
-    .tab-btn:hover{color:rgba(12,21,36,.75);background:rgba(11,31,51,.05);}
-    .tab-btn-active{background:linear-gradient(135deg,rgba(44,122,142,.90),rgba(17,75,95,.80));color:white;border:1px solid rgba(44,122,142,.40)!important;box-shadow:0 2px 12px rgba(44,122,142,.20);}
-    .book-m1{background:linear-gradient(135deg,rgba(26,138,158,.16),rgba(13,82,98,.10));border:1px solid rgba(26,138,158,.28);}
-    .book-m1:hover{background:linear-gradient(135deg,rgba(26,138,158,.24),rgba(13,82,98,.16));}
-    .book-m2{background:linear-gradient(135deg,rgba(42,100,170,.16),rgba(26,58,120,.10));border:1px solid rgba(42,100,170,.28);}
-    .book-m2:hover{background:linear-gradient(135deg,rgba(42,100,170,.24),rgba(26,58,120,.16));}
-    .book-m3{background:linear-gradient(135deg,rgba(26,154,122,.16),rgba(13,90,72,.10));border:1px solid rgba(26,154,122,.28);}
-    .book-m3:hover{background:linear-gradient(135deg,rgba(26,154,122,.24),rgba(13,90,72,.16));}
-    .book-m4{background:linear-gradient(135deg,rgba(90,74,170,.16),rgba(42,26,120,.10));border:1px solid rgba(90,74,170,.28);}
-    .book-m4:hover{background:linear-gradient(135deg,rgba(90,74,170,.24),rgba(42,26,120,.16));}
-    .book-m5{background:linear-gradient(135deg,rgba(42,122,170,.16),rgba(26,74,120,.10));border:1px solid rgba(42,122,170,.28);}
-    .book-m5:hover{background:linear-gradient(135deg,rgba(42,122,170,.24),rgba(26,74,120,.16));}
-    .book-m6{background:linear-gradient(135deg,rgba(58,90,138,.16),rgba(26,42,80,.10));border:1px solid rgba(58,90,138,.28);}
-    .book-m6:hover{background:linear-gradient(135deg,rgba(58,90,138,.24),rgba(26,42,80,.16));}
-    .lesson-card{background:rgba(255,255,255,.90);border-bottom:1px solid rgba(11,31,51,.07);color:#0c1524;transition:background .12s;}
-    .lesson-card:hover{background:rgba(255,255,255,1);}
+    .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
+    .btn-primary:hover{filter:brightness(1.10);}
+    .btn-danger{border:1px solid rgba(200,60,80,.35);background:rgba(200,60,80,.10);color:#e07080;}
+    .btn-danger:hover{background:rgba(200,60,80,.18);}
+
+    /* ── INPUTS ── */
+    .input{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.13);outline:none;color:var(--font);font-family:'Outfit',sans-serif;}
+    .input:focus{border-color:rgba(44,160,180,.75);box-shadow:0 0 0 3px rgba(44,160,180,.14);}
+    .input-light{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.11);outline:none;color:var(--font);border-radius:8px;padding:5px 10px;font-size:13px;width:100%;font-family:'Outfit',sans-serif;}
+    .input-light:focus{border-color:rgba(44,160,180,.6);box-shadow:0 0 0 3px rgba(44,160,180,.12);}
+    .err-box{background:rgba(200,60,70,.12);border:1px solid rgba(200,60,70,.38);border-radius:12px;padding:10px 14px;font-size:13px;color:#f0a0a8;}
+
+    /* ── TAB BAR ── */
+    .tab-bar{display:flex;background:var(--tabbar);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:4px;gap:3px;overflow-x:auto;}
+    .tab-btn{flex:1;padding:9px 10px;border-radius:10px;font-size:12px;font-weight:600;letter-spacing:.02em;cursor:pointer;border:none;background:transparent;color:rgba(180,200,220,.45);transition:all .18s;white-space:nowrap;min-width:fit-content;}
+    .tab-btn:hover{color:rgba(200,220,240,.80);background:rgba(255,255,255,.05);}
+    .tab-btn-active{background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;border:1px solid rgba(44,160,180,.40)!important;box-shadow:0 2px 14px rgba(30,143,168,.25);}
+
+    /* ── BOOK ACCORDIONS ── */
+    .book-m1{background:linear-gradient(135deg,rgba(26,138,158,.18),rgba(13,82,98,.12));border:1px solid rgba(26,138,158,.32);color:#b8e8f2;}
+    .book-m1:hover{background:linear-gradient(135deg,rgba(26,138,158,.26),rgba(13,82,98,.18));}
+    .book-m2{background:linear-gradient(135deg,rgba(42,100,190,.18),rgba(26,58,140,.12));border:1px solid rgba(42,100,190,.32);color:#b0ccf8;}
+    .book-m2:hover{background:linear-gradient(135deg,rgba(42,100,190,.26),rgba(26,58,140,.18));}
+    .book-m3{background:linear-gradient(135deg,rgba(26,154,122,.18),rgba(13,90,72,.12));border:1px solid rgba(26,154,122,.32);color:#a0e8cc;}
+    .book-m3:hover{background:linear-gradient(135deg,rgba(26,154,122,.26),rgba(13,90,72,.18));}
+    .book-m4{background:linear-gradient(135deg,rgba(110,84,200,.18),rgba(52,26,140,.12));border:1px solid rgba(110,84,200,.32);color:#c8b8f8;}
+    .book-m4:hover{background:linear-gradient(135deg,rgba(110,84,200,.26),rgba(52,26,140,.18));}
+    .book-m5{background:linear-gradient(135deg,rgba(42,130,190,.18),rgba(26,80,140,.12));border:1px solid rgba(42,130,190,.32);color:#a8d4f8;}
+    .book-m5:hover{background:linear-gradient(135deg,rgba(42,130,190,.26),rgba(26,80,140,.18));}
+    .book-m6{background:linear-gradient(135deg,rgba(70,100,160,.18),rgba(30,50,100,.12));border:1px solid rgba(70,100,160,.32);color:#b0c4e8;}
+    .book-m6:hover{background:linear-gradient(135deg,rgba(70,100,160,.26),rgba(30,50,100,.18));}
+
+    /* ── LESSON CARDS ── */
+    .lesson-card{background:var(--lesson);border-bottom:1px solid rgba(255,255,255,.05);color:var(--font);transition:background .12s;}
+    .lesson-card:hover{filter:brightness(1.08);}
     .lesson-card:last-child{border-bottom:none;}
-    .review-card{background:rgba(44,122,142,.10);border-bottom:1px solid rgba(44,122,142,.13);color:#0c1524;transition:background .12s;}
-    .review-card:hover{background:rgba(44,122,142,.17);}
+    /* LIÇÃO CONCLUÍDA: fundo colorido configurável */
+    .lesson-card.done-card{background:var(--done)!important;border-left:3px solid var(--done-border)!important;color:var(--done-text)!important;}
+    .review-card{background:rgba(30,130,155,.14);border-bottom:1px solid rgba(30,130,155,.20);color:var(--font);transition:background .12s;}
+    .review-card:hover{background:rgba(30,130,155,.22);}
     .review-card:last-child{border-bottom:none;}
-    .lesson-detail{background:rgba(248,250,252,.98);border-top:1px solid rgba(11,31,51,.08);padding:14px 18px 16px;}
-    .detail-label{font-size:11px;font-weight:700;color:#4a6a82;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-    .num-light{background:rgba(11,31,51,.08);border:1px solid rgba(11,31,51,.14);color:#1a3a52;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    .num-dark{background:rgba(44,122,142,.18);border:1px solid rgba(44,122,142,.32);color:#0e4a5a;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    .tag-input{background:rgba(15,58,69,.10);color:#0F3A45;border:1px solid rgba(15,58,69,.24);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-output{background:rgba(90,31,43,.08);color:#5A1F2B;border:1px solid rgba(90,31,43,.24);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
+    .review-card.done-card{background:var(--done)!important;border-left:3px solid var(--done-border)!important;color:var(--done-text)!important;}
+    .lesson-detail{background:var(--detail);border-top:1px solid rgba(255,255,255,.06);padding:14px 18px 16px;}
+    .detail-label{font-size:11px;font-weight:700;color:#5ab4cc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+    .num-light{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:var(--font);min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
+    .num-dark{background:rgba(30,143,168,.22);border:1px solid rgba(30,143,168,.42);color:#7de0f8;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
+    .tag-input{background:rgba(30,143,168,.18);color:#7de0f8;border:1px solid rgba(30,143,168,.38);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
+    .tag-output{background:rgba(180,80,120,.16);color:#f0a0c0;border:1px solid rgba(180,80,120,.36);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
     .chevron-icon{transition:transform .2s;}
     .chevron-open{transform:rotate(180deg);}
-    .ls-pendente{background:rgba(11,31,51,.07);border:1px solid rgba(11,31,51,.14);color:#5a7a90;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
-    .ls-andamento{background:rgba(190,135,20,.10);border:1px solid rgba(190,135,20,.34);color:#8a6010;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
-    .ls-concluida{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
+
+    /* ── STATUS BADGES ── */
+    .ls-pendente{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);color:#8ab0c8;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
+    .ls-andamento{background:rgba(220,160,30,.14);border:1px solid rgba(220,160,30,.36);color:#f0cc60;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
+    .ls-concluida{background:rgba(30,160,110,.14);border:1px solid rgba(30,160,110,.38);color:#60daa8;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;}
     .att-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .att-inactive{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .att-inactive:hover{background:rgba(11,31,51,.10);}
-    .att-presente{background:rgba(44,142,105,.12);border-color:rgba(44,142,105,.38);color:#1b6e48;}
-    .att-ausente{background:rgba(90,31,43,.10);border-color:rgba(90,31,43,.38);color:#9a2a38;}
-    .att-desmarcada{background:rgba(120,120,120,.09);border-color:rgba(120,120,120,.28);color:#555;}
+    .att-inactive{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.10);color:#7a9aaa;}
+    .att-inactive:hover{background:rgba(255,255,255,.09);}
+    .att-presente{background:rgba(30,160,110,.18);border-color:rgba(30,160,110,.45);color:#60daa8;}
+    .att-ausente{background:rgba(200,60,80,.16);border-color:rgba(200,60,80,.42);color:#f0909a;}
+    .att-desmarcada{background:rgba(140,140,140,.12);border-color:rgba(140,140,140,.28);color:#a0b0c0;}
     .eval-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .eval-inactive{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .eval-inactive:hover{background:rgba(11,31,51,.10);}
-    .eval-revisao{background:rgba(190,135,20,.10);border-color:rgba(190,135,20,.38);color:#8a6010;}
-    .eval-atingiu{background:rgba(42,100,170,.10);border-color:rgba(42,100,170,.38);color:#1a3a7a;}
-    .eval-superou{background:rgba(44,142,105,.12);border-color:rgba(44,142,105,.38);color:#1b6e48;}
+    .eval-inactive{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.10);color:#7a9aaa;}
+    .eval-inactive:hover{background:rgba(255,255,255,.09);}
+    .eval-revisao{background:rgba(220,160,30,.16);border-color:rgba(220,160,30,.40);color:#f0cc60;}
+    .eval-atingiu{background:rgba(42,120,200,.16);border-color:rgba(42,120,200,.40);color:#88c0f8;}
+    .eval-superou{background:rgba(30,160,110,.18);border-color:rgba(30,160,110,.42);color:#60daa8;}
     .sbtn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .13s;border:1px solid transparent;}
-    .sbtn-off{background:rgba(11,31,51,.06);border-color:rgba(11,31,51,.13);color:#7a9aaa;}
-    .sbtn-off:hover{background:rgba(11,31,51,.10);}
-    .sbtn-pendente{background:rgba(11,31,51,.08);border-color:rgba(11,31,51,.20);color:#3a6a82;}
-    .sbtn-andamento{background:rgba(190,135,20,.13);border-color:rgba(190,135,20,.44);color:#7a5000;}
-    .sbtn-concluida{background:rgba(44,142,105,.14);border-color:rgba(44,142,105,.48);color:#155a38;}
-    .ds-realizada{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;}
-    .ds-andamento{background:rgba(44,122,142,.12);border:1px solid rgba(44,122,142,.33);color:#0e4a5a;}
-    .ds-ausente{background:rgba(90,31,43,.12);border:1px solid rgba(90,31,43,.36);color:#9a2a38;}
-    .ds-desmarcada{background:rgba(120,120,120,.09);border:1px solid rgba(120,120,120,.28);color:#555;}
-    .ds-rep-gratis{background:rgba(44,80,142,.10);border:1px solid rgba(44,80,142,.28);color:#1a3a8a;}
-    .ds-rep-paga{background:rgba(140,80,0,.10);border:1px solid rgba(140,80,0,.28);color:#8a4a00;}
-    .ds-cancelada{background:rgba(130,30,60,.10);border:1px solid rgba(130,30,60,.28);color:#8a1a3a;}
+    .sbtn-off{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.10);color:#7a9aaa;}
+    .sbtn-off:hover{background:rgba(255,255,255,.09);}
+    .sbtn-pendente{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#98bcd4;}
+    .sbtn-andamento{background:rgba(220,160,30,.16);border-color:rgba(220,160,30,.42);color:#f0cc60;}
+    .sbtn-concluida{background:rgba(30,160,110,.18);border-color:rgba(30,160,110,.46);color:#60daa8;}
+
+    /* ── DIÁRIO ── */
+    .ds-realizada{background:rgba(30,160,110,.18);border:1px solid rgba(30,160,110,.40);color:#60daa8;}
+    .ds-andamento{background:rgba(30,143,168,.18);border:1px solid rgba(30,143,168,.36);color:#7de0f8;}
+    .ds-ausente{background:rgba(200,60,80,.16);border:1px solid rgba(200,60,80,.38);color:#f0909a;}
+    .ds-desmarcada{background:rgba(140,140,140,.11);border:1px solid rgba(140,140,140,.26);color:#a0b0c0;}
+    .ds-rep-gratis{background:rgba(42,100,200,.16);border:1px solid rgba(42,100,200,.34);color:#88c0f8;}
+    .ds-rep-paga{background:rgba(180,100,20,.16);border:1px solid rgba(180,100,20,.34);color:#f0b060;}
+    .ds-cancelada{background:rgba(160,40,70,.16);border:1px solid rgba(160,40,70,.34);color:#f09090;}
     .diario-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;display:inline-block;}
-    .num-aula{background:linear-gradient(135deg,rgba(44,122,142,.85),rgba(17,75,95,.85));border:1px solid rgba(44,122,142,.50);color:white;min-width:3rem;text-align:center;border-radius:9px;padding:5px 8px;font-weight:700;font-size:12px;flex-shrink:0;line-height:1.3;}
-    .dtable-row{border-bottom:1px solid rgba(11,31,51,.06);}
+    .num-aula{background:linear-gradient(135deg,#1e8fa8,#145f7a);border:1px solid rgba(30,143,168,.50);color:#fff;min-width:3rem;text-align:center;border-radius:9px;padding:5px 8px;font-weight:700;font-size:12px;flex-shrink:0;line-height:1.3;}
+    .dtable-row{border-bottom:1px solid rgba(255,255,255,.05);}
     .dtable-row:last-child{border-bottom:none;}
-    .dtable-row:hover{background:rgba(11,31,51,.02);}
-    select.ds-select{background:white;border:1px solid rgba(11,31,51,.15);color:#0c1524;border-radius:8px;padding:4px 8px;font-size:12px;outline:none;cursor:pointer;min-width:170px;font-family:'Outfit',sans-serif;}
-    select.ds-select:focus{border-color:rgba(44,122,142,.7);}
-    textarea.obs-input{background:white;border:1px solid rgba(11,31,51,.12);color:#0c1524;border-radius:8px;padding:5px 10px;font-size:12px;outline:none;resize:vertical;min-height:36px;width:100%;font-family:'Outfit',sans-serif;}
-    textarea.obs-input:focus{border-color:rgba(44,122,142,.7);}
+    .dtable-row:hover{background:rgba(255,255,255,.03);}
+    select.ds-select{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11);color:var(--font);border-radius:8px;padding:4px 8px;font-size:12px;outline:none;cursor:pointer;min-width:170px;font-family:'Outfit',sans-serif;}
+    select.ds-select:focus{border-color:rgba(30,143,168,.7);}
+    textarea.obs-input{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11);color:var(--font);border-radius:8px;padding:5px 10px;font-size:12px;outline:none;resize:vertical;min-height:36px;width:100%;font-family:'Outfit',sans-serif;}
+    textarea.obs-input:focus{border-color:rgba(30,143,168,.7);}
+
+    /* ── FINANCEIRO ── */
     .fin-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;}
-    .fin-paga{background:rgba(44,142,105,.12);border:1px solid rgba(44,142,105,.36);color:#1b6e48;}
-    .fin-avencer{background:rgba(190,135,20,.10);border:1px solid rgba(190,135,20,.36);color:#8a6010;}
-    .fin-vencida{background:rgba(90,31,43,.12);border:1px solid rgba(90,31,43,.36);color:#9a2a38;}
-    .fin-aberto{background:rgba(42,100,170,.10);border:1px solid rgba(42,100,170,.28);color:#1a3a7a;}
-    .fin-creditos{background:rgba(90,74,170,.10);border:1px solid rgba(90,74,170,.28);color:#4a2a8a;}
-    .ivictor-btn{position:fixed;bottom:22px;right:22px;z-index:900;width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid rgba(44,122,142,.6);box-shadow:0 4px 24px rgba(0,0,0,.18),0 0 0 4px rgba(44,122,142,.10);cursor:pointer;transition:transform .18s;background:#0c2030;}
+    .fin-paga{background:rgba(30,160,110,.18);border:1px solid rgba(30,160,110,.40);color:#60daa8;}
+    .fin-avencer{background:rgba(220,160,30,.14);border:1px solid rgba(220,160,30,.38);color:#f0cc60;}
+    .fin-vencida{background:rgba(200,60,80,.16);border:1px solid rgba(200,60,80,.40);color:#f0909a;}
+    .fin-aberto{background:rgba(42,120,200,.14);border:1px solid rgba(42,120,200,.33);color:#88c0f8;}
+    .fin-creditos{background:rgba(110,80,200,.14);border:1px solid rgba(110,80,200,.33);color:#c0a8f8;}
+
+    /* ── iVICTOR ── */
+    .ivictor-btn{position:fixed;bottom:22px;right:22px;z-index:900;width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid rgba(30,143,168,.65);box-shadow:0 4px 24px rgba(0,0,0,.40),0 0 0 4px rgba(30,143,168,.12);cursor:pointer;transition:transform .18s;background:#0c2030;}
     .ivictor-btn:hover{transform:scale(1.07);}
-    .ivictor-panel{position:fixed;bottom:92px;right:22px;z-index:900;width:280px;border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.20);animation:slideUp .22s ease-out;}
+    .ivictor-panel{position:fixed;bottom:92px;right:22px;z-index:900;width:280px;border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.50);animation:slideUp .22s ease-out;}
     @keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-    .ivictor-header{background:linear-gradient(135deg,rgba(44,122,142,.92),rgba(17,75,95,.88));padding:12px 14px;display:flex;align-items:center;gap:10px;color:white;}
+    .ivictor-header{background:linear-gradient(135deg,#1e8fa8,#145f7a);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#fff;}
     .ivictor-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.3);flex-shrink:0;background:#0c2030;}
-    .ivictor-body{background:rgba(255,255,255,.98);border:1px solid rgba(44,122,142,.18);backdrop-filter:blur(16px);padding:14px;}
-    .ivictor-msg{background:rgba(44,122,142,.08);border:1px solid rgba(44,122,142,.16);border-radius:12px 12px 12px 3px;padding:10px 13px;font-size:13px;line-height:1.5;color:#0c1524;}
-    .ivictor-date{font-size:11px;color:rgba(12,21,36,.38);margin-top:8px;text-align:center;}
-    .student-card{background:rgba(255,255,255,.95);border:1px solid rgba(11,31,51,.10);border-radius:16px;padding:16px;cursor:pointer;transition:all .15s;}
-    .student-card:hover{background:white;box-shadow:0 4px 16px rgba(11,31,51,.08);transform:translateY(-1px);}
+    .ivictor-body{background:#141e30;border:1px solid rgba(30,143,168,.22);backdrop-filter:blur(16px);padding:14px;}
+    .ivictor-msg{background:rgba(30,143,168,.12);border:1px solid rgba(30,143,168,.22);border-radius:12px 12px 12px 3px;padding:10px 13px;font-size:13px;line-height:1.5;color:#d8e8f4;}
+    .ivictor-date{font-size:11px;color:rgba(180,200,220,.38);margin-top:8px;text-align:center;}
+
+    /* ── STUDENT CARDS ── */
+    .student-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:16px;cursor:pointer;transition:all .15s;}
+    .student-card:hover{filter:brightness(1.10);box-shadow:0 4px 22px rgba(0,0,0,.35);transform:translateY(-1px);}
+
+    /* ── APARÊNCIA ── */
+    .ap-section{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;margin-bottom:16px;background:rgba(0,0,0,.18);}
+    .ap-section h4{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5ab4cc;margin-bottom:14px;}
+    .ap-swatch{width:34px;height:34px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
+    .ap-swatch:hover{transform:scale(1.12);}
+    .ap-swatch.selected{border-color:#fff;box-shadow:0 0 0 3px rgba(30,143,168,.5);}
+    .ap-preset{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;background:rgba(255,255,255,.04);}
+    .ap-preset:hover{background:rgba(255,255,255,.09);}
+    .ap-preset.selected{border-color:rgba(30,143,168,.8);background:rgba(30,143,168,.14);color:#7de0f8;}
+
+    /* ── MISC ── */
     ::-webkit-scrollbar{width:5px;height:5px;}
     ::-webkit-scrollbar-track{background:transparent;}
-    ::-webkit-scrollbar-thumb{background:rgba(44,122,142,.22);border-radius:99px;}
+    ::-webkit-scrollbar-thumb{background:rgba(30,143,168,.28);border-radius:99px;}
     .progress-fill{transition:width .6s ease;}
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
+
+  <script>
+  // Carrega tema do Firebase assim que possível e aplica CSS variables
+  (function(){
+    function applyTheme(t){
+      if(!t)return;
+      const r=document.documentElement.style;
+      if(t.bg)r.setProperty('--bg',t.bg);
+      if(t.font)r.setProperty('--font',t.font);
+      if(t.card)r.setProperty('--card',t.card);
+      if(t.lesson)r.setProperty('--lesson',t.lesson);
+      if(t.detail)r.setProperty('--detail',t.detail);
+      if(t.header)r.setProperty('--header',t.header);
+      if(t.tabbar)r.setProperty('--tabbar',t.tabbar);
+      if(t.badge)r.setProperty('--badge',t.badge);
+      if(t.btn)r.setProperty('--btn',t.btn);
+      if(t.done)r.setProperty('--done',t.done);
+      if(t.doneBorder)r.setProperty('--done-border',t.doneBorder);
+      if(t.doneText)r.setProperty('--done-text',t.doneText);
+    }
+    window.__applyTheme=applyTheme;
+    // Tenta carregar antes do React montar
+    try{
+      firebase.firestore().collection('config').doc('aparencia').get().then(doc=>{
+        if(doc.exists)applyTheme(doc.data());
+      });
+    }catch(e){}
+  })();
+  </script>
 </head>
 <body>
 <div id="root"></div>
@@ -306,12 +386,12 @@ function StudentLessonView({item}){
   return(
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
-        {item.date&&<div><div className="detail-label">Data</div><p className="text-sm font-medium" style={{color:"#2a4a62"}}>{formatDateBR(item.date)}</p></div>}
+        {item.date&&<div><div className="detail-label">Data</div><p className="text-sm font-medium" style={{color:"var(--font)"}}>{formatDateBR(item.date)}</p></div>}
         {item.status&&<div><div className="detail-label">Status</div><LessonBadge status={item.status}/></div>}
         {item.attendance&&<div><div className="detail-label">Presença</div><span className={"att-btn "+AS[item.attendance]}>{AL[item.attendance]}</span></div>}
         {item.evaluation&&<div><div className="detail-label">Avaliação</div><span className={"eval-btn "+ES[item.evaluation]}>{EL[item.evaluation]}</span></div>}
       </div>
-      {item.obs&&<div><div className="detail-label">Observações</div><p className="text-sm" style={{color:"#2a4a62"}}>{item.obs}</p></div>}
+      {item.obs&&<div><div className="detail-label">Observações</div><p className="text-sm" style={{color:"var(--font)"}}>{item.obs}</p></div>}
       {anyLinks&&<div><div className="detail-label mb-2">Links</div><div className="flex gap-2 flex-wrap">{LK.map(lk=>{const url=item[lk.f]||(lk.f==="linkMaterial"?item.link:"");if(!url)return null;return <a key={lk.f} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.26)",color:"#0e4a5a"}}><Icon name="external-link" size={11}/>{lk.l}</a>;})}</div></div>}
     </div>
   );
@@ -323,7 +403,7 @@ function LessonItem({item,uid,isAdmin}){
   async function updateField(field,val){const patch={};patch[`trilha.${item.id}.${field}`]=val;await db.collection("students").doc(uid).update(patch);}
   async function setStatus(s){await updateField("status",s);}
   return(
-    <div className={isReview?"review-card":"lesson-card"}>
+    <div className={(isReview?"review-card":"lesson-card")+(item.status==="concluida"||item.status==="realizada"?" done-card":"")}>
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={handleToggle}>
         <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
         <div className="flex-1 min-w-0">
@@ -348,13 +428,13 @@ function BookAccordion({bookIdx,items,uid,isAdmin}){
   const [open,setOpen]=useState(false);const mod=MODULES[bookIdx-1];
   const done=items.filter(i=>i.status==="concluida").length;const pct=Math.round((done/items.length)*100);
   return(
-    <div className="overflow-hidden rounded-2xl mb-3" style={{border:"1px solid rgba(11,31,51,.08)"}}>
+    <div className="overflow-hidden rounded-2xl mb-3" style={{border:"1px solid rgba(255,255,255,.08)"}}>
       <button className={"w-full text-left px-5 py-4 flex items-center justify-between gap-4 transition-all "+mod.bookClass} onClick={()=>setOpen(o=>!o)}>
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <div className="chip rounded-xl px-3 py-2 text-center min-w-[52px] shrink-0"><div className="text-xs muted">Módulo</div><div className="font-bold text-base">{bookIdx}</div></div>
           <div className="flex-1 min-w-0">
             <div className="font-bold text-base truncate">{mod.name}</div>
-            <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{background:"rgba(0,0,0,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:`linear-gradient(90deg,${mod.accent}.85),${mod.accent}.55))`}}/></div>
+            <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.10)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:`linear-gradient(90deg,${mod.accent}.85),${mod.accent}.55))`}}/></div>
           </div>
         </div>
         <Icon name="chevron-down" size={16} className={"chevron-icon muted"+(open?" chevron-open":"")}/>
@@ -378,13 +458,13 @@ function TrilhaSection({uid,isAdmin}){
         <p className="muted text-sm mb-4">Fluência Real em 18 Meses</p>
         <div className="max-w-sm mx-auto">
           <div className="flex justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{progress}%</span></div>
-          <div className="h-2.5 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
+          <div className="h-2.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
         </div>
       </div>
       {GROUPS.map(group=>{
         const gm=MODULES.filter(m=>m.group===group);
         return <div key={group} className="mb-6">
-          <div className="flex items-center gap-3 mb-3"><div className="h-px flex-1" style={{background:"rgba(11,31,51,.10)"}}/><span className="text-xs font-bold tracking-widest muted uppercase px-2">{group}</span><div className="h-px flex-1" style={{background:"rgba(11,31,51,.10)"}}/></div>
+          <div className="flex items-center gap-3 mb-3"><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/><span className="text-xs font-bold tracking-widest muted uppercase px-2">{group}</span><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/></div>
           {gm.map(mod=><BookAccordion key={mod.id} bookIdx={mod.id} items={books.find(b=>b.bookIdx===mod.id)?.items||[]} uid={uid} isAdmin={isAdmin}/>)}
         </div>;
       })}
@@ -426,7 +506,7 @@ function DiarioSection({uid,isAdmin}){
   async function updateEntry(id,patch){await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);}
   async function deleteEntry(id){if(!confirm("Remover esta aula?"))return;await db.collection("students").doc(uid).collection("diario").doc(id).delete();}
   if(!entries)return null;
-  const iS={background:"white",border:"1px solid rgba(11,31,51,.15)",color:"#0c1524",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",fontFamily:"'Outfit',sans-serif"};
+  const iS={background:"rgba(0,0,0,.25)",border:"1px solid rgba(255,255,255,.12)",color:"var(--font)",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",fontFamily:"'Outfit',sans-serif"};
   return(
     <div><div className="glass rounded-2xl p-5">
       <div className="flex items-center justify-between gap-3 flex-wrap mb-5">
@@ -497,7 +577,7 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
       </div>}
       {tipo==="creditos"&&!isAdmin&&<div className="glass rounded-2xl p-5">
         <div className="flex items-center justify-between"><div><h3 className="font-bold text-base">Seus Créditos</h3><p className="muted text-sm">{creditosUsados} usados de {creditosTotal}</p></div><div className="text-center"><div className="text-3xl font-extrabold" style={{color:"rgba(44,122,142,1)"}}>{creditosRestantes}</div><div className="text-xs muted">restantes</div></div></div>
-        {creditosTotal>0&&<div className="mt-3 h-2 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:Math.round((creditosUsados/creditosTotal)*100)+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>}
+        {creditosTotal>0&&<div className="mt-3 h-2 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:Math.round((creditosUsados/creditosTotal)*100)+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>}
       </div>}
       {tipo==="creditos"&&isAdmin&&creditosTotal>0&&<div className="chip rounded-2xl p-4 flex items-center justify-between"><span className="text-sm font-semibold">Créditos Restantes</span><span className="fin-badge fin-creditos" style={{fontSize:13}}>{creditosRestantes} de {creditosTotal}</span></div>}
       <div className="glass rounded-2xl p-5">
@@ -526,7 +606,7 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
                   <div className="flex items-center gap-5 flex-wrap">
                     {p.valor>0&&<div><div className="detail-label">Valor</div><div className="font-semibold text-sm">{formatCurrency(p.valor)}</div></div>}
                     {p.valorDesconto>0&&<div><div className="detail-label">Com Desconto</div><div className="font-semibold text-sm" style={{color:"rgba(44,122,142,1)"}}>{formatCurrency(p.valorDesconto)}</div></div>}
-                    {p.comprovante&&<a href={p.comprovante} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.24)",color:"#0e4a5a"}}><Icon name="file-text" size={11}/> Ver Comprovante</a>}
+                    {p.comprovante&&<a href={p.comprovante} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.24)",color:"var(--font)"}}><Icon name="file-text" size={11}/> Ver Comprovante</a>}
                   </div>
                 </div>
               )}
@@ -564,10 +644,10 @@ function StudentDetail({uid,isAdmin,onBack}){
   function calcAge(bday){if(!bday)return null;const[y,m,d]=bday.split("-").map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m||(today.getMonth()+1===m&&today.getDate()<d))age--;return age;}
   if(!profile)return <LoadingScreen/>;
   const age=calcAge(profile.birthday);
-  const tabs=[{id:"financeiro",label:"Financeiro"},{id:"trilha",label:"Trilha"},{id:"recursos",label:"Recursos"},{id:"diario",label:"Diário"}];
+  const tabs=[{id:"financeiro",label:"Financeiro"},{id:"trilha",label:"Trilha"},{id:"recursos",label:"Recursos"},{id:"diario",label:"Diário"},...(isAdmin?[{id:"config",label:"⚙ Config"}]:[])];
   return(
     <div className="min-h-screen pb-20">
-      <header className="px-4 py-4 sticky top-0 z-50" style={{background:"rgba(240,244,248,.92)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(11,31,51,.08)"}}>
+      <header className="px-4 py-4 sticky top-0 z-50" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {isAdmin&&onBack&&<button className="btn rounded-xl px-3 py-2.5 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={16}/></button>}
@@ -609,8 +689,215 @@ function StudentDetail({uid,isAdmin,onBack}){
         {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={isAdmin}/>}
         {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={isAdmin} links={links}/>}
         {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={isAdmin}/>}
+        {activeTab==="config"&&isAdmin&&<AparenciaSection/>}
       </main>
       <IVictor/>
+    </div>
+  );
+}
+
+
+// ── SISTEMA DE TEMAS ────────────────────────────────────────────────────────
+const BG_PRESETS = [
+  {id:"dark-blue",   label:"Preto + Azul",    value:"linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%)"},
+  {id:"blue-purple", label:"Azul + Roxo",     value:"linear-gradient(160deg,#08051a 0%,#0d0a2e 30%,#150f3e 55%,#1a1050 75%,#0f0828 100%)"},
+  {id:"white-gray",  label:"Branco + Cinza",  value:"linear-gradient(160deg,#f8f9fb 0%,#eef0f4 35%,#e4e8ee 60%,#dde2ea 80%,#e8ecf2 100%)"},
+];
+const FONT_PRESETS = [
+  {id:"f1",label:"Branco",        value:"#ffffff"},
+  {id:"f2",label:"Branco-gelo",   value:"#f0f4f8"},
+  {id:"f3",label:"Cinza-claro",   value:"#c8d4e0"},
+  {id:"f4",label:"Preto",         value:"#0a0a0a"},
+  {id:"f5",label:"Cinza-escuro",  value:"#2a3240"},
+  {id:"f6",label:"Teal",          value:"#1e8fa8"},
+  {id:"f7",label:"Dourado",       value:"#c8a84b"},
+];
+const CARD_PRESETS = [
+  {id:"c1",label:"Deep Navy",   value:"#1c2438"},
+  {id:"c2",label:"Branco",      value:"#ffffff"},
+  {id:"c3",label:"Cinza-escuro",value:"#1e1e2e"},
+  {id:"c4",label:"Grafite",     value:"#2a2d35"},
+  {id:"c5",label:"Azul-aço",    value:"#162032"},
+];
+const DONE_PRESETS = [
+  {id:"d1",label:"Verde-esmeralda", bg:"rgba(22,160,100,.30)",  border:"rgba(22,160,100,.65)",  text:"#4de0a0"},
+  {id:"d2",label:"Verde-teal",      bg:"rgba(22,140,140,.30)",  border:"rgba(22,140,140,.65)",  text:"#4dd4d4"},
+  {id:"d3",label:"Verde-lima",      bg:"rgba(100,180,30,.22)",  border:"rgba(100,180,30,.55)",  text:"#a0e040"},
+  {id:"d4",label:"Azul-safira",     bg:"rgba(30,100,210,.28)",  border:"rgba(30,100,210,.60)",  text:"#80c0ff"},
+  {id:"d5",label:"Roxo",            bg:"rgba(120,60,200,.24)",  border:"rgba(120,60,200,.55)",  text:"#c090ff"},
+  {id:"d6",label:"Dourado",         bg:"rgba(200,150,20,.22)",  border:"rgba(200,150,20,.55)",  text:"#f0c840"},
+];
+const DEFAULT_THEME = {
+  bg:         BG_PRESETS[0].value,
+  font:       FONT_PRESETS[0].value,
+  card:       CARD_PRESETS[0].value,
+  lesson:     "#1a2236",
+  detail:     "#111927",
+  header:     "rgba(10,18,38,.94)",
+  tabbar:     "rgba(255,255,255,.04)",
+  badge:      "rgba(255,255,255,.07)",
+  btn:        "rgba(255,255,255,.07)",
+  done:       DONE_PRESETS[0].bg,
+  doneBorder: DONE_PRESETS[0].border,
+  doneText:   DONE_PRESETS[0].text,
+};
+
+function ColorPicker({label,value,onChange}){
+  return(
+    <div className="flex items-center gap-3">
+      <label className="text-xs muted w-28 shrink-0">{label}</label>
+      <input type="color" value={value||"#ffffff"} onChange={e=>onChange(e.target.value)}
+        style={{width:36,height:36,border:"1px solid rgba(255,255,255,.15)",borderRadius:8,cursor:"pointer",background:"none",padding:2}}/>
+      <span className="text-xs muted font-mono">{value}</span>
+    </div>
+  );
+}
+
+function AparenciaSection(){
+  const [theme,setTheme]=useState(DEFAULT_THEME);
+  const [saved,setSaved]=useState(false);
+  const [loading,setLoading]=useState(true);
+
+  useEffect(()=>{
+    db.collection("config").doc("aparencia").get().then(doc=>{
+      if(doc.exists)setTheme({...DEFAULT_THEME,...doc.data()});
+      setLoading(false);
+    }).catch(()=>setLoading(false));
+  },[]);
+
+  function set(key,val){setTheme(p=>({...p,[key]:val}));}
+
+  function applyLive(patch){
+    const t={...theme,...patch};
+    window.__applyTheme&&window.__applyTheme(t);
+  }
+
+  function setAndApply(key,val){
+    set(key,val);
+    applyLive({[key]:val});
+  }
+
+  function setDonePreset(p){
+    const patch={done:p.bg,doneBorder:p.border,doneText:p.text};
+    setTheme(prev=>({...prev,...patch}));
+    applyLive(patch);
+  }
+
+  function setBgPreset(p){setAndApply("bg",p.value);}
+  function setCardPreset(p){
+    const lesson=p.id==="c2"?"#f0f2f5":p.id==="c3"?"#191926":p.id==="c4"?"#242730":p.id==="c5"?"#101828":"#1a2236";
+    const detail=p.id==="c2"?"#e8eaee":p.id==="c3"?"#111118":p.id==="c4"?"#1a1d23":p.id==="c5"?"#080e1a":"#111927";
+    const patch={card:p.value,lesson,detail};
+    setTheme(prev=>({...prev,...patch}));
+    applyLive(patch);
+  }
+
+  async function saveTheme(){
+    await db.collection("config").doc("aparencia").set(theme);
+    window.__applyTheme&&window.__applyTheme(theme);
+    setSaved(true);
+    setTimeout(()=>setSaved(false),2500);
+  }
+
+  if(loading)return <div className="glass rounded-2xl p-8 text-center muted">Carregando configurações...</div>;
+
+  return(
+    <div className="max-w-2xl mx-auto space-y-4">
+      <div className="glass rounded-2xl p-6">
+        <h3 className="text-lg font-bold mb-1" style={{fontFamily:"'Sora',sans-serif"}}>Aparência do Portal</h3>
+        <p className="muted text-sm mb-6">As alterações afetam todos os usuários ao salvar.</p>
+
+        {/* FUNDO */}
+        <div className="ap-section">
+          <h4>🎨 Fundo Geral</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {BG_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setBgPreset(p)}
+                className={"ap-preset"+(theme.bg===p.value?" selected":"")}>{p.label}</button>
+            ))}
+          </div>
+          <div className="text-xs muted mb-2">Personalizado (cor inicial do gradiente):</div>
+          <ColorPicker label="Cor do gradiente" value={theme.bgCustom||"#05080f"} onChange={v=>{
+            const grad=`linear-gradient(160deg,${v} 0%,${v}dd 35%,${v}bb 65%,${v}99 100%)`;
+            setTheme(p=>({...p,bg:grad,bgCustom:v}));
+            applyLive({bg:grad});
+          }}/>
+        </div>
+
+        {/* FONTE */}
+        <div className="ap-section">
+          <h4>🔤 Cor da Fonte Principal</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {FONT_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setAndApply("font",p.value)}
+                className={"ap-preset"+(theme.font===p.value?" selected":"")}
+                style={{color:p.value,borderColor:theme.font===p.value?"rgba(30,143,168,.8)":"rgba(255,255,255,.12)"}}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <ColorPicker label="Cor livre" value={theme.font} onChange={v=>setAndApply("font",v)}/>
+        </div>
+
+        {/* CARDS */}
+        <div className="ap-section">
+          <h4>🃏 Cards / Caixas</h4>
+          <div className="text-xs muted mb-3">Cor principal das caixas (cards de aluno, painéis, etc.):</div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {CARD_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setCardPreset(p)}
+                className={"ap-preset flex items-center gap-2"+(theme.card===p.value?" selected":"")}>
+                <span style={{width:14,height:14,borderRadius:4,background:p.value,border:"1px solid rgba(255,255,255,.2)",display:"inline-block"}}/>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <ColorPicker label="Card principal" value={theme.card} onChange={v=>{const patch={card:v};setTheme(p=>({...p,...patch}));applyLive(patch);}}/>
+          <div className="mt-3"/>
+          <ColorPicker label="Card de lição" value={theme.lesson} onChange={v=>setAndApply("lesson",v)}/>
+          <div className="mt-3"/>
+          <ColorPicker label="Painel de detalhe" value={theme.detail} onChange={v=>setAndApply("detail",v)}/>
+        </div>
+
+        {/* HEADER / TABBAR / BADGE / BTN */}
+        <div className="ap-section">
+          <h4>🧩 Elementos da Interface</h4>
+          <div className="space-y-3">
+            <ColorPicker label="Header (barra top)" value={theme.header||"#0a1226"} onChange={v=>setAndApply("header",v)}/>
+            <ColorPicker label="Barra de abas" value={theme.tabbar||"rgba(255,255,255,.04)"} onChange={v=>setAndApply("tabbar",v)}/>
+            <ColorPicker label="Badges / chips" value={theme.badge||"rgba(255,255,255,.07)"} onChange={v=>setAndApply("badge",v)}/>
+            <ColorPicker label="Botões neutros" value={theme.btn||"rgba(255,255,255,.07)"} onChange={v=>setAndApply("btn",v)}/>
+          </div>
+        </div>
+
+        {/* LIÇÃO CONCLUÍDA */}
+        <div className="ap-section">
+          <h4>✅ Cor da Lição Concluída / Realizada</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {DONE_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setDonePreset(p)}
+                className={"ap-preset"+(theme.done===p.bg?" selected":"")}
+                style={{color:p.text,borderColor:theme.done===p.bg?p.border:"rgba(255,255,255,.12)",background:theme.done===p.bg?p.bg:"rgba(255,255,255,.04)"}}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-3">
+            <ColorPicker label="Fundo do card" value={theme.doneBg||theme.done||"#1ea064"} onChange={v=>{const patch={done:v};setTheme(p=>({...p,...patch}));applyLive(patch);}}/>
+            <ColorPicker label="Borda do card" value={theme.doneBorder||"#2ae090"} onChange={v=>setAndApply("doneBorder",v)}/>
+            <ColorPicker label="Texto do card" value={theme.doneText||"#60daa8"} onChange={v=>setAndApply("doneText",v)}/>
+          </div>
+          <div className="mt-4 p-3 rounded-xl text-sm font-semibold flex items-center gap-2"
+            style={{background:theme.done,border:"1px solid "+theme.doneBorder,color:theme.doneText,borderLeft:"3px solid "+theme.doneBorder}}>
+            ✓ Prévia: Lesson 12 — Concluída
+          </div>
+        </div>
+
+        <button onClick={saveTheme}
+          className="btn btn-primary w-full py-3 rounded-xl font-bold text-base inline-flex items-center justify-center gap-2">
+          {saved?"✓ Tema Salvo com Sucesso!":"Salvar e Publicar Tema"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -628,7 +915,7 @@ function AdminApp({user}){
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin onBack={()=>setSelectedUid(null)}/>;
   return(
     <div className="min-h-screen">
-      <header className="px-5 py-5" style={{background:"rgba(240,244,248,.92)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(11,31,51,.08)"}}>
+      <header className="px-5 py-5" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {imgOk?<img src={LOGO_URL} alt="Fluency Studio" className="h-9" onError={()=>setImgOk(false)}/>:<span className="text-xl font-extrabold" style={{fontFamily:"'Sora',sans-serif"}}>Fluency Studio</span>}
@@ -658,7 +945,7 @@ function AdminApp({user}){
               return(<div key={s.uid} className="student-card" onClick={()=>setSelectedUid(s.uid)}>
                 <div className="flex items-center gap-3 mb-3"><div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div><div className="flex-1 min-w-0"><div className="font-bold truncate">{s.name||"Aluno"}</div><div className="text-xs muted">Módulo {mod} · Nível {s.level||"—"}</div></div>{finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}<Icon name="chevron-right" size={16} className="muted shrink-0"/></div>
                 <div className="flex items-center justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{pct}%</span></div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{background:"rgba(11,31,51,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
                 <div className="text-xs muted mt-2">{done} de {total} lições concluídas</div>
               </div>);
             })}
