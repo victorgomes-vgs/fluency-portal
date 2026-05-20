@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 89 Output - Dictation</title>
+    <!-- Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons para os ícones -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- html2pdf.js para gerar o PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* Estilos adicionais personalizados */
+        body { background-color: #f3f4f6; }
+        .phrase-input { transition: all 0.2s ease; }
+        .phrase-input:focus { transform: scale(1.01); }
+        .correct-text { display: none; }
+        .show-correction .correct-text { display: block; }
+        .show-correction .phrase-input { pointer-events: none; background-color: #f9fafb; border-color: transparent;}
+        
+        /* Oculta botões durante a geração do PDF para ficar mais limpo */
+        .pdf-mode .no-pdf { display: none !important; }
+        .pdf-mode input { border: none !important; background: transparent !important; }
+    </style>
+</head>
+<body class="text-gray-800 font-sans p-4 md:p-8 flex justify-center min-h-screen">
+
+    <div id="app-container" class="max-w-3xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <header class="bg-slate-900 text-white p-6 flex flex-col items-center justify-center text-center relative">
+            <!-- Substitua o src abaixo pela URL real do seu logo no GitHub -->
+            <img src="https://via.placeholder.com/150x50/1e293b/ffffff?text=SCHOOL+LOGO" alt="School Logo" class="h-12 object-contain mb-4">
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-yellow-400">Lesson 89 output</h1>
+            <p class="mt-2 text-slate-300 font-medium tracking-widest uppercase text-sm">Dictation Exercise</p>
+        </header>
+
+        <main class="p-6 md:p-10 flex-grow">
+            
+            <!-- Main Audio Section -->
+            <section class="mb-10 bg-blue-50 border border-blue-100 rounded-xl p-6 text-center shadow-sm">
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center justify-center gap-2">
+                    <i class="ph ph-headphones text-2xl"></i> Listen to the full story first
+                </h2>
+                
+                <audio id="mainAudioPlayer" src="audio_ditado_lesson89.wav" preload="auto"></audio>
+                
+                <div class="flex items-center justify-center gap-4">
+                    <button id="btnPlayMain" class="no-pdf flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-bold transition-colors shadow-md">
+                        <i class="ph-fill ph-play-circle text-2xl"></i> <span id="mainAudioText">Play Story</span>
+                    </button>
+                    <button id="btnPauseMain" class="no-pdf hidden flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full font-bold transition-colors shadow-md">
+                        <i class="ph-fill ph-pause-circle text-2xl"></i> Pause
+                    </button>
+                </div>
+            </section>
+
+            <!-- Dictation Instructions -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 border-b pb-2 mb-2">Dictation Time</h3>
+                <p class="text-slate-600 text-sm">Ouça cada frase com atenção e digite exatamente o que ouvir. Seu progresso é salvo automaticamente.</p>
+            </div>
+
+            <!-- Dictation Items Container -->
+            <div id="dictation-list" class="space-y-6">
+                <!-- Gerado via JavaScript -->
+            </div>
+
+            <!-- Correction Section -->
+            <div class="mt-12 border-t pt-8">
+                <button id="btnCorrect" class="no-pdf w-full bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                    <i class="ph-bold ph-check-circle text-2xl"></i> Autocorreção
+                </button>
+
+                <!-- Results Panel (Hidden initially) -->
+                <div id="resultsPanel" class="hidden mt-8 bg-slate-50 border-2 border-slate-200 rounded-xl p-6 text-center">
+                    <h2 class="text-2xl font-black text-slate-800 mb-2">Seu Resultado</h2>
+                    <div class="text-6xl font-black text-emerald-600 mb-4" id="scoreDisplay">0%</div>
+                    <p class="text-slate-600 mb-8" id="scoreMessage">Verifique as correções acima.</p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button id="btnPdf" class="no-pdf flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <i class="ph-bold ph-file-pdf text-xl"></i> Salvar PDF
+                        </button>
+                        <button id="btnWhatsapp" class="no-pdf flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <i class="ph-bold ph-whatsapp-logo text-xl"></i> Enviar p/ Professor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="bg-slate-100 p-4 text-center text-xs text-slate-400">
+            <span id="saveStatus">Pronto.</span>
+        </footer>
+    </div>
+
+    <script>
+        // --- DADOS DA LIÇÃO ---
+        const lessonPhrases = [
+            "A police officer stopped a driver",
+            "and asked him if he knew the speed limit on that highway.",
+            "The driver admitted that he knew it,",
+            "but explained that in his desperation was driving too fast",
+            "because he needed to attend an important meeting within ten minutes.",
+            "The officer asked whose meeting it was.",
+            "The driver answered that it was for his business,",
+            "adding that he needed to sit down with his partners",
+            "and sign a declaration of independence,",
+            "and that his signature was the most important item on it.",
+            "The police officer said that he understood the current situation was stressful,",
+            "and that currently many people were rushing",
+            "and some even tried to hide from the police,",
+            "but he said that safety came first.",
+            "Finally, the driver agreed that the officer was right",
+            "and promised that he would slow down."
+        ];
+
+        const professorPhone = "5511921423578"; // Sem o +
+
+        // --- VARIÁVEIS DE ESTADO ---
+        let userInputs = Array(lessonPhrases.length).fill("");
+        let finalScore = 0;
+
+        // --- ELEMENTOS DA DOM ---
+        const dictationList = document.getElementById('dictation-list');
+        const btnCorrect = document.getElementById('btnCorrect');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const scoreMessage = document.getElementById('scoreMessage');
+        const btnPdf = document.getElementById('btnPdf');
+        const btnWhatsapp = document.getElementById('btnWhatsapp');
+        const saveStatus = document.getElementById('saveStatus');
+        
+        const mainAudioPlayer = document.getElementById('mainAudioPlayer');
+        const btnPlayMain = document.getElementById('btnPlayMain');
+        const btnPauseMain = document.getElementById('btnPauseMain');
+        const mainAudioText = document.getElementById('mainAudioText');
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            loadFromLocalStorage();
+            renderDictationItems();
+            setupMainAudio();
+        }
+
+        // --- RENDERIZAÇÃO DA INTERFACE ---
+        function renderDictationItems() {
+            dictationList.innerHTML = '';
+            
+            lessonPhrases.forEach((phrase, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'dictation-item bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative';
+                itemDiv.id = `item-${index}`;
+                
+                itemDiv.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <button onclick="playNativeAudio(${index})" class="no-pdf mt-1 shrink-0 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 p-2 rounded-full transition-colors flex items-center justify-center w-10 h-10" title="Ouvir Frase">
+                            <i class="ph-fill ph-speaker-high text-xl"></i>
+                        </button>
+                        <div class="flex-grow w-full">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Phrase ${index + 1}</label>
+                            <textarea 
+                                id="input-${index}" 
+                                class="phrase-input w-full bg-slate-50 border border-slate-300 text-slate-800 text-lg rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none min-h-[60px]" 
+                                placeholder="Type what you hear..."
+                                oninput="handleInput(${index}, this.value)"
+                            >${userInputs[index] || ''}</textarea>
+                            
+                            <!-- Área de Correção (Invisível no início) -->
+                            <div class="correct-text mt-3 pt-3 border-t border-dashed border-slate-200">
+                                <p class="text-sm font-bold text-emerald-600 mb-1">Resposta Correta:</p>
+                                <p class="text-lg font-medium text-emerald-800 break-words">${phrase}</p>
+                                <div id="feedback-${index}" class="mt-2 text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                dictationList.appendChild(itemDiv);
+            });
+            
+            // Auto-resize textareas based on content
+            setTimeout(() => {
+                document.querySelectorAll('textarea').forEach(el => {
+                    el.style.height = 'auto';
+                    el.style.height = (el.scrollHeight) + 'px';
+                });
+            }, 100);
+        }
+
+        // --- ÁUDIO PRINCIPAL ---
+        function setupMainAudio() {
+            btnPlayMain.addEventListener('click', () => {
+                mainAudioPlayer.play();
+                btnPlayMain.classList.add('hidden');
+                btnPauseMain.classList.remove('hidden');
+            });
+
+            btnPauseMain.addEventListener('click', () => {
+                mainAudioPlayer.pause();
+                btnPauseMain.classList.add('hidden');
+                btnPlayMain.classList.remove('hidden');
+                mainAudioText.innerText = "Resume Story";
+            });
+
+            mainAudioPlayer.addEventListener('ended', () => {
+                btnPauseMain.classList.add('hidden');
+                btnPlayMain.classList.remove('hidden');
+                mainAudioText.innerText = "Listen Again";
+            });
+            
+            // Tratamento de erro caso o arquivo não seja encontrado
+            mainAudioPlayer.addEventListener('error', () => {
+                mainAudioText.innerText = "Áudio não encontrado";
+                btnPlayMain.disabled = true;
+                btnPlayMain.classList.replace('bg-blue-600', 'bg-slate-400');
+            });
+        }
+
+        // --- TEXT-TO-SPEECH (Áudio Nativo) ---
+        function playNativeAudio(index) {
+            const textToSpeak = lessonPhrases[index];
+            
+            // Cancela se houver algo tocando
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Um pouco mais lento para ditado
+            
+            // Tenta encontrar uma voz mais natural (Google/Apple)
+            const voices = window.speechSynthesis.getVoices();
+            const englishVoices = voices.filter(v => v.lang.includes('en'));
+            if(englishVoices.length > 0) {
+                // Tenta pegar uma voz feminina ou específica se existir, senão pega a primeira
+                utterance.voice = englishVoices.find(v => v.name.includes('Google') || v.name.includes('Samantha')) || englishVoices[0];
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- AUTO-SAVE ---
+        function handleInput(index, value) {
+            userInputs[index] = value;
+            saveToLocalStorage();
+            
+            // Auto-resize textarea
+            const el = document.getElementById(`input-${index}`);
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('dictation_lesson89', JSON.stringify(userInputs));
+            saveStatus.innerText = `Salvo às ${new Date().toLocaleTimeString()}`;
+            saveStatus.classList.add('text-emerald-500');
+            setTimeout(() => { saveStatus.classList.remove('text-emerald-500'); }, 2000);
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('dictation_lesson89');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length === lessonPhrases.length) {
+                        userInputs = parsed;
+                    }
+                } catch (e) {
+                    console.error("Erro ao carregar save", e);
+                }
+            }
+        }
+
+        // --- ALGORITMO DE COMPARAÇÃO (LEVENSHTEIN) ---
+        // Retorna a similaridade em porcentagem entre duas strings (ignorando pontuação e case)
+        function calculateSimilarity(str1, str2) {
+            const clean1 = str1.toLowerCase().replace(/[.,!?;:]/g, "").trim();
+            const clean2 = str2.toLowerCase().replace(/[.,!?;:]/g, "").trim();
+            
+            if (clean1 === clean2) return 100;
+            if (clean1.length === 0 || clean2.length === 0) return 0;
+
+            const matrix = Array(clean2.length + 1).fill(null).map(() => Array(clean1.length + 1).fill(null));
+
+            for (let i = 0; i <= clean1.length; i += 1) { matrix[0][i] = i; }
+            for (let j = 0; j <= clean2.length; j += 1) { matrix[j][0] = j; }
+
+            for (let j = 1; j <= clean2.length; j += 1) {
+                for (let i = 1; i <= clean1.length; i += 1) {
+                    const indicator = clean1[i - 1] === clean2[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(
+                        matrix[j][i - 1] + 1, // deletion
+                        matrix[j - 1][i] + 1, // insertion
+                        matrix[j - 1][i - 1] + indicator // substitution
+                    );
+                }
+            }
+            const distance = matrix[clean2.length][clean1.length];
+            const maxLen = Math.max(clean1.length, clean2.length);
+            return Math.max(0, ((maxLen - distance) / maxLen) * 100);
+        }
+
+        // --- CORREÇÃO E RESULTADOS ---
+        btnCorrect.addEventListener('click', () => {
+            let totalSimilarity = 0;
+
+            lessonPhrases.forEach((phrase, index) => {
+                const itemDiv = document.getElementById(`item-${index}`);
+                const feedbackDiv = document.getElementById(`feedback-${index}`);
+                const userInput = userInputs[index] || "";
+                
+                const similarity = calculateSimilarity(userInput, phrase);
+                totalSimilarity += similarity;
+
+                // Estilização do input baseada no acerto
+                const textarea = document.getElementById(`input-${index}`);
+                itemDiv.classList.add('show-correction');
+                
+                if (similarity >= 95) {
+                    textarea.classList.replace('text-slate-800', 'text-emerald-600');
+                    textarea.classList.replace('bg-slate-50', 'bg-emerald-50');
+                    feedbackDiv.innerHTML = `<span class="text-emerald-600 font-bold"><i class="ph-bold ph-check"></i> Perfeito! (${Math.round(similarity)}%)</span>`;
+                } else if (similarity > 70) {
+                    textarea.classList.replace('text-slate-800', 'text-amber-600');
+                    textarea.classList.replace('bg-slate-50', 'bg-amber-50');
+                    feedbackDiv.innerHTML = `<span class="text-amber-600 font-bold"><i class="ph-bold ph-warning"></i> Quase lá. Atenção à ortografia ou palavras faltando. (${Math.round(similarity)}%)</span>`;
+                } else {
+                    textarea.classList.replace('text-slate-800', 'text-rose-600');
+                    textarea.classList.replace('bg-slate-50', 'bg-rose-50');
+                    textarea.style.textDecoration = "line-through";
+                    feedbackDiv.innerHTML = `<span class="text-rose-600 font-bold"><i class="ph-bold ph-x"></i> Reveja esta frase. (${Math.round(similarity)}%)</span>`;
+                }
+            });
+
+            // Calcula média final
+            finalScore = Math.round(totalSimilarity / lessonPhrases.length);
+            
+            // Animação do número
+            let currentDisplayScore = 0;
+            const scoreInterval = setInterval(() => {
+                if(currentDisplayScore >= finalScore) {
+                    clearInterval(scoreInterval);
+                    scoreDisplay.innerText = finalScore + '%';
+                } else {
+                    currentDisplayScore++;
+                    scoreDisplay.innerText = currentDisplayScore + '%';
+                }
+            }, 10);
+
+            if(finalScore >= 90) scoreMessage.innerText = "Excelente trabalho! Você mandou muito bem.";
+            else if(finalScore >= 70) scoreMessage.innerText = "Bom trabalho! Continue praticando para chegar à perfeição.";
+            else scoreMessage.innerText = "Não desanime! O ditado é desafiador. Revise seus erros e tente novamente.";
+
+            // Mostra painel de resultados e esconde botão de corrigir
+            btnCorrect.classList.add('hidden');
+            resultsPanel.classList.remove('hidden');
+            
+            // Rola a página para baixo
+            setTimeout(() => {
+                resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
+        });
+
+        // --- GERAÇÃO DE PDF ---
+        btnPdf.addEventListener('click', () => {
+            const element = document.getElementById('app-container');
+            
+            // Adiciona classe para esconder botões temporariamente
+            element.classList.add('pdf-mode');
+            const originalStatus = saveStatus.innerText;
+            saveStatus.innerText = `Resultado final: ${finalScore}%`;
+
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     `Lesson89_Dictation_${new Date().getTime()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Gera e salva
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restaura interface após baixar
+                element.classList.remove('pdf-mode');
+                saveStatus.innerText = originalStatus;
+            });
+        });
+
+        // --- ENVIO PARA WHATSAPP ---
+        btnWhatsapp.addEventListener('click', () => {
+            const text = `Olá professor! Terminei o exercício de ditado (Lesson 89 Output). Minha nota final foi: *${finalScore}%*.`;
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://wa.me/${professorPhone}?text=${encodedText}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        // Garantir que as vozes sejam carregadas (necessário em alguns navegadores)
+        window.speechSynthesis.onvoiceschanged = () => {
+            // As vozes estão prontas
+        };
+
+        // Iniciar
+        init();
+
+    </script>
+</body>
+</html>
