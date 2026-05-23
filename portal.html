@@ -30,79 +30,18 @@
 
     /* ── TEMA: variáveis CSS injetadas via JS após carregar do Firebase ── */
     :root{
-      /* ── GLOBAL ── */
-      --bg:            linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%);
-      --font:          #dde6f0;
-      --card:          #1c2438;
-      --lesson:        #1a2236;
-      --detail:        #111927;
-      --header:        rgba(10,18,38,.94);
-      --tabbar:        rgba(255,255,255,.04);
-      --badge:         rgba(255,255,255,.07);
-      --btn:           rgba(255,255,255,.07);
-      --done:          rgba(30,160,110,.28);
-      --done-border:   rgba(30,160,110,.55);
-      --done-text:     #60daa8;
-
-      /* ── PÁGINA PRINCIPAL ── */
-      --hp-nome:       #dde6f0;
-      --hp-subtitulo:  rgba(180,200,220,.55);
-      --hp-progresso:  rgba(180,200,220,.55);
-      --hp-pct:        #dde6f0;
-      --hp-licoes:     rgba(180,200,220,.55);
-      --hp-header:     #dde6f0;
-      --hp-header-sub: rgba(180,200,220,.55);
-
-      /* ── FINANCEIRO ── */
-      --fin-titulo:    #dde6f0;
-      --fin-label:     #5ab4cc;
-      --fin-valor:     #dde6f0;
-      --fin-desconto:  rgba(44,160,180,1);
-      --fin-mes:       #dde6f0;
-      --fin-muted:     rgba(180,200,220,.55);
-      --fin-creditos-num: rgba(44,160,180,1);
-      --fin-creditos-sub: rgba(180,200,220,.55);
-
-      /* ── TRILHA ── */
-      --tr-titulo:     #dde6f0;
-      --tr-subtitulo:  rgba(180,200,220,.55);
-      --tr-progresso:  rgba(180,200,220,.55);
-      --tr-pct:        #dde6f0;
-      --tr-grupo:      rgba(180,200,220,.55);
-      --tr-mod-nome:   #dde6f0;
-      --tr-mod-label:  rgba(180,200,220,.55);
-      --tr-mod-num:    #dde6f0;
-      --tr-licao-nome: #dde6f0;
-      --tr-licao-sub:  rgba(180,200,220,.55);
-      --tr-licao-data: rgba(180,200,220,.55);
-      --tr-tag-input:  #7de0f8;
-      --tr-tag-output: #f0a0c0;
-      --tr-detail-label: #5ab4cc;
-      --tr-detail-val: #dde6f0;
-      --tr-obs:        #dde6f0;
-      --tr-link-col:   #5ab4cc;
-      --tr-link-btn:   #7de0f8;
-
-      /* ── RECURSOS ── */
-      --rec-titulo:    #dde6f0;
-      --rec-link-nome: #dde6f0;
-      --rec-link-url:  rgba(180,200,220,.55);
-      --rec-wpp-nome:  #dde6f0;
-      --rec-wpp-sub:   rgba(180,200,220,.55);
-      --rec-agenda-nome: #dde6f0;
-      --rec-agenda-sub:  rgba(180,200,220,.55);
-
-      /* ── DIÁRIO ── */
-      --di-titulo:     #dde6f0;
-      --di-subtitulo:  rgba(180,200,220,.55);
-      --di-total:      rgba(180,200,220,.55);
-      --di-total-num:  #dde6f0;
-      --di-th:         rgba(180,200,220,.55);
-      --di-num-aula:   #ffffff;
-      --di-data:       rgba(180,200,220,.55);
-      --di-licao:      #dde6f0;
-      --di-licao-sub:  rgba(180,200,220,.55);
-      --di-obs:        rgba(180,200,220,.55);
+      --bg:       linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%);
+      --font:     #dde6f0;
+      --card:     #1c2438;
+      --lesson:   #1a2236;
+      --detail:   #111927;
+      --header:   rgba(10,18,38,.94);
+      --tabbar:   rgba(255,255,255,.04);
+      --badge:    rgba(255,255,255,.07);
+      --btn:      rgba(255,255,255,.07);
+      --done:     rgba(30,160,110,.28);
+      --done-border: rgba(30,160,110,.55);
+      --done-text:   #60daa8;
     }
     body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--font);min-height:100vh;}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -256,33 +195,18 @@
     function applyTheme(t){
       if(!t)return;
       const r=document.documentElement.style;
-      const s=(k,v)=>{if(v!==undefined&&v!==null&&v!=='')r.setProperty(k,v);};
-      s('--bg',t.bg);s('--font',t.font);s('--card',t.card);
-      s('--header',t.header);s('--tabbar',t.tabbar);s('--badge',t.badge);s('--btn',t.btn);
-      s('--done',t.done);s('--done-border',t.doneBorder);s('--done-text',t.doneText);
-      s('--hp-nome',t.hp_nome);s('--hp-subtitulo',t.hp_subtitulo);
-      s('--hp-progresso',t.hp_progresso);s('--hp-pct',t.hp_pct);
-      s('--hp-licoes',t.hp_licoes);s('--hp-header',t.hp_header);s('--hp-header-sub',t.hp_header_sub);
-      s('--fin-titulo',t.fin_titulo);s('--fin-label',t.fin_label);
-      s('--fin-valor',t.fin_valor);s('--fin-desconto',t.fin_desconto);
-      s('--fin-mes',t.fin_mes);s('--fin-muted',t.fin_muted);
-      s('--fin-creditos-num',t.fin_creditos_num);s('--fin-creditos-sub',t.fin_creditos_sub);
-      s('--tr-titulo',t.tr_titulo);s('--tr-subtitulo',t.tr_subtitulo);
-      s('--tr-progresso',t.tr_progresso);s('--tr-pct',t.tr_pct);
-      s('--tr-grupo',t.tr_grupo);s('--tr-mod-nome',t.tr_mod_nome);
-      s('--tr-mod-label',t.tr_mod_label);s('--tr-mod-num',t.tr_mod_num);
-      s('--tr-licao-nome',t.tr_licao_nome);s('--tr-licao-sub',t.tr_licao_sub);
-      s('--tr-tag-input',t.tr_tag_input);s('--tr-tag-output',t.tr_tag_output);
-      s('--tr-detail-label',t.tr_detail_label);s('--tr-detail-val',t.tr_detail_val);
-      s('--tr-obs',t.tr_obs);s('--tr-link-col',t.tr_link_col);s('--tr-link-btn',t.tr_link_btn);
-      s('--rec-titulo',t.rec_titulo);s('--rec-link-nome',t.rec_link_nome);
-      s('--rec-link-url',t.rec_link_url);s('--rec-wpp-nome',t.rec_wpp_nome);
-      s('--rec-wpp-sub',t.rec_wpp_sub);s('--rec-agenda-nome',t.rec_agenda_nome);s('--rec-agenda-sub',t.rec_agenda_sub);
-      s('--di-titulo',t.di_titulo);s('--di-subtitulo',t.di_subtitulo);
-      s('--di-total',t.di_total);s('--di-total-num',t.di_total_num);
-      s('--di-th',t.di_th);s('--di-num-aula',t.di_num_aula);
-      s('--di-data',t.di_data);s('--di-licao',t.di_licao);
-      s('--di-licao-sub',t.di_licao_sub);s('--di-obs',t.di_obs);
+      if(t.bg)r.setProperty('--bg',t.bg);
+      if(t.font)r.setProperty('--font',t.font);
+      if(t.card)r.setProperty('--card',t.card);
+      if(t.lesson)r.setProperty('--lesson',t.lesson);
+      if(t.detail)r.setProperty('--detail',t.detail);
+      if(t.header)r.setProperty('--header',t.header);
+      if(t.tabbar)r.setProperty('--tabbar',t.tabbar);
+      if(t.badge)r.setProperty('--badge',t.badge);
+      if(t.btn)r.setProperty('--btn',t.btn);
+      if(t.done)r.setProperty('--done',t.done);
+      if(t.doneBorder)r.setProperty('--done-border',t.doneBorder);
+      if(t.doneText)r.setProperty('--done-text',t.doneText);
     }
     window.__applyTheme=applyTheme;
     // Tenta carregar antes do React montar
@@ -437,15 +361,15 @@ function AdminLessonPanel({item,updateField,setStatus}){
   return(
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Status</div><div className="flex gap-2 flex-wrap mt-1">{ST.map(s=><button key={s.v} onClick={()=>setStatus(s.v)} className={"sbtn "+(item.status===s.v?"sbtn-"+s.v:"sbtn-off")}>{s.l}</button>)}</div></div>
-        <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Data</div><input type="date" className="input-light mt-1" value={item.date||""} onChange={e=>updateField("date",e.target.value)}/></div>
+        <div><div className="detail-label">Status</div><div className="flex gap-2 flex-wrap mt-1">{ST.map(s=><button key={s.v} onClick={()=>setStatus(s.v)} className={"sbtn "+(item.status===s.v?"sbtn-"+s.v:"sbtn-off")}>{s.l}</button>)}</div></div>
+        <div><div className="detail-label">Data</div><input type="date" className="input-light mt-1" value={item.date||""} onChange={e=>updateField("date",e.target.value)}/></div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Presença</div><div className="flex gap-2 flex-wrap mt-1">{AT.map(a=><button key={a.v} onClick={()=>updateField("attendance",a.v)} className={"att-btn "+(item.attendance===a.v?a.c:"att-inactive")}>{a.l}</button>)}</div></div>
-        <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Avaliação</div><div className="flex gap-2 flex-wrap mt-1">{EV.map(e=><button key={e.v} onClick={()=>updateField("evaluation",e.v)} className={"eval-btn "+(item.evaluation===e.v?"eval-"+e.v:"eval-inactive")}>{e.l}</button>)}</div></div>
+        <div><div className="detail-label">Presença</div><div className="flex gap-2 flex-wrap mt-1">{AT.map(a=><button key={a.v} onClick={()=>updateField("attendance",a.v)} className={"att-btn "+(item.attendance===a.v?a.c:"att-inactive")}>{a.l}</button>)}</div></div>
+        <div><div className="detail-label">Avaliação</div><div className="flex gap-2 flex-wrap mt-1">{EV.map(e=><button key={e.v} onClick={()=>updateField("evaluation",e.v)} className={"eval-btn "+(item.evaluation===e.v?"eval-"+e.v:"eval-inactive")}>{e.l}</button>)}</div></div>
       </div>
-      <div><div className="detail-label mb-2" style={{color:"var(--tr-detail-label)"}}>Links</div><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{LK.map(lk=><div key={lk.f}><div className="text-xs font-semibold mb-1" style={{color:"var(--tr-link-col)"}}>{lk.l}</div><input type="url" className="input-light" placeholder="https://" value={item[lk.f]||(lk.f==="linkMaterial"?item.link||"":"")} onChange={e=>updateField(lk.f,e.target.value)}/></div>)}</div></div>
-      <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Observações</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="Notas..." value={item.obs||""} onChange={e=>updateField("obs",e.target.value)}/></div>
+      <div><div className="detail-label mb-2">Links</div><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{LK.map(lk=><div key={lk.f}><div className="text-xs font-semibold mb-1" style={{color:"#6a8aaa"}}>{lk.l}</div><input type="url" className="input-light" placeholder="https://" value={item[lk.f]||(lk.f==="linkMaterial"?item.link||"":"")} onChange={e=>updateField(lk.f,e.target.value)}/></div>)}</div></div>
+      <div><div className="detail-label">Observações</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="Notas..." value={item.obs||""} onChange={e=>updateField("obs",e.target.value)}/></div>
     </div>
   );
 }
@@ -462,13 +386,13 @@ function StudentLessonView({item}){
   return(
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
-        {item.date&&<div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Data</div><p className="text-sm font-medium" style={{color:"var(--tr-detail-val)"}} >{formatDateBR(item.date)}</p></div>}
-        {item.status&&<div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Status</div><LessonBadge status={item.status}/></div>}
-        {item.attendance&&<div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Presença</div><span className={"att-btn "+AS[item.attendance]}>{AL[item.attendance]}</span></div>}
-        {item.evaluation&&<div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Avaliação</div><span className={"eval-btn "+ES[item.evaluation]}>{EL[item.evaluation]}</span></div>}
+        {item.date&&<div><div className="detail-label">Data</div><p className="text-sm font-medium" style={{color:"var(--font)"}}>{formatDateBR(item.date)}</p></div>}
+        {item.status&&<div><div className="detail-label">Status</div><LessonBadge status={item.status}/></div>}
+        {item.attendance&&<div><div className="detail-label">Presença</div><span className={"att-btn "+AS[item.attendance]}>{AL[item.attendance]}</span></div>}
+        {item.evaluation&&<div><div className="detail-label">Avaliação</div><span className={"eval-btn "+ES[item.evaluation]}>{EL[item.evaluation]}</span></div>}
       </div>
-      {item.obs&&<div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Observações</div><p className="text-sm" style={{color:"var(--tr-obs)"}} >{item.obs}</p></div>}
-      {anyLinks&&<div><div className="detail-label mb-2" style={{color:"var(--tr-detail-label)"}}>Links</div><div className="flex gap-2 flex-wrap">{LK.map(lk=>{const url=item[lk.f]||(lk.f==="linkMaterial"?item.link:"");if(!url)return null;return <a key={lk.f} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.26)",color:"var(--tr-link-btn)"}}><Icon name="external-link" size={11}/>{lk.l}</a>;})}</div></div>}
+      {item.obs&&<div><div className="detail-label">Observações</div><p className="text-sm" style={{color:"var(--font)"}}>{item.obs}</p></div>}
+      {anyLinks&&<div><div className="detail-label mb-2">Links</div><div className="flex gap-2 flex-wrap">{LK.map(lk=>{const url=item[lk.f]||(lk.f==="linkMaterial"?item.link:"");if(!url)return null;return <a key={lk.f} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.26)",color:"#0e4a5a"}}><Icon name="external-link" size={11}/>{lk.l}</a>;})}</div></div>}
     </div>
   );
 }
@@ -483,12 +407,12 @@ function LessonItem({item,uid,isAdmin}){
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={handleToggle}>
         <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm flex items-center gap-2 flex-wrap" style={{color:"var(--tr-licao-nome)"}}>
+          <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
             {isReview&&<Icon name="rotate-ccw" size={12} style={{opacity:.55,flexShrink:0}}/>}
             {item.title}
-            {!isReview&&<span className={item.lessonType==="input"?"tag-input":"tag-output"} style={{color:item.lessonType==="input"?"var(--tr-tag-input)":"var(--tr-tag-output)"}} style={{color:item.lessonType==="input"?"var(--tr-tag-input)":"var(--tr-tag-output)"}}>{item.lessonType==="input"?"Input":"Output"}</span>}
+            {!isReview&&<span className={item.lessonType==="input"?"tag-input":"tag-output"}>{item.lessonType==="input"?"Input":"Output"}</span>}
           </div>
-          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap" style={{color:"var(--tr-licao-sub)"}}>
+          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap muted">
             <span>{isReview?"Review Unificada · Assíncrona":`Lesson ${item.num}`}</span>
             {item.date&&<span className="flex items-center gap-1"><Icon name="calendar" size={10}/>{formatDateBR(item.date)}</span>}
           </div>
@@ -507,9 +431,9 @@ function BookAccordion({bookIdx,items,uid,isAdmin}){
     <div className="overflow-hidden rounded-2xl mb-3" style={{border:"1px solid rgba(255,255,255,.08)"}}>
       <button className={"w-full text-left px-5 py-4 flex items-center justify-between gap-4 transition-all "+mod.bookClass} onClick={()=>setOpen(o=>!o)}>
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="chip rounded-xl px-3 py-2 text-center min-w-[52px] shrink-0"><div className="text-xs" style={{color:"var(--tr-mod-label)"}}>Módulo</div><div className="font-bold text-base" style={{color:"var(--tr-mod-num)"}}>{bookIdx}</div></div>
+          <div className="chip rounded-xl px-3 py-2 text-center min-w-[52px] shrink-0"><div className="text-xs muted">Módulo</div><div className="font-bold text-base">{bookIdx}</div></div>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-base truncate" style={{color:"var(--tr-mod-nome)"}}>{mod.name}</div>
+            <div className="font-bold text-base truncate">{mod.name}</div>
             <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.10)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:`linear-gradient(90deg,${mod.accent}.85),${mod.accent}.55))`}}/></div>
           </div>
         </div>
@@ -521,7 +445,7 @@ function BookAccordion({bookIdx,items,uid,isAdmin}){
 }
 
 function TrilhaSection({uid,isAdmin}){
-  const [trilhaData,setTrilhaData]=useState(null);const [showCfg,setShowCfg]=useState(false);
+  const [trilhaData,setTrilhaData]=useState(null);
   useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>setTrilhaData(doc.exists?doc.data().trilha||{}:{})),[uid]);
   const books=useMemo(()=>trilhaData?mergeBooks(trilhaData):[],[trilhaData]);
   const {totalDone,totalItems}=useMemo(()=>{let done=0,total=0;books.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida")done++;}));return{totalDone:done,totalItems:total};},[books]);
@@ -529,20 +453,18 @@ function TrilhaSection({uid,isAdmin}){
   if(!trilhaData)return <LoadingScreen/>;
   return(
     <div>
-      {isAdmin&&showCfg&&<PanelTrilha onClose={()=>setShowCfg(false)}/>}
-      <div className="glass rounded-2xl p-5 mb-6 text-center" style={{position:"relative"}}>
-        {isAdmin&&<div style={{position:"absolute",top:14,right:14}}><AdminConfigBtn onClick={()=>setShowCfg(o=>!o)}/></div>}
-        <h2 className="text-xl font-bold mb-1" style={{fontFamily:"'Sora',sans-serif",color:"var(--tr-titulo)"}}>Trilha da Fluência</h2>
-        <p className="text-sm mb-4" style={{color:"var(--tr-subtitulo)"}}>Fluência Real em 18 Meses</p>
+      <div className="glass rounded-2xl p-5 mb-6 text-center">
+        <h2 className="text-xl font-bold mb-1" style={{fontFamily:"'Sora',sans-serif"}}>Trilha da Fluência</h2>
+        <p className="muted text-sm mb-4">Fluência Real em 18 Meses</p>
         <div className="max-w-sm mx-auto">
-          <div className="flex justify-between text-xs mb-1"><span style={{color:"var(--tr-progresso)"}}>Progresso</span><span className="font-semibold" style={{color:"var(--tr-pct)"}}>{progress}%</span></div>
+          <div className="flex justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{progress}%</span></div>
           <div className="h-2.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
         </div>
       </div>
       {GROUPS.map(group=>{
         const gm=MODULES.filter(m=>m.group===group);
         return <div key={group} className="mb-6">
-          <div className="flex items-center gap-3 mb-3"><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/><span className="text-xs font-bold tracking-widest uppercase px-2" style={{color:"var(--tr-grupo)"}}>{group}</span><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/></div>
+          <div className="flex items-center gap-3 mb-3"><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/><span className="text-xs font-bold tracking-widest muted uppercase px-2">{group}</span><div className="h-px flex-1" style={{background:"rgba(255,255,255,.10)"}}/></div>
           {gm.map(mod=><BookAccordion key={mod.id} bookIdx={mod.id} items={books.find(b=>b.bookIdx===mod.id)?.items||[]} uid={uid} isAdmin={isAdmin}/>)}
         </div>;
       })}
@@ -551,7 +473,7 @@ function TrilhaSection({uid,isAdmin}){
 }
 
 function RecursosSection({uid,isAdmin,links}){
-  const [editLinks,setEditLinks]=useState(false);const [showCfg,setShowCfg]=useState(false);const [localLinks,setLocalLinks]=useState(links);
+  const [editLinks,setEditLinks]=useState(false);const [localLinks,setLocalLinks]=useState(links);
   useEffect(()=>setLocalLinks(links),[links]);
   function updateLink(idx,field,val){setLocalLinks(prev=>prev.map((l,i)=>i===idx?{...l,[field]:val}:l));}
   function addLink(){setLocalLinks(prev=>[...prev,{id:Date.now(),label:"Novo link",url:""}]);}
@@ -559,8 +481,7 @@ function RecursosSection({uid,isAdmin,links}){
   async function saveLinks(){await db.collection("students").doc(uid).update({links:localLinks});setEditLinks(false);}
   return(
     <div className="max-w-lg mx-auto"><div className="glass rounded-2xl p-5">
-      {isAdmin&&showCfg&&<PanelRecursos onClose={()=>setShowCfg(false)}/>}
-      <div className="flex items-center justify-between mb-4"><h3 className="font-bold text-lg" style={{color:"var(--rec-titulo)"}}>Recursos</h3><div className="flex items-center gap-2">{isAdmin&&<AdminConfigBtn onClick={()=>setShowCfg(o=>!o)}/>}{isAdmin&&!editLinks&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>setEditLinks(true)}><Icon name="pencil" size={12}/> Editar</button>}</div></div>
+      <div className="flex items-center justify-between mb-4"><h3 className="font-bold text-lg">Recursos</h3>{isAdmin&&!editLinks&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>setEditLinks(true)}><Icon name="pencil" size={12}/> Editar</button>}</div>
       {editLinks?(
         <div className="space-y-2">
           {localLinks.map((lk,idx)=><div key={lk.id} className="chip rounded-xl p-3 space-y-1.5"><input className="w-full input rounded-lg px-3 py-2 text-sm" placeholder="Nome" value={lk.label} onChange={e=>updateLink(idx,"label",e.target.value)}/><div className="flex gap-2"><input className="flex-1 input rounded-lg px-3 py-2 text-sm" placeholder="https://" value={lk.url} onChange={e=>updateLink(idx,"url",e.target.value)}/><button className="btn btn-danger rounded-lg px-2.5" onClick={()=>removeLink(idx)}><Icon name="trash-2" size={13}/></button></div></div>)}
@@ -569,9 +490,9 @@ function RecursosSection({uid,isAdmin,links}){
         </div>
       ):(
         <div className="space-y-3">
-          {links.map(lk=><a key={lk.id} href={lk.url} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="link"/></div><div><div className="font-semibold" style={{color:"var(--rec-link-nome)"}}>{lk.label}</div><div className="text-xs truncate max-w-[180px]" style={{color:"var(--rec-link-url)"}}>{lk.url}</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>)}
-          <a href={WPP_VICTOR} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block" style={{borderColor:"rgba(37,211,102,.28)",background:"rgba(37,211,102,.05)"}}><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{background:"rgba(37,211,102,.12)",border:"1px solid rgba(37,211,102,.26)"}}><Icon name="message-circle" style={{color:"#25d366"}}/></div><div><div className="font-semibold" style={{color:"var(--rec-wpp-nome)"}}>WhatsApp — Victor</div><div className="text-xs" style={{color:"var(--rec-wpp-sub)"}}>Falar com o professor</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
-          <a href={SCHED_URL} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="calendar"/></div><div><div className="font-semibold" style={{color:"var(--rec-agenda-nome)"}}>Agendar Aula</div><div className="text-xs" style={{color:"var(--rec-agenda-sub)"}}>Google Calendar</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
+          {links.map(lk=><a key={lk.id} href={lk.url} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="link"/></div><div><div className="font-semibold">{lk.label}</div><div className="text-xs muted truncate max-w-[180px]">{lk.url}</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>)}
+          <a href={WPP_VICTOR} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block" style={{borderColor:"rgba(37,211,102,.28)",background:"rgba(37,211,102,.05)"}}><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{background:"rgba(37,211,102,.12)",border:"1px solid rgba(37,211,102,.26)"}}><Icon name="message-circle" style={{color:"#25d366"}}/></div><div><div className="font-semibold">WhatsApp — Victor</div><div className="text-xs muted">Falar com o professor</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
+          <a href={SCHED_URL} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="calendar"/></div><div><div className="font-semibold">Agendar Aula</div><div className="text-xs muted">Google Calendar</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
         </div>
       )}
     </div></div>
@@ -579,7 +500,7 @@ function RecursosSection({uid,isAdmin,links}){
 }
 
 function DiarioSection({uid,isAdmin}){
-  const [entries,setEntries]=useState(null);const [showCfg,setShowCfg]=useState(false);
+  const [entries,setEntries]=useState(null);
   useEffect(()=>db.collection("students").doc(uid).collection("diario").orderBy("num","asc").onSnapshot(snap=>setEntries(snap.docs.map(d=>({id:d.id,...d.data()})))),[uid]);
   async function addEntry(){const nextNum=entries&&entries.length>0?Math.max(...entries.map(e=>e.num))+1:1;await db.collection("students").doc(uid).collection("diario").add({num:nextNum,date:new Date().toISOString().slice(0,10),licaoNum:1,status:"andamento",obs:"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
   async function updateEntry(id,patch){await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);}
@@ -587,21 +508,21 @@ function DiarioSection({uid,isAdmin}){
   if(!entries)return null;
   const iS={background:"rgba(0,0,0,.25)",border:"1px solid rgba(255,255,255,.12)",color:"var(--font)",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",fontFamily:"'Outfit',sans-serif"};
   return(
-    <div>{isAdmin&&showCfg&&<PanelDiario onClose={()=>setShowCfg(false)}/>}<div className="glass rounded-2xl p-5">
+    <div><div className="glass rounded-2xl p-5">
       <div className="flex items-center justify-between gap-3 flex-wrap mb-5">
-        <div><h3 className="text-lg font-bold" style={{color:"var(--di-titulo)"}}>Diário de Aulas</h3><p className="text-sm mt-0.5" style={{color:"var(--di-subtitulo)"}}>Registro por aula.</p></div>
-        <div className="flex items-center gap-3">{isAdmin&&<AdminConfigBtn onClick={()=>setShowCfg(o=>!o)}/>}<div className="chip rounded-2xl px-4 py-2 text-sm"><span style={{color:"var(--di-total)"}}>Total:</span> <span className="font-semibold" style={{color:"var(--di-total-num)"}}>{entries.length} aulas</span></div>{isAdmin&&<button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={addEntry}><Icon name="plus" size={16}/> Nova Aula</button>}</div>
+        <div><h3 className="text-lg font-bold">Diário de Aulas</h3><p className="muted text-sm mt-0.5">Registro por aula.</p></div>
+        <div className="flex items-center gap-3"><div className="chip rounded-2xl px-4 py-2 text-sm"><span className="muted">Total:</span> <span className="font-semibold">{entries.length} aulas</span></div>{isAdmin&&<button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={addEntry}><Icon name="plus" size={16}/> Nova Aula</button>}</div>
       </div>
       {entries.length===0?<div className="text-center py-12 muted"><Icon name="book-open" size={32} className="mx-auto mb-3 opacity-30"/><p>Nenhuma aula lançada ainda.</p></div>:(
         <div className="overflow-x-auto"><table className="w-full text-sm">
-          <thead><tr className="text-left text-xs" style={{color:"var(--di-th)"}}><th className="py-3 pr-3">Aula</th><th className="py-3 pr-3">Data</th><th className="py-3 pr-3">Lição</th><th className="py-3 pr-3">Status</th><th className="py-3 pr-3">Observações</th>{isAdmin&&<th className="py-3"/>}</tr></thead>
+          <thead><tr className="text-left muted text-xs"><th className="py-3 pr-3">Aula</th><th className="py-3 pr-3">Data</th><th className="py-3 pr-3">Lição</th><th className="py-3 pr-3">Status</th><th className="py-3 pr-3">Observações</th>{isAdmin&&<th className="py-3"/>}</tr></thead>
           <tbody>{entries.map(e=>{const ds=dStatusMap[e.status]||DIARIO_STATUS[0];return(
             <tr key={e.id} className="dtable-row align-top">
-              <td className="py-3 pr-3"><div className="num-aula inline-flex flex-col items-center" style={{color:"var(--di-num-aula)"}}><span className="text-xs opacity-70">Aula</span><span>{e.num}</span></div></td>
-              <td className="py-3 pr-3 whitespace-nowrap">{isAdmin?<input type="date" value={e.date||""} onChange={ev=>updateEntry(e.id,{date:ev.target.value})} style={{...iS,width:130}}/>:<span style={{color:"var(--di-data)"}}>{formatDateBR(e.date)||"—"}</span>}</td>
-              <td className="py-3 pr-3">{isAdmin?<><input type="number" min={1} max={300} value={e.licaoNum||1} onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})} style={{...iS,width:65,textAlign:"center"}}/><div className="text-xs muted mt-1 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div></>:<><span className="font-semibold" style={{color:"var(--di-licao)"}}>Lesson {e.licaoNum}</span><div className="text-xs mt-0.5 max-w-[160px] truncate" style={{color:"var(--di-licao-sub)"}}>{getLessonTitle(e.licaoNum)}</div></>}</td>
+              <td className="py-3 pr-3"><div className="num-aula inline-flex flex-col items-center"><span className="text-xs opacity-70">Aula</span><span>{e.num}</span></div></td>
+              <td className="py-3 pr-3 whitespace-nowrap">{isAdmin?<input type="date" value={e.date||""} onChange={ev=>updateEntry(e.id,{date:ev.target.value})} style={{...iS,width:130}}/>:<span className="muted">{formatDateBR(e.date)||"—"}</span>}</td>
+              <td className="py-3 pr-3">{isAdmin?<><input type="number" min={1} max={300} value={e.licaoNum||1} onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})} style={{...iS,width:65,textAlign:"center"}}/><div className="text-xs muted mt-1 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div></>:<><span className="font-semibold">Lesson {e.licaoNum}</span><div className="text-xs muted mt-0.5 max-w-[160px] truncate">{getLessonTitle(e.licaoNum)}</div></>}</td>
               <td className="py-3 pr-3 whitespace-nowrap">{isAdmin?<><select className="ds-select" value={e.status} onChange={ev=>updateEntry(e.id,{status:ev.target.value})}>{DIARIO_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select><div className="mt-1.5"><span className={"diario-badge "+ds.cls}>{ds.label}</span></div></>:<span className={"diario-badge "+ds.cls}>{ds.label}</span>}</td>
-              <td className="py-3 pr-3" style={{minWidth:200}}>{isAdmin?<textarea className="obs-input" rows={2} placeholder="Resumo..." value={e.obs||""} onChange={ev=>updateEntry(e.id,{obs:ev.target.value})}/>:<span className="text-xs" style={{color:"var(--di-obs)"}}>{e.obs||"—"}</span>}</td>
+              <td className="py-3 pr-3" style={{minWidth:200}}>{isAdmin?<textarea className="obs-input" rows={2} placeholder="Resumo..." value={e.obs||""} onChange={ev=>updateEntry(e.id,{obs:ev.target.value})}/>:<span className="muted text-xs">{e.obs||"—"}</span>}</td>
               {isAdmin&&<td className="py-3"><button className="btn btn-danger rounded-lg px-2.5 py-2" onClick={()=>deleteEntry(e.id)} title="Remover"><Icon name="trash-2" size={14}/></button></td>}
             </tr>);})}</tbody>
         </table></div>
@@ -633,7 +554,6 @@ function FinanceiroStrip({financeiro,onGoToFinanceiro}){
 }
 
 function FinanceiroSection({uid,isAdmin,financeiro}){
-  const [showCfg,setShowCfg]=useState(false);
   const tipo=financeiro?.tipo||"mensalidade";const parcelas=financeiro?.parcelas||[];
   const creditosTotal=financeiro?.creditosTotal||0;const creditosUsados=financeiro?.creditosUsados||0;const creditosRestantes=creditosTotal-creditosUsados;
   const sorted=[...parcelas].sort((a,b)=>a.dataVencimento>b.dataVencimento?1:-1);
@@ -644,10 +564,8 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
   async function deleteParcela(id){if(!confirm("Remover esta parcela?"))return;await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});}
   return(
     <div className="space-y-4">
-      {isAdmin&&showCfg&&<PanelFinanceiro onClose={()=>setShowCfg(false)}/>}
-      {isAdmin&&<div className="flex justify-end mb-1"><AdminConfigBtn onClick={()=>setShowCfg(o=>!o)}/></div>}
       {isAdmin&&<div className="glass rounded-2xl p-5">
-        <h3 className="font-bold text-base mb-3" style={{color:"var(--fin-titulo)"}}>Tipo de Contrato</h3>
+        <h3 className="font-bold text-base mb-3">Tipo de Contrato</h3>
         <div className="flex gap-2 mb-4">
           <button onClick={()=>setTipo("mensalidade")} className={"sbtn "+(tipo==="mensalidade"?"sbtn-concluida":"sbtn-off")}>Mensalidade</button>
           <button onClick={()=>setTipo("creditos")} className={"sbtn "+(tipo==="creditos"?"sbtn-andamento":"sbtn-off")}>Créditos</button>
@@ -658,13 +576,13 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
         </div>}
       </div>}
       {tipo==="creditos"&&!isAdmin&&<div className="glass rounded-2xl p-5">
-        <div className="flex items-center justify-between"><div><h3 className="font-bold text-base" style={{color:"var(--fin-titulo)"}}>Seus Créditos</h3><p className="text-sm" style={{color:"var(--fin-muted)"}}>{creditosUsados} usados de {creditosTotal}</p></div><div className="text-center"><div className="text-3xl font-extrabold" style={{color:"var(--fin-creditos-num)"}}>{creditosRestantes}</div><div className="text-xs" style={{color:"var(--fin-creditos-sub)"}}>restantes</div></div></div>
+        <div className="flex items-center justify-between"><div><h3 className="font-bold text-base">Seus Créditos</h3><p className="muted text-sm">{creditosUsados} usados de {creditosTotal}</p></div><div className="text-center"><div className="text-3xl font-extrabold" style={{color:"rgba(44,122,142,1)"}}>{creditosRestantes}</div><div className="text-xs muted">restantes</div></div></div>
         {creditosTotal>0&&<div className="mt-3 h-2 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.08)"}}><div className="h-full rounded-full progress-fill" style={{width:Math.round((creditosUsados/creditosTotal)*100)+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>}
       </div>}
       {tipo==="creditos"&&isAdmin&&creditosTotal>0&&<div className="chip rounded-2xl p-4 flex items-center justify-between"><span className="text-sm font-semibold">Créditos Restantes</span><span className="fin-badge fin-creditos" style={{fontSize:13}}>{creditosRestantes} de {creditosTotal}</span></div>}
       <div className="glass rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-base" style={{color:"var(--fin-titulo)"}}>{tipo==="creditos"?"Lançamentos":"Parcelas"}</h3>
+          <h3 className="font-bold text-base">{tipo==="creditos"?"Lançamentos":"Parcelas"}</h3>
           {isAdmin&&<button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={addParcela}><Icon name="plus" size={14}/> Adicionar</button>}
         </div>
         {sorted.length===0?<div className="text-center py-8 muted"><Icon name="credit-card" size={28} className="mx-auto mb-2 opacity-30"/><p className="text-sm">Nenhum lançamento cadastrado ainda.</p></div>:(
@@ -673,22 +591,22 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
               {isAdmin?(
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div><div className="detail-label" style={{color:"var(--fin-label)"}}>Mês / Referência</div><input className="input-light mt-1" placeholder="Ex: Abril 2026" value={p.mes} onChange={e=>updateParcela(p.id,"mes",e.target.value)}/></div>
-                    <div><div className="detail-label" style={{color:"var(--fin-label)"}}>Vencimento</div><input type="date" className="input-light mt-1" value={p.dataVencimento} onChange={e=>updateParcela(p.id,"dataVencimento",e.target.value)}/></div>
-                    <div><div className="detail-label" style={{color:"var(--tr-detail-label)"}}>Status</div><select className="ds-select mt-1" value={p.status} onChange={e=>updateParcela(p.id,"status",e.target.value)}>{FIN_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-                    <div><div className="detail-label" style={{color:"var(--fin-label)"}}>Valor (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valor} onChange={e=>updateParcela(p.id,"valor",parseFloat(e.target.value)||0)}/></div>
-                    <div><div className="detail-label" style={{color:"var(--fin-label)"}}>Com Desconto (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valorDesconto} onChange={e=>updateParcela(p.id,"valorDesconto",parseFloat(e.target.value)||0)}/></div>
-                    <div><div className="detail-label" style={{color:"var(--fin-label)"}}>Comprovante (Link)</div><input type="url" className="input-light mt-1" placeholder="https://drive.google.com/..." value={p.comprovante} onChange={e=>updateParcela(p.id,"comprovante",e.target.value)}/></div>
+                    <div><div className="detail-label">Mês / Referência</div><input className="input-light mt-1" placeholder="Ex: Abril 2026" value={p.mes} onChange={e=>updateParcela(p.id,"mes",e.target.value)}/></div>
+                    <div><div className="detail-label">Vencimento</div><input type="date" className="input-light mt-1" value={p.dataVencimento} onChange={e=>updateParcela(p.id,"dataVencimento",e.target.value)}/></div>
+                    <div><div className="detail-label">Status</div><select className="ds-select mt-1" value={p.status} onChange={e=>updateParcela(p.id,"status",e.target.value)}>{FIN_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
+                    <div><div className="detail-label">Valor (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valor} onChange={e=>updateParcela(p.id,"valor",parseFloat(e.target.value)||0)}/></div>
+                    <div><div className="detail-label">Com Desconto (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valorDesconto} onChange={e=>updateParcela(p.id,"valorDesconto",parseFloat(e.target.value)||0)}/></div>
+                    <div><div className="detail-label">Comprovante (Link)</div><input type="url" className="input-light mt-1" placeholder="https://drive.google.com/..." value={p.comprovante} onChange={e=>updateParcela(p.id,"comprovante",e.target.value)}/></div>
                   </div>
                   <div className="flex justify-end"><button className="btn btn-danger rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>deleteParcela(p.id)}><Icon name="trash-2" size={12}/> Remover</button></div>
                 </div>
               ):(
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-3"><div><div className="font-bold text-base" style={{color:"var(--fin-mes)"}}>{p.mes||"—"}</div>{p.dataVencimento&&<div className="text-xs mt-0.5" style={{color:"var(--fin-muted)"}}>Vencimento: {formatDateBR(p.dataVencimento)}</div>}</div><span className={"fin-badge "+fs.cls}>{fs.label}</span></div>
+                  <div className="flex items-start justify-between gap-3 mb-3"><div><div className="font-bold text-base">{p.mes||"—"}</div>{p.dataVencimento&&<div className="text-xs muted mt-0.5">Vencimento: {formatDateBR(p.dataVencimento)}</div>}</div><span className={"fin-badge "+fs.cls}>{fs.label}</span></div>
                   <div className="flex items-center gap-5 flex-wrap">
-                    {p.valor>0&&<div><div className="detail-label" style={{color:"var(--fin-label)"}}>Valor</div><div className="font-semibold text-sm" style={{color:"var(--fin-valor)"}}>{formatCurrency(p.valor)}</div></div>}
-                    {p.valorDesconto>0&&<div><div className="detail-label" style={{color:"var(--fin-label)"}}>Com Desconto</div><div className="font-semibold text-sm" style={{color:"var(--fin-desconto)"}}>{formatCurrency(p.valorDesconto)}</div></div>}
-                    {p.comprovante&&<a href={p.comprovante} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.24)",color:"var(--fin-valor)"}}><Icon name="file-text" size={11}/> Ver Comprovante</a>}
+                    {p.valor>0&&<div><div className="detail-label">Valor</div><div className="font-semibold text-sm">{formatCurrency(p.valor)}</div></div>}
+                    {p.valorDesconto>0&&<div><div className="detail-label">Com Desconto</div><div className="font-semibold text-sm" style={{color:"rgba(44,122,142,1)"}}>{formatCurrency(p.valorDesconto)}</div></div>}
+                    {p.comprovante&&<a href={p.comprovante} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ml-auto" style={{background:"rgba(44,122,142,.10)",border:"1px solid rgba(44,122,142,.24)",color:"var(--font)"}}><Icon name="file-text" size={11}/> Ver Comprovante</a>}
                   </div>
                 </div>
               )}
@@ -712,7 +630,7 @@ function IVictor(){
   </>);
 }
 
-function StudentDetail({uid,isAdmin,onBack,appTheme={},onThemeSave=()=>{}}){
+function StudentDetail({uid,isAdmin,onBack}){
   const [profile,setProfile]=useState(null);const [links,setLinks]=useState([]);const [trilhaData,setTrilhaData]=useState({});const [financeiro,setFinanceiro]=useState(null);const [activeTab,setActiveTab]=useState("financeiro");const [editProfile,setEditProfile]=useState(false);const [editFields,setEditFields]=useState({});const [imgOk,setImgOk]=useState(true);
   useEffect(()=>{
     const ref=db.collection("students").doc(uid);
@@ -754,7 +672,7 @@ function StudentDetail({uid,isAdmin,onBack,appTheme={},onThemeSave=()=>{}}){
               </div>}
               {!editProfile&&financeiro&&<FinanceiroStrip financeiro={financeiro} onGoToFinanceiro={()=>setActiveTab("financeiro")}/>}
             </div>
-            {isAdmin&&!editProfile&&<div className="flex gap-2 shrink-0"><button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={startEditProfile}><Icon name="pencil" size={12}/> Perfil</button></div>}
+            {isAdmin&&!editProfile&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5 shrink-0" onClick={startEditProfile}><Icon name="pencil" size={12}/> Perfil</button>}
           </div>
           {editProfile&&<div className="mt-4 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -767,11 +685,11 @@ function StudentDetail({uid,isAdmin,onBack,appTheme={},onThemeSave=()=>{}}){
           </div>}
         </div>
         <div className="tab-bar mb-5">{tabs.map(t=><button key={t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTab(t.id)}>{t.label}</button>)}</div>
-        {activeTab==="financeiro"&&<>{isAdmin&&<PageConfigBtn page="financeiro" label="Financeiro" theme={appTheme} onSave={onThemeSave}/>}<FinanceiroSection uid={uid} isAdmin={isAdmin} financeiro={financeiro||FINANCEIRO_DEFAULT}/></>
-        }{activeTab==="trilha"&&<>{isAdmin&&<PageConfigBtn page="trilha" label="Trilha" theme={appTheme} onSave={onThemeSave}/>}<TrilhaSection uid={uid} isAdmin={isAdmin}/></>
-        }{activeTab==="recursos"&&<>{isAdmin&&<PageConfigBtn page="recursos" label="Recursos" theme={appTheme} onSave={onThemeSave}/>}<RecursosSection uid={uid} isAdmin={isAdmin} links={links}/></>
-        }{activeTab==="diario"&&<>{isAdmin&&<PageConfigBtn page="diario" label="Diário de Aulas" theme={appTheme} onSave={onThemeSave}/>}<DiarioSection uid={uid} isAdmin={isAdmin}/></>
-        }{activeTab==="config"&&isAdmin&&<AparenciaSection theme={appTheme} onSave={onThemeSave}/>}
+        {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={isAdmin} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
+        {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={isAdmin}/>}
+        {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={isAdmin} links={links}/>}
+        {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={isAdmin}/>}
+        {activeTab==="config"&&isAdmin&&<AparenciaSection/>}
       </main>
       <IVictor/>
     </div>
@@ -779,625 +697,214 @@ function StudentDetail({uid,isAdmin,onBack,appTheme={},onThemeSave=()=>{}}){
 }
 
 
-
-// ══════════════════════════════════════════════════════════════════
-//  SISTEMA DE CONFIGURAÇÃO POR GUIA
-// ══════════════════════════════════════════════════════════════════
-
-// ── Defaults completos por guia ───────────────────────────────────
-const PAGE_DEFAULTS = {
-  // Página principal
-  hp_nome:        "#ffffff",
-  hp_subtitulo:   "rgba(180,200,220,.55)",
-  hp_progresso:   "rgba(180,200,220,.55)",
-  hp_pct:         "#dde6f0",
-  hp_licoes:      "rgba(180,200,220,.55)",
-  hp_header:      "#ffffff",
-  hp_header_sub:  "rgba(180,200,220,.55)",
-  // Financeiro
-  fin_titulo:     "#ffffff",
-  fin_label:      "#5ab4cc",
-  fin_valor:      "#dde6f0",
-  fin_desconto:   "#1e8fa8",
-  fin_mes:        "#dde6f0",
-  fin_muted:      "rgba(180,200,220,.55)",
-  fin_creditos_num:"#1e8fa8",
-  fin_creditos_sub:"rgba(180,200,220,.55)",
-  // Trilha
-  tr_titulo:      "#ffffff",
-  tr_subtitulo:   "rgba(180,200,220,.55)",
-  tr_progresso:   "rgba(180,200,220,.55)",
-  tr_pct:         "#dde6f0",
-  tr_grupo:       "rgba(180,200,220,.55)",
-  tr_mod_nome:    "#dde6f0",
-  tr_mod_label:   "rgba(180,200,220,.55)",
-  tr_mod_num:     "#dde6f0",
-  tr_licao_nome:  "#dde6f0",
-  tr_licao_sub:   "rgba(180,200,220,.55)",
-  tr_tag_input:   "#7de0f8",
-  tr_tag_output:  "#f0a0c0",
-  tr_detail_label:"#5ab4cc",
-  tr_detail_val:  "#dde6f0",
-  tr_obs:         "#dde6f0",
-  tr_link_col:    "#5ab4cc",
-  tr_link_btn:    "#7de0f8",
-  // Recursos
-  rec_titulo:     "#ffffff",
-  rec_link_nome:  "#dde6f0",
-  rec_link_url:   "rgba(180,200,220,.55)",
-  rec_wpp_nome:   "#dde6f0",
-  rec_wpp_sub:    "rgba(180,200,220,.55)",
-  rec_agenda_nome:"#dde6f0",
-  rec_agenda_sub: "rgba(180,200,220,.55)",
-  // Diário
-  di_titulo:      "#ffffff",
-  di_subtitulo:   "rgba(180,200,220,.55)",
-  di_total:       "rgba(180,200,220,.55)",
-  di_total_num:   "#dde6f0",
-  di_th:          "rgba(180,200,220,.55)",
-  di_num_aula:    "#ffffff",
-  di_data:        "rgba(180,200,220,.55)",
-  di_licao:       "#dde6f0",
-  di_licao_sub:   "rgba(180,200,220,.55)",
-  di_obs:         "rgba(180,200,220,.55)",
+// ── SISTEMA DE TEMAS ────────────────────────────────────────────────────────
+const BG_PRESETS = [
+  {id:"dark-blue",   label:"Preto + Azul",    value:"linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%)"},
+  {id:"blue-purple", label:"Azul + Roxo",     value:"linear-gradient(160deg,#08051a 0%,#0d0a2e 30%,#150f3e 55%,#1a1050 75%,#0f0828 100%)"},
+  {id:"white-gray",  label:"Branco + Cinza",  value:"linear-gradient(160deg,#f8f9fb 0%,#eef0f4 35%,#e4e8ee 60%,#dde2ea 80%,#e8ecf2 100%)"},
+];
+const FONT_PRESETS = [
+  {id:"f1",label:"Branco",        value:"#ffffff"},
+  {id:"f2",label:"Branco-gelo",   value:"#f0f4f8"},
+  {id:"f3",label:"Cinza-claro",   value:"#c8d4e0"},
+  {id:"f4",label:"Preto",         value:"#0a0a0a"},
+  {id:"f5",label:"Cinza-escuro",  value:"#2a3240"},
+  {id:"f6",label:"Teal",          value:"#1e8fa8"},
+  {id:"f7",label:"Dourado",       value:"#c8a84b"},
+];
+const CARD_PRESETS = [
+  {id:"c1",label:"Deep Navy",   value:"#1c2438"},
+  {id:"c2",label:"Branco",      value:"#ffffff"},
+  {id:"c3",label:"Cinza-escuro",value:"#1e1e2e"},
+  {id:"c4",label:"Grafite",     value:"#2a2d35"},
+  {id:"c5",label:"Azul-aço",    value:"#162032"},
+];
+const DONE_PRESETS = [
+  {id:"d1",label:"Verde-esmeralda", bg:"rgba(22,160,100,.30)",  border:"rgba(22,160,100,.65)",  text:"#4de0a0"},
+  {id:"d2",label:"Verde-teal",      bg:"rgba(22,140,140,.30)",  border:"rgba(22,140,140,.65)",  text:"#4dd4d4"},
+  {id:"d3",label:"Verde-lima",      bg:"rgba(100,180,30,.22)",  border:"rgba(100,180,30,.55)",  text:"#a0e040"},
+  {id:"d4",label:"Azul-safira",     bg:"rgba(30,100,210,.28)",  border:"rgba(30,100,210,.60)",  text:"#80c0ff"},
+  {id:"d5",label:"Roxo",            bg:"rgba(120,60,200,.24)",  border:"rgba(120,60,200,.55)",  text:"#c090ff"},
+  {id:"d6",label:"Dourado",         bg:"rgba(200,150,20,.22)",  border:"rgba(200,150,20,.55)",  text:"#f0c840"},
+];
+const DEFAULT_THEME = {
+  bg:         BG_PRESETS[0].value,
+  font:       FONT_PRESETS[0].value,
+  card:       CARD_PRESETS[0].value,
+  lesson:     "#1a2236",
+  detail:     "#111927",
+  header:     "rgba(10,18,38,.94)",
+  tabbar:     "rgba(255,255,255,.04)",
+  badge:      "rgba(255,255,255,.07)",
+  btn:        "rgba(255,255,255,.07)",
+  done:       DONE_PRESETS[0].bg,
+  doneBorder: DONE_PRESETS[0].border,
+  doneText:   DONE_PRESETS[0].text,
 };
 
-// ── Mapeamento de labels legíveis por guia ───────────────────────
-const PAGE_FIELDS = {
-  home: [
-    {key:"hp_header",      label:"Título do Header (Painel do Professor)"},
-    {key:"hp_header_sub",  label:"Subtítulo do Header"},
-    {key:"hp_nome",        label:"Nome do Aluno (card)"},
-    {key:"hp_subtitulo",   label:"Módulo · Nível (card)"},
-    {key:"hp_progresso",   label:"Label 'Progresso'"},
-    {key:"hp_pct",         label:"Percentual de Progresso"},
-    {key:"hp_licoes",      label:"'X de Y lições concluídas'"},
-  ],
-  financeiro: [
-    {key:"fin_titulo",      label:"Títulos das seções"},
-    {key:"fin_label",       label:"Labels (Mês, Vencimento, Valor…)"},
-    {key:"fin_mes",         label:"Nome do Mês / Referência"},
-    {key:"fin_valor",       label:"Valores em R$"},
-    {key:"fin_desconto",    label:"Valor com Desconto"},
-    {key:"fin_muted",       label:"Texto secundário (datas, etc.)"},
-    {key:"fin_creditos_num",label:"Número de Créditos"},
-    {key:"fin_creditos_sub",label:"'X usados de Y'"},
-  ],
-  trilha: [
-    {key:"tr_titulo",       label:"'Trilha da Fluência' (título)"},
-    {key:"tr_subtitulo",    label:"'Fluência Real em 18 Meses'"},
-    {key:"tr_progresso",    label:"Label 'Progresso'"},
-    {key:"tr_pct",          label:"Percentual de Progresso"},
-    {key:"tr_grupo",        label:"Grupo (FOUNDATION / MASTERY)"},
-    {key:"tr_mod_nome",     label:"Nome do Módulo"},
-    {key:"tr_mod_label",    label:"Label 'Módulo'"},
-    {key:"tr_mod_num",      label:"Número do Módulo"},
-    {key:"tr_licao_nome",   label:"Nome da Lição (Lesson X)"},
-    {key:"tr_licao_sub",    label:"Subtítulo da Lição (Review, etc.)"},
-    {key:"tr_tag_input",    label:"Tag INPUT"},
-    {key:"tr_tag_output",   label:"Tag OUTPUT"},
-    {key:"tr_detail_label", label:"Labels do detalhe (STATUS, DATA…)"},
-    {key:"tr_detail_val",   label:"Valores do detalhe (data, obs…)"},
-    {key:"tr_obs",          label:"Texto de Observações"},
-    {key:"tr_link_col",     label:"Label da coluna de Links"},
-    {key:"tr_link_btn",     label:"Texto dos botões de Link"},
-  ],
-  recursos: [
-    {key:"rec_titulo",      label:"Título 'Recursos'"},
-    {key:"rec_link_nome",   label:"Nome dos Links"},
-    {key:"rec_link_url",    label:"URL dos Links"},
-    {key:"rec_wpp_nome",    label:"'WhatsApp — Victor'"},
-    {key:"rec_wpp_sub",     label:"'Falar com o professor'"},
-    {key:"rec_agenda_nome", label:"'Agendar Aula'"},
-    {key:"rec_agenda_sub",  label:"'Google Calendar'"},
-  ],
-  diario: [
-    {key:"di_titulo",       label:"'Diário de Aulas' (título)"},
-    {key:"di_subtitulo",    label:"'Registro por aula.'"},
-    {key:"di_total",        label:"Label 'Total:'"},
-    {key:"di_total_num",    label:"Número total de aulas"},
-    {key:"di_th",           label:"Cabeçalhos da tabela"},
-    {key:"di_num_aula",     label:"Número da Aula (badge)"},
-    {key:"di_data",         label:"Data da aula"},
-    {key:"di_licao",        label:"Nome da lição"},
-    {key:"di_licao_sub",    label:"Subtítulo da lição"},
-    {key:"di_obs",          label:"Observações"},
-  ],
-};
-
-// ── Botão flutuante que abre o painel da guia ────────────────────
-function PageConfigBtn({page, label, theme, onSave}){
-  const [open, setOpen] = useState(false);
-  const [local, setLocal] = useState({});
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(()=>{
-    if(open){
-      // Carrega valores atuais do tema para esse page
-      const fields = PAGE_FIELDS[page]||[];
-      const snap = {};
-      fields.forEach(f=>{ snap[f.key] = theme[f.key] || PAGE_DEFAULTS[f.key] || "#ffffff"; });
-      setLocal(snap);
-    }
-  },[open, theme, page]);
-
-  function setVal(key,val){
-    setLocal(p=>({...p,[key]:val}));
-    // preview ao vivo
-    window.__applyTheme && window.__applyTheme({...theme,...local,[key]:val});
-  }
-
-  async function save(){
-    setSaving(true);
-    const merged = {...theme,...local};
-    await db.collection("config").doc("aparencia").set(merged);
-    window.__applyTheme && window.__applyTheme(merged);
-    onSave(merged);
-    setSaving(false);
-    setSaved(true);
-    setTimeout(()=>{ setSaved(false); setOpen(false); },1800);
-  }
-
-  const fields = PAGE_FIELDS[page]||[];
-
+function ColorPicker({label,value,onChange}){
   return(
-    <>
-      {/* Botão ⚙ flutuante no canto da guia */}
-      <button onClick={()=>setOpen(true)}
-        title={"Configurar cores — "+label}
-        style={{
-          position:"fixed", bottom:90, right:88, zIndex:800,
-          width:40, height:40, borderRadius:"50%",
-          background:"linear-gradient(135deg,#1e8fa8,#145f7a)",
-          border:"1px solid rgba(30,143,168,.6)",
-          boxShadow:"0 2px 16px rgba(0,0,0,.4)",
-          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:16, color:"#fff", transition:"transform .15s",
-        }}
-        onMouseEnter={e=>e.currentTarget.style.transform="scale(1.12)"}
-        onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}
-      >⚙</button>
-
-      {/* Painel lateral */}
-      {open&&(
-        <div style={{
-          position:"fixed", inset:0, zIndex:1000,
-          display:"flex", alignItems:"flex-end", justifyContent:"flex-end",
-          background:"rgba(0,0,0,.55)", backdropFilter:"blur(3px)"
-        }} onClick={e=>{if(e.target===e.currentTarget)setOpen(false);}}>
-          <div style={{
-            width:"min(420px,96vw)", height:"92vh",
-            background:"#0d1628", borderRadius:"20px 0 0 20px",
-            border:"1px solid rgba(255,255,255,.09)",
-            display:"flex", flexDirection:"column",
-            boxShadow:"-8px 0 40px rgba(0,0,0,.5)",
-            animation:"slideInRight .22s ease-out",
-          }}>
-            {/* Header do painel */}
-            <div style={{
-              padding:"18px 20px 14px",
-              borderBottom:"1px solid rgba(255,255,255,.07)",
-              background:"linear-gradient(135deg,rgba(30,143,168,.15),rgba(20,95,122,.10))",
-              borderRadius:"20px 0 0 0",
-              flexShrink:0,
-            }}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,letterSpacing:".06em",textTransform:"uppercase",color:"#5ab4cc",marginBottom:3}}>
-                    ⚙ Configurar Cores
-                  </div>
-                  <div style={{fontSize:17,fontWeight:800,color:"#fff",fontFamily:"'Sora',sans-serif"}}>
-                    {label}
-                  </div>
-                </div>
-                <button onClick={()=>setOpen(false)} style={{
-                  background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.12)",
-                  borderRadius:10,width:36,height:36,cursor:"pointer",color:"#aac",fontSize:18,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                }}>×</button>
-              </div>
-              <div style={{fontSize:12,color:"rgba(180,200,220,.55)",marginTop:6}}>
-                Alterações em tempo real • Clique em Salvar para publicar.
-              </div>
-            </div>
-
-            {/* Lista de campos */}
-            <div style={{flex:1,overflowY:"auto",padding:"16px 20px",display:"flex",flexDirection:"column",gap:14}}>
-              {fields.map(f=>(
-                <div key={f.key} style={{display:"flex",alignItems:"center",gap:12,justifyContent:"space-between"}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:12,fontWeight:600,color:"#c8d8e8",marginBottom:2}}>{f.label}</div>
-                    <div style={{fontSize:11,fontFamily:"monospace",color:"rgba(180,200,220,.45)"}}>{local[f.key]||""}</div>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-                    {/* Prévia da cor */}
-                    <div style={{
-                      width:22,height:22,borderRadius:6,
-                      background:local[f.key]||"#888",
-                      border:"1px solid rgba(255,255,255,.2)",
-                    }}/>
-                    <input type="color"
-                      value={/^#[0-9a-fA-F]{6}$/.test(local[f.key]||"")?local[f.key]:"#dddddd"}
-                      onChange={e=>setVal(f.key,e.target.value)}
-                      style={{
-                        width:40,height:34,border:"1px solid rgba(255,255,255,.15)",
-                        borderRadius:8,cursor:"pointer",background:"none",padding:2,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Footer */}
-            <div style={{padding:"14px 20px",borderTop:"1px solid rgba(255,255,255,.07)",flexShrink:0}}>
-              <button onClick={save} disabled={saving}
-                style={{
-                  width:"100%",padding:"12px",borderRadius:12,
-                  background:saved?"rgba(30,160,110,.3)":"linear-gradient(135deg,#1e8fa8,#145f7a)",
-                  border:saved?"1px solid rgba(30,160,110,.5)":"1px solid rgba(30,143,168,.5)",
-                  color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer",
-                  transition:"all .2s",
-                }}>
-                {saving?"Salvando…":saved?"✓ Salvo!":"Salvar e Publicar"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes slideInRight{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-      `}</style>
-    </>
+    <div className="flex items-center gap-3">
+      <label className="text-xs muted w-28 shrink-0">{label}</label>
+      <input type="color" value={value||"#ffffff"} onChange={e=>onChange(e.target.value)}
+        style={{width:36,height:36,border:"1px solid rgba(255,255,255,.15)",borderRadius:8,cursor:"pointer",background:"none",padding:2}}/>
+      <span className="text-xs muted font-mono">{value}</span>
+    </div>
   );
 }
 
-// ── SISTEMA DE TEMAS ───────────────────────────────────────────────────────
-const BG_PRESETS=[
-  {id:"dark-blue",  label:"Preto + Azul",   value:"linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%)"},
-  {id:"blue-purple",label:"Azul + Roxo",    value:"linear-gradient(160deg,#08051a 0%,#0d0a2e 30%,#150f3e 55%,#1a1050 75%,#0f0828 100%)"},
-  {id:"white-gray", label:"Branco + Cinza", value:"linear-gradient(160deg,#f8f9fb 0%,#eef0f4 35%,#e4e8ee 60%,#dde2ea 80%,#e8ecf2 100%)"},
-];
-const FONT_PRESETS=[
-  {id:"f1",label:"Branco",       value:"#ffffff"},
-  {id:"f2",label:"Branco-gelo",  value:"#f0f4f8"},
-  {id:"f3",label:"Cinza-claro",  value:"#c8d4e0"},
-  {id:"f4",label:"Preto",        value:"#0a0a0a"},
-  {id:"f5",label:"Cinza-escuro", value:"#2a3240"},
-  {id:"f6",label:"Teal",         value:"#1e8fa8"},
-  {id:"f7",label:"Dourado",      value:"#c8a84b"},
-];
-const CARD_PRESETS=[
-  {id:"c1",label:"Deep Navy",    value:"#1c2438"},
-  {id:"c2",label:"Branco",       value:"#ffffff"},
-  {id:"c3",label:"Cinza-escuro", value:"#1e1e2e"},
-  {id:"c4",label:"Grafite",      value:"#2a2d35"},
-  {id:"c5",label:"Azul-aço",     value:"#162032"},
-];
-const DONE_PRESETS=[
-  {id:"d1",label:"Verde-esmeralda",bg:"rgba(22,160,100,.30)",border:"rgba(22,160,100,.65)",text:"#4de0a0"},
-  {id:"d2",label:"Verde-teal",     bg:"rgba(22,140,140,.30)",border:"rgba(22,140,140,.65)",text:"#4dd4d4"},
-  {id:"d3",label:"Verde-lima",     bg:"rgba(100,180,30,.22)",border:"rgba(100,180,30,.55)",text:"#a0e040"},
-  {id:"d4",label:"Azul-safira",    bg:"rgba(30,100,210,.28)",border:"rgba(30,100,210,.60)",text:"#80c0ff"},
-  {id:"d5",label:"Roxo",           bg:"rgba(120,60,200,.24)",border:"rgba(120,60,200,.55)",text:"#c090ff"},
-  {id:"d6",label:"Dourado",        bg:"rgba(200,150,20,.22)",border:"rgba(200,150,20,.55)",text:"#f0c840"},
-];
-const DEFAULT_THEME={
-  bg:BG_PRESETS[0].value,font:"#dde6f0",card:"#1c2438",lesson:"#1a2236",detail:"#111927",
-  header:"rgba(10,18,38,.94)",tabbar:"rgba(255,255,255,.04)",badge:"rgba(255,255,255,.07)",btn:"rgba(255,255,255,.07)",
-  done:DONE_PRESETS[0].bg,doneBorder:DONE_PRESETS[0].border,doneText:DONE_PRESETS[0].text,
-  // Principal
-  hpNome:"#dde6f0",hpSub:"rgba(180,200,220,.55)",hpProg:"rgba(180,200,220,.55)",hpPct:"#dde6f0",
-  hpLicoes:"rgba(180,200,220,.55)",hpHeader:"#dde6f0",hpHeaderSub:"rgba(180,200,220,.55)",
-  // Financeiro
-  finTitulo:"#dde6f0",finLabel:"#5ab4cc",finValor:"#dde6f0",finDesconto:"rgba(44,160,180,1)",
-  finMes:"#dde6f0",finMuted:"rgba(180,200,220,.55)",finCreditosNum:"rgba(44,160,180,1)",finCreditosSub:"rgba(180,200,220,.55)",
-  // Trilha
-  trTitulo:"#dde6f0",trSub:"rgba(180,200,220,.55)",trProg:"rgba(180,200,220,.55)",trPct:"#dde6f0",
-  trGrupo:"rgba(180,200,220,.55)",trModNome:"#dde6f0",trModLabel:"rgba(180,200,220,.55)",trModNum:"#dde6f0",
-  trLicaoNome:"#dde6f0",trLicaoSub:"rgba(180,200,220,.55)",trLicaoData:"rgba(180,200,220,.55)",
-  trTagInput:"#7de0f8",trTagOutput:"#f0a0c0",trDetailLabel:"#5ab4cc",trDetailVal:"#dde6f0",
-  trObs:"#dde6f0",trLinkCol:"#5ab4cc",trLinkBtn:"#7de0f8",
-  // Recursos
-  recTitulo:"#dde6f0",recLinkNome:"#dde6f0",recLinkUrl:"rgba(180,200,220,.55)",
-  recWppNome:"#dde6f0",recWppSub:"rgba(180,200,220,.55)",recAgendaNome:"#dde6f0",recAgendaSub:"rgba(180,200,220,.55)",
-  // Diário
-  diTitulo:"#dde6f0",diSub:"rgba(180,200,220,.55)",diTotal:"rgba(180,200,220,.55)",diTotalNum:"#dde6f0",
-  diTh:"rgba(180,200,220,.55)",diNumAula:"#ffffff",diData:"rgba(180,200,220,.55)",diLicao:"#dde6f0",
-  diLicaoSub:"rgba(180,200,220,.55)",diObs:"rgba(180,200,220,.55)",
-};
-
-// Contexto global do tema
-const ThemeContext=React.createContext({theme:DEFAULT_THEME,setThemeKey:()=>{},saveTheme:()=>{}});
-
-function useTheme(){return React.useContext(ThemeContext);}
-
-function ThemeProvider({children}){
+function AparenciaSection(){
   const [theme,setTheme]=useState(DEFAULT_THEME);
   const [saved,setSaved]=useState(false);
+  const [loading,setLoading]=useState(true);
 
   useEffect(()=>{
     db.collection("config").doc("aparencia").get().then(doc=>{
-      if(doc.exists){const t={...DEFAULT_THEME,...doc.data()};setTheme(t);window.__applyTheme&&window.__applyTheme(t);}
-    }).catch(()=>{});
+      if(doc.exists)setTheme({...DEFAULT_THEME,...doc.data()});
+      setLoading(false);
+    }).catch(()=>setLoading(false));
   },[]);
 
-  function setThemeKey(key,val){
-    setTheme(prev=>{
-      const next={...prev,[key]:val};
-      window.__applyTheme&&window.__applyTheme(next);
-      return next;
-    });
+  function set(key,val){setTheme(p=>({...p,[key]:val}));}
+
+  function applyLive(patch){
+    const t={...theme,...patch};
+    window.__applyTheme&&window.__applyTheme(t);
   }
-  function setThemeKeys(patch){
-    setTheme(prev=>{
-      const next={...prev,...patch};
-      window.__applyTheme&&window.__applyTheme(next);
-      return next;
-    });
+
+  function setAndApply(key,val){
+    set(key,val);
+    applyLive({[key]:val});
   }
+
+  function setDonePreset(p){
+    const patch={done:p.bg,doneBorder:p.border,doneText:p.text};
+    setTheme(prev=>({...prev,...patch}));
+    applyLive(patch);
+  }
+
+  function setBgPreset(p){setAndApply("bg",p.value);}
+  function setCardPreset(p){
+    const lesson=p.id==="c2"?"#f0f2f5":p.id==="c3"?"#191926":p.id==="c4"?"#242730":p.id==="c5"?"#101828":"#1a2236";
+    const detail=p.id==="c2"?"#e8eaee":p.id==="c3"?"#111118":p.id==="c4"?"#1a1d23":p.id==="c5"?"#080e1a":"#111927";
+    const patch={card:p.value,lesson,detail};
+    setTheme(prev=>({...prev,...patch}));
+    applyLive(patch);
+  }
+
   async function saveTheme(){
     await db.collection("config").doc("aparencia").set(theme);
-    setSaved(true);setTimeout(()=>setSaved(false),2500);
+    window.__applyTheme&&window.__applyTheme(theme);
+    setSaved(true);
+    setTimeout(()=>setSaved(false),2500);
   }
-  return <ThemeContext.Provider value={{theme,setThemeKey,setThemeKeys,saveTheme,saved}}>{children}</ThemeContext.Provider>;
-}
 
-// ── COMPONENTES COMPARTILHADOS DO PAINEL ────────────────────────────────────
-function CP({label,k,w=28}){
-  const {theme,setThemeKey}=useTheme();
-  const val=theme[k]||"#ffffff";
-  // color picker only works with hex; if value has rgba, skip the input but show a box
-  const isHex=val&&val.startsWith("#");
+  if(loading)return <div className="glass rounded-2xl p-8 text-center muted">Carregando configurações...</div>;
+
   return(
-    <div className="flex items-center gap-3 py-1.5">
-      <label className="text-xs shrink-0" style={{color:"rgba(180,200,220,.6)",width:w*4+"px"}}>{label}</label>
-      <div className="relative flex-shrink-0">
-        <input type="color" value={isHex?val:"#888888"}
-          onChange={e=>setThemeKey(k,e.target.value)}
-          style={{width:32,height:32,borderRadius:8,border:"1px solid rgba(255,255,255,.15)",cursor:"pointer",padding:2,background:"none"}}/>
+    <div className="max-w-2xl mx-auto space-y-4">
+      <div className="glass rounded-2xl p-6">
+        <h3 className="text-lg font-bold mb-1" style={{fontFamily:"'Sora',sans-serif"}}>Aparência do Portal</h3>
+        <p className="muted text-sm mb-6">As alterações afetam todos os usuários ao salvar.</p>
+
+        {/* FUNDO */}
+        <div className="ap-section">
+          <h4>🎨 Fundo Geral</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {BG_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setBgPreset(p)}
+                className={"ap-preset"+(theme.bg===p.value?" selected":"")}>{p.label}</button>
+            ))}
+          </div>
+          <div className="text-xs muted mb-2">Personalizado (cor inicial do gradiente):</div>
+          <ColorPicker label="Cor do gradiente" value={theme.bgCustom||"#05080f"} onChange={v=>{
+            const grad=`linear-gradient(160deg,${v} 0%,${v}dd 35%,${v}bb 65%,${v}99 100%)`;
+            setTheme(p=>({...p,bg:grad,bgCustom:v}));
+            applyLive({bg:grad});
+          }}/>
+        </div>
+
+        {/* FONTE */}
+        <div className="ap-section">
+          <h4>🔤 Cor da Fonte Principal</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {FONT_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setAndApply("font",p.value)}
+                className={"ap-preset"+(theme.font===p.value?" selected":"")}
+                style={{color:p.value,borderColor:theme.font===p.value?"rgba(30,143,168,.8)":"rgba(255,255,255,.12)"}}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <ColorPicker label="Cor livre" value={theme.font} onChange={v=>setAndApply("font",v)}/>
+        </div>
+
+        {/* CARDS */}
+        <div className="ap-section">
+          <h4>🃏 Cards / Caixas</h4>
+          <div className="text-xs muted mb-3">Cor principal das caixas (cards de aluno, painéis, etc.):</div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {CARD_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setCardPreset(p)}
+                className={"ap-preset flex items-center gap-2"+(theme.card===p.value?" selected":"")}>
+                <span style={{width:14,height:14,borderRadius:4,background:p.value,border:"1px solid rgba(255,255,255,.2)",display:"inline-block"}}/>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <ColorPicker label="Card principal" value={theme.card} onChange={v=>{const patch={card:v};setTheme(p=>({...p,...patch}));applyLive(patch);}}/>
+          <div className="mt-3"/>
+          <ColorPicker label="Card de lição" value={theme.lesson} onChange={v=>setAndApply("lesson",v)}/>
+          <div className="mt-3"/>
+          <ColorPicker label="Painel de detalhe" value={theme.detail} onChange={v=>setAndApply("detail",v)}/>
+        </div>
+
+        {/* HEADER / TABBAR / BADGE / BTN */}
+        <div className="ap-section">
+          <h4>🧩 Elementos da Interface</h4>
+          <div className="space-y-3">
+            <ColorPicker label="Header (barra top)" value={theme.header||"#0a1226"} onChange={v=>setAndApply("header",v)}/>
+            <ColorPicker label="Barra de abas" value={theme.tabbar||"rgba(255,255,255,.04)"} onChange={v=>setAndApply("tabbar",v)}/>
+            <ColorPicker label="Badges / chips" value={theme.badge||"rgba(255,255,255,.07)"} onChange={v=>setAndApply("badge",v)}/>
+            <ColorPicker label="Botões neutros" value={theme.btn||"rgba(255,255,255,.07)"} onChange={v=>setAndApply("btn",v)}/>
+          </div>
+        </div>
+
+        {/* LIÇÃO CONCLUÍDA */}
+        <div className="ap-section">
+          <h4>✅ Cor da Lição Concluída / Realizada</h4>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {DONE_PRESETS.map(p=>(
+              <button key={p.id} onClick={()=>setDonePreset(p)}
+                className={"ap-preset"+(theme.done===p.bg?" selected":"")}
+                style={{color:p.text,borderColor:theme.done===p.bg?p.border:"rgba(255,255,255,.12)",background:theme.done===p.bg?p.bg:"rgba(255,255,255,.04)"}}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-3">
+            <ColorPicker label="Fundo do card" value={theme.doneBg||theme.done||"#1ea064"} onChange={v=>{const patch={done:v};setTheme(p=>({...p,...patch}));applyLive(patch);}}/>
+            <ColorPicker label="Borda do card" value={theme.doneBorder||"#2ae090"} onChange={v=>setAndApply("doneBorder",v)}/>
+            <ColorPicker label="Texto do card" value={theme.doneText||"#60daa8"} onChange={v=>setAndApply("doneText",v)}/>
+          </div>
+          <div className="mt-4 p-3 rounded-xl text-sm font-semibold flex items-center gap-2"
+            style={{background:theme.done,border:"1px solid "+theme.doneBorder,color:theme.doneText,borderLeft:"3px solid "+theme.doneBorder}}>
+            ✓ Prévia: Lesson 12 — Concluída
+          </div>
+        </div>
+
+        <button onClick={saveTheme}
+          className="btn btn-primary w-full py-3 rounded-xl font-bold text-base inline-flex items-center justify-center gap-2">
+          {saved?"✓ Tema Salvo com Sucesso!":"Salvar e Publicar Tema"}
+        </button>
       </div>
-      <input type="text" value={val} onChange={e=>setThemeKey(k,e.target.value)}
-        style={{flex:1,background:"rgba(0,0,0,.3)",border:"1px solid rgba(255,255,255,.12)",borderRadius:8,
-          padding:"4px 8px",fontSize:11,color:"#dde6f0",fontFamily:"monospace",outline:"none",minWidth:0}}/>
-    </div>
-  );
-}
-
-function SaveBtn({mini=false}){
-  const {saveTheme,saved}=useTheme();
-  return(
-    <button onClick={saveTheme}
-      className={"btn btn-primary rounded-xl font-bold inline-flex items-center justify-center gap-2"+(mini?" px-3 py-1.5 text-xs":" w-full py-2.5 text-sm mt-3")}
-      style={{background:saved?"rgba(30,160,110,.8)":"",borderColor:saved?"rgba(30,160,110,1)":""}}>
-      {saved?"✓ Salvo!":mini?"💾 Salvar":"💾 Salvar e Publicar Tema"}
-    </button>
-  );
-}
-
-function PanelShell({title,onClose,children}){
-  return(
-    <div className="glass rounded-2xl p-5 mb-5" style={{border:"1px solid rgba(30,143,168,.25)"}}>
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-bold text-sm tracking-wide" style={{color:"#7de0f8"}}>🎨 {title}</h4>
-        <button onClick={onClose} className="btn rounded-lg px-2 py-1 text-xs" style={{fontSize:16}}>✕</button>
-      </div>
-      <div className="space-y-1">{children}</div>
-      <SaveBtn/>
-    </div>
-  );
-}
-
-function AdminConfigBtn({onClick}){
-  return(
-    <button onClick={onClick}
-      className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5 shrink-0"
-      style={{borderColor:"rgba(30,143,168,.4)",color:"#7de0f8",background:"rgba(30,143,168,.08)"}}>
-      🎨 Aparência
-    </button>
-  );
-}
-
-// ── PAINÉIS POR GUIA ────────────────────────────────────────────────────────
-function PanelPrincipal({onClose}){
-  const {theme,setThemeKey,setThemeKeys}=useTheme();
-  return(
-    <PanelShell title="Aparência — Página Principal" onClose={onClose}>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Fundo Geral</div>
-      <div className="flex flex-wrap gap-2 mb-3">
-        {BG_PRESETS.map(p=>(
-          <button key={p.id} onClick={()=>setThemeKey("bg",p.value)}
-            className={"ap-preset"+(theme.bg===p.value?" selected":"")}>{p.label}</button>
-        ))}
-      </div>
-      <CP label="Fundo (gradiente custom)" k="bgCustom" w={36}/>
-      <div className="h-px my-3" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Header</div>
-      <CP label="Fundo do header" k="header" w={36}/>
-      <CP label="Título principal" k="hpHeader" w={36}/>
-      <CP label="Subtítulo header" k="hpHeaderSub" w={36}/>
-      <div className="h-px my-3" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Cards de Aluno</div>
-      <div className="flex flex-wrap gap-2 mb-3">
-        {CARD_PRESETS.map(p=>(
-          <button key={p.id} onClick={()=>setThemeKey("card",p.value)}
-            className={"ap-preset flex items-center gap-1.5"+(theme.card===p.value?" selected":"")}>
-            <span style={{width:12,height:12,borderRadius:3,background:p.value,border:"1px solid rgba(255,255,255,.2)",display:"inline-block",flexShrink:0}}/>
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <CP label="Fundo do card" k="card" w={36}/>
-      <CP label="Nome do aluno" k="hpNome" w={36}/>
-      <CP label="Módulo / Nível" k="hpSub" w={36}/>
-      <CP label="Label Progresso" k="hpProg" w={36}/>
-      <CP label="Percentual" k="hpPct" w={36}/>
-      <CP label="Lições concluídas" k="hpLicoes" w={36}/>
-      <div className="h-px my-3" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Barra de Abas</div>
-      <CP label="Fundo da tab bar" k="tabbar" w={36}/>
-      <CP label="Badges / chips" k="badge" w={36}/>
-      <CP label="Botões neutros" k="btn" w={36}/>
-    </PanelShell>
-  );
-}
-
-function PanelFinanceiro({onClose}){
-  return(
-    <PanelShell title="Aparência — Financeiro" onClose={onClose}>
-      <CP label="Título da seção" k="finTitulo" w={32}/>
-      <CP label="Labels (Valor, etc.)" k="finLabel" w={32}/>
-      <CP label="Mês / Referência" k="finMes" w={32}/>
-      <CP label="Valor principal" k="finValor" w={32}/>
-      <CP label="Valor com desconto" k="finDesconto" w={32}/>
-      <CP label="Vencimento / muted" k="finMuted" w={32}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <CP label="Créditos (número)" k="finCreditosNum" w={32}/>
-      <CP label="Créditos (subtítulo)" k="finCreditosSub" w={32}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2 mt-1" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Cards / painéis</div>
-      <CP label="Fundo do card" k="card" w={32}/>
-    </PanelShell>
-  );
-}
-
-function PanelTrilha({onClose}){
-  const {theme,setThemeKey,setThemeKeys}=useTheme();
-  return(
-    <PanelShell title="Aparência — Trilha" onClose={onClose}>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Cabeçalho da trilha</div>
-      <CP label="Título (Trilha da Fluência)" k="trTitulo" w={38}/>
-      <CP label="Subtítulo" k="trSub" w={38}/>
-      <CP label="Label Progresso" k="trProg" w={38}/>
-      <CP label="Percentual" k="trPct" w={38}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Acordeão de módulos</div>
-      <CP label="Grupo (Foundation/Mastery)" k="trGrupo" w={38}/>
-      <CP label="Nome do módulo" k="trModNome" w={38}/>
-      <CP label="Label "Módulo"" k="trModLabel" w={38}/>
-      <CP label="Número do módulo" k="trModNum" w={38}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Cards de lição</div>
-      <div className="flex flex-wrap gap-2 mb-2">
-        {CARD_PRESETS.map(p=>(
-          <button key={p.id} onClick={()=>setThemeKeys({lesson:p.value})}
-            className={"ap-preset flex items-center gap-1.5"+(theme.lesson===p.value?" selected":"")}>
-            <span style={{width:12,height:12,borderRadius:3,background:p.value,border:"1px solid rgba(255,255,255,.2)",display:"inline-block",flexShrink:0}}/>
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <CP label="Fundo do card" k="lesson" w={38}/>
-      <CP label="Painel de detalhe" k="detail" w={38}/>
-      <CP label="Nome da lição" k="trLicaoNome" w={38}/>
-      <CP label="Subtítulo (Lesson X)" k="trLicaoSub" w={38}/>
-      <CP label="Data da lição" k="trLicaoData" w={38}/>
-      <CP label="Tag Input" k="trTagInput" w={38}/>
-      <CP label="Tag Output" k="trTagOutput" w={38}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Painel de detalhe da lição</div>
-      <CP label="Labels (STATUS, DATA...)" k="trDetailLabel" w={38}/>
-      <CP label="Valores dos campos" k="trDetailVal" w={38}/>
-      <CP label="Observações" k="trObs" w={38}/>
-      <CP label="Label dos links" k="trLinkCol" w={38}/>
-      <CP label="Botões de link" k="trLinkBtn" w={38}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Lição concluída / realizada</div>
-      <div className="flex flex-wrap gap-2 mb-2">
-        {DONE_PRESETS.map(p=>(
-          <button key={p.id} onClick={()=>setThemeKeys({done:p.bg,doneBorder:p.border,doneText:p.text})}
-            className={"ap-preset"+(theme.done===p.bg?" selected":"")}
-            style={{color:p.text,borderColor:theme.done===p.bg?p.border:"rgba(255,255,255,.12)",background:theme.done===p.bg?p.bg:"rgba(255,255,255,.04)"}}>
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <CP label="Fundo do card verde" k="done" w={38}/>
-      <CP label="Borda" k="doneBorder" w={38}/>
-      <CP label="Texto" k="doneText" w={38}/>
-      <div className="mt-3 p-3 rounded-xl text-sm font-semibold"
-        style={{background:theme.done,border:"1px solid "+theme.doneBorder,color:theme.doneText,borderLeft:"3px solid "+theme.doneBorder}}>
-        ✓ Prévia — Lesson 12 Concluída
-      </div>
-    </PanelShell>
-  );
-}
-
-function PanelRecursos({onClose}){
-  return(
-    <PanelShell title="Aparência — Recursos" onClose={onClose}>
-      <CP label="Título (Recursos)" k="recTitulo" w={34}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Links personalizados</div>
-      <CP label="Nome do link" k="recLinkNome" w={34}/>
-      <CP label="URL abreviada" k="recLinkUrl" w={34}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>WhatsApp Victor</div>
-      <CP label="Nome (WhatsApp...)" k="recWppNome" w={34}/>
-      <CP label="Subtítulo" k="recWppSub" w={34}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Agendar Aula</div>
-      <CP label="Nome (Agendar Aula)" k="recAgendaNome" w={34}/>
-      <CP label="Subtítulo" k="recAgendaSub" w={34}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <CP label="Fundo do card" k="card" w={34}/>
-    </PanelShell>
-  );
-}
-
-function PanelDiario({onClose}){
-  return(
-    <PanelShell title="Aparência — Diário" onClose={onClose}>
-      <CP label="Título (Diário de Aulas)" k="diTitulo" w={36}/>
-      <CP label="Subtítulo" k="diSub" w={36}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Cabeçalho da tabela</div>
-      <CP label="Colunas (Aula, Data...)" k="diTh" w={36}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Contador de aulas</div>
-      <CP label="Label (Total:)" k="diTotal" w={36}/>
-      <CP label="Número de aulas" k="diTotalNum" w={36}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <div className="text-xs font-semibold mb-2" style={{color:"rgba(180,200,220,.45)",textTransform:"uppercase",letterSpacing:".06em"}}>Linhas da tabela</div>
-      <CP label="Aula (badge número)" k="diNumAula" w={36}/>
-      <CP label="Data" k="diData" w={36}/>
-      <CP label="Nome da lição" k="diLicao" w={36}/>
-      <CP label="Subtítulo lição" k="diLicaoSub" w={36}/>
-      <CP label="Observações" k="diObs" w={36}/>
-      <div className="h-px my-2" style={{background:"rgba(255,255,255,.07)"}}/>
-      <CP label="Fundo do card" k="card" w={36}/>
-    </PanelShell>
-  );
-}
-
-// ── PAINEL CONFIG COMPLETO (aba ⚙ Config) ───────────────────────────────────
-function AparenciaSection(){
-  return(
-    <div className="max-w-2xl mx-auto space-y-2">
-      <div className="glass rounded-2xl p-5 mb-2">
-        <h3 className="text-lg font-bold mb-1" style={{fontFamily:"'Sora',sans-serif",color:"#7de0f8"}}>Central de Aparência</h3>
-        <p className="text-sm mb-0" style={{color:"rgba(180,200,220,.55)"}}>Abra o painel de cada guia para editar. As alterações afetam todos os usuários ao salvar.</p>
-      </div>
-      <PanelPrincipal onClose={()=>{}}/>
-      <PanelFinanceiro onClose={()=>{}}/>
-      <PanelTrilha onClose={()=>{}}/>
-      <PanelRecursos onClose={()=>{}}/>
-      <PanelDiario onClose={()=>{}}/>
     </div>
   );
 }
 
 function AdminApp({user}){
-  const [students,setStudents]=useState(null);const [selectedUid,setSelectedUid]=useState(null);const [showAdd,setShowAdd]=useState(false);const [showCfgPrincipal,setShowCfgPrincipal]=useState(false);const [appTheme,setAppTheme]=useState({...PAGE_DEFAULTS});const [newUid,setNewUid]=useState("");const [newName,setNewName]=useState("");const [newLevel,setNewLevel]=useState("A1");const [addErr,setAddErr]=useState("");const [imgOk,setImgOk]=useState(true);
+  const [students,setStudents]=useState(null);const [selectedUid,setSelectedUid]=useState(null);const [showAdd,setShowAdd]=useState(false);const [newUid,setNewUid]=useState("");const [newName,setNewName]=useState("");const [newLevel,setNewLevel]=useState("A1");const [addErr,setAddErr]=useState("");const [imgOk,setImgOk]=useState(true);
   useEffect(()=>db.collection("students").onSnapshot(snap=>setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})))),[]);
-  useEffect(()=>{
-    db.collection("config").doc("aparencia").get().then(doc=>{
-      if(doc.exists){const t={...PAGE_DEFAULTS,...doc.data()};setAppTheme(t);window.__applyTheme&&window.__applyTheme(t);}
-    });
-  },[]);
-  function handleThemeSave(t){setAppTheme(t);}
   async function createStudent(){
     if(!newUid.trim()||!newName.trim()){setAddErr("Preencha UID e nome.");return;}
     const ref=db.collection("students").doc(newUid.trim());const doc=await ref.get();
@@ -1405,25 +912,22 @@ function AdminApp({user}){
     await ref.set({name:newName.trim(),level:newLevel,program:"Fluência Real em 18 Meses",coach:"Victor Gomes",profession:"",birthday:"",links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],trilha:{},financeiro:FINANCEIRO_DEFAULT});
     setNewUid("");setNewName("");setNewLevel("A1");setAddErr("");setShowAdd(false);
   }
-  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin appTheme={appTheme} onThemeSave={handleThemeSave} onBack={()=>setSelectedUid(null)}/>;
+  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin onBack={()=>setSelectedUid(null)}/>;
   return(
     <div className="min-h-screen">
-      {<PageConfigBtn page="home" label="Página Principal" theme={appTheme} onSave={handleThemeSave}/>}
       <header className="px-5 py-5" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {imgOk?<img src={LOGO_URL} alt="Fluency Studio" className="h-9" onError={()=>setImgOk(false)}/>:<span className="text-xl font-extrabold" style={{fontFamily:"'Sora',sans-serif"}}>Fluency Studio</span>}
-            <div><h1 className="text-xl font-bold" style={{color:"var(--hp-header)"}}>Painel do Professor</h1><p className="text-xs" style={{color:"var(--hp-header-sub)"}}>Gerencie alunos, trilhas e diários.</p></div>
+            <div><h1 className="text-xl font-bold">Painel do Professor</h1><p className="muted text-xs">Gerencie alunos, trilhas e diários.</p></div>
           </div>
           <div className="flex items-center gap-2">
-            <AdminConfigBtn onClick={()=>setShowCfgPrincipal(o=>!o)}/>
             <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowAdd(o=>!o)}><Icon name="user-plus" size={16}/> Novo Aluno</button>
             <button className="btn rounded-xl px-4 py-3 inline-flex items-center gap-2" onClick={()=>auth.signOut()}><Icon name="log-out"/><span className="hidden sm:inline text-sm">Sair</span></button>
           </div>
         </div>
       </header>
       <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
-        {showCfgPrincipal&&<PanelPrincipal onClose={()=>setShowCfgPrincipal(false)}/>}
         {showAdd&&<div className="glass rounded-2xl p-6 mb-5">
           <h3 className="font-bold text-lg mb-4">Adicionar Aluno</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1439,10 +943,10 @@ function AdminApp({user}){
             {students.map(s=>{
               const merged=mergeBooks(s.trilha||{});let done=0,total=0;merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida")done++;}));const pct=total?Math.round((done/total)*100):0;const mod=getCurrentModule(merged);const finVencida=s.financeiro?.parcelas?.some(p=>p.status==="vencida");
               return(<div key={s.uid} className="student-card" onClick={()=>setSelectedUid(s.uid)}>
-                <div className="flex items-center gap-3 mb-3"><div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div><div className="flex-1 min-w-0"><div className="font-bold truncate" style={{color:"var(--hp-nome)"}}>{s.name||"Aluno"}</div><div className="text-xs" style={{color:"var(--hp-subtitulo)"}}>Módulo {mod} · Nível {s.level||"—"}</div></div>{finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}<Icon name="chevron-right" size={16} className="muted shrink-0"/></div>
-                <div className="flex items-center justify-between text-xs mb-1"><span style={{color:"var(--hp-progresso)"}}>Progresso</span><span className="font-semibold" style={{color:"var(--hp-pct)"}}>{pct}%</span></div>
+                <div className="flex items-center gap-3 mb-3"><div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div><div className="flex-1 min-w-0"><div className="font-bold truncate">{s.name||"Aluno"}</div><div className="text-xs muted">Módulo {mod} · Nível {s.level||"—"}</div></div>{finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}<Icon name="chevron-right" size={16} className="muted shrink-0"/></div>
+                <div className="flex items-center justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{pct}%</span></div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{background:"rgba(255,255,255,.09)"}}><div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
-                <div className="text-xs mt-2" style={{color:"var(--hp-licoes)"}}>{done} de {total} lições concluídas</div>
+                <div className="text-xs muted mt-2">{done} de {total} lições concluídas</div>
               </div>);
             })}
           </div>
@@ -1455,16 +959,10 @@ function AdminApp({user}){
 function App(){
   const [user,setUser]=useState(undefined);
   useEffect(()=>auth.onAuthStateChanged(u=>setUser(u||null)),[]);
-  // Carrega tema para alunos também
-  useEffect(()=>{
-    db.collection("config").doc("aparencia").get().then(doc=>{
-      if(doc.exists&&window.__applyTheme)window.__applyTheme({...PAGE_DEFAULTS,...doc.data()});
-    });
-  },[]);
   if(user===undefined)return <LoadingScreen/>;
-  if(!user)return <ThemeProvider><Login/></ThemeProvider>;
-  if(user.uid===ADMIN_UID)return <ThemeProvider><AdminApp user={user}/></ThemeProvider>;
-  return <ThemeProvider><StudentDetail uid={user.uid} isAdmin={false}/></ThemeProvider>;
+  if(!user)return <Login/>;
+  if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
+  return <StudentDetail uid={user.uid} isAdmin={false}/>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
