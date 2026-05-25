@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2 – Input | The Fluency Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0B1F33',
+                        bordo: '#5A1F2B',
+                        'teal-dark': '#0F3A45',
+                        'teal-accent': '#114B5F',
+                        'teal-light': '#2C7A8E',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --navy: #0B1F33;
+            --bordo: #5A1F2B;
+            --teal-accent: #114B5F;
+        }
+        body {
+            background-color: #F8FAFC;
+            color: var(--navy);
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Inputs */
+        .input-line {
+            border: none;
+            border-bottom: 2px solid #CBD5E1;
+            background: transparent;
+            border-radius: 0;
+            padding: 4px 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: var(--navy);
+            font-weight: 500;
+        }
+        .input-line:focus {
+            outline: none;
+            border-bottom-color: var(--teal-accent);
+            background-color: #F1F5F9;
+        }
+        .input-gap {
+            border: none;
+            border-bottom: 2px solid var(--teal-accent);
+            background: rgba(17, 75, 95, 0.05);
+            text-align: center;
+            font-weight: 600;
+            color: var(--teal-accent);
+            width: 150px;
+            padding: 2px 5px;
+            margin: 0 8px;
+            outline: none;
+        }
+
+        /* Drag & Drop Word Bank */
+        .word-pill {
+            background: white;
+            border: 2px solid var(--navy);
+            color: var(--navy);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .word-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .word-pill.dragging {
+            opacity: 0.5;
+        }
+        .word-pill.used {
+            background: #E2EAF0;
+            border-color: #CBD5E1;
+            color: #94A3B8;
+            pointer-events: none;
+            box-shadow: none;
+            transform: none;
+        }
+        .drop-zone {
+            min-height: 200px;
+            border: 2px dashed #CBD5E1;
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s;
+            background: #F8FAFC;
+        }
+        .drop-zone.drag-over {
+            border-color: var(--teal-accent);
+            background: rgba(17, 75, 95, 0.05);
+        }
+
+        /* iVi Chat Bubbles */
+        .chat-bubble-ivi { background: #F1F5F9; border-radius: 16px 16px 16px 4px; color: var(--navy); }
+        .chat-bubble-user { background: var(--teal-accent); border-radius: 16px 16px 4px 16px; color: white; }
+        
+        /* Correction Feedback */
+        .correction-feedback {
+            font-size: 0.85rem;
+            margin-top: 4px;
+            display: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+        .correct-input { border-bottom-color: #10B981 !important; background-color: rgba(16, 185, 129, 0.1) !important; }
+        .incorrect-input { border-bottom-color: #EF4444 !important; background-color: rgba(239, 68, 68, 0.1) !important; }
+        
+        /* Loading Spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-break { page-break-before: always; }
+            .shadow-lg, .shadow-xl { box-shadow: none !important; }
+            .drop-zone { border: 1px solid black; min-height: 150px; }
+            .word-pill { border: 1px solid black; }
+            header { background: transparent !important; color: black !important; border-bottom: 2px solid black; }
+            header h1 { color: black !important; }
+            header img { filter: grayscale(100%); }
+            .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .input-line, .input-gap { border-bottom: 1px solid black; }
+        }
+    </style>
+</head>
+<body class="relative min-h-screen pb-32">
+
+    <!-- Header -->
+    <header class="bg-navy text-white py-6 sticky top-0 z-40 shadow-md">
+        <div class="max-w-4xl mx-auto px-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">LESSON 2</h1>
+                <p class="text-teal-light text-sm font-medium uppercase tracking-widest mt-1">Input Exercises</p>
+            </div>
+            <div class="text-right hidden sm:block">
+                <span class="font-bold text-xl tracking-tighter">Fs</span>
+                <p class="text-[10px] uppercase tracking-widest text-gray-400">Fluency Studio</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+        
+        <!-- EXERCISE 1 -->
+        <section class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-gray-100 print:border-0 print:p-0">
+            <h2 class="text-xl font-bold text-navy mb-6 flex items-center">
+                <span class="bg-teal-accent text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">1</span>
+                Write the sentences in English.
+            </h2>
+            
+            <div class="space-y-6" id="ex1-container">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- EXERCISE 2 -->
+        <section class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-gray-100 print:border-0 print:p-0 print-break">
+            <h2 class="text-xl font-bold text-navy mb-6 flex items-center">
+                <span class="bg-teal-accent text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">2</span>
+                Change the sentences into negative form.
+            </h2>
+            
+            <div class="space-y-6" id="ex2-container">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- EXERCISE 3 -->
+        <section class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-gray-100 print:border-0 print:p-0 print-break">
+            <h2 class="text-xl font-bold text-navy mb-4 flex items-center">
+                <span class="bg-teal-accent text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">3</span>
+                Put the words in the correct column.
+            </h2>
+            
+            <!-- Word Bank -->
+            <div class="bg-gray-50 p-4 rounded-xl mb-8 border border-gray-200 text-center no-print" id="word-bank">
+                <p class="text-sm text-gray-500 mb-3 font-medium">Click a word, then click the box where it belongs:</p>
+                <div id="words-container" class="flex flex-wrap justify-center gap-2">
+                    <!-- Words injected via JS -->
+                </div>
+            </div>
+
+            <!-- Print Word Bank -->
+            <div class="hidden print-only mb-6 text-center text-lg font-medium">
+                water | banana | coffee | juice | jam | tea | bread | pancakes | milk | butter | honey
+            </div>
+
+            <!-- Columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- YOU EAT -->
+                <div class="flex flex-col">
+                    <h3 class="font-bold text-bordo text-center mb-3 bg-bordo/10 py-2 rounded-t-xl print:bg-transparent border-b-2 border-bordo">YOU EAT</h3>
+                    <div class="drop-zone flex-1 flex flex-col gap-2 relative cursor-pointer" id="drop-eat" onclick="handleZoneClick('eat')">
+                        <span class="text-gray-300 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none no-print">Click to place here</span>
+                    </div>
+                </div>
+                <!-- YOU DRINK -->
+                <div class="flex flex-col">
+                    <h3 class="font-bold text-teal-accent text-center mb-3 bg-teal-accent/10 py-2 rounded-t-xl print:bg-transparent border-b-2 border-teal-accent">YOU DRINK</h3>
+                    <div class="drop-zone flex-1 flex flex-col gap-2 relative cursor-pointer" id="drop-drink" onclick="handleZoneClick('drink')">
+                        <span class="text-gray-300 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none no-print">Click to place here</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXERCISE 4 -->
+        <section class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-gray-100 print:border-0 print:p-0 print-break">
+            <h2 class="text-xl font-bold text-navy mb-4 flex items-center">
+                <span class="bg-teal-accent text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">4</span>
+                Complete the sentences with the words from the box.
+            </h2>
+            
+            <div class="bg-gray-50 p-4 rounded-xl mb-8 border border-gray-200 text-center text-navy font-semibold word-spacing-4 shadow-inner">
+                slice of &nbsp;&nbsp;|&nbsp;&nbsp; piece of &nbsp;&nbsp;|&nbsp;&nbsp; for breakfast &nbsp;&nbsp;|&nbsp;&nbsp; to eat &nbsp;&nbsp;|&nbsp;&nbsp; to drink
+            </div>
+
+            <div class="space-y-6 text-lg" id="ex4-container">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Action Bar (No Print) -->
+    <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-30 no-print flex justify-center gap-4 flex-wrap">
+        <button onclick="autoCorrect()" id="btn-correct" class="flex items-center gap-2 bg-teal-accent hover:bg-teal-dark text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-md">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span id="correct-text">Autocorreção</span>
+        </button>
+        <button onclick="sendToWhatsApp()" class="flex items-center gap-2 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-md">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar para o Professor
+        </button>
+        <button onclick="window.print()" class="flex items-center gap-2 bg-bordo hover:bg-opacity-90 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-md">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Salvar em PDF
+        </button>
+    </div>
+
+    <!-- Floating iVi -->
+    <div class="fixed bottom-24 right-6 z-50 no-print flex flex-col items-end">
+        <!-- Chat Window -->
+        <div id="ivi-chat-window" class="hidden w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 mb-4 flex-col overflow-hidden transition-all duration-300 origin-bottom-right transform scale-95 opacity-0">
+            <div class="bg-teal-accent text-white p-4 font-bold flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="preview.webp" alt="iVi" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                    <span>iVi, seu super tutor</span>
+                </div>
+                <button onclick="toggleChat()" class="text-white hover:text-gray-200 focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="ivi-messages" class="p-4 h-64 overflow-y-auto flex flex-col gap-3 bg-gray-50 text-sm">
+                <div class="chat-bubble-ivi p-3 shadow-sm self-start max-w-[90%]">
+                    Hello! I'm iVi. Estou aqui para te ajudar a destruir nas aulas de inglês. Se tiver dúvida em alguma questão, manda aqui! Não vou te dar a resposta, mas vou te guiar até ela brilhantemente. 🧠✨
+                </div>
+            </div>
+            <div class="p-3 bg-white border-t border-gray-200 flex gap-2">
+                <input type="text" id="ivi-input" placeholder="Pergunte ao iVi..." class="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-accent" onkeypress="if(event.key === 'Enter') { sendToIvi(); }">
+                <button onclick="sendToIvi()" class="bg-teal-accent text-white p-2 rounded-xl hover:bg-teal-dark transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- FAB -->
+        <button onclick="toggleChat()" class="w-16 h-16 rounded-full bg-white shadow-xl border-4 border-teal-accent overflow-hidden hover:scale-110 transition-transform flex items-center justify-center cursor-pointer relative group">
+            <img src="preview.webp" alt="iVi" class="w-full h-full object-cover">
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <div id="result-modal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
+            <div id="score-circle" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl font-black text-white mb-6 shadow-lg">
+                --%
+            </div>
+            <h3 class="text-2xl font-bold text-navy mb-2" id="result-title">Avaliação Concluída!</h3>
+            <p class="text-gray-600 mb-6" id="result-message">Veja as correções detalhadas nas questões em vermelho.</p>
+            <button onclick="closeModal()" class="w-full bg-navy text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition">Revisar minhas respostas</button>
+        </div>
+    </div>
+
+    <!-- FIREBASE & LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // CONFIG & DATA
+        const PROFESSOR_WHATSAPP = "5511921423578";
+        const apiKey = ""; // Environment provided Gemini Key
+
+        const exercises = {
+            ex1: [
+                { id: "ex1a", pt: "a. Eu não como ovos no café da manhã." },
+                { id: "ex1b", pt: "b. Você não bebe suco de maçã." },
+                { id: "ex1c", pt: "c. Eu não quero comer torrada no café da manhã." },
+                { id: "ex1d", pt: "d. Você não gosta de beber suco de laranja." },
+                { id: "ex1e", pt: "e. Eu quero uma fatia de queijo." },
+                { id: "ex1f", pt: "f. Você quer um pedaço de torta." },
+                { id: "ex1g", pt: "g. Eu gosto de comer frutas no café da manhã. E você?" },
+                { id: "ex1h", pt: "h. Você não quer comer cereal." },
+                { id: "ex1i", pt: "i. Eu não gosto de comer pão e presunto." },
+                { id: "ex1j", pt: "j. Eu quero um pedaço de queijo, por favor." }
+            ],
+            ex2: [
+                { id: "ex2a", en: "a. I want to eat bread and jam for breakfast." },
+                { id: "ex2b", en: "b. You like yogurt and granola." },
+                { id: "ex2c", en: "c. I want to eat a slice of cheese." },
+                { id: "ex2d", en: "d. You like to drink orange juice." },
+                { id: "ex2e", en: "e. I eat eggs and toast for breakfast." },
+                { id: "ex2f", en: "f. You drink milk, and I drink coffee." },
+                { id: "ex2g", en: "g. I like to eat chocolate pie." },
+                { id: "ex2h", en: "h. You want chocolate pie." }
+            ],
+            ex3_words: ["water", "banana", "coffee", "juice", "jam", "tea", "bread", "pancakes", "milk", "butter", "honey"],
+            ex4: [
+                { id: "ex4a", pre: "a. I want", post: "coffee and milk." },
+                { id: "ex4b", pre: "b. I eat a", post: "apple pie for breakfast." },
+                { id: "ex4c", pre: "c. I like", post: "pancakes for breakfast." },
+                { id: "ex4d", pre: "d. I want a", post: "cheese, please." },
+                { id: "ex4e", pre: "e. I want bread and butter", post: "." }
+            ]
+        };
+
+        // Firebase Setup
+        let db, auth, user, currentAppId;
+        
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'fluency-studio-l2';
+                    
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    onAuthStateChanged(auth, (u) => {
+                        if (u) {
+                            user = u;
+                            loadData();
+                        }
+                    });
+                } else {
+                    console.log("Running locally, using LocalStorage fallback only.");
+                    loadLocalData();
+                }
+            } catch (e) {
+                console.error("Firebase init error:", e);
+                loadLocalData();
+            }
+        }
+
+        // BUILD UI
+        function buildUI() {
+            // Ex 1
+            const ex1Container = document.getElementById('ex1-container');
+            exercises.ex1.forEach(item => {
+                ex1Container.innerHTML += `
+                    <div class="flex flex-col gap-1 relative">
+                        <label class="text-sm text-gray-500 font-medium">${item.pt}</label>
+                        <input type="text" id="${item.id}" class="input-line save-trigger" autocomplete="off" spellcheck="false" placeholder="Type here...">
+                        <div id="fb-${item.id}" class="correction-feedback"></div>
+                    </div>
+                `;
+            });
+
+            // Ex 2
+            const ex2Container = document.getElementById('ex2-container');
+            exercises.ex2.forEach(item => {
+                ex2Container.innerHTML += `
+                    <div class="flex flex-col gap-1 relative">
+                        <label class="text-sm text-gray-500 font-medium">${item.en}</label>
+                        <input type="text" id="${item.id}" class="input-line save-trigger" autocomplete="off" spellcheck="false" placeholder="Negative form...">
+                        <div id="fb-${item.id}" class="correction-feedback"></div>
+                    </div>
+                `;
+            });
+
+            // Ex 3
+            const wordContainer = document.getElementById('words-container');
+            exercises.ex3_words.forEach(word => {
+                wordContainer.innerHTML += `
+                    <div id="word-${word}" class="word-pill" onclick="selectWord('${word}')">${word}</div>
+                `;
+            });
+
+            // Ex 4
+            const ex4Container = document.getElementById('ex4-container');
+            exercises.ex4.forEach(item => {
+                ex4Container.innerHTML += `
+                    <div class="flex items-center flex-wrap gap-y-2 relative">
+                        <span>${item.pre}</span>
+                        <input type="text" id="${item.id}" class="input-gap save-trigger" autocomplete="off" spellcheck="false">
+                        <span>${item.post}</span>
+                        <div id="fb-${item.id}" class="correction-feedback w-full basis-full mt-1"></div>
+                    </div>
+                `;
+            });
+
+            // Add listeners for auto-save
+            document.querySelectorAll('.save-trigger').forEach(el => {
+                el.addEventListener('input', debounce(saveData, 1000));
+            });
+        }
+
+        // DRAG & DROP LOGIC (Click to Move)
+        let selectedWordId = null;
+        window.selectWord = function(word) {
+            const el = document.getElementById(`word-${word}`);
+            if (el.classList.contains('used')) return;
+            
+            if (selectedWordId) {
+                document.getElementById(selectedWordId).classList.remove('ring-4', 'ring-teal-accent', 'scale-110');
+            }
+            if (selectedWordId === `word-${word}`) {
+                selectedWordId = null;
+                return;
+            }
+            
+            selectedWordId = `word-${word}`;
+            el.classList.add('ring-4', 'ring-teal-accent', 'scale-110');
+        };
+
+        window.handleZoneClick = function(zoneType) {
+            if (!selectedWordId) return;
+            
+            const wordEl = document.getElementById(selectedWordId);
+            const word = wordEl.innerText;
+            const zone = document.getElementById(`drop-${zoneType}`);
+            
+            // Create placed item
+            const placedItem = document.createElement('div');
+            placedItem.className = 'bg-white border border-gray-300 rounded-lg px-4 py-2 font-medium flex justify-between items-center text-navy shadow-sm';
+            placedItem.innerHTML = `${word} <button onclick="removeWord(this, '${word}')" class="text-red-400 hover:text-red-600 font-bold">&times;</button>`;
+            placedItem.dataset.word = word;
+            
+            zone.appendChild(placedItem);
+            
+            // Mark original as used
+            wordEl.classList.remove('ring-4', 'ring-teal-accent', 'scale-110');
+            wordEl.classList.add('used');
+            selectedWordId = null;
+            
+            saveData();
+        };
+
+        window.removeWord = function(btn, word) {
+            const placedItem = btn.parentElement;
+            placedItem.remove();
+            
+            const originalWord = document.getElementById(`word-${word}`);
+            originalWord.classList.remove('used');
+            saveData();
+        };
+
+        // SAVE & LOAD
+        function getEx3State() {
+            const eat = Array.from(document.getElementById('drop-eat').children)
+                            .filter(el => el.dataset && el.dataset.word)
+                            .map(el => el.dataset.word);
+            const drink = Array.from(document.getElementById('drop-drink').children)
+                            .filter(el => el.dataset && el.dataset.word)
+                            .map(el => el.dataset.word);
+            return { eat, drink };
+        }
+
+        function restoreEx3State(state) {
+            if (!state) return;
+            state.eat.forEach(w => mockZonePlacement(w, 'eat'));
+            state.drink.forEach(w => mockZonePlacement(w, 'drink'));
+        }
+
+        function mockZonePlacement(word, zoneType) {
+            const wordEl = document.getElementById(`word-${word}`);
+            if(!wordEl || wordEl.classList.contains('used')) return;
+            
+            const zone = document.getElementById(`drop-${zoneType}`);
+            const placedItem = document.createElement('div');
+            placedItem.className = 'bg-white border border-gray-300 rounded-lg px-4 py-2 font-medium flex justify-between items-center text-navy shadow-sm';
+            placedItem.innerHTML = `${word} <button onclick="removeWord(this, '${word}')" class="text-red-400 hover:text-red-600 font-bold">&times;</button>`;
+            placedItem.dataset.word = word;
+            zone.appendChild(placedItem);
+            wordEl.classList.add('used');
+        }
+
+        function gatherAllData() {
+            const data = {};
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                if(input.id && input.id !== 'ivi-input') {
+                    data[input.id] = input.value.trim();
+                }
+            });
+            data.ex3 = getEx3State();
+            return data;
+        }
+
+        async function saveData() {
+            const data = gatherAllData();
+            localStorage.setItem('fs_lesson2_data', JSON.stringify(data));
+            
+            if (user && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', currentAppId, 'users', user.uid, 'lesson2_data');
+                    await setDoc(docRef, { answers: data, lastUpdated: new Date() }, { merge: true });
+                } catch (e) {
+                    console.error("Firebase save error:", e);
+                }
+            }
+        }
+
+        async function loadData() {
+            let data = null;
+            if (user && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', currentAppId, 'users', user.uid, 'lesson2_data');
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        data = docSnap.data().answers;
+                    }
+                } catch(e) {}
+            }
+            
+            if (!data) {
+                loadLocalData();
+                return;
+            }
+            applyData(data);
+        }
+
+        function loadLocalData() {
+            const saved = localStorage.getItem('fs_lesson2_data');
+            if (saved) {
+                applyData(JSON.parse(saved));
+            }
+        }
+
+        function applyData(data) {
+            Object.keys(data).forEach(key => {
+                if (key === 'ex3') {
+                    restoreEx3State(data[key]);
+                } else {
+                    const el = document.getElementById(key);
+                    if (el) el.value = data[key];
+                }
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => { clearTimeout(timeout); func(...args); };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // WHATSAPP
+        window.sendToWhatsApp = function() {
+            const data = gatherAllData();
+            let text = `*Teacher, aqui está minha Lesson 2 da Fluency Studio!* 🚀\n\n`;
+            
+            text += `*1. Sentences in English:*\n`;
+            exercises.ex1.forEach(item => { text += `${item.pt}\n👉 ${data[item.id] || "Não respondido"}\n\n`; });
+            
+            text += `*2. Negative form:*\n`;
+            exercises.ex2.forEach(item => { text += `${item.en}\n👉 ${data[item.id] || "Não respondido"}\n\n`; });
+            
+            text += `*3. Columns:*\n`;
+            text += `EAT: ${data.ex3.eat.join(', ') || "Nenhum"}\n`;
+            text += `DRINK: ${data.ex3.drink.join(', ') || "Nenhum"}\n\n`;
+            
+            text += `*4. Complete:*\n`;
+            exercises.ex4.forEach(item => { 
+                const qNum = item.id.replace('ex4', '');
+                text += `${qNum}) 👉 ${data[item.id] || "-"}\n`; 
+            });
+
+            const encoded = encodeURIComponent(text);
+            window.open(`https://wa.me/${PROFESSOR_WHATSAPP}?text=${encoded}`, '_blank');
+        };
+
+        // GEMINI AI CALLER
+        async function fetchGemini(systemPrompt, userPrompt, jsonFormat = false) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+            if (jsonFormat) {
+                payload.generationConfig = { responseMimeType: "application/json" };
+            }
+            
+            try {
+                let backoff = 1000;
+                for (let i = 0; i < 5; i++) {
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (response.ok) {
+                        const resJSON = await response.json();
+                        return resJSON.candidates?.[0]?.content?.parts?.[0]?.text;
+                    }
+                    if (i < 4) {
+                        await new Promise(r => setTimeout(r, backoff));
+                        backoff *= 2;
+                    }
+                }
+                throw new Error("Failed after retries");
+            } catch (e) {
+                console.error(e);
+                return null;
+            }
+        }
+
+        // AUTOCORRECTION
+        window.autoCorrect = async function() {
+            const btn = document.getElementById('btn-correct');
+            const btnText = document.getElementById('correct-text');
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span> Analisando...';
+            
+            const data = gatherAllData();
+            const studentAnswers = JSON.stringify(data);
+            
+            const systemPrompt = `You are the master English teacher at Fluency Studio.
+You must evaluate the student's answers for Lesson 2.
+Be lenient with minor typos and capitalization, focus on grammar and vocabulary accuracy.
+Return a STRICT JSON matching this schema:
+{
+  "score": number (0-100),
+  "results": {
+    "ex1a": { "correct": boolean, "correction": "string with explanation if incorrect, empty if correct" },
+    ... (all keys from Ex 1, 2, 4)
+  }
+}
+Exercise 1 expects translation to English. Exercise 2 expects transformation to negative. Exercise 4 expects words: slice of, piece of, for breakfast, to eat, to drink.`;
+            
+            const userPrompt = `Evaluate these answers:\n${studentAnswers}`;
+
+            const response = await fetchGemini(systemPrompt, userPrompt, true);
+            
+            if (!response) {
+                btn.disabled = false;
+                btnText.innerHTML = 'Erro de conexão';
+                setTimeout(() => { btnText.innerHTML = 'Autocorreção'; }, 3000);
+                return;
+            }
+
+            try {
+                const evalData = JSON.parse(response);
+                applyFeedback(evalData);
+                showResultModal(evalData.score);
+                
+                btn.disabled = false;
+                btnText.innerHTML = 'Autocorreção';
+            } catch (e) {
+                console.error("JSON parse error", e);
+                btn.disabled = false;
+                btnText.innerHTML = 'Erro na análise';
+                setTimeout(() => { btnText.innerHTML = 'Autocorreção'; }, 3000);
+            }
+        };
+
+        function applyFeedback(evalData) {
+            // Reset all visual states
+            document.querySelectorAll('.input-line, .input-gap').forEach(el => {
+                el.classList.remove('correct-input', 'incorrect-input');
+                const fb = document.getElementById(`fb-${el.id}`);
+                if (fb) { fb.style.display = 'none'; fb.innerText = ''; }
+            });
+
+            // Apply new states
+            for (const [id, data] of Object.entries(evalData.results)) {
+                const el = document.getElementById(id);
+                const fb = document.getElementById(`fb-${id}`);
+                if (!el || !fb) continue;
+                
+                if (data.correct) {
+                    el.classList.add('correct-input');
+                    fb.innerText = '✨ Great job!';
+                    fb.className = 'correction-feedback text-green-700 bg-green-100';
+                    fb.style.display = 'block';
+                } else {
+                    el.classList.add('incorrect-input');
+                    fb.innerHTML = `⚠️ <b>Correção:</b> ${data.correction}`;
+                    fb.className = 'correction-feedback text-red-700 bg-red-100';
+                    fb.style.display = 'block';
+                }
+            }
+            
+            // Check Ex 3 manually (rule based)
+            const ex3State = getEx3State();
+            const correctEat = ["banana", "jam", "bread", "pancakes", "butter", "honey"];
+            const correctDrink = ["water", "coffee", "juice", "tea", "milk"];
+            
+            // Just visually highlight the drop zones based on errors (simplification)
+            let ex3Correct = true;
+            ex3State.eat.forEach(w => { if(!correctEat.includes(w)) ex3Correct = false; });
+            ex3State.drink.forEach(w => { if(!correctDrink.includes(w)) ex3Correct = false; });
+            
+            document.getElementById('drop-eat').style.borderColor = ex3Correct ? '#10B981' : '#EF4444';
+            document.getElementById('drop-drink').style.borderColor = ex3Correct ? '#10B981' : '#EF4444';
+        }
+
+        function showResultModal(score) {
+            const modal = document.getElementById('result-modal');
+            const circle = document.getElementById('score-circle');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-message');
+            
+            circle.innerText = `${score}%`;
+            
+            if(score >= 90) {
+                circle.className = 'w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl font-black text-white mb-6 shadow-lg bg-green-500';
+                title.innerText = "Excellent!";
+                msg.innerText = "Você arrasou na atividade!";
+            } else if (score >= 70) {
+                circle.className = 'w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl font-black text-white mb-6 shadow-lg bg-teal-accent';
+                title.innerText = "Good Job!";
+                msg.innerText = "Muito bom, mas ainda pode melhorar alguns detalhes.";
+            } else {
+                circle.className = 'w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl font-black text-white mb-6 shadow-lg bg-red-500';
+                title.innerText = "Try Again!";
+                msg.innerText = "Revise as questões em vermelho e converse com o iVi para tirar dúvidas!";
+            }
+            
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+
+        window.closeModal = function() {
+            const modal = document.getElementById('result-modal');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        };
+
+        // IVI CHAT LOGIC
+        let chatHistory = [];
+        const iviPrompt = `Você é o iVi, o assistente de IA genial da Fluency Studio. Você é mais inteligente que o Claude, GPT e Bill Gates juntos.
+Sua missão é guiar o aluno de forma encorajadora, pedagógica e brilhante.
+NÃO DÊ A RESPOSTA IMEDIATAMENTE. Faça o aluno pensar, use o método socrático.
+Fale em Português com termos em inglês misturados amigavelmente. Seja curto, direto e motivador.
+Mantenha respostas com no máximo 3 frases.`;
+
+        window.toggleChat = function() {
+            const w = document.getElementById('ivi-chat-window');
+            if (w.classList.contains('hidden')) {
+                w.classList.remove('hidden');
+                setTimeout(() => { w.classList.remove('scale-95', 'opacity-0'); }, 10);
+                document.getElementById('ivi-input').focus();
+            } else {
+                w.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { w.classList.add('hidden'); }, 300);
+            }
+        };
+
+        window.sendToIvi = async function() {
+            const input = document.getElementById('ivi-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            appendChat('user', text);
+            input.value = '';
+            
+            chatHistory.push(`Aluno: ${text}`);
+            
+            // Show typing indicator
+            const typingId = appendChat('ivi', '<span class="loader"></span>Pensando...');
+            
+            // Build prompt
+            const context = `Aqui estão as respostas atuais do aluno: ${JSON.stringify(gatherAllData())}\nHistórico: ${chatHistory.slice(-4).join('\n')}`;
+            
+            const response = await fetchGemini(iviPrompt, `Contexto: ${context}\nAluno: ${text}`);
+            
+            document.getElementById(typingId).remove();
+            if (response) {
+                appendChat('ivi', response);
+                chatHistory.push(`iVi: ${response}`);
+            } else {
+                appendChat('ivi', 'Ops, tive um branco! Pode repetir? 😅');
+            }
+        };
+
+        function appendChat(sender, htmlText) {
+            const container = document.getElementById('ivi-messages');
+            const div = document.createElement('div');
+            const id = 'msg-' + Date.now();
+            div.id = id;
+            if (sender === 'ivi') {
+                div.className = 'chat-bubble-ivi p-3 shadow-sm self-start max-w-[90%] fade-in';
+            } else {
+                div.className = 'chat-bubble-user p-3 shadow-sm self-end max-w-[90%] fade-in';
+            }
+            div.innerHTML = htmlText;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            buildUI();
+            initFirebase();
+        });
+
+    </script>
+</body>
+</html>
