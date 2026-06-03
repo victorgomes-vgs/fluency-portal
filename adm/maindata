@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Central de Vida</title>
+<!-- Fonte Moderna: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Ícones Modernos -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  :root {
+    --bg: #09090b;        /* Zinc 950 */
+    --surface: #18181b;   /* Zinc 900 */
+    --surface-hover: #27272a;
+    --border: #27272a;    /* Zinc 800 */
+    --accent: #6366f1;    /* Modern Indigo */
+    --accent-hover: #4f46e5;
+    --text: #fafafa;
+    --muted: #a1a1aa;
+    --green: #10b981;
+    --red: #ef4444;
+    --gold: #f59e0b;
+    --radius: 16px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- MOBILE HEADER & OVERLAY --- */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+  }
+  .mobile-header h1 { font-size: 18px; font-weight: 600; }
+  .mobile-menu-btn { background: none; border: none; color: var(--text); cursor: pointer; }
+  
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45;
+    backdrop-filter: blur(4px);
+    opacity: 0; transition: opacity 0.3s;
+  }
+
+  /* --- SIDEBAR --- */
+  aside {
+    width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    z-index: 50;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .logo { padding: 0 24px; margin-bottom: 40px; }
+  .logo h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px;}
+  .logo span { color: var(--accent); }
+
+  nav { display: flex; flex-direction: column; gap: 4px; padding: 0 16px; }
+
+  .nav-item {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 14px; font-weight: 500; text-align: left;
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface-hover); }
+  .nav-item.active { color: #fff; background: var(--accent); font-weight: 600; }
+
+  /* --- MAIN CONTENT --- */
+  main {
+    flex: 1; overflow-y: auto; padding: 40px; position: relative; scroll-behavior: smooth;
+  }
+  main::-webkit-scrollbar { width: 6px; }
+  main::-webkit-scrollbar-track { background: transparent; }
+  main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .view { display: none; max-width: 1200px; margin: 0 auto; padding-bottom: 60px; animation: fadeIn 0.3s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .view-header { margin-bottom: 32px; }
+  .view-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .view-header p { color: var(--muted); font-size: 15px; }
+
+  /* --- GRIDS & CARDS --- */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* --- WIDGETS --- */
+  .dash-widget {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column;
+  }
+  .dash-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .dash-value { font-size: 32px; font-weight: 700; margin-top: 8px; letter-spacing: -1px; }
+
+  /* --- FORMS & BUTTONS --- */
+  .form-row { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  input, select {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 14px; border-radius: var(--radius-sm); font-size: 14px; transition: border 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus { border-color: var(--accent); outline: none; }
+  
+  .btn {
+    background: var(--surface-hover); color: var(--text); font-weight: 500;
+    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer; border: none;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  }
+  .btn:hover { background: #3f3f46; }
+  .btn-accent { background: var(--accent); color: #fff; }
+  .btn-accent:hover { background: var(--accent-hover); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-icon { padding: 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: var(--red); }
+  .btn-icon:hover { background: var(--red); color: #fff; }
+
+  /* --- TABLES --- */
+  .table-responsive { width: 100%; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 400px; }
+  th { text-align: left; padding: 12px; color: var(--muted); font-size: 12px; font-weight: 500; border-bottom: 1px solid var(--border); text-transform: uppercase;}
+  td { padding: 16px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .text-gold { color: var(--gold); }
+  .text-accent { color: var(--accent); }
+
+  /* --- LISTS & SCHEDULE --- */
+  .schedule-item { display: flex; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: center; }
+  .s-time { width: 80px; color: var(--muted); font-size: 14px; font-weight: 500; }
+  .s-desc { flex: 1; font-size: 15px; font-weight: 500;}
+
+  .chk-item { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text); padding: 12px 0; cursor: pointer; }
+  .chk-item input[type="checkbox"] { 
+    appearance: none; width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; position: relative; background: var(--bg);
+  }
+  .chk-item input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+  .chk-item input[type="checkbox"]:checked::after {
+    content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .chk-item.done { color: var(--muted); text-decoration: line-through; }
+
+  /* --- PROGRESS BAR --- */
+  .progress-wrap { background: var(--bg); border-radius: 8px; height: 6px; width: 100%; overflow: hidden; margin-top: 12px; }
+  .progress-bar { background: var(--accent); height: 100%; transition: width 0.5s ease; border-radius: 8px;}
+
+  /* --- RESPONSIVIDADE PARA CELULAR --- */
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .mobile-header { display: flex; }
+    main { padding: 90px 20px 40px 20px; }
+    aside {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      transform: translateX(-100%); z-index: 50; width: 280px;
+    }
+    aside.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; opacity: 1; }
+    
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .form-row { flex-direction: column; align-items: stretch; }
+    .form-row > * { flex: 1 1 100%; }
+    .view-header h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <h1>Central de Vida</h1>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+  </header>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="logo">
+      <h1>Central<span>.</span></h1>
+    </div>
+    <nav>
+      <button class="nav-item active" onclick="navigate('home')"><i data-lucide="layout-dashboard"></i> Dashboard</button>
+      <button class="nav-item" onclick="navigate('agenda')"><i data-lucide="calendar"></i> Agenda</button>
+      <button class="nav-item" onclick="navigate('financeiro')"><i data-lucide="wallet"></i> Moradia & Caixa</button>
+      <button class="nav-item" onclick="navigate('dividas')"><i data-lucide="file-warning"></i> Dívidas</button>
+      <button class="nav-item" onclick="navigate('trabalho')"><i data-lucide="briefcase"></i> The Fluency Studio</button>
+      <button class="nav-item" onclick="navigate('saude')"><i data-lucide="heart-pulse"></i> Saúde & Metas</button>
+      <button class="nav-item" onclick="navigate('alimentar')"><i data-lucide="coffee"></i> Alimentação</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    
+    <!-- 1. DASHBOARD -->
+    <div id="home" class="view active">
+      <div class="view-header">
+        <h2>Dashboard</h2>
+        <p>Projeções financeiras, rotina e visão geral.</p>
+      </div>
+      
+      <div class="grid-3">
+        <div class="dash-widget">
+          <div class="dash-label">Receita Estimada</div>
+          <div class="dash-value text-green" id="dash-in">R$ 0,00</div>
+        </div>
+        <div class="dash-widget">
+          <div class="dash-label">Despesas Totais</div>
+          <div class="dash-value text-red" id="dash-out">R$ 0,00</div>
+        </div>
+        <div class="dash-widget">
+          <div class="dash-label">Caixa Livre (Metas)</div>
+          <div class="dash-value text-accent" id="dash-total">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="card">
+          <div class="card-title">Distribuição Mensal</div>
+          <div style="height: 250px; display: flex; justify-content: center;">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Rotina Âncora</div>
+          <label class="chk-item" style="background: var(--bg); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+            <input type="checkbox" id="hiv-check" onchange="saveHIV()">
+            <strong class="text-accent">Medicação HIV Tomada</strong>
+          </label>
+          <div class="schedule-item"><div class="s-time">06:00</div><div class="s-desc">Acordar / Skincare / Off-screen</div></div>
+          <div class="schedule-item"><div class="s-time">08:00</div><div class="s-desc">The Fluency Studio</div></div>
+          <div class="schedule-item"><div class="s-time">17:00</div><div class="s-desc">Treino Físico</div></div>
+          <div class="schedule-item"><div class="s-time">22:30</div><div class="s-desc">Luzes apagadas</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. AGENDA -->
+    <div id="agenda" class="view">
+      <div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h2>Agenda</h2>
+          <p>Sincronizado com Google Calendar.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="authorize_button" onclick="handleAuthClick()" class="btn btn-accent" style="display: none;"><i data-lucide="log-in"></i> Conectar Google</button>
+          <button id="signout_button" onclick="handleSignoutClick()" class="btn" style="display: none;">Desconectar</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Próximos Eventos</div>
+          <div id="gcal-list" style="color: var(--muted); min-height: 200px;">
+            <p id="gcal-status">Autorize o acesso para carregar eventos.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Novo Compromisso</div>
+          <form id="gcal-form" style="display: none; flex-direction: column; gap: 16px;" onsubmit="addCalendarEvent(event)">
+            <input type="text" id="gcal-title" placeholder="Título do compromisso" required>
+            <div class="form-row" style="margin:0;">
+              <input type="date" id="gcal-date" style="flex: 2;" required>
+              <input type="time" id="gcal-time" style="flex: 1;">
+            </div>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i> Agendar</button>
+          </form>
+          <p id="gcal-form-msg" style="font-size: 14px; color: var(--muted);">Aguardando login no Google...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. FINANCEIRO PESSOAL -->
+    <div id="financeiro" class="view">
+      <div class="view-header">
+        <h2>Moradia & Pessoal</h2>
+        <p>Receita baseada no Studio. Gestão de fixos e variáveis.</p>
+      </div>
+
+      <div class="card" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+        <div style="font-size: 12px; font-weight: 600; color: var(--green); margin-bottom: 4px;">RECEITA IMPORTADA (THE FLUENCY STUDIO)</div>
+        <div style="font-size: 28px; font-weight: 700; color: var(--text);" id="link-studio">R$ 0,00</div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Rendas Extras -->
+        <div class="card">
+          <div class="card-title">Extras & Aulas Avulsas</div>
+          <form class="form-row" onsubmit="addEntry(event, 'extraIncome')">
+            <input type="text" id="add-ext-desc" placeholder="Descrição" style="flex:2" required>
+            <input type="number" id="add-ext-val" placeholder="R$ 0.00" step="0.01" style="flex:1" required>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i></button>
+          </form>
+          <div class="table-responsive">
+            <table><tbody id="list-extraIncome"></tbody></table>
+          </div>
+        </div>
+
+        <!-- Fixas -->
+        <div class="card">
+          <div class="card-title">Contas Fixas</div>
+          <form class="form-row" onsubmit="addEntry(event, 'fixed')">
+            <input type="text" id="add-fix-desc" placeholder="Ex: Aluguel" style="flex:2" required>
+            <input type="number" id="add-fix-val" placeholder="R$ 0.00" step="0.01" style="flex:1" required>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i></button>
+          </form>
+          <div class="table-responsive">
+            <table><tbody id="list-fixed"></tbody></table>
+          </div>
+          <div style="text-align: right; margin-top:16px; font-weight: 600; color: var(--muted);">Total Fixo: <span id="sum-fixed" class="text-red">R$ 0,00</span></div>
+        </div>
+
+        <!-- Variáveis -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-title">Contas Variáveis (Projeção)</div>
+          <form class="form-row" style="max-width: 600px;" onsubmit="addEntry(event, 'vars')">
+            <input type="text" id="add-var-desc" placeholder="Ex: Supermercado" style="flex:2" required>
+            <input type="number" id="add-var-val" placeholder="R$ 0.00" step="0.01" style="flex:1" required>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i></button>
+          </form>
+          <div class="table-responsive">
+            <table><tbody id="list-vars"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. DÍVIDAS -->
+    <div id="dividas" class="view">
+      <div class="view-header">
+        <h2>Gestão de Dívidas</h2>
+        <p>Plano rigoroso de quitação e acordos.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Novo Acordo</div>
+        <form class="form-row" onsubmit="addDebt(event)">
+          <input type="text" id="add-debt-desc" placeholder="Credor (Ex: Nubank)" style="flex:2" required>
+          <input type="number" id="add-debt-val" placeholder="Valor Parcela (Mês)" step="0.01" style="flex:1" required>
+          <input type="number" id="add-debt-total" placeholder="Dívida Total" step="0.01" style="flex:1">
+          <button type="submit" class="btn btn-accent"><i data-lucide="save"></i> Salvar</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Dívidas Ativas</div>
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>Credor</th><th>Dívida Total</th><th>Parcela Mensal</th><th>Ação</th></tr></thead>
+            <tbody id="list-debts"></tbody>
+          </table>
+        </div>
+        <div style="text-align: right; margin-top:24px; font-weight: 600; font-size: 18px;">
+          Total Mensal (Dívidas): <span id="sum-debts" class="text-red">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. TRABALHO -->
+    <div id="trabalho" class="view">
+      <div class="view-header">
+        <h2>The Fluency Studio</h2>
+        <p>Administrativo de alunos e fluxo pedagógico.</p>
+      </div>
+      
+      <div class="grid-2">
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-title">Alunos Ativos (Receita Mensal)</div>
+          <form class="form-row" style="max-width: 800px;" onsubmit="addStudent(event)">
+            <input type="text" id="stu-name" placeholder="Nome do Aluno" style="flex:2" required>
+            <input type="number" id="stu-day" placeholder="Dia Venc. (ex: 15)" style="flex:1" required>
+            <input type="number" id="stu-val" placeholder="R$ Mensalidade" step="0.01" style="flex:1" required>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i></button>
+          </form>
+          
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>Aluno</th><th>Vencimento</th><th>Valor Mensal</th><th>Ação</th></tr></thead>
+              <tbody id="list-students"></tbody>
+            </table>
+          </div>
+          
+          <div style="margin-top: 24px; text-align: right; font-weight: 700; font-size: 20px;">
+            Faturamento: <span id="studio-total-display" class="text-green">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1; background: var(--bg);">
+          <div class="card-title">Estrutura Pedagógica</div>
+          <div class="grid-2">
+            <div>
+              <p style="margin-bottom:8px; font-weight: 600;"><i data-lucide="layers" style="width:16px; display:inline-block; margin-right:4px; color:var(--accent);"></i> Ciclos de Input/Output</p>
+              <p style="color:var(--muted); font-size: 14px;">Planejamento estrutural base.</p>
+            </div>
+            <div>
+              <p style="margin-bottom:8px; font-weight: 600;"><i data-lucide="brain" style="width:16px; display:inline-block; margin-right:4px; color:var(--accent);"></i> Conteúdos</p>
+              <p style="color:var(--muted); font-size: 14px;">Business English, Comunicação.</p>
+            </div>
+            <div>
+              <p style="margin-bottom:8px; font-weight: 600;"><i data-lucide="book-open" style="width:16px; display:inline-block; margin-right:4px; color:var(--accent);"></i> Diários</p>
+              <p style="color:var(--muted); font-size: 14px;">Acompanhamento de evolução.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. SAÚDE & METAS -->
+    <div id="saude" class="view">
+      <div class="view-header">
+        <h2>Saúde & Projetos</h2>
+        <p>Acompanhamento estético e clínico.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Projetos & Procedimentos</div>
+          <form class="form-row" onsubmit="addMeta(event)">
+            <input type="text" id="new-meta-desc" placeholder="Ex: Lentes" style="flex:2" required>
+            <input type="number" id="new-meta-val" placeholder="Custo (R$)" step="0.01" style="flex:1" required>
+            <button type="submit" class="btn btn-accent"><i data-lucide="plus"></i></button>
+          </form>
+          <div id="list-metas" style="margin-top: 24px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Clínico (HIV)</div>
+          <div class="form-row">
+            <span style="font-size: 13px; width: 80px; font-weight: 500;">Último CD4</span>
+            <input type="date" style="flex:1">
+            <input type="text" placeholder="Resultado" style="flex:1">
+          </div>
+          <div class="form-row">
+            <span style="font-size: 13px; width: 80px; font-weight: 500;">Carga Viral</span>
+            <input type="date" style="flex:1">
+            <input type="text" placeholder="Indetectável" style="flex:1">
+          </div>
+          
+          <div style="margin: 24px 0; height: 1px; background: var(--border);"></div>
+          
+          <div class="card-title">Checklist Diário</div>
+          <label class="chk-item"><input type="checkbox"> Skincare completo</label>
+          <label class="chk-item"><input type="checkbox"> Treino concluído</label>
+          <label class="chk-item"><input type="checkbox"> Higiene e Barba</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. ALIMENTAÇÃO -->
+    <div id="alimentar" class="view">
+      <div class="view-header">
+        <h2>Cardápio Base</h2>
+        <p>Estrutura alimentar semanal.</p>
+      </div>
+      <div class="card">
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>Dia</th><th>Café da Manhã (07:00)</th><th>Almoço (12:00)</th><th>Jantar (18:30)</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600;">Segunda</td><td>Ovos, Pão Integral, Café</td><td>Frango, Arroz, Salada</td><td>Sopa Leve</td></tr>
+              <tr><td style="font-weight:600;">Terça</td><td>Aveia, Fruta, Whey</td><td>Carne, Batata, Legumes</td><td>Crepioca</td></tr>
+              <tr><td style="font-weight:600;">Quarta</td><td>Ovos, Pão Integral, Café</td><td>Frango, Massa Integral</td><td>Salada com Atum</td></tr>
+              <tr><td style="font-weight:600;">Quinta</td><td>Aveia, Fruta, Whey</td><td>Peixe/Frango, Arroz, Salada</td><td>Wrap</td></tr>
+              <tr><td style="font-weight:600;">Sexta</td><td>Ovos, Tapioca, Café</td><td style="color:var(--muted)">Livre Controlado</td><td style="color:var(--muted)">Livre Controlado</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Inicializar ícones
+    lucide.createIcons();
+
+    // --- RESPONSIVIDADE E NAVEGAÇÃO ---
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.querySelector('.sidebar-overlay').classList.toggle('open');
+    }
+
+    function navigate(id) {
+      document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.currentTarget.classList.add('active');
+      
+      // Fecha menu no mobile após clique
+      if(window.innerWidth <= 768) toggleSidebar();
+      window.scrollTo(0,0);
+    }
+
+    // --- ESTADO & DADOS (LOCALSTORAGE) ---
+    const defaultState = {
+      hivTakenDate: null,
+      students: [
+        { id: 1, name: "Rose Matos", day: 16, val: 300 },
+        { id: 2, name: "Kaio", day: 24, val: 420 },
+        { id: 3, name: "Tainá", day: 25, val: 420 },
+        { id: 4, name: "Camilla", day: 5, val: 750 },
+        { id: 5, name: "Lorraybe", day: 25, val: 320 }
+      ],
+      extraIncome: [],
+      fixed: [
+        { id: 1, desc: "Aluguel", val: 2700 },
+        { id: 2, desc: "Internet", val: 110 },
+        { id: 3, desc: "Plano de Saúde", val: 350 },
+        { id: 4, desc: "Energia Elétrica", val: 200 },
+        { id: 5, desc: "Celular", val: 50 }
+      ],
+      debts: [
+        { id: 1, desc: "SANTANDER", val: 0, total: 0 },
+        { id: 2, desc: "NUBANK", val: 0, total: 0 },
+        { id: 3, desc: "CAIXA", val: 0, total: 0 },
+        { id: 4, desc: "IPANEMA", val: 0, total: 0 },
+        { id: 5, desc: "QUINTO ANDAR", val: 0, total: 0 }
+      ],
+      vars: [
+        { id: 1, desc: "Transporte", val: 100 },
+        { id: 2, desc: "Supermercado", val: 500 }
+      ],
+      metas: [
+        { id: 1, desc: "Lentes de contato", val: 3000, done: false },
+        { id: 2, desc: "Botox", val: 1200, done: false },
+        { id: 3, desc: "Preenchimento", val: 1500, done: false },
+        { id: 4, desc: "Rinoplastia", val: 12000, done: false },
+        { id: 5, desc: "Prótese", val: 8000, done: false }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem('centralVidaV4')) || defaultState;
+    function saveState() { localStorage.setItem('centralVidaV4', JSON.stringify(state)); calculateDashboards(); }
+
+    function formatMoney(value) { return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+    // --- RENDERIZADORES ---
+    function renderList(type, elementId, colorClass) {
+      const tbody = document.getElementById(elementId);
+      tbody.innerHTML = '';
+      state[type].forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:500;">${item.desc}</td>
+            <td class="${colorClass}" style="font-weight:600;">${formatMoney(item.val)}</td>
+            <td style="width: 50px; text-align:right;"><button class="btn-icon" onclick="deleteEntry('${type}', ${item.id})"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
+          </tr>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function addEntry(e, type) {
+      e.preventDefault();
+      let pre = type === 'extraIncome' ? 'add-ext' : type === 'fixed' ? 'add-fix' : 'add-var';
+      const desc = document.getElementById(`${pre}-desc`).value;
+      const val = parseFloat(document.getElementById(`${pre}-val`).value);
+      if(desc && val >= 0) {
+        state[type].push({ id: Date.now(), desc, val });
+        document.getElementById(`${pre}-desc`).value = ''; document.getElementById(`${pre}-val`).value = '';
+        saveState(); renderAll();
+      }
+    }
+
+    function deleteEntry(type, id) { state[type] = state[type].filter(item => item.id !== id); saveState(); renderAll(); }
+
+    // ALUNOS
+    function renderStudents() {
+      const tbody = document.getElementById('list-students');
+      tbody.innerHTML = '';
+      state.students.forEach(s => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:600;">${s.name}</td>
+            <td style="color:var(--muted);">Dia ${s.day}</td>
+            <td class="text-green" style="font-weight:600;">${formatMoney(s.val)}</td>
+            <td style="width: 50px; text-align:right;"><button class="btn-icon" onclick="deleteEntry('students', ${s.id})"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
+          </tr>
+        `;
+      });
+      lucide.createIcons();
+    }
+    function addStudent(e) {
+      e.preventDefault();
+      const name = document.getElementById('stu-name').value;
+      const day = document.getElementById('stu-day').value;
+      const val = parseFloat(document.getElementById('stu-val').value);
+      if(name && val > 0) {
+        state.students.push({ id: Date.now(), name, day, val });
+        document.getElementById('stu-name').value = ''; document.getElementById('stu-day').value = ''; document.getElementById('stu-val').value = '';
+        saveState(); renderAll();
+      }
+    }
+
+    // DÍVIDAS
+    function renderDebts() {
+      const tbody = document.getElementById('list-debts');
+      tbody.innerHTML = '';
+      state.debts.forEach(d => {
+        const totalDisp = d.total > 0 ? formatMoney(d.total) : '-';
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:600;">${d.desc}</td>
+            <td style="color:var(--muted);">${totalDisp}</td>
+            <td class="text-red" style="font-weight:600;">${formatMoney(d.val)}</td>
+            <td style="width: 50px; text-align:right;"><button class="btn-icon" onclick="deleteEntry('debts', ${d.id})"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
+          </tr>
+        `;
+      });
+      lucide.createIcons();
+    }
+    function addDebt(e) {
+      e.preventDefault();
+      const desc = document.getElementById('add-debt-desc').value;
+      const val = parseFloat(document.getElementById('add-debt-val').value);
+      const totalStr = document.getElementById('add-debt-total').value;
+      const total = totalStr ? parseFloat(totalStr) : 0;
+      if(desc && val >= 0) {
+        state.debts.push({ id: Date.now(), desc, val, total });
+        document.getElementById('add-debt-desc').value = ''; document.getElementById('add-debt-val').value = ''; document.getElementById('add-debt-total').value = '';
+        saveState(); renderAll();
+      }
+    }
+
+    // METAS
+    function renderMetas() {
+      const div = document.getElementById('list-metas');
+      div.innerHTML = '';
+      const saldoLivre = calculateRawBalance();
+      
+      state.metas.forEach(m => {
+        let progress = (saldoLivre > 0 && m.val > 0) ? Math.min((saldoLivre / m.val) * 100, 100) : 0;
+        div.innerHTML += `
+          <div style="background:var(--bg); padding:16px; border-radius:var(--radius-sm); margin-bottom:12px; border:1px solid var(--border); ${m.done ? 'opacity:0.5;' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <label class="chk-item ${m.done ? 'done' : ''}" style="padding:0;">
+                <input type="checkbox" ${m.done ? 'checked' : ''} onchange="toggleMeta(${m.id})">
+                <span style="font-weight:600;">${m.desc}</span>
+              </label>
+              <div style="display:flex; gap:16px; align-items:center;">
+                <span class="text-accent" style="font-weight:600;">${formatMoney(m.val)}</span>
+                <button class="btn-icon" onclick="deleteEntry('metas', ${m.id})" style="padding:6px;"><i data-lucide="trash-2" style="width:14px;"></i></button>
+              </div>
+            </div>
+            ${!m.done && m.val > 0 ? `
+              <div class="progress-wrap"><div class="progress-bar" style="width: ${progress}%"></div></div>
+              <div style="font-size:12px; color:var(--muted); margin-top:6px; text-align:right;">${progress.toFixed(0)}% Alcançado do Saldo</div>
+            ` : ''}
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+    function addMeta(e) {
+      e.preventDefault();
+      const desc = document.getElementById('new-meta-desc').value;
+      const val = parseFloat(document.getElementById('new-meta-val').value);
+      if(desc && val > 0) {
+        state.metas.push({ id: Date.now(), desc, val, done: false });
+        document.getElementById('new-meta-desc').value = ''; document.getElementById('new-meta-val').value = '';
+        saveState(); renderMetas();
+      }
+    }
+    function toggleMeta(id) {
+      const meta = state.metas.find(m => m.id === id);
+      if(meta) meta.done = !meta.done;
+      saveState(); renderMetas();
+    }
+
+    // HIV
+    function initHIV() { document.getElementById('hiv-check').checked = (state.hivTakenDate === new Date().toDateString()); }
+    function saveHIV() { state.hivTakenDate = document.getElementById('hiv-check').checked ? new Date().toDateString() : null; saveState(); }
+
+    // DASHBOARD & CHART
+    let expenseChartInstance = null;
+    function calculateRawBalance() {
+      return (state.students.reduce((a,b)=>a+b.val,0) + state.extraIncome.reduce((a,b)=>a+b.val,0)) - 
+             (state.fixed.reduce((a,b)=>a+b.val,0) + state.debts.reduce((a,b)=>a+b.val,0) + state.vars.reduce((a,b)=>a+b.val,0));
+    }
+
+    function calculateDashboards() {
+      const studioTotal = state.students.reduce((a,b)=>a+b.val,0);
+      const totalIn = studioTotal + state.extraIncome.reduce((a,b)=>a+b.val,0);
+      const fixTotal = state.fixed.reduce((a,b)=>a+b.val,0);
+      const debtTotal = state.debts.reduce((a,b)=>a+b.val,0);
+      const varTotal = state.vars.reduce((a,b)=>a+b.val,0);
+      const totalOut = fixTotal + debtTotal + varTotal;
+      const saldo = totalIn - totalOut;
+
+      document.getElementById('studio-total-display').innerText = formatMoney(studioTotal);
+      document.getElementById('link-studio').innerText = formatMoney(studioTotal);
+      document.getElementById('sum-fixed').innerText = formatMoney(fixTotal);
+      document.getElementById('sum-debts').innerText = formatMoney(debtTotal);
+      
+      document.getElementById('dash-in').innerText = formatMoney(totalIn);
+      document.getElementById('dash-out').innerText = formatMoney(totalOut);
+      const dTotal = document.getElementById('dash-total');
+      dTotal.innerText = formatMoney(saldo);
+      dTotal.className = `dash-value ${saldo >= 0 ? 'text-accent' : 'text-red'}`;
+
+      updateChart(fixTotal, varTotal, debtTotal, saldo > 0 ? saldo : 0);
+    }
+
+    function updateChart(fixo, variavel, dividas, livre) {
+      const ctx = document.getElementById('expenseChart').getContext('2d');
+      if (expenseChartInstance) expenseChartInstance.destroy();
+      Chart.defaults.color = '#a1a1aa'; Chart.defaults.font.family = "'Inter', sans-serif";
+      expenseChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Fixo', 'Variável', 'Dívidas', 'Saldo Livre'],
+          datasets: [{
+            data: [fixo, variavel, dividas, livre],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#6366f1'],
+            borderColor: '#18181b', borderWidth: 3, hoverOffset: 4
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } }, cutout: '75%' }
+      });
+    }
+
+    function renderAll() {
+      renderStudents();
+      renderList('extraIncome', 'list-extraIncome', 'text-green');
+      renderList('fixed', 'list-fixed', 'text-red');
+      renderDebts();
+      renderList('vars', 'list-vars', 'text-red');
+      calculateDashboards(); 
+      renderMetas();
+    }
+
+    window.onload = () => { renderAll(); initHIV(); };
+
+    // ==================================================================================
+    // GOOGLE CALENDAR
+    // ==================================================================================
+    const CLIENT_ID = 'COLE_AQUI_O_SEU_CLIENT_ID.apps.googleusercontent.com'; 
+    const API_KEY = 'COLE_AQUI_A_SUA_API_KEY'; 
+    // ==================================================================================
+    const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+    const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+    let tokenClient; let gapiInited = false; let gisInited = false;
+
+    function gapiLoaded() { gapi.load('client', initializeGapiClient); }
+    async function initializeGapiClient() {
+      try {
+        await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] });
+        gapiInited = true; maybeEnableButtons();
+      } catch (e) { document.getElementById('gcal-status').innerHTML = "Erro Google API."; }
+    }
+    function gisLoaded() {
+      tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' });
+      gisInited = true; maybeEnableButtons();
+    }
+    function maybeEnableButtons() {
+      if (gapiInited && gisInited) {
+        document.getElementById('authorize_button').style.display = 'inline-flex';
+        document.getElementById('gcal-date').value = new Date().toISOString().split('T')[0];
+      }
+    }
+    function handleAuthClick() {
+      tokenClient.callback = async (resp) => {
+        if (resp.error !== undefined) throw (resp);
+        document.getElementById('signout_button').style.display = 'inline-flex';
+        document.getElementById('authorize_button').style.display = 'none';
+        document.getElementById('gcal-form').style.display = 'flex';
+        document.getElementById('gcal-form-msg').style.display = 'none';
+        document.getElementById('gcal-status').innerHTML = "Carregando...";
+        await listUpcomingEvents();
+      };
+      if (gapi.client.getToken() === null) tokenClient.requestAccessToken({prompt: 'consent'});
+      else tokenClient.requestAccessToken({prompt: ''});
+    }
+    function handleSignoutClick() {
+      const token = gapi.client.getToken();
+      if (token !== null) {
+        google.accounts.oauth2.revoke(token.access_token);
+        gapi.client.setToken('');
+        document.getElementById('gcal-list').innerHTML = '<p id="gcal-status">Desconectado.</p>';
+        document.getElementById('authorize_button').style.display = 'inline-flex';
+        document.getElementById('signout_button').style.display = 'none';
+        document.getElementById('gcal-form').style.display = 'none';
+        document.getElementById('gcal-form-msg').style.display = 'block';
+      }
+    }
+    async function listUpcomingEvents() {
+      try {
+        const response = await gapi.client.calendar.events.list({ calendarId: 'primary', timeMin: (new Date()).toISOString(), showDeleted: false, singleEvents: true, maxResults: 5, orderBy: 'startTime' });
+        const events = response.result.items;
+        const listDiv = document.getElementById('gcal-list');
+        listDiv.innerHTML = '';
+        if (!events || events.length === 0) { listDiv.innerHTML = '<p>Nenhum evento.</p>'; return; }
+        events.forEach((event) => {
+          let when = event.start.dateTime; let isAllDay = false;
+          if (!when) { when = event.start.date; isAllDay = true; }
+          const dateObj = new Date(when);
+          let timeStr = isAllDay ? "Dia Todo" : dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+          const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+          listDiv.innerHTML += `
+            <div style="display:flex; padding:12px 0; border-bottom:1px solid var(--border);">
+              <div style="width:60px; font-size:12px; font-weight:600; color:var(--accent);">${dateStr}<br><span style="color:var(--muted); font-weight:400;">${timeStr}</span></div>
+              <div style="flex:1; font-size:14px; display:flex; align-items:center;">${event.summary}</div>
+            </div>`;
+        });
+      } catch (err) { document.getElementById('gcal-list').innerHTML = `<p class="text-red">Erro.</p>`; }
+    }
+    async function addCalendarEvent(e) {
+      e.preventDefault();
+      const title = document.getElementById('gcal-title').value; const dateVal = document.getElementById('gcal-date').value; const timeVal = document.getElementById('gcal-time').value;
+      if(!title || !dateVal) return;
+      const btn = e.target.querySelector('button'); btn.textContent = "Agendando..."; btn.disabled = true;
+      let startDateTime, endDateTime;
+      if (timeVal) {
+        startDateTime = new Date(`${dateVal}T${timeVal}:00`); endDateTime = new Date(startDateTime.getTime() + 60*60*1000);
+      } else { startDateTime = new Date(`${dateVal}T00:00:00`); }
+      const dateStringFinal = new Date(new Date(dateVal).getTime() + 24*60*60*1000).toISOString().split('T')[0];
+      const eventBody = {
+        'summary': title,
+        'start': timeVal ? { 'dateTime': startDateTime.toISOString(), 'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone } : { 'date': dateVal },
+        'end': timeVal ? { 'dateTime': endDateTime.toISOString(), 'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone } : { 'date': dateStringFinal }
+      };
+      try {
+        await gapi.client.calendar.events.insert({ 'calendarId': 'primary', 'resource': eventBody });
+        document.getElementById('gcal-title').value = ''; document.getElementById('gcal-time').value = ''; await listUpcomingEvents();
+      } catch (err) { alert("Erro: " + err.message); } finally { btn.innerHTML = "<i data-lucide='plus'></i> Agendar"; btn.disabled = false; lucide.createIcons(); }
+    }
+  </script>
+  <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+</html>
