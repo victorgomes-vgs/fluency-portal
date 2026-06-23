@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Practice Worksheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf para gerar o PDF perfeitamente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .correct-input { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .wrong-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .audio-btn { transition: transform 0.1s; }
+        .audio-btn:active { transform: scale(0.95); }
+        
+        /* Ocultar elementos na hora de imprimir o PDF */
+        .pdf-hidden { display: block; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="worksheet" class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg">
+        
+        <!-- Cabeçalho -->
+        <div class="border-b-4 border-indigo-600 pb-4 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-indigo-800">English Practice</h1>
+                <p class="text-gray-500">Food, Drinks and Preferences</p>
+            </div>
+            <div class="w-full md:w-auto">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Nome do(a) Aluno(a):</label>
+                <input type="text" id="studentName" placeholder="Digite seu nome..." class="w-full md:w-64 border-2 border-gray-300 rounded-lg p-2 focus:border-indigo-500 focus:outline-none">
+            </div>
+        </div>
+
+        <!-- Seção 1: Tradução -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold bg-indigo-600 text-white inline-block px-4 py-1 rounded mb-4 shadow">1. Write the sentences in English.</h2>
+            <div class="space-y-6" id="translation-container">
+                <!-- Injetado via JS para manter o HTML limpo -->
+            </div>
+        </div>
+
+        <!-- Seção 2: Listening -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold bg-indigo-600 text-white inline-block px-4 py-1 rounded mb-4 shadow">2. Listen and mark the right option. <i class="fa-solid fa-headphones ml-2"></i></h2>
+            <p class="text-sm text-gray-600 mb-4">Ouça os áudios e selecione a conversa que corresponde à imagem.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="listening-container">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+
+        <!-- Seção 3: Read and Rewrite -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold bg-indigo-600 text-white inline-block px-4 py-1 rounded mb-4 shadow">3. Read, select the correct word and rewrite.</h2>
+            <div class="space-y-6" id="rewrite-container">
+                <!-- Injetado via JS -->
+            </div>
+        </div>
+
+        <!-- Resultados e Ações -->
+        <div class="mt-12 pt-6 border-t-2 border-gray-200">
+            <div class="flex flex-col items-center gap-4">
+                <button onclick="checkAllAnswers()" class="pdf-hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-colors text-lg w-full md:w-auto">
+                    <i class="fa-solid fa-check-circle mr-2"></i> Corrigir Atividade
+                </button>
+                
+                <div id="score-display" class="hidden text-2xl font-bold text-center p-4 rounded-lg bg-gray-100 w-full">
+                    Sua pontuação: <span id="score-value" class="text-indigo-600">0</span> / 21
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 w-full justify-center mt-4">
+                    <button onclick="generatePDF()" class="pdf-hidden bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded shadow transition-colors w-full md:w-auto">
+                        <i class="fa-solid fa-file-pdf mr-2"></i> Salvar em PDF
+                    </button>
+                    <button onclick="sendToWhatsApp()" id="btn-whatsapp" class="pdf-hidden bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded shadow transition-colors w-full md:w-auto opacity-50 cursor-not-allowed" disabled>
+                        <i class="fa-brands fa-whatsapp mr-2"></i> Enviar para a Teacher
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DADOS DA ATIVIDADE ---
+
+        const translationData = [
+            { id: 't_a', pt: "Eu adoro comer arroz e feijão no almoço.", en: "I love to eat rice and beans for lunch" },
+            { id: 't_b', pt: "Desculpe. Eu não gosto de comer batata frita no jantar.", en: "Sorry I dont like to eat French fries for dinner" }, // Removido pontuação para validação flexível
+            { id: 't_c', pt: "Você prefere bacon ou salsicha?", en: "Do you prefer bacon or sausages" },
+            { id: 't_d', pt: "Com licença. O que você quer beber?", en: "Excuse me What do you want to drink" },
+            { id: 't_e', pt: "Eu adoro legumes. E você?", en: "I love vegetables And you" },
+            { id: 't_f', pt: "Você quer uma xícara de chá ou uma xícara de café?", en: "Do you want a cup of tea or a cup of coffee" },
+            { id: 't_g', pt: "O que você quer beber: suco ou refrigerante?", en: "What do you want to drink juice or soda" },
+            { id: 't_h', pt: "Você quer um copo de suco de maçã?", en: "Do you want a glass of apple juice" },
+            { id: 't_i', pt: "O que você quer comer no jantar?", en: "What do you want to eat for dinner" },
+            { id: 't_j', pt: "Eu adoro beber suco de laranja e comer batata frita no jantar.", en: "I love to drink orange juice and eat French fries for dinner" }
+        ];
+
+        const listeningData = [
+            {
+                id: 'l_a', label: 'a.', img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80', correct: 2,
+                audios: [
+                    "A: What do you want to eat for dinner? B: I want chicken and salad, please.",
+                    "A: Do you want fish and French fries or fish and vegetables? B: I prefer fish and vegetables. Thank you.",
+                    "A: Do you want a sandwich for dinner? B: No, thanks."
+                ]
+            },
+            {
+                id: 'l_b', label: 'b.', img: 'https://images.unsplash.com/photo-1644704381389-c451ccf07eb0?auto=format&fit=crop&w=400&q=80', correct: 3,
+                audios: [
+                    "A: What do you prefer to eat for lunch? B: I prefer to eat fish and vegetables.",
+                    "A: What do you want to eat for dinner? B: I want beef and salad, please.",
+                    "A: What do you like to eat for lunch? B: I like to eat rice, beans, beef, French fries, and salad."
+                ]
+            },
+            {
+                id: 'l_c', label: 'c.', img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80', correct: 3,
+                audios: [
+                    "A: What do you want to drink for breakfast? B: I want to drink a glass of juice, please.",
+                    "A: What do you love to drink? B: I love to drink water.",
+                    "A: What do you want to drink? B: A glass of soda, please."
+                ]
+            },
+            {
+                id: 'l_d', label: 'd.', img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=400&q=80', correct: 1,
+                audios: [
+                    "A: I love to eat French fries for dinner. And you? B: I don't like French fries.",
+                    "A: What do you want for dinner? B: I want tomato salad and chicken, please.",
+                    "A: Do you prefer sausages or bacon? B: I prefer bacon."
+                ]
+            }
+        ];
+
+        const rewriteData = [
+            { id: 'r_a', p1: "I don't want to drink a glass", opt1: "or", opt2: "of", p2: "juice.", correctWord: "of", fullSentence: "I don't want to drink a glass of juice" },
+            { id: 'r_b', p1: "I want to drink a cup", opt1: "of", opt2: "for", p2: "coffee.", correctWord: "of", fullSentence: "I want to drink a cup of coffee" },
+            { id: 'r_c', p1: "Do you prefer butter", opt1: "or", opt2: "of", p2: "jam?", correctWord: "or", fullSentence: "Do you prefer butter or jam" },
+            { id: 'r_d', p1: "What do you want to eat", opt1: "of", opt2: "for", p2: "lunch?", correctWord: "for", fullSentence: "What do you want to eat for lunch" },
+            { id: 'r_e', p1: "", opt1: "What", opt2: "Do", p2: "you eat cookies for dinner?", correctWord: "Do", fullSentence: "Do you eat cookies for dinner" },
+            { id: 'r_f', p1: "Do you want to eat a piece", opt1: "of", opt2: "for", p2: "ham?", correctWord: "of", fullSentence: "Do you want to eat a piece of ham" },
+            { id: 'r_g', p1: "I don't like orange juice, I prefer to drink a cup", opt1: "of", opt2: "and", p2: "coffee for breakfast.", correctWord: "of", fullSentence: "I dont like orange juice I prefer to drink a cup of coffee for breakfast" }
+        ];
+
+        // --- SISTEMA DE TEXT-TO-SPEECH ---
+        let voices = [];
+        function initVoices() {
+            voices = window.speechSynthesis.getVoices();
+        }
+        window.speechSynthesis.onvoiceschanged = initVoices;
+
+        function playAudio(text) {
+            window.speechSynthesis.cancel(); // Para áudio atual se houver
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Um pouco mais devagar para alunos
+            
+            // Tenta forçar uma voz em inglês caso o sistema misture
+            if (voices.length > 0) {
+                const enVoice = voices.find(v => v.lang.startsWith('en-'));
+                if (enVoice) utterance.voice = enVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+
+        function renderTranslation() {
+            const container = document.getElementById('translation-container');
+            translationData.forEach((item, index) => {
+                const letter = String.fromCharCode(97 + index); // a, b, c...
+                // O texto a ser falado é a versão em inglês
+                const textToSpeak = item.en.replace(/[^a-zA-Z0-9 ]/g, '') + "."; 
+                
+                container.innerHTML += `
+                    <div class="flex flex-col group">
+                        <p class="text-gray-800 font-medium mb-1"><span class="text-blue-500 font-bold">${letter}.</span> ${item.pt}</p>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="${item.id}" class="flex-1 border-b-2 border-gray-300 bg-gray-50 focus:bg-white p-2 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Type here..." data-correct="${item.en}">
+                            <button onclick="playAudio('${textToSpeak}')" class="audio-btn pdf-hidden text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-full h-10 w-10 flex items-center justify-center cursor-pointer" title="Ouvir pronúncia">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderListening() {
+            const container = document.getElementById('listening-container');
+            listeningData.forEach((item) => {
+                let audiosHtml = '';
+                let radiosHtml = '';
+                
+                for(let i=1; i<=3; i++) {
+                    const audioText = item.audios[i-1].replace(/A:|B:/g, ''); // Limpa A: e B: para leitura natural
+                    audiosHtml += `
+                        <button onclick="playAudio('${audioText}')" class="audio-btn pdf-hidden bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-bold py-1 px-2 rounded flex items-center gap-1">
+                            <i class="fa-solid fa-play"></i> Áudio ${i}
+                        </button>
+                    `;
+                    radiosHtml += `
+                        <label class="flex items-center gap-1 cursor-pointer font-bold text-gray-700 hover:text-indigo-600">
+                            <input type="radio" name="${item.id}" value="${i}" class="w-4 h-4 text-indigo-600"> ${i}
+                        </label>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="border border-gray-200 rounded-lg p-3 bg-white shadow-sm flex flex-col">
+                        <div class="font-bold text-lg mb-2">${item.label}</div>
+                        <img src="${item.img}" alt="Food image" class="w-full h-40 object-cover rounded mb-3">
+                        
+                        <div class="flex justify-between items-center bg-gray-50 p-2 rounded mb-3 gap-1 pdf-hidden">
+                            ${audiosHtml}
+                        </div>
+                        
+                        <div class="mt-auto border-t pt-2 flex justify-center gap-6" id="radios_${item.id}" data-correct="${item.correct}">
+                            ${radiosHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderRewrite() {
+            const container = document.getElementById('rewrite-container');
+            rewriteData.forEach((item, index) => {
+                const letter = String.fromCharCode(97 + index);
+                container.innerHTML += `
+                    <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
+                        <div class="flex items-center flex-wrap gap-2 mb-2 text-gray-800">
+                            <span class="text-blue-500 font-bold">${letter}.</span> 
+                            <span>${item.p1}</span>
+                            <select id="sel_${item.id}" class="border border-indigo-300 text-indigo-700 font-bold rounded p-1 bg-indigo-50 outline-none" data-correct="${item.correctWord}">
+                                <option value="">---</option>
+                                <option value="${item.opt1}">${item.opt1}</option>
+                                <option value="${item.opt2}">${item.opt2}</option>
+                            </select>
+                            <span>${item.p2}</span>
+                        </div>
+                        <div class="pl-5">
+                            <input type="text" id="inp_${item.id}" class="w-full border-b-2 border-gray-300 bg-gray-50 p-2 focus:outline-none focus:border-indigo-500 text-red-800 font-medium" placeholder="Rewrite the sentence here..." data-correct="${item.fullSentence}">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- FUNÇÕES DE VALIDAÇÃO E LÓGICA ---
+
+        // Normaliza string: tira espaços extras, pontuação e converte pra minúscula
+        function normalizeString(str) {
+            return str.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ').trim();
+        }
+
+        let currentScore = 0;
+        const totalPoints = 21; // 10 tradução + 4 listening + 7 reescrita
+
+        function checkAllAnswers() {
+            currentScore = 0;
+            
+            // 1. Validar Tradução
+            translationData.forEach(item => {
+                const inputEl = document.getElementById(item.id);
+                const userAnswer = normalizeString(inputEl.value);
+                const correctAnswer = normalizeString(inputEl.dataset.correct);
+                
+                inputEl.classList.remove('correct-input', 'wrong-input');
+                
+                if(userAnswer === correctAnswer && userAnswer !== "") {
+                    inputEl.classList.add('correct-input');
+                    currentScore++;
+                } else if (userAnswer !== "") {
+                    inputEl.classList.add('wrong-input');
+                }
+            });
+
+            // 2. Validar Listening
+            listeningData.forEach(item => {
+                const radios = document.getElementsByName(item.id);
+                const container = document.getElementById(`radios_${item.id}`);
+                const correctVal = container.dataset.correct;
+                
+                let answered = false;
+                radios.forEach(radio => {
+                    if(radio.checked) {
+                        answered = true;
+                        if(radio.value === correctVal) {
+                            container.parentElement.classList.add('ring-4', 'ring-green-400');
+                            container.parentElement.classList.remove('ring-red-400');
+                            currentScore++;
+                        } else {
+                            container.parentElement.classList.add('ring-4', 'ring-red-400');
+                            container.parentElement.classList.remove('ring-green-400');
+                        }
+                    }
+                });
+            });
+
+            // 3. Validar Rewrite
+            rewriteData.forEach(item => {
+                // Valida Select (não conta ponto isolado, mas mostra visualmente)
+                const selEl = document.getElementById(`sel_${item.id}`);
+                selEl.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+                if(selEl.value === selEl.dataset.correct) {
+                    selEl.classList.add('bg-green-100', 'text-green-800');
+                } else if (selEl.value !== "") {
+                    selEl.classList.add('bg-red-100', 'text-red-800');
+                }
+
+                // Valida Input (este conta o ponto)
+                const inpEl = document.getElementById(`inp_${item.id}`);
+                const userInp = normalizeString(inpEl.value);
+                const correctInp = normalizeString(inpEl.dataset.correct);
+                
+                inpEl.classList.remove('correct-input', 'wrong-input');
+                if(userInp === correctInp && userInp !== "") {
+                    inpEl.classList.add('correct-input');
+                    currentScore++;
+                } else if (userInp !== "") {
+                    inpEl.classList.add('wrong-input');
+                }
+            });
+
+            // Atualiza UI
+            document.getElementById('score-value').innerText = currentScore;
+            document.getElementById('score-display').classList.remove('hidden');
+            
+            // Habilita WhatsApp se tiver nome
+            const name = document.getElementById('studentName').value.trim();
+            const btnWpp = document.getElementById('btn-whatsapp');
+            if(name !== "") {
+                btnWpp.disabled = false;
+                btnWpp.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                alert("Por favor, preencha seu nome no topo da página para enviar pelo WhatsApp.");
+                document.getElementById('studentName').focus();
+            }
+        }
+
+        // --- INTEGRAÇÕES EXTERNAS (PDF / WPP) ---
+
+        function generatePDF() {
+            const name = document.getElementById('studentName').value.trim() || 'Aluno';
+            const element = document.getElementById('worksheet');
+            
+            // Esconder botões e elementos interativos não necessários no PDF
+            const hiddenEls = document.querySelectorAll('.pdf-hidden');
+            hiddenEls.forEach(el => el.style.display = 'none');
+
+            const opt = {
+                margin:       10,
+                filename:     `English_Activity_${name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restaurar botões
+                hiddenEls.forEach(el => el.style.display = '');
+            });
+        }
+
+        function sendToWhatsApp() {
+            const name = document.getElementById('studentName').value.trim();
+            if(!name) {
+                alert("Preencha seu nome primeiro.");
+                return;
+            }
+            
+            const teacherNumber = "5511921423578";
+            const score = document.getElementById('score-value').innerText;
+            
+            const message = `Olá Teacher! Sou o(a) aluno(a) *${name}*.\nTerminei a minha atividade online de Inglês!\nMinha pontuação preliminar foi: *${score}/${totalPoints}*.\n\nAguardo seu feedback!`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            const url = `https://wa.me/${teacherNumber}?text=${encodedMessage}`;
+            window.open(url, '_blank');
+        }
+
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            renderTranslation();
+            renderListening();
+            renderRewrite();
+            initVoices(); // Pre-load vozes
+        };
+
+    </script>
+</body>
+</html>
