@@ -3,175 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ditado em Inglês</title>
+    <title>Ditado de Inglês Interativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .correct-input { border-color: #22c55e !important; background-color: #f0fdf4 !important; }
-        .incorrect-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen py-10 px-4">
+<body class="min-h-screen py-8 px-4 text-gray-800">
 
-<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-    <div class="bg-blue-600 px-6 py-8 text-white text-center">
-        <h1 class="text-3xl font-bold mb-2"><i class="fas fa-headphones-alt mr-2"></i> English Dictation</h1>
-        <p class="text-blue-100">Ouça o áudio e digite a frase corretamente.</p>
-    </div>
-
-    <div class="p-6 md:p-8">
-        <div id="dictation-container" class="space-y-6">
-            <!-- As frases serão injetadas aqui via JavaScript -->
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-blue-600 px-6 py-8 text-white text-center">
+            <h1 class="text-3xl font-bold mb-2">English Dictation Test</h1>
+            <p class="text-blue-100 mb-6">Ouça os áudios e digite as frases. A correção é automática!</p>
+            
+            <!-- Speed Control -->
+            <div class="inline-flex items-center bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
+                <label for="speed-control" class="font-medium mr-3 flex items-center">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Velocidade do Áudio:
+                </label>
+                <select id="speed-control" class="bg-white text-blue-900 font-semibold rounded px-2 py-1 outline-none border-none cursor-pointer">
+                    <option value="1.0">1.0x (Normal)</option>
+                    <option value="0.9">0.9x (Lento)</option>
+                    <option value="0.8">0.8x (Mais Lento)</option>
+                    <option value="0.7">0.7x (Muito Lento)</option>
+                    <option value="0.6">0.6x (Extremamente Lento)</option>
+                </select>
+            </div>
         </div>
 
-        <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <button onclick="checkAll()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200 flex items-center justify-center">
-                <i class="fas fa-check-double mr-2"></i> Corrigir Tudo
-            </button>
-            <button onclick="sendToWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200 flex items-center justify-center">
-                <i class="fab fa-whatsapp text-xl mr-2"></i> Enviar p/ WhatsApp
-            </button>
+        <!-- Content Body -->
+        <div class="p-6 md:p-8">
+            <div id="dictation-list" class="space-y-8">
+                <!-- Items will be injected here by JavaScript -->
+            </div>
+
+            <!-- WhatsApp Export Button -->
+            <div class="mt-12 pt-6 border-t border-gray-200 text-center">
+                <button id="send-whatsapp" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+                    </svg>
+                    Enviar Resultados para meu WhatsApp
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const sentences = [
-        "Sometimes I eat a sandwich or French fries,",
-        "but I don't eat them every day.",
-        "I always drink a glass of water with my meals.",
-        "I don't like soda very much.",
-        "Vegetables and salad are my favorite foods.",
-        "What do you like to eat?"
-    ];
+    <script>
+        // Array com as frases do ditado
+        const sentences = [
+            "Sometimes I eat a sandwich or French fries,",
+            "but I don't eat them every day.",
+            "I always drink a glass of water with my meals.",
+            "I don't like soda very much.",
+            "Vegetables and salad are my favorite foods.",
+            "What do you like to eat?"
+        ];
 
-    const phoneNumber = "5511921423578";
-    const container = document.getElementById('dictation-container');
+        // Variável para armazenar a voz em inglês americano
+        let usVoice = null;
 
-    function renderApp() {
-        sentences.forEach((sentence, index) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = "bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm transition-all";
-            
-            itemDiv.innerHTML = `
-                <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                    <button onclick="playAudio('${sentence}')" class="shrink-0 bg-blue-100 hover:bg-blue-200 text-blue-700 w-12 h-12 rounded-full flex items-center justify-center transition-colors shadow-inner" title="Ouvir áudio">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <div class="flex-grow w-full relative">
-                        <label class="text-sm font-medium text-gray-500 mb-1 block">Frase ${index + 1}</label>
-                        <textarea 
-                            id="input-${index}" 
-                            rows="2"
-                            class="w-full border-2 border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none" 
-                            placeholder="Escreva o que você ouviu..."></textarea>
-                        <div id="feedback-${index}" class="absolute right-3 top-10 hidden">
-                            <!-- Ícone de feedback aparecerá aqui -->
-                        </div>
-                    </div>
-                </div>
-                <div id="correction-${index}" class="hidden mt-3 text-sm font-medium text-gray-700 bg-yellow-50 p-3 rounded border border-yellow-200">
-                    <span class="text-gray-500 block mb-1">Resposta correta:</span>
-                    <span class="text-green-700 font-semibold">${sentence}</span>
-                </div>
-            `;
-            container.appendChild(itemDiv);
-        });
-    }
-
-    function playAudio(text) {
-        if ('speechSynthesis' in window) {
-            // Cancela áudios anteriores para não encavalar
-            window.speechSynthesis.cancel(); 
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85; // Um pouco mais devagar para facilitar o ditado
-            
-            // Tenta forçar uma voz americana, se disponível no navegador
+        // Função para carregar as vozes disponíveis no navegador
+        function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
-            const usVoice = voices.find(voice => voice.lang === 'en-US' && (voice.name.includes('Google') || voice.name.includes('Samantha') || voice.name.includes('Alex')));
-            if (usVoice) {
-                utterance.voice = usVoice;
-            }
-
-            window.speechSynthesis.speak(utterance);
-        } else {
-            alert("Seu navegador não suporta leitura de áudio.");
+            // Tenta encontrar uma voz do Google (geralmente melhor) ou qualquer voz en-US
+            usVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) 
+                   || voices.find(v => v.lang === 'en-US');
         }
-    }
 
-    function cleanText(text) {
-        // Remove pontuações comuns, espaços extras e transforma em minúsculas
-        return text.toLowerCase()
-                   .replace(/[.,!?]/g, '')
-                   .trim()
-                   .replace(/\s+/g, ' ');
-    }
+        // Os navegadores carregam as vozes de forma assíncrona
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
 
-    function checkAll() {
-        sentences.forEach((sentence, index) => {
+        // Referências do DOM
+        const listContainer = document.getElementById('dictation-list');
+        const speedControl = document.getElementById('speed-control');
+        const whatsappBtn = document.getElementById('send-whatsapp');
+
+        // Número de telefone configurado (Brasil)
+        const targetPhone = "5511921423578";
+
+        // Função para normalizar texto (remover pontuação e deixar minúsculo)
+        // Isso permite que o usuário não seja penalizado por faltar uma vírgula ou letra maiúscula
+        function normalizeText(text) {
+            return text
+                .toLowerCase()
+                .replace(/[.,!?]/g, '') // Remove pontuações
+                .trim();
+        }
+
+        // Função para avaliar se a resposta está correta
+        function checkAnswer(index) {
             const inputEl = document.getElementById(`input-${index}`);
             const feedbackEl = document.getElementById(`feedback-${index}`);
-            const correctionEl = document.getElementById(`correction-${index}`);
+            const expectedEl = document.getElementById(`expected-${index}`);
             
-            const userAnswer = cleanText(inputEl.value);
-            const correctAnswer = cleanText(sentence);
-
-            inputEl.classList.remove('correct-input', 'incorrect-input');
-            feedbackEl.classList.remove('hidden');
-
-            if (userAnswer === correctAnswer) {
-                inputEl.classList.add('correct-input');
-                feedbackEl.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
-                correctionEl.classList.add('hidden');
-            } else {
-                inputEl.classList.add('incorrect-input');
-                feedbackEl.innerHTML = '<i class="fas fa-times-circle text-red-500 text-xl"></i>';
-                correctionEl.classList.remove('hidden');
+            const userInput = inputEl.value;
+            const targetSentence = sentences[index];
+            
+            // Se estiver vazio, reseta o estado
+            if (!userInput.trim()) {
+                inputEl.className = "w-full p-4 pr-12 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 transition-colors";
+                feedbackEl.innerHTML = "";
+                expectedEl.classList.add('hidden');
+                return;
             }
-        });
-    }
 
-    function sendToWhatsApp() {
-        let message = "📝 *Meus Resultados do Ditado de Inglês:*\n\n";
-        let score = 0;
+            const normalizedUser = normalizeText(userInput);
+            const normalizedTarget = normalizeText(targetSentence);
 
+            if (normalizedUser === normalizedTarget) {
+                // Correto! Borda verde e ícone de check
+                inputEl.className = "w-full p-4 pr-12 text-lg border-2 border-green-500 rounded-xl focus:outline-none bg-green-50 transition-colors";
+                feedbackEl.innerHTML = `
+                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+                expectedEl.classList.add('hidden');
+            } else {
+                // Errado. Mostrar vermelho e opção de ver correção
+                inputEl.className = "w-full p-4 pr-12 text-lg border-2 border-red-400 rounded-xl focus:outline-none bg-red-50 transition-colors";
+                feedbackEl.innerHTML = `
+                    <svg class="w-6 h-6 text-red-500 cursor-pointer hover:scale-110 transition-transform" onclick="toggleExpected(${index})" title="Ver reposta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+            }
+        }
+
+        // Função para mostrar a frase correta se o usuário quiser ajuda
+        window.toggleExpected = function(index) {
+            const expectedEl = document.getElementById(`expected-${index}`);
+            expectedEl.classList.toggle('hidden');
+        }
+
+        // Renderizar a lista de frases
         sentences.forEach((sentence, index) => {
-            const userAnswerRaw = document.getElementById(`input-${index}`).value || "(em branco)";
-            const userAnswer = cleanText(userAnswerRaw);
-            const correctAnswer = cleanText(sentence);
-            
-            const isCorrect = (userAnswer === correctAnswer);
-            if (isCorrect) score++;
-
-            message += `*Frase ${index + 1}:*\n`;
-            message += `🗣️ Original: ${sentence}\n`;
-            message += `✍️ Minha resposta: ${userAnswerRaw}\n`;
-            message += isCorrect ? "✅ *Correto!*\n\n" : "❌ *Incorreto*\n\n";
+            const itemHTML = `
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-3">
+                        <!-- Play Button -->
+                        <button onclick="playAudio('${sentence.replace(/'/g, "\\'")}')" class="flex-shrink-0 flex items-center justify-center w-14 h-14 bg-blue-100 hover:bg-blue-600 hover:text-white text-blue-600 rounded-full transition-colors shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-200" title="Ouvir Frase ${index + 1}">
+                            <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Input Field -->
+                        <div class="relative flex-grow">
+                            <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Frase ${index + 1}</label>
+                            <input 
+                                type="text" 
+                                id="input-${index}" 
+                                onkeyup="checkAnswer(${index})"
+                                onchange="checkAnswer(${index})"
+                                onblur="checkAnswer(${index})"
+                                placeholder="Digite o que você ouviu..." 
+                                class="w-full p-4 pr-12 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+                                autocomplete="off"
+                            >
+                            <!-- Feedback Icon Anchor -->
+                            <div id="feedback-${index}" class="absolute right-4 top-[38px]"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Expected Answer (Hidden by default) -->
+                    <div id="expected-${index}" class="hidden ml-0 sm:ml-18 mt-2 p-3 bg-yellow-50 text-yellow-800 rounded-lg text-sm font-medium border border-yellow-200">
+                        <span class="font-bold">Resposta correta:</span> ${sentence}
+                    </div>
+                </div>
+            `;
+            listContainer.insertAdjacentHTML('beforeend', itemHTML);
         });
 
-        message += `\n📊 *Pontuação Final:* ${score} de ${sentences.length}`;
+        // Função para tocar o áudio
+        window.playAudio = function(text) {
+            // Cancela se já estiver falando algo
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Define o idioma e a voz se disponível
+            utterance.lang = 'en-US';
+            if (usVoice) utterance.voice = usVoice;
+            
+            // Captura a velocidade escolhida
+            utterance.rate = parseFloat(speedControl.value);
+            
+            // Ajustes para soar mais natural
+            utterance.pitch = 1.0; 
 
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-        
-        // Abre o link em uma nova aba
-        window.open(whatsappUrl, '_blank');
-    }
-
-    // Carregar a interface quando a página iniciar
-    window.onload = renderApp;
-
-    // Forçar o carregamento de vozes em alguns navegadores
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = function() {
-            // As vozes foram carregadas
+            window.speechSynthesis.speak(utterance);
         };
-    }
-</script>
 
+        // Lógica para coletar as respostas e enviar pro WhatsApp
+        whatsappBtn.addEventListener('click', () => {
+            let message = "*Resultados do Ditado de Inglês:*\n\n";
+            let correctCount = 0;
+
+            sentences.forEach((targetSentence, index) => {
+                const userInput = document.getElementById(`input-${index}`).value.trim();
+                const normalizedUser = normalizeText(userInput);
+                const normalizedTarget = normalizeText(targetSentence);
+                
+                message += `*Frase ${index + 1}:*\n`;
+                
+                if (!userInput) {
+                    message += `❌ (Não respondido)\n`;
+                    message += `🗣 _Correção:_ ${targetSentence}\n\n`;
+                } else if (normalizedUser === normalizedTarget) {
+                    correctCount++;
+                    message += `✅ ${userInput}\n\n`;
+                } else {
+                    message += `❌ _Você escreveu:_ ${userInput}\n`;
+                    message += `🗣 _O correto era:_ ${targetSentence}\n\n`;
+                }
+            });
+
+            message += `\n*Pontuação:* ${correctCount} de ${sentences.length} corretas!`;
+
+            // Codifica a mensagem para formato de URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Monta o link da API do WhatsApp
+            const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodedMessage}`;
+            
+            // Abre o WhatsApp em uma nova aba
+            window.open(whatsappUrl, '_blank');
+        });
+
+    </script>
 </body>
 </html>
