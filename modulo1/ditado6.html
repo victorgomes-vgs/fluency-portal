@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ditado em Inglês</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .correct-input { border-color: #22c55e !important; background-color: #f0fdf4 !important; }
+        .incorrect-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen py-10 px-4">
+
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-blue-600 px-6 py-8 text-white text-center">
+        <h1 class="text-3xl font-bold mb-2"><i class="fas fa-headphones-alt mr-2"></i> English Dictation</h1>
+        <p class="text-blue-100">Ouça o áudio e digite a frase corretamente.</p>
+    </div>
+
+    <div class="p-6 md:p-8">
+        <div id="dictation-container" class="space-y-6">
+            <!-- As frases serão injetadas aqui via JavaScript -->
+        </div>
+
+        <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="checkAll()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200 flex items-center justify-center">
+                <i class="fas fa-check-double mr-2"></i> Corrigir Tudo
+            </button>
+            <button onclick="sendToWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200 flex items-center justify-center">
+                <i class="fab fa-whatsapp text-xl mr-2"></i> Enviar p/ WhatsApp
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sentences = [
+        "Sometimes I eat a sandwich or French fries,",
+        "but I don't eat them every day.",
+        "I always drink a glass of water with my meals.",
+        "I don't like soda very much.",
+        "Vegetables and salad are my favorite foods.",
+        "What do you like to eat?"
+    ];
+
+    const phoneNumber = "5511921423578";
+    const container = document.getElementById('dictation-container');
+
+    function renderApp() {
+        sentences.forEach((sentence, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = "bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm transition-all";
+            
+            itemDiv.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                    <button onclick="playAudio('${sentence}')" class="shrink-0 bg-blue-100 hover:bg-blue-200 text-blue-700 w-12 h-12 rounded-full flex items-center justify-center transition-colors shadow-inner" title="Ouvir áudio">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="flex-grow w-full relative">
+                        <label class="text-sm font-medium text-gray-500 mb-1 block">Frase ${index + 1}</label>
+                        <textarea 
+                            id="input-${index}" 
+                            rows="2"
+                            class="w-full border-2 border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none" 
+                            placeholder="Escreva o que você ouviu..."></textarea>
+                        <div id="feedback-${index}" class="absolute right-3 top-10 hidden">
+                            <!-- Ícone de feedback aparecerá aqui -->
+                        </div>
+                    </div>
+                </div>
+                <div id="correction-${index}" class="hidden mt-3 text-sm font-medium text-gray-700 bg-yellow-50 p-3 rounded border border-yellow-200">
+                    <span class="text-gray-500 block mb-1">Resposta correta:</span>
+                    <span class="text-green-700 font-semibold">${sentence}</span>
+                </div>
+            `;
+            container.appendChild(itemDiv);
+        });
+    }
+
+    function playAudio(text) {
+        if ('speechSynthesis' in window) {
+            // Cancela áudios anteriores para não encavalar
+            window.speechSynthesis.cancel(); 
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; // Um pouco mais devagar para facilitar o ditado
+            
+            // Tenta forçar uma voz americana, se disponível no navegador
+            const voices = window.speechSynthesis.getVoices();
+            const usVoice = voices.find(voice => voice.lang === 'en-US' && (voice.name.includes('Google') || voice.name.includes('Samantha') || voice.name.includes('Alex')));
+            if (usVoice) {
+                utterance.voice = usVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("Seu navegador não suporta leitura de áudio.");
+        }
+    }
+
+    function cleanText(text) {
+        // Remove pontuações comuns, espaços extras e transforma em minúsculas
+        return text.toLowerCase()
+                   .replace(/[.,!?]/g, '')
+                   .trim()
+                   .replace(/\s+/g, ' ');
+    }
+
+    function checkAll() {
+        sentences.forEach((sentence, index) => {
+            const inputEl = document.getElementById(`input-${index}`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const correctionEl = document.getElementById(`correction-${index}`);
+            
+            const userAnswer = cleanText(inputEl.value);
+            const correctAnswer = cleanText(sentence);
+
+            inputEl.classList.remove('correct-input', 'incorrect-input');
+            feedbackEl.classList.remove('hidden');
+
+            if (userAnswer === correctAnswer) {
+                inputEl.classList.add('correct-input');
+                feedbackEl.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
+                correctionEl.classList.add('hidden');
+            } else {
+                inputEl.classList.add('incorrect-input');
+                feedbackEl.innerHTML = '<i class="fas fa-times-circle text-red-500 text-xl"></i>';
+                correctionEl.classList.remove('hidden');
+            }
+        });
+    }
+
+    function sendToWhatsApp() {
+        let message = "📝 *Meus Resultados do Ditado de Inglês:*\n\n";
+        let score = 0;
+
+        sentences.forEach((sentence, index) => {
+            const userAnswerRaw = document.getElementById(`input-${index}`).value || "(em branco)";
+            const userAnswer = cleanText(userAnswerRaw);
+            const correctAnswer = cleanText(sentence);
+            
+            const isCorrect = (userAnswer === correctAnswer);
+            if (isCorrect) score++;
+
+            message += `*Frase ${index + 1}:*\n`;
+            message += `🗣️ Original: ${sentence}\n`;
+            message += `✍️ Minha resposta: ${userAnswerRaw}\n`;
+            message += isCorrect ? "✅ *Correto!*\n\n" : "❌ *Incorreto*\n\n";
+        });
+
+        message += `\n📊 *Pontuação Final:* ${score} de ${sentences.length}`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        
+        // Abre o link em uma nova aba
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // Carregar a interface quando a página iniciar
+    window.onload = renderApp;
+
+    // Forçar o carregamento de vozes em alguns navegadores
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = function() {
+            // As vozes foram carregadas
+        };
+    }
+</script>
+
+</body>
+</html>
