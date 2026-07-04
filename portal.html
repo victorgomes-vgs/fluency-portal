@@ -180,34 +180,88 @@
                 font-size: 1.55rem;
             }
 
+            .hero-headline-block {
+                margin-bottom: 0;
+            }
+
+            .hero-subtitle {
+                margin-top: 2.25rem;
+            }
+
+            .hero-buttons {
+                margin-top: 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+
             .hero-bottom {
                 margin-left: -1rem;
                 margin-right: -1rem;
-                margin-top: 0.25rem;
             }
 
             .hero-photo-mobile {
                 display: block;
                 width: 100%;
-                height: min(54vh, 420px);
-                min-height: 300px;
-                background-image: url('assets/capa_portal_jul.png');
-                background-size: cover;
-                background-position: center 18%;
-                background-repeat: no-repeat;
+                height: auto;
+                max-height: 62vh;
+                object-fit: contain;
+                object-position: center bottom;
             }
 
             .hero-stats {
-                position: relative;
-                margin-top: -8rem;
-                padding: 4.75rem 1rem 1.25rem;
-                border-top: none !important;
-                background: linear-gradient(180deg, rgba(5, 10, 21, 0) 0%, rgba(5, 10, 21, 0.72) 28%, rgba(5, 10, 21, 0.94) 58%, #050a15 100%);
-                z-index: 2;
+                margin-top: 0;
+                padding: 0.65rem 0.25rem 1rem;
+                border-top: 1px solid rgba(12, 137, 148, 0.3) !important;
+                background: #050a15;
             }
 
-            .hero-stats > div {
-                padding: 0.85rem 0.5rem;
+            .stats-grid-mobile {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .stats-grid-mobile > div {
+                padding: 0.35rem 0.2rem;
+                text-align: center;
+            }
+
+            .stats-grid-mobile > div:nth-child(odd) {
+                border-right: 1px solid rgba(12, 137, 148, 0.3);
+                box-shadow: none;
+            }
+
+            .stats-grid-mobile > div:nth-child(-n+2) {
+                border-bottom: none;
+                box-shadow: none;
+            }
+
+            .stats-grid-mobile > div:not(:last-child) {
+                border-right: 1px solid rgba(12, 137, 148, 0.3);
+            }
+
+            .hero-stats .stat-icon-wrap {
+                width: 1.35rem;
+                height: 1.35rem;
+                margin: 0 auto 0.2rem;
+            }
+
+            .hero-stats .stat-icon-wrap svg {
+                width: 0.65rem;
+                height: 0.65rem;
+            }
+
+            .hero-stats .stat-value {
+                font-size: 1rem;
+                line-height: 1.1;
+                margin-bottom: 0.15rem;
+            }
+
+            .hero-stats .stat-label {
+                font-size: 0.48rem;
+                line-height: 1.2;
+                letter-spacing: 0.04em;
+            }
+
+            .hero-stats .stat-label br {
+                display: none;
             }
 
             .header-actions {
@@ -940,10 +994,6 @@
             transform: scale(0.96) translateY(1px);
         }
 
-        .hero-photo-mobile {
-            display: none;
-        }
-
         .hero-section {
             background-image: linear-gradient(180deg, rgba(5,10,21,.98) 0%, rgba(5,10,21,.92) 45%, rgba(5,10,21,.75) 70%, rgba(5,10,21,.4) 100%), url('assets/capa_portal_jul.png');
             background-size: 130% auto;
@@ -1085,20 +1135,20 @@
     <section class="hero-section relative min-h-screen bg-no-repeat bg-brand-dark flex flex-col justify-start md:justify-center items-start pt-36 md:pt-28 pb-12 md:pb-20">
         <div class="max-w-7xl mx-auto px-4 md:px-6 w-full relative z-10">
             <div class="max-w-3xl w-full text-left">
-                <h1 class="font-extrabold tracking-tight mb-5 md:mb-6">
+                <h1 class="hero-headline-block font-extrabold tracking-tight mb-5 md:mb-6">
                     <span class="hero-headline-main block">FALE</span>
                     <span class="hero-headline-main block">ENTENDA</span>
                     <span class="hero-headline-main block text-[#0c8994]">EVOLUA</span>
                     <span class="hero-headline-sub block text-[#0c8994]">COM ESTRATÉGIA</span>
                 </h1>
-                <p class="text-sm md:text-xl text-slate-300 mb-6 md:mb-10 max-w-2xl leading-relaxed md:flex md:items-start md:gap-3">
+                <p class="hero-subtitle text-sm md:text-xl text-slate-300 mb-6 md:mb-10 max-w-2xl leading-relaxed md:flex md:items-start md:gap-3">
                     <span class="stat-icon-wrap shrink-0 mt-1 hidden md:inline-flex">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </span>
                     <span>Um programa personalizado para desenvolver sua comunicação em inglês, respeitando seu ritmo e com progressão contínua.</span>
                 </p>
                 
-                <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-5 md:mb-16 w-full">
+                <div class="hero-buttons flex flex-col sm:flex-row gap-3 md:gap-4 mb-5 md:mb-16 w-full">
                     <button type="button" id="open-demo-modal" class="btn-touch w-full sm:w-auto bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-3.5 md:py-4 px-6 md:px-8 rounded flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,168,157,0.4)] text-sm md:text-base">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         AGENDAR AULA DEMO
@@ -1110,29 +1160,34 @@
                 </div>
 
                 <div class="hero-bottom w-full">
-                    <div class="hero-photo-mobile" aria-hidden="true"></div>
+                    <img
+                        src="assets/capa_portal_jul.png"
+                        alt="Victor Gomes - Fluency Studio"
+                        class="hero-photo-mobile md:hidden"
+                        loading="eager"
+                    >
 
                     <!-- Stats Grid -->
                     <div class="stats-grid-mobile hero-stats text-left border-t border-slate-700/50 pt-2 md:pt-8 w-full">
                     <div class="md:flex-1 md:pl-0 md:pr-6">
                         <div class="stat-icon-wrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg></div>
-                        <div class="text-2xl md:text-3xl font-bold text-white mb-1">20</div>
-                        <div class="text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">ANOS DE<br>EXPERIÊNCIA</div>
+                        <div class="stat-value text-2xl md:text-3xl font-bold text-white mb-1">20</div>
+                        <div class="stat-label text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">ANOS DE<br>EXPERIÊNCIA</div>
                     </div>
                     <div class="md:flex-1 md:px-6 stat-divider">
                         <div class="stat-icon-wrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                        <div class="text-2xl md:text-3xl font-bold text-white mb-1">18</div>
-                        <div class="text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">MESES PARA<br>FLUÊNCIA</div>
+                        <div class="stat-value text-2xl md:text-3xl font-bold text-white mb-1">18</div>
+                        <div class="stat-label text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">MESES PARA<br>FLUÊNCIA</div>
                     </div>
                     <div class="md:flex-1 md:px-6 stat-divider">
                         <div class="stat-icon-wrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                        <div class="text-2xl md:text-3xl font-bold text-white mb-1">CEFR</div>
-                        <div class="text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">PADRÃO<br>INTERNACIONAL</div>
+                        <div class="stat-value text-2xl md:text-3xl font-bold text-white mb-1">CEFR</div>
+                        <div class="stat-label text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">PADRÃO<br>INTERNACIONAL</div>
                     </div>
                     <div class="md:flex-1 md:pl-6 stat-divider">
                         <div class="stat-icon-wrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg></div>
-                        <div class="text-2xl md:text-3xl font-bold text-white mb-1">3</div>
-                        <div class="text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">MODELOS DE<br>AULAS DIFERENTES</div>
+                        <div class="stat-value text-2xl md:text-3xl font-bold text-white mb-1">3</div>
+                        <div class="stat-label text-[10px] md:text-xs text-slate-400 font-semibold tracking-wider uppercase">MODELOS DE<br>AULAS DIFERENTES</div>
                     </div>
                 </div>
                 </div>
