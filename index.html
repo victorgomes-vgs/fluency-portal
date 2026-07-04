@@ -423,6 +423,8 @@
         .card-corporate:hover { border-color: #8b5cf6; box-shadow: 0 16px 48px -8px rgba(139, 92, 246, 0.25); }
 
         .program-card {
+            min-height: 28rem;
+            padding: 0;
             box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.45);
             transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, border-color 0.3s ease;
             animation: card-float 7s ease-in-out infinite;
@@ -442,6 +444,7 @@
         }
 
         .program-card-icon {
+            z-index: 3;
             opacity: 0.35;
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
@@ -451,20 +454,44 @@
             transform: scale(1.08) rotate(-3deg);
         }
 
-        .card-image-slot {
-            min-height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
+        .program-card-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            overflow: hidden;
         }
 
-        .card-image-slot img {
-            max-height: 140px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+        .program-card-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .program-card-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            border-radius: inherit;
+            background: linear-gradient(
+                180deg,
+                rgba(15, 23, 42, 0.12) 0%,
+                rgba(15, 23, 42, 0.45) 42%,
+                rgba(15, 23, 42, 0.88) 100%
+            );
+            pointer-events: none;
+        }
+
+        .program-card-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 28rem;
+            padding: 2rem;
         }
 
         .skill-tag {
@@ -1359,78 +1386,81 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl p-8 flex flex-col relative overflow-hidden group border border-slate-800 card-fluency">
+                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-fluency">
+                    <div class="program-card-bg" aria-hidden="true">
+                        <img src="assets/card1.png" alt="">
+                    </div>
+                    <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m0 0l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 21.45a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"></path></svg>
                     </div>
+                    <div class="program-card-content">
+                        <h3 class="text-2xl font-bold text-center mb-2 mt-6">FLUENCY FOUNDATION</h3>
+                        <p class="text-brand-teal text-sm font-semibold text-center mb-4">Fluência em 18 meses</p>
 
-                    <div class="card-image-slot">
-                        <img src="assets/card1.png" alt="Fluency Foundation">
-                    </div>
+                        <div class="flex flex-wrap justify-center gap-2 mb-5">
+                            <span class="skill-tag">FALE</span>
+                            <span class="skill-tag">LEIA</span>
+                            <span class="skill-tag">ESCREVA</span>
+                            <span class="skill-tag">ESCUTE</span>
+                        </div>
 
-                    <h3 class="text-2xl font-bold text-center mb-2">FLUENCY FOUNDATION</h3>
-                    <p class="text-brand-teal text-sm font-semibold text-center mb-4">Fluência em 18 meses</p>
+                        <p class="text-slate-300 text-sm text-center mb-8 flex-grow leading-relaxed">
+                            Para profissionais que precisam de um inglês alto padrão e completo. Ideal para o mercado de trabalho, viagens, exames, etc.
+                        </p>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-5">
-                        <span class="skill-tag">FALE</span>
-                        <span class="skill-tag">LEIA</span>
-                        <span class="skill-tag">ESCREVA</span>
-                        <span class="skill-tag">ESCUTE</span>
-                    </div>
-
-                    <p class="text-slate-400 text-sm text-center mb-8 flex-grow leading-relaxed">
-                        Para profissionais que precisam de um inglês alto padrão e completo. Ideal para o mercado de trabalho, viagens, exames, etc.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                        <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Fluency%20Foundation." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                        <button type="button" id="open-demo-modal-card-1" class="btn-touch flex-1 bg-brand-teal hover:bg-brand-tealHover py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                            <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Fluency%20Foundation." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                            <button type="button" id="open-demo-modal-card-1" class="btn-touch flex-1 bg-brand-teal hover:bg-brand-tealHover py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 2 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl p-8 flex flex-col relative overflow-hidden group border border-slate-800 card-flash">
+                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-flash">
+                    <div class="program-card-bg" aria-hidden="true">
+                        <img src="assets/card2.png" alt="">
+                    </div>
+                    <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
+                    <div class="program-card-content">
+                        <h3 class="text-2xl font-bold text-center mb-2 mt-6">FLASH TALK</h3>
+                        <p class="text-blue-400 text-sm font-semibold text-center mb-5">Aulas de 30 minutos até quatro vezes por semana</p>
 
-                    <div class="card-image-slot">
-                        <img src="assets/card2.pnj" alt="Flash Talk">
-                    </div>
+                        <p class="text-slate-300 text-sm text-center mb-8 flex-grow leading-relaxed">
+                            Para aqueles que dizem: Teacher, eu só quero falar. Temas modernos do dia a dia e o aluno monta sua trilha.
+                        </p>
 
-                    <h3 class="text-2xl font-bold text-center mb-2">FLASH TALK</h3>
-                    <p class="text-blue-500 text-sm font-semibold text-center mb-5">Aulas de 30 minutos até quatro vezes por semana</p>
-
-                    <p class="text-slate-400 text-sm text-center mb-8 flex-grow leading-relaxed">
-                        Para aqueles que dizem: Teacher, eu só quero falar. Temas modernos do dia a dia e o aluno monta sua trilha.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                        <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                        <button type="button" id="open-demo-modal-card-2" class="btn-touch flex-1 bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                            <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                            <button type="button" id="open-demo-modal-card-2" class="btn-touch flex-1 bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 3 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl p-8 flex flex-col relative overflow-hidden group border border-slate-800 card-corporate">
+                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-corporate">
+                    <div class="program-card-bg" aria-hidden="true">
+                        <img src="assets/card3.png" alt="">
+                    </div>
+                    <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v1.5l-1.75 2.5h3.5L12 12.5V11"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6"></path></svg>
                     </div>
+                    <div class="program-card-content">
+                        <h3 class="text-2xl font-bold text-center mb-2 mt-6">CORPORATE SPEECH</h3>
+                        <p class="text-purple-400 text-sm font-semibold text-center mb-5 leading-snug">SE EXPRESSAR E SER RECONHECIDO NO TRABALHO COM INGLÊS ALTO PADRÃO</p>
 
-                    <div class="card-image-slot">
-                        <img src="assets/card3.pnj" alt="Corporate Speech">
-                    </div>
+                        <p class="text-slate-300 text-sm text-center mb-8 flex-grow leading-relaxed">
+                            Para profissionais que entendem que um domínio da oratória de alto nível resulta em prestígio e sucesso.
+                        </p>
 
-                    <h3 class="text-2xl font-bold text-center mb-2">CORPORATE SPEECH</h3>
-                    <p class="text-purple-500 text-sm font-semibold text-center mb-5 leading-snug">SE EXPRESSAR E SER RECONHECIDO NO TRABALHO COM INGLÊS ALTO PADRÃO</p>
-
-                    <p class="text-slate-400 text-sm text-center mb-8 flex-grow leading-relaxed">
-                        Para profissionais que entendem que um domínio da oratória de alto nível resulta em prestígio e sucesso.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                        <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                        <button type="button" id="open-demo-modal-card-3" class="btn-touch flex-1 bg-purple-700 hover:bg-purple-800 py-3 px-4 rounded text-sm font-semibold">AGENDAR DIAGNÓSTICO</button>
+                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                            <a href="https://wa.me/5511911333759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                            <button type="button" id="open-demo-modal-card-3" class="btn-touch flex-1 bg-purple-700 hover:bg-purple-800 py-3 px-4 rounded text-sm font-semibold">AGENDAR DIAGNÓSTICO</button>
+                        </div>
                     </div>
                 </div>
             </div>
