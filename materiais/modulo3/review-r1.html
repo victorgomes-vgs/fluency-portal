@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REVIEW R1 | Fluency Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg-deep:#0a1628;
+      --bg-card:#12243d;
+      --teal:#00BFA5;
+      --teal-dim:rgba(0,191,165,.18);
+      --teal-glow:rgba(0,191,165,.45);
+      --purple:#7c5cbf;
+      --purple-dim:rgba(124,92,191,.2);
+      --green:#4CAF50;
+      --font:#eef4f8;
+      --muted:rgba(196,212,228,.78);
+      --row-a:rgba(255,255,255,.04);
+      --row-b:rgba(255,255,255,.07);
+      --border:rgba(255,255,255,.12);
+    }
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Outfit',system-ui,sans-serif;
+      background:var(--bg-deep);
+      color:var(--font);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* ── Animated background ── */
+    .bg-layer{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+    .bg-gradient{
+      position:absolute;inset:-50%;
+      background:conic-gradient(from 0deg at 50% 50%,#0a1628,#0d2840,#0a3048,#0a1628);
+      animation:bgSpin 28s linear infinite;
+      opacity:.55;
+    }
+    @keyframes bgSpin{to{transform:rotate(360deg);}}
+    .orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat 12s ease-in-out infinite;}
+    .orb-1{width:320px;height:320px;background:rgba(0,191,165,.15);top:-80px;left:-60px;}
+    .orb-2{width:280px;height:280px;background:rgba(124,92,191,.12);bottom:10%;right:-80px;animation-delay:-4s;}
+    .orb-3{width:200px;height:200px;background:rgba(56,189,248,.1);top:40%;left:30%;animation-delay:-8s;}
+    @keyframes orbFloat{
+      0%,100%{transform:translate(0,0) scale(1);}
+      33%{transform:translate(30px,-20px) scale(1.08);}
+      66%{transform:translate(-20px,25px) scale(.95);}
+    }
+    .particles{position:absolute;inset:0;}
+    .particle{
+      position:absolute;width:4px;height:4px;border-radius:50%;
+      background:var(--teal);opacity:0;
+      animation:particleRise linear infinite;
+    }
+    @keyframes particleRise{
+      0%{opacity:0;transform:translateY(100vh) scale(0);}
+      10%{opacity:.6;}
+      90%{opacity:.3;}
+      100%{opacity:0;transform:translateY(-10vh) scale(1);}
+    }
+
+    .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:20px 16px 100px;}
+
+    /* ── Header ── */
+    .header{
+      text-align:center;padding:28px 20px 24px;
+      background:linear-gradient(145deg,rgba(18,36,61,.92),rgba(10,22,40,.88));
+      border:1.5px solid var(--border);border-radius:22px;
+      margin-bottom:20px;position:relative;overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
+    }
+    .header::before{
+      content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(0,191,165,.08),transparent);
+      animation:headerShine 5s ease-in-out infinite;
+    }
+    @keyframes headerShine{0%,100%{left:-100%;}50%{left:150%;}}
+    .badge{
+      display:inline-block;font-size:10px;font-weight:800;letter-spacing:.2em;
+      color:var(--teal);border:1px solid var(--teal-glow);border-radius:99px;
+      padding:5px 14px;margin-bottom:12px;
+      animation:badgePulse 2.5s ease-in-out infinite;
+    }
+    @keyframes badgePulse{
+      0%,100%{box-shadow:0 0 0 0 rgba(0,191,165,.3);}
+      50%{box-shadow:0 0 16px 4px rgba(0,191,165,.15);}
+    }
+    .title{
+      font-family:'Sora',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);
+      font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--teal));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .directions{
+      margin-top:16px;font-size:14px;line-height:1.65;color:var(--muted);
+      text-align:left;padding:14px 16px;border-radius:14px;
+      background:rgba(0,191,165,.06);border:1px solid rgba(0,191,165,.2);
+    }
+    .directions strong{color:var(--teal);font-weight:700;letter-spacing:.04em;}
+
+    /* ── Save indicator ── */
+    .save-toast{
+      position:fixed;top:16px;right:16px;z-index:100;
+      font-size:12px;font-weight:600;padding:8px 14px;border-radius:99px;
+      background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);color:#81c784;
+      opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none;
+    }
+    .save-toast.show{opacity:1;transform:translateY(0);}
+
+    /* ── Progress ── */
+    .progress-bar-wrap{margin-bottom:18px;}
+    .progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
+    .progress-track{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
+    .progress-fill{
+      height:100%;border-radius:99px;width:0%;
+      background:linear-gradient(90deg,var(--teal),#38bdf8,var(--teal));
+      background-size:200% 100%;
+      animation:progressFlow 2s linear infinite;
+      transition:width .4s ease;
+    }
+    @keyframes progressFlow{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+
+    /* ── Questions ── */
+    .questions{display:flex;flex-direction:column;gap:10px;}
+    .q-card{
+      border-radius:16px;border:1px solid var(--border);overflow:hidden;
+      background:var(--bg-card);
+      transition:transform .2s,box-shadow .2s,border-color .2s;
+      animation:cardIn .5s ease backwards;
+    }
+    .q-card:hover{border-color:rgba(0,191,165,.3);box-shadow:0 8px 28px rgba(0,0,0,.25);}
+    .q-card.answered{border-color:rgba(76,175,80,.35);}
+    @keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .q-head{
+      display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
+      background:var(--row-a);
+    }
+    .q-num{
+      flex-shrink:0;width:32px;height:32px;border-radius:10px;
+      background:linear-gradient(135deg,var(--teal),#0d9488);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Sora',sans-serif;font-weight:800;font-size:13px;color:#fff;
+      box-shadow:0 4px 12px var(--teal-glow);
+    }
+    .q-text{flex:1;font-size:15px;font-weight:600;line-height:1.45;padding-top:4px;}
+    .q-body{padding:0 16px 16px;}
+    .answer-input{
+      width:100%;min-height:72px;padding:12px 14px;border-radius:12px;
+      background:rgba(0,0,0,.25);border:1.5px solid var(--border);
+      color:var(--font);font-family:inherit;font-size:14px;line-height:1.5;
+      resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;
+    }
+    .answer-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-dim);}
+    .answer-input::placeholder{color:rgba(196,212,228,.4);}
+    .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .btn{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+      border-radius:10px;border:1px solid transparent;font-family:inherit;
+      font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;
+    }
+    .btn:active{transform:scale(.96);}
+    .btn-listen{background:var(--teal-dim);border-color:rgba(0,191,165,.35);color:var(--teal);}
+    .btn-listen:hover{background:rgba(0,191,165,.28);box-shadow:0 4px 14px var(--teal-glow);}
+    .btn-listen.speaking{animation:listenPulse .8s ease infinite;}
+    @keyframes listenPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,191,165,.5);}50%{box-shadow:0 0 0 8px rgba(0,191,165,0);}}
+    .btn-tip{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35);color:#fbbf24;}
+    .btn-tip:hover{background:rgba(245,158,11,.25);}
+    .btn-translate{background:var(--purple-dim);border-color:rgba(124,92,191,.4);color:#c4b5fd;}
+    .btn-translate:hover{background:rgba(124,92,191,.3);}
+    .help-panel{
+      margin-top:10px;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.55;
+      display:none;animation:panelSlide .25s ease;
+    }
+    .help-panel.visible{display:block;}
+    @keyframes panelSlide{from{opacity:0;max-height:0;}to{opacity:1;max-height:200px;}}
+    .help-tip{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fde68a;}
+    .help-trans{background:rgba(124,92,191,.1);border:1px solid rgba(124,92,191,.25);color:#ddd6fe;}
+    .help-panel strong{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;opacity:.8;}
+
+    /* ── Send footer ── */
+    .send-section{
+      margin-top:28px;padding:24px 20px;border-radius:20px;text-align:center;
+      background:linear-gradient(145deg,rgba(18,36,61,.95),rgba(12,26,46,.9));
+      border:1.5px solid var(--border);position:relative;overflow:hidden;
+    }
+    .send-section::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 100%,rgba(0,191,165,.12),transparent 60%);
+      animation:sendGlow 3s ease-in-out infinite;
+    }
+    @keyframes sendGlow{0%,100%{opacity:.5;}50%{opacity:1;}}
+    .btn-send{
+      position:relative;z-index:1;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:16px 32px;border-radius:14px;border:none;
+      font-family:'Sora',sans-serif;font-size:15px;font-weight:800;
+      color:#fff;cursor:pointer;
+      background:linear-gradient(135deg,var(--purple),#5b3fa0);
+      box-shadow:0 8px 28px rgba(124,92,191,.45);
+      transition:transform .15s,box-shadow .15s;
+      animation:sendPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes sendPulse{
+      0%,100%{box-shadow:0 8px 28px rgba(124,92,191,.45);}
+      50%{box-shadow:0 8px 36px rgba(124,92,191,.65),0 0 20px rgba(124,92,191,.25);}
+    }
+    .btn-send:hover{transform:translateY(-2px) scale(1.02);}
+    .send-note{position:relative;z-index:1;margin-top:12px;font-size:12px;color:var(--muted);}
+
+    .mic-icon{width:16px;height:16px;}
+  </style>
+</head>
+<body>
+  <div class="bg-layer">
+    <div class="bg-gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="save-toast" id="saveToast">✓ Saved on this device</div>
+
+  <div class="wrap">
+    <header class="header">
+      <div class="badge">FLUENCY STUDIO</div>
+      <h1 class="title">REVIEW R1</h1>
+      <div class="directions">
+        <strong>ANSWER THE QUESTIONS BELOW.</strong> There are some features to practice.
+        You can <strong>listen to the question</strong>, see a <strong>tip</strong> and <strong>translation</strong>.
+        Your answers are saved automatically on this device if you pause.
+      </div>
+    </header>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Your progress</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="questions" id="questions"></div>
+
+    <div class="send-section">
+      <button type="button" class="btn-send" id="btnSend">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        SEND THE TEACHER
+      </button>
+      <p class="send-note">Opens WhatsApp with all your answers for Victor Gomes</p>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'fluency-review-r1';
+    const WHATSAPP = '5511921423578';
+
+    const QUESTIONS = [
+      { q: 'Where were you last weekend?', tip: 'Talk about a place and what you did. Use past tense.', example: 'I was at the beach with my family. We had a great time.', pt: 'Onde você esteve no último fim de semana?' },
+      { q: 'What do you expect in your future?', tip: 'Share hopes or plans. Use "I expect…" or "I hope…".', example: 'I expect to travel more and improve my English fluency.', pt: 'O que você espera para o seu futuro?' },
+      { q: "Does it seem like it's going to rain today?", tip: 'Look outside or think about the weather. Yes/No + reason.', example: "Yes, it seems like it's going to rain. The sky is very cloudy.", pt: 'Parece que vai chover hoje?' },
+      { q: 'Would you play the lottery? Why or why not?', tip: 'Give your opinion and explain with "because".', example: "No, I wouldn't. I prefer to work hard and save money.", pt: 'Você jogaria na loteria? Por quê ou por que não?' },
+      { q: 'Do you think people should be more careful while driving?', tip: 'State your opinion and give one or two reasons.', example: 'Yes, definitely. Too many accidents happen because of distraction.', pt: 'Você acha que as pessoas deveriam ser mais cuidadosas ao dirigir?' },
+      { q: 'What games did you use to play when you were a child?', tip: 'Use "used to" + verb. Name specific games.', example: 'I used to play hide and seek and soccer in the street.', pt: 'Que jogos você costumava jogar quando era criança?' },
+      { q: 'Do you think people were happier in the past?', tip: 'Compare past and present. There is no wrong answer.', example: "I'm not sure. Life was simpler, but we have more opportunities now.", pt: 'Você acha que as pessoas eram mais felizes no passado?' },
+      { q: 'How often do you have seafood?', tip: 'Answer with frequency: never, rarely, sometimes, often.', example: 'I have seafood about once a month. I love shrimp.', pt: 'Com que frequência você come frutos do mar?' },
+      { q: 'If you could choose, where would you like to live?', tip: 'Use second conditional: If I could…, I would…', example: 'If I could choose, I would live in Lisbon. I love the culture.', pt: 'Se você pudesse escolher, onde gostaria de morar?' },
+      { q: 'When do you have people over to your house?', tip: 'Say when you invite friends or family. Give examples.', example: 'I usually have people over on weekends or for birthday parties.', pt: 'Quando você recebe pessoas na sua casa?' },
+      { q: 'How are people accepted to college in our country?', tip: 'Describe the process: exams, grades, ENEM, etc.', example: 'In Brazil, most people take ENEM or entrance exams to get into college.', pt: 'Como as pessoas são aceitas na faculdade no nosso país?' },
+      { q: 'Would you ever stay in a hostel?', tip: 'Say yes or no and explain. Mention travel experience if you have any.', example: "Yes, I would! It's a cheap way to meet people when traveling.", pt: 'Você ficaria em um hostel?' },
+      { q: 'Are you pleased with what you already have?', tip: 'Express gratitude or honesty. Use "I am pleased because…"', example: "Yes, I'm pleased. I have a good family, health, and I'm learning English.", pt: 'Você está satisfeito(a) com o que já tem?' },
+      { q: 'What was the most important day of your life?', tip: 'Pick one day and explain why it mattered.', example: 'The most important day was when my daughter was born.', pt: 'Qual foi o dia mais importante da sua vida?' },
+      { q: 'Do you like to try different kinds of food? Why or why not?', tip: 'Share your food personality. Mention cuisines you enjoy.', example: 'Yes! I love trying Japanese and Mexican food. It\'s exciting.', pt: 'Você gosta de experimentar diferentes tipos de comida? Por quê?' },
+      { q: 'What songs were played on the radio five years ago?', tip: 'Think of popular hits from around 2021. Name artists if you can.', example: 'Five years ago, a lot of pop and funk songs were on the radio in Brazil.', pt: 'Que músicas tocavam no rádio cinco anos atrás?' },
+      { q: 'Do you prefer to have food at a restaurant or just have take out?', tip: 'Compare both options. Say which you prefer and why.', example: 'I prefer eating at the restaurant. I like the atmosphere.', pt: 'Você prefere comer no restaurante ou pedir delivery?' },
+      { q: "What's your favorite kind of pizza?", tip: 'Name toppings and style. Be specific!', example: 'My favorite is margherita with fresh basil and mozzarella.', pt: 'Qual é o seu tipo de pizza favorito?' },
+      { q: 'When were you born?', tip: 'Give your birth date. Example: I was born on March 15th, 1990.', example: 'I was born on July 12th, 1995.', pt: 'Quando você nasceu?' },
+      { q: 'Where was Barack Obama born?', tip: 'Think about US presidents. State + city if you know.', example: 'Barack Obama was born in Honolulu, Hawaii.', pt: 'Onde Barack Obama nasceu?' },
+    ];
+
+    const micSvg = '<svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+
+    let answers = {};
+    let saveTimer = null;
+    let speakingBtn = null;
+
+    function loadSaved() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) answers = JSON.parse(raw);
+      } catch (e) { answers = {}; }
+    }
+
+    function saveAnswers() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
+      const toast = document.getElementById('saveToast');
+      toast.classList.add('show');
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const filled = QUESTIONS.filter((_, i) => (answers[i] || '').trim().length > 0).length;
+      const pct = Math.round((filled / QUESTIONS.length) * 100);
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.querySelectorAll('.q-card').forEach((card, i) => {
+        card.classList.toggle('answered', (answers[i] || '').trim().length > 0);
+      });
+    }
+
+    function speak(text, btn) {
+      if (!window.speechSynthesis) {
+        alert('Text-to-speech is not supported in this browser.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      if (speakingBtn) speakingBtn.classList.remove('speaking');
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = 0.92;
+      u.pitch = 1;
+      const voices = speechSynthesis.getVoices();
+      const us = voices.find(v => v.lang.startsWith('en-US') && !v.name.includes('Google'));
+      if (us) u.voice = us;
+      else {
+        const anyUs = voices.find(v => v.lang.startsWith('en-US'));
+        if (anyUs) u.voice = anyUs;
+      }
+      if (btn) {
+        speakingBtn = btn;
+        btn.classList.add('speaking');
+        u.onend = () => { btn.classList.remove('speaking'); speakingBtn = null; };
+        u.onerror = () => { btn.classList.remove('speaking'); speakingBtn = null; };
+      }
+      speechSynthesis.speak(u);
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    }
+
+    function togglePanel(id, type) {
+      const el = document.getElementById(id);
+      const other = document.getElementById(id.replace(type, type === 'tip' ? 'trans' : 'tip'));
+      if (other) other.classList.remove('visible');
+      el.classList.toggle('visible');
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questions');
+      container.innerHTML = QUESTIONS.map((item, i) => `
+        <article class="q-card" style="animation-delay:${i * 0.04}s" data-idx="${i}">
+          <div class="q-head">
+            <div class="q-num">${i + 1}</div>
+            <div class="q-text">${item.q}</div>
+          </div>
+          <div class="q-body">
+            <textarea class="answer-input" id="ans-${i}" placeholder="Type your answer in English…" rows="3"></textarea>
+            <div class="btn-row">
+              <button type="button" class="btn btn-listen" data-speak="${i}">${micSvg} Listen</button>
+              <button type="button" class="btn btn-tip" data-tip="${i}">💡 Tip & Example</button>
+              <button type="button" class="btn btn-translate" data-trans="${i}">🌐 Translation</button>
+            </div>
+            <div class="help-panel help-tip" id="tip-${i}">
+              <strong>Tip & Example</strong>
+              ${item.tip}<br><br><em>Example:</em> "${item.example}"
+            </div>
+            <div class="help-panel help-trans" id="trans-${i}">
+              <strong>Tradução (PT)</strong>
+              ${item.pt}
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      container.querySelectorAll('.answer-input').forEach(el => {
+        const idx = +el.id.replace('ans-', '');
+        el.value = answers[idx] || '';
+        el.addEventListener('input', () => {
+          answers[idx] = el.value;
+          saveAnswers();
+        });
+      });
+
+      container.querySelectorAll('[data-speak]').forEach(btn => {
+        btn.addEventListener('click', () => speak(QUESTIONS[+btn.dataset.speak].q, btn));
+      });
+
+      container.querySelectorAll('[data-tip]').forEach(btn => {
+        btn.addEventListener('click', () => togglePanel('tip-' + btn.dataset.tip, 'tip'));
+      });
+
+      container.querySelectorAll('[data-trans]').forEach(btn => {
+        btn.addEventListener('click', () => togglePanel('trans-' + btn.dataset.trans, 'trans'));
+      });
+
+      updateProgress();
+    }
+
+    function buildWhatsAppMessage() {
+      const name = localStorage.getItem('fluency-student-name') || 'Student';
+      let msg = `*REVIEW R1 — ${name}*\n`;
+      msg += `Fluency Studio\n`;
+      msg += `Date: ${new Date().toLocaleString('pt-BR')}\n\n`;
+      QUESTIONS.forEach((item, i) => {
+        const ans = (answers[i] || '').trim() || '(no answer)';
+        msg += `*${i + 1}. ${item.q}*\n${ans}\n\n`;
+      });
+      return msg;
+    }
+
+    document.getElementById('btnSend').addEventListener('click', () => {
+      const msg = buildWhatsAppMessage();
+      const url = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
+    });
+
+    // Floating particles
+    (function initParticles() {
+      const box = document.getElementById('particles');
+      for (let i = 0; i < 24; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = Math.random() * 10 + 's';
+        box.appendChild(p);
+      }
+    })();
+
+    loadSaved();
+    renderQuestions();
+  </script>
+</body>
+</html>
