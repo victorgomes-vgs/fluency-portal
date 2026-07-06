@@ -730,7 +730,7 @@
     try{
       firebase.firestore().collection('config').doc('aparencia').get().then(doc=>{
         if(doc.exists)applyTheme(doc.data());
-      });
+      }).catch(()=>{});
     }catch(e){}
   })();
   </script>
@@ -3293,7 +3293,7 @@ function getAulasDoDia(students,dateISO,agendaExtra={}){
     .filter(e=>e.date===dateISO&&(e.type==="aula"||e.type==="google"||e.type==="agenda"));
   return eventsToAulasCards(dayEvents,students);
 }
-function eventTypeLabel(type){return{type==="aula"?"Aula":type==="google"?"Google":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type};}
+function eventTypeLabel(type){return type==="aula"?"Aula":type==="google"?"Google":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type;}
 const FC_EV_CLS={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom",google:"fc-ev-google"};
 function EventChip({e,full}){
   const cls=FC_EV_CLS[e.type]||"fc-ev-custom";
