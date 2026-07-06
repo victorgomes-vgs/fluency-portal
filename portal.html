@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fluency Studio | Student Portal</title>
   <meta name="description" content="Portal do aluno Fluency Studio — acompanhe sua jornada rumo à fluência em inglês." />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="icon" type="image/png" href="https://thefluency.studio/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
@@ -739,6 +743,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
+console.info("Fluency Portal v2026.07.06.2");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -2523,9 +2528,20 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
 
   useEffect(()=>{
     const ref=db.collection("students").doc(uid);
-    ref.get().then(doc=>{if(!doc.exists)ref.set({name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",profession:"",birthday:"",foto:"",links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[]});});
-    return ref.onSnapshot(doc=>{if(doc.exists){const d=doc.data();setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach,profession:d.profession||"",birthday:d.birthday||d.dataNasc||"",foto:d.foto||"",email:d.email||"",phone:d.phone||""});setLinks(d.links||[]);setTrilhaData(d.trilha||{});setMateriaisData(d.materiais||{});setFinanceiro(d.financeiro||FINANCEIRO_DEFAULT);setModulosOcultos(d.modulosOcultos||[]);setStudentSchedule({dataInicio:d.dataInicio||"",diasAulas:d.diasAulas||[],horarioAulas:d.horarioAulas||"",calendarioCompleto:d.calendarioCompleto||[],calendarioResumo:d.calendarioResumo||null,program:d.program||"",licaoInicio:d.licaoInicio||1});}});
-  },[uid]);
+    if(isAdmin){
+      ref.get().then(doc=>{
+        if(!doc.exists)ref.set({name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",profession:"",birthday:"",foto:"",links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[]});
+      }).catch(()=>{});
+    }
+    return ref.onSnapshot(doc=>{
+      if(doc.exists){
+        const d=doc.data();
+        setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach,profession:d.profession||"",birthday:d.birthday||d.dataNasc||"",foto:d.foto||"",email:d.email||"",phone:d.phone||""});
+        setLinks(d.links||[]);setTrilhaData(d.trilha||{});setMateriaisData(d.materiais||{});setFinanceiro(d.financeiro||FINANCEIRO_DEFAULT);setModulosOcultos(d.modulosOcultos||[]);
+        setStudentSchedule({dataInicio:d.dataInicio||"",diasAulas:d.diasAulas||[],horarioAulas:d.horarioAulas||"",calendarioCompleto:d.calendarioCompleto||[],calendarioResumo:d.calendarioResumo||null,program:d.program||"",licaoInicio:d.licaoInicio||1});
+      }
+    },()=>{});
+  },[uid,isAdmin]);
 
   const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
   const currentMod=useMemo(()=>getCurrentModule(books,modulosOcultos),[books,modulosOcultos]);
