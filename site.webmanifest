@@ -1,0 +1,30 @@
+{
+  "name": "Fluency Studio — Curso de Inglês Online",
+  "short_name": "Fluency Studio",
+  "description": "Curso de inglês personalizado com Victor Gomes. Método PEH 5.0, aula demonstrativa gratuita.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050a15",
+  "theme_color": "#050a15",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/logo_portal_jul.png",
+      "sizes": "905x895",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo_portal_jul.png",
+      "sizes": "905x895",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "business"],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

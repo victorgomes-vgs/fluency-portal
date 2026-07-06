@@ -23,8 +23,14 @@
     <link rel="canonical" href="https://thefluency.studio/">
     <link rel="alternate" hreflang="pt-BR" href="https://thefluency.studio/">
     <link rel="alternate" hreflang="x-default" href="https://thefluency.studio/">
-    <link rel="icon" type="image/png" href="assets/logo_portal_jul.png">
-    <link rel="apple-touch-icon" href="assets/logo_portal_jul.png">
+    <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/logo_portal_jul.png" sizes="180x180">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="preload" as="image" href="assets/capa_portal_jul.png" fetchpriority="high">
+    <meta property="og:image:width" content="4003">
+    <meta property="og:image:height" content="3838">
+    <link itemprop="thumbnailUrl" href="https://thefluency.studio/assets/capa_portal_jul.png">
+    <meta itemprop="image" content="https://thefluency.studio/assets/capa_portal_jul.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
@@ -40,8 +46,6 @@
     <meta property="og:image" content="https://thefluency.studio/assets/capa_portal_jul.png">
     <meta property="og:image:secure_url" content="https://thefluency.studio/assets/capa_portal_jul.png">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Victor Gomes, professor da Fluency Studio — curso de inglês personalizado online">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -62,18 +66,8 @@
                 "name": "Fluency Studio",
                 "alternateName": "The Fluency Studio",
                 "url": "https://thefluency.studio/",
-                "logo": {
-                    "@type": "ImageObject",
-                    "@id": "https://thefluency.studio/#logo",
-                    "url": "https://thefluency.studio/assets/logo_portal_jul.png",
-                    "contentUrl": "https://thefluency.studio/assets/logo_portal_jul.png",
-                    "caption": "Fluency Studio"
-                },
-                "image": {
-                    "@type": "ImageObject",
-                    "url": "https://thefluency.studio/assets/capa_portal_jul.png",
-                    "caption": "Victor Gomes — Fluency Studio"
-                },
+                "logo": { "@id": "https://thefluency.studio/#image-logo" },
+                "image": { "@id": "https://thefluency.studio/#image-hero" },
                 "description": "Escola de inglês online com método exclusivo PEH 5.0 — personalizado, estratégico e humanizado. Aulas ao vivo individuais e em grupos reduzidos com Victor Gomes.",
                 "slogan": "Fale, entenda e evolua com estratégia",
                 "telephone": "+55-11-91199-9759",
@@ -114,6 +108,7 @@
                 "jobTitle": "Professor de Inglês e Fundador",
                 "description": "Professor de inglês com 20 anos de experiência, formado em Letras, certificado TOEFL e TOEIC, criador do método PEH 5.0.",
                 "worksFor": { "@id": "https://thefluency.studio/#organization" },
+                "image": { "@id": "https://thefluency.studio/#image-hero" },
                 "sameAs": "https://instagram.com/teacher_victorgomes",
                 "knowsAbout": ["English teaching", "Language acquisition", "CEFR", "Corporate communication"]
             },
@@ -138,7 +133,7 @@
                 "name": "Fluency Studio — Curso de Inglês Online com Estratégia",
                 "isPartOf": { "@id": "https://thefluency.studio/#website" },
                 "about": { "@id": "https://thefluency.studio/#organization" },
-                "primaryImageOfPage": { "@type": "ImageObject", "url": "https://thefluency.studio/assets/capa_portal_jul.png" },
+                "primaryImageOfPage": { "@id": "https://thefluency.studio/#image-hero" },
                 "description": "Página oficial da Fluency Studio: programas Fluency Foundation, Flash Talk e Corporate Speech. Agende aula demonstrativa gratuita com Victor Gomes.",
                 "inLanguage": "pt-BR",
                 "dateModified": "2026-07-06",
@@ -176,6 +171,7 @@
                 "courseMode": "online",
                 "inLanguage": "en",
                 "availableLanguage": "pt-BR",
+                "image": { "@id": "https://thefluency.studio/#image-card-foundation" },
                 "offers": {
                     "@type": "Offer",
                     "category": "Fluency Foundation",
@@ -192,6 +188,7 @@
                 "courseMode": "online",
                 "inLanguage": "en",
                 "availableLanguage": "pt-BR",
+                "image": { "@id": "https://thefluency.studio/#image-card-flash-talk" },
                 "offers": {
                     "@type": "Offer",
                     "category": "Flash Talk",
@@ -209,6 +206,7 @@
                 "courseMode": "online",
                 "inLanguage": "en",
                 "availableLanguage": "pt-BR",
+                "image": { "@id": "https://thefluency.studio/#image-card-corporate" },
                 "offers": {
                     "@type": "Offer",
                     "category": "Corporate Speech",
@@ -230,6 +228,98 @@
                     { "@type": "Question", "name": "Como são definidos os horários das aulas?", "acceptedAnswer": { "@type": "Answer", "text": "Os horários são definidos de acordo com a disponibilidade do professor e do aluno. É definido um horário fixo e o aluno se torna o dono do horário." } },
                     { "@type": "Question", "name": "Preciso comprar material didático extra?", "acceptedAnswer": { "@type": "Answer", "text": "O material é indicado na escolha da modalidade. No Flash Talk não há necessidade de compra. No Fluency Foundation o material é organizado personalizadamente — analisado no atendimento, sem surpresas após o início." } },
                     { "@type": "Question", "name": "Como funciona o investimento?", "acceptedAnswer": { "@type": "Answer", "text": "O investimento varia por curso. Corporate Speech são módulos mensais avulsos. Flash Talk parcela mensalmente no PIX ou cartão. Fluency Foundation parcela em pelo menos 18 vezes conforme a necessidade do aluno." } }
+                ]
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-hero",
+                "url": "https://thefluency.studio/assets/capa_portal_jul.png",
+                "contentUrl": "https://thefluency.studio/assets/capa_portal_jul.png",
+                "width": 4003,
+                "height": 3838,
+                "encodingFormat": "image/png",
+                "name": "Victor Gomes — Fluency Studio",
+                "caption": "Victor Gomes, professor de inglês e fundador da Fluency Studio — curso de inglês online personalizado",
+                "representativeOfPage": true
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-logo",
+                "url": "https://thefluency.studio/assets/logo_portal_jul.png",
+                "contentUrl": "https://thefluency.studio/assets/logo_portal_jul.png",
+                "width": 905,
+                "height": 895,
+                "encodingFormat": "image/png",
+                "name": "Logo Fluency Studio",
+                "caption": "Logotipo oficial da Fluency Studio"
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-wordmark",
+                "url": "https://thefluency.studio/assets/logo_portal_jul2.png",
+                "contentUrl": "https://thefluency.studio/assets/logo_portal_jul2.png",
+                "width": 1254,
+                "height": 102,
+                "encodingFormat": "image/png",
+                "name": "Fluency Studio By Victor Gomes",
+                "caption": "Marca Fluency Studio — By Victor Gomes"
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-card-foundation",
+                "url": "https://thefluency.studio/assets/card1.png",
+                "contentUrl": "https://thefluency.studio/assets/card1.png",
+                "width": 479,
+                "height": 558,
+                "encodingFormat": "image/png",
+                "name": "Fluency Foundation",
+                "caption": "Programa Fluency Foundation — fluência em inglês em 18 meses"
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-card-flash-talk",
+                "url": "https://thefluency.studio/assets/card2.png",
+                "contentUrl": "https://thefluency.studio/assets/card2.png",
+                "width": 479,
+                "height": 558,
+                "encodingFormat": "image/png",
+                "name": "Flash Talk",
+                "caption": "Programa Flash Talk — aulas de conversação em inglês de 30 minutos"
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-card-corporate",
+                "url": "https://thefluency.studio/assets/card3.png",
+                "contentUrl": "https://thefluency.studio/assets/card3.png",
+                "width": 479,
+                "height": 558,
+                "encodingFormat": "image/png",
+                "name": "Corporate Speech",
+                "caption": "Programa Corporate Speech — inglês corporativo e oratória profissional"
+            },
+            {
+                "@type": "ImageObject",
+                "@id": "https://thefluency.studio/#image-ivi",
+                "url": "https://thefluency.studio/assets/ivi.jpg",
+                "contentUrl": "https://thefluency.studio/assets/ivi.jpg",
+                "width": 880,
+                "height": 1168,
+                "encodingFormat": "image/jpeg",
+                "name": "iVi — Assistente Fluency Studio",
+                "caption": "iVi, assistente virtual da Fluency Studio para dúvidas sobre cursos de inglês"
+            },
+            {
+                "@type": "ImageGallery",
+                "@id": "https://thefluency.studio/#image-gallery",
+                "name": "Galeria Fluency Studio",
+                "associatedMedia": [
+                    { "@id": "https://thefluency.studio/#image-hero" },
+                    { "@id": "https://thefluency.studio/#image-logo" },
+                    { "@id": "https://thefluency.studio/#image-wordmark" },
+                    { "@id": "https://thefluency.studio/#image-card-foundation" },
+                    { "@id": "https://thefluency.studio/#image-card-flash-talk" },
+                    { "@id": "https://thefluency.studio/#image-card-corporate" },
+                    { "@id": "https://thefluency.studio/#image-ivi" }
                 ]
             }
         ]
@@ -2336,18 +2426,22 @@
             <a href="https://thefluency.studio/" class="flex items-center gap-2 md:gap-4 shrink-0" aria-label="Fluency Studio — página inicial" itemprop="url">
                 <img
                     src="assets/logo_portal_jul.png"
-                    alt="Logo Fluency Studio"
+                    alt="Logo Fluency Studio — escola de inglês online"
+                    title="Fluency Studio"
                     class="logo-mark"
-                    width="48"
-                    height="48"
+                    width="905"
+                    height="895"
+                    decoding="async"
                     itemprop="image"
                 >
                 <img
                     src="assets/logo_portal_jul2.png"
-                    alt="Fluency Studio — By Victor Gomes"
+                    alt="Fluency Studio By Victor Gomes — curso de inglês personalizado"
+                    title="Fluency Studio By Victor Gomes"
                     class="logo-name"
-                    width="160"
-                    height="32"
+                    width="1254"
+                    height="102"
+                    decoding="async"
                 >
             </a>
 
@@ -2375,9 +2469,15 @@
                 <div class="hero-photo-wrap">
                     <img
                         src="assets/capa_portal_jul.png"
-                        alt="Victor Gomes - Fluency Studio"
+                        alt="Victor Gomes, professor de inglês e fundador da Fluency Studio — curso de inglês online com método PEH 5.0"
+                        title="Victor Gomes — Fluency Studio"
                         class="hero-photo-mobile"
+                        width="4003"
+                        height="3838"
                         loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        itemprop="primaryImageOfPage"
                     >
                 </div>
                 <div class="hero-mobile-footer">
@@ -2476,7 +2576,7 @@
         <!-- Floating Widget -->
         <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos." target="_blank" rel="noopener noreferrer" class="btn-touch fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex items-center gap-2 md:gap-3 bg-white text-brand-dark p-2 pr-3 md:pr-4 rounded-full shadow-2xl hover:scale-105" aria-label="Pergunte sobre os cursos no WhatsApp">
             <div class="floating-widget-avatar" aria-hidden="true">
-                <img src="assets/ivi.jpg" alt="iVi — assistente virtual Fluency Studio" width="48" height="48" loading="lazy">
+                <img src="assets/ivi.jpg" alt="iVi — assistente virtual da Fluency Studio para tirar dúvidas sobre cursos de inglês" title="iVi — Assistente Fluency Studio" width="880" height="1168" loading="lazy" decoding="async">
             </div>
             <div class="floating-widget-text text-sm font-semibold pr-2">
                 Pergunte sobre<br>os cursos!
@@ -2508,16 +2608,16 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 programs-cards-grid">
                 <!-- Card 1 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-fluency">
-                    <div class="program-card-bg" aria-hidden="true">
-                        <img src="assets/card1.png" alt="" role="presentation" loading="lazy">
+                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-fluency" itemscope itemtype="https://schema.org/Course">
+                    <div class="program-card-bg">
+                        <img src="assets/card1.png" alt="Fluency Foundation — programa completo de inglês com fluência em 18 meses" title="Fluency Foundation" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
                     </div>
                     <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m0 0l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 21.45a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"></path></svg>
                     </div>
                     <div class="program-card-content">
-                        <h3 class="program-card-title mt-4">FLUENCY FOUNDATION</h3>
+                        <h3 class="program-card-title mt-4" itemprop="name">FLUENCY FOUNDATION</h3>
                         <p class="program-card-subtitle program-card-subtitle--teal">Fluência em 18 meses</p>
 
                         <div class="program-card-tags">
@@ -2527,7 +2627,7 @@
                             <span class="skill-tag">ESCUTE</span>
                         </div>
 
-                        <p class="program-card-desc">
+                        <p class="program-card-desc" itemprop="description">
                             Para profissionais que precisam de um inglês alto padrão e completo. Ideal para o mercado de trabalho, viagens, exames, etc.
                         </p>
 
@@ -2536,24 +2636,24 @@
                             <button type="button" id="open-demo-modal-card-1" class="btn-touch flex-1 bg-brand-teal hover:bg-brand-tealHover py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 <!-- Card 2 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-flash">
-                    <div class="program-card-bg" aria-hidden="true">
-                        <img src="assets/card2.png" alt="" role="presentation" loading="lazy">
+                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-flash" itemscope itemtype="https://schema.org/Course">
+                    <div class="program-card-bg">
+                        <img src="assets/card2.png" alt="Flash Talk — aulas de conversação em inglês de 30 minutos, até 4x por semana" title="Flash Talk" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
                     </div>
                     <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                     <div class="program-card-content">
-                        <h3 class="program-card-title mt-4">FLASH TALK</h3>
+                        <h3 class="program-card-title mt-4" itemprop="name">FLASH TALK</h3>
                         <p class="program-card-subtitle program-card-subtitle--blue">Aulas de 30 minutos até quatro vezes por semana</p>
 
                         <div class="program-card-tags" aria-hidden="true"></div>
 
-                        <p class="program-card-desc">
+                        <p class="program-card-desc" itemprop="description">
                             Para aqueles que dizem:<br>
                             "Teacher, eu só quero falar!"<br>
                             Temas modernos do dia a dia e o aluno monta sua trilha.
@@ -2564,24 +2664,24 @@
                             <button type="button" id="open-demo-modal-card-2" class="btn-touch flex-1 bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 <!-- Card 3 -->
-                <div class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-corporate">
-                    <div class="program-card-bg" aria-hidden="true">
-                        <img src="assets/card3.png" alt="" role="presentation" loading="lazy">
+                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-corporate" itemscope itemtype="https://schema.org/Course">
+                    <div class="program-card-bg">
+                        <img src="assets/card3.png" alt="Corporate Speech — inglês corporativo e oratória profissional de alto padrão" title="Corporate Speech" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
                     </div>
                     <div class="program-card-overlay" aria-hidden="true"></div>
                     <div class="program-card-icon absolute top-4 right-4">
                         <svg class="w-14 h-14 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v1.5l-1.75 2.5h3.5L12 12.5V11"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6"></path></svg>
                     </div>
                     <div class="program-card-content">
-                        <h3 class="program-card-title mt-4">CORPORATE SPEECH</h3>
+                        <h3 class="program-card-title mt-4" itemprop="name">CORPORATE SPEECH</h3>
                         <p class="program-card-subtitle program-card-subtitle--purple">Se expressar e ser reconhecido no trabalho com inglês alto padrão</p>
 
                         <div class="program-card-tags" aria-hidden="true"></div>
 
-                        <p class="program-card-desc">
+                        <p class="program-card-desc" itemprop="description">
                             Para profissionais que entendem que um domínio da oratória de alto nível resulta em prestígio e sucesso.
                         </p>
 
@@ -2590,7 +2690,7 @@
                             <button type="button" id="open-demo-modal-card-3" class="btn-touch flex-1 bg-purple-700 hover:bg-purple-800 py-3 px-4 rounded text-sm font-semibold">AGENDAR DIAGNÓSTICO</button>
                         </div>
                     </div>
-                </div>
+                </article>
             </div>
         </div>
     </section>
@@ -3010,7 +3110,7 @@
     <footer class="bg-brand-dark border-t border-slate-800 py-10 px-4" role="contentinfo">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-slate-400">
             <div>
-                <img src="assets/logo_portal_jul2.png" alt="Fluency Studio" class="h-5 mb-3 opacity-90" width="120" height="20" loading="lazy">
+                <img src="assets/logo_portal_jul2.png" alt="Fluency Studio By Victor Gomes" title="Fluency Studio" class="h-5 mb-3 opacity-90" width="1254" height="102" loading="lazy" decoding="async">
                 <p class="leading-relaxed">Curso de inglês online com método PEH 5.0. Aulas ao vivo personalizadas com Victor Gomes.</p>
             </div>
             <nav aria-label="Navegação do site">

@@ -9,11 +9,38 @@
     <image:image>
       <image:loc>https://thefluency.studio/assets/capa_portal_jul.png</image:loc>
       <image:title>Victor Gomes — Fluency Studio</image:title>
-      <image:caption>Curso de inglês online personalizado com Victor Gomes</image:caption>
+      <image:caption>Professor de inglês e fundador da Fluency Studio — curso de inglês online personalizado</image:caption>
+      <image:geo_location>São Paulo, Brazil</image:geo_location>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/logo_portal_jul.png</image:loc>
       <image:title>Logo Fluency Studio</image:title>
+      <image:caption>Logotipo oficial da escola de inglês Fluency Studio</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/logo_portal_jul2.png</image:loc>
+      <image:title>Fluency Studio By Victor Gomes</image:title>
+      <image:caption>Marca Fluency Studio By Victor Gomes</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/card1.png</image:loc>
+      <image:title>Fluency Foundation</image:title>
+      <image:caption>Programa Fluency Foundation — fluência em inglês em 18 meses</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/card2.png</image:loc>
+      <image:title>Flash Talk</image:title>
+      <image:caption>Aulas de conversação em inglês de 30 minutos</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/card3.png</image:loc>
+      <image:title>Corporate Speech</image:title>
+      <image:caption>Inglês corporativo e oratória profissional</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/ivi.jpg</image:loc>
+      <image:title>iVi — Assistente Fluency Studio</image:title>
+      <image:caption>Assistente virtual para dúvidas sobre cursos de inglês</image:caption>
     </image:image>
   </url>
   <url>
@@ -21,5 +48,14 @@
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://thefluency.studio/logoentrada.png</image:loc>
+      <image:title>Portal do Aluno Fluency Studio</image:title>
+      <image:caption>Área do aluno — portal de estudos Fluency Studio</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://thefluency.studio/assets/ivi.jpg</image:loc>
+      <image:title>iVi — Assistente do Portal</image:title>
+    </image:image>
   </url>
 </urlset>

@@ -10,3 +10,5 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: https://thefluency.studio/sitemap.xml
+
+# IndexNow key: https://thefluency.studio/fluency2026indexnow.txt
