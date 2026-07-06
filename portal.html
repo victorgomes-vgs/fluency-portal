@@ -147,8 +147,10 @@
     .btn:active{transform:translateY(1px);}
     .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
     .btn-primary:hover{filter:brightness(1.10);}
-    [data-theme="light"] .btn-primary{background:var(--gradient-cta);border:1px solid rgba(53,102,182,.35);box-shadow:0 4px 18px rgba(34,82,160,.32);color:#fff;}
-    [data-theme="light"] .btn-primary:hover{filter:none;background:linear-gradient(135deg,#2252A0,#174082,#00665B);box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);}
+    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#3566B6 0%,#2252A0 45%,#187E74 100%)!important;border:1px solid rgba(53,102,182,.35)!important;box-shadow:0 4px 18px rgba(34,82,160,.32);color:#fff!important;}
+    [data-theme="light"] .btn-primary:hover{filter:none;background:linear-gradient(135deg,#2252A0,#174082,#00665B)!important;box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);color:#fff!important;}
+    [data-theme="light"] .btn-primary svg{color:#fff!important;}
+    [data-theme="light"] .admin-toolbar .btn:not(.btn-primary){color:var(--font);background:var(--btn);}
     .btn-danger{border:1px solid rgba(200,60,80,.35);background:rgba(200,60,80,.10);color:#e07080;}
     .btn-danger:hover{background:rgba(200,60,80,.18);}
 
@@ -357,6 +359,9 @@
     .ivictor-body{background:var(--card);border:1px solid rgba(30,143,168,.22);border-top:none;backdrop-filter:blur(16px);}
     .ivictor-msg-ai{background:rgba(30,143,168,.12);border:1px solid rgba(30,143,168,.22);border-radius:12px 12px 12px 3px;padding:9px 13px;font-size:13px;line-height:1.5;color:var(--font);}
     .ivictor-footer{padding:10px 12px;border-top:1px solid rgba(30,143,168,.18);background:var(--detail);display:flex;gap:8px;}
+    .ivi-quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;}
+    .ivi-chip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;cursor:pointer;border:1px solid rgba(30,143,168,.28);background:rgba(30,143,168,.08);color:var(--font);transition:background .15s;}
+    .ivi-chip:hover{background:rgba(30,143,168,.16);}
     @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
     /* ── STUDENT CARDS ── */
@@ -379,6 +384,20 @@
     /* ── LOGO BAR ── */
     .logo-bar{background:linear-gradient(135deg,#000000 0%,#071020 100%);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:50;}
     [data-theme="light"] .logo-bar{background:linear-gradient(135deg,#174082 0%,#2252A0 42%,#187E74 100%);border-bottom:1px solid rgba(134,207,255,.28);box-shadow:0 4px 24px rgba(23,64,130,.18);}
+
+    /* ── BRAND LOGO ── */
+    .brand-logo{display:flex;align-items:center;gap:8px;}
+    .brand-logo-mark{height:32px;width:auto;object-fit:contain;}
+    .brand-logo-name{height:17px;width:auto;object-fit:contain;display:block;}
+    .brand-logo-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1;}
+    .brand-byline{font-size:9px;font-weight:600;letter-spacing:.05em;color:rgba(255,255,255,.75);margin-top:2px;font-family:'Outfit',sans-serif;}
+    .brand-logo-lg .brand-logo-mark{height:44px;}
+    .brand-logo-lg .brand-logo-name{height:24px;}
+    .brand-logo-lg .brand-byline{font-size:10px;margin-top:3px;}
+    .logo-bar .btn-bar{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.24)!important;color:#fff!important;}
+    .logo-bar .btn-bar:hover{background:rgba(255,255,255,.22)!important;}
+    .logo-bar .btn-bar svg{color:#fff!important;}
+    .logo-bar .btn-bar-label{font-size:12px;color:#fff;}
 
     /* ── THEME SWITCHER ── */
     .theme-switcher{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:10px;padding:2px;border:1px solid rgba(255,255,255,.14);}
@@ -743,7 +762,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.06.2");
+console.info("Fluency Portal v2026.07.06.3");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -754,8 +773,11 @@ const GCAL_EMBED_URL = "https://calendar.google.com/calendar/embed?height=600&wk
 const GCAL_OPEN_URL  = "https://calendar.google.com/calendar/u/0?cid=dmljdG9yLmdvbWVzLmdzQGdtYWlsLmNvbQ";
 const GCAL_ICAL_URL  = `https://calendar.google.com/calendar/ical/${encodeURIComponent(GCAL_EMAIL)}/public/basic.ics`;
 const LOGO_URL   = "https://thefluency.studio/logo.png";
+const LOGO_MARK  = "assets/logo_portal_jul.png";
+const LOGO_NAME  = "assets/logo_portal_jul2.png";
 const LOGO_ENTRADA = "logoentrada.png";
-const VICTOR_PHOTO = "";
+const IVI_PHOTO  = "assets/ivi.jpg";
+const WPP_SITE   = "https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos%20da%20Fluency%20Studio.";
 
 const BLOCK_PATTERN = ["input","input","output","input","input","output","input","input","output","review"];
 
@@ -1033,33 +1055,42 @@ function ThemeSwitcher() {
   );
 }
 
-// ── MODIFICAÇÃO 1d: LogoBar ─────────────────────────────────────────────────
+function BrandLogo({large}){
+  const [ok,setOk]=useState(true);
+  if(!ok)return <span style={{fontFamily:"'Sora',sans-serif",fontWeight:800,color:'#fff',fontSize:large?18:15}}>Fluency Studio</span>;
+  return(
+    <div className={"brand-logo"+(large?" brand-logo-lg":"")}>
+      <img src={LOGO_MARK} alt="" className="brand-logo-mark" onError={()=>setOk(false)}/>
+      <div className="brand-logo-text">
+        <img src={LOGO_NAME} alt="Fluency Studio" className="brand-logo-name"/>
+        <span className="brand-byline">By Victor Gomes</span>
+      </div>
+    </div>
+  );
+}
+
 function LogoBar({ onBack, isAdmin, showLogout }) {
-  const [imgOk, setImgOk] = useState(true);
   return (
     <div className="logo-bar">
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         {onBack && (
-          <button className="btn" style={{padding:'6px 10px',borderRadius:8,border:'1px solid rgba(255,255,255,.15)'}} onClick={onBack}>
-            <Icon name="arrow-left" size={15} style={{color:'#fff'}}/>
+          <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center'}} onClick={onBack}>
+            <Icon name="arrow-left" size={15}/>
           </button>
         )}
-        {imgOk
-          ? <img src={LOGO_URL} alt="Fluency Studio" style={{height:28,transition:'none'}} onError={()=>setImgOk(false)}/>
-          : <span style={{fontFamily:"'Sora',sans-serif",fontWeight:800,color:'#fff',fontSize:15,letterSpacing:'-.02em'}}>Fluency Studio</span>
-        }
+        <BrandLogo/>
       </div>
       <div style={{display:'flex',alignItems:'center',gap:8}}>
         {isAdmin && (
-          <span style={{fontSize:10,fontWeight:700,letterSpacing:'.08em',padding:'3px 8px',borderRadius:20,background:'rgba(44,122,142,.2)',border:'1px solid rgba(44,122,142,.4)',color:'rgba(44,122,142,1)'}}>
+          <span style={{fontSize:10,fontWeight:700,letterSpacing:'.08em',padding:'3px 8px',borderRadius:20,background:'rgba(255,255,255,.15)',border:'1px solid rgba(255,255,255,.28)',color:'#fff'}}>
             ADMIN
           </span>
         )}
         <ThemeSwitcher/>
         {showLogout && (
-          <button className="btn" style={{padding:'6px 10px',borderRadius:8,border:'1px solid rgba(255,255,255,.15)',display:'flex',alignItems:'center',gap:6}} onClick={()=>auth.signOut()}>
-            <Icon name="log-out" size={14} style={{color:'rgba(255,255,255,.7)'}}/>
-            <span style={{fontSize:12,color:'rgba(255,255,255,.7)',display:'none'}} className="sm:inline">Sair</span>
+          <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center',gap:6}} onClick={()=>auth.signOut()}>
+            <Icon name="log-out" size={14}/>
+            <span className="btn-bar-label">Sair</span>
           </button>
         )}
       </div>
@@ -1073,16 +1104,13 @@ function LoadingScreen(){
 
 function Login(){
   const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
-  const [logoOk,setLogoOk]=useState(true);
   async function handleLogin(){if(!email||!pass){setErr("Preencha email e senha.");return;}setLoading(true);setErr("");try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){setErr("Email ou senha incorretos.");setLoading(false);}}
   return(
     <div className="min-h-screen flex flex-col items-center justify-center px-5">
-      <div className="login-logo-wrap">
-        {logoOk
-          ?<img src={LOGO_ENTRADA} alt="Fluency Studio" className="login-logo" onError={()=>setLogoOk(false)}/>
-          :<img src={LOGO_URL} alt="Fluency Studio" className="login-logo"/>
-        }
+      <div className="login-logo-wrap" style={{filter:'drop-shadow(0 4px 12px rgba(0,0,0,.25))'}}>
+        <BrandLogo large/>
       </div>
+      <IVi mode="visitor"/>
       <div className="w-full max-w-md glass rounded-2xl p-7">
           <div className="text-center mb-6">
             <h1 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Bem-vindo ao Portal</h1>
@@ -2334,173 +2362,169 @@ function WhatsAppFloat(){
   );
 }
 
-// ── MODIFICAÇÃO 4: iVi com histórico de conversa ────────────────────────────
-function ivisFallback(question) {
-  const q = question.toLowerCase();
-  if (q.includes('tarefa') || q.includes('homework')) return 'Para suas tarefas, acesse a Trilha e clique na lição correspondente. O botão de tarefa fica disponível no card da aula! 📝';
-  if (q.includes('material') || q.includes('pdf') || q.includes('drive')) return 'Seus materiais estão disponíveis na aba Recursos ou diretamente na Trilha, clicando em cada lição. 📚';
-  if (q.includes('professor') || q.includes('victor') || q.includes('dúvida')) return 'Para falar diretamente com o professor Victor, use o WhatsApp disponível na aba Recursos. Ele responde rapidinho! 😊';
-  if (q.includes('financeiro') || q.includes('pagamento') || q.includes('mensalidade')) return 'Suas informações financeiras estão na aba Financeiro. Se tiver dúvidas sobre pagamentos, fale com o Victor pelo WhatsApp em Recursos.';
-  if (q.includes('trilha') || q.includes('progresso') || q.includes('módulo')) return 'Sua trilha mostra toda a sua jornada até a fluência. As lições concluídas ficam destacadas, e a próxima disponível aparece em andamento. Continue assim! 🚀';
-  return 'Boa pergunta! Para uma resposta mais completa, você pode falar diretamente com o professor Victor pelo WhatsApp na aba Recursos. Estou aqui para ajudar no que puder! 😊';
+const IVI_TUTORIAL_STUDENT=`**Tutorial rápido do Portal** 🎓
+
+**Início** — visão geral: progresso, financeiro e atalhos.
+**Trilha** — suas lições por módulo. Clique na aula para abrir lição online, tarefa, PDF ou aula ao vivo.
+**Materiais** — PDFs e recursos extras por módulo.
+**Diário** — registro de cada aula: presença, avaliação e observações.
+**Financeiro** — mensalidades, vencimentos e comprovantes.
+**Calendário** — suas aulas previstas no mês.
+**Contato / Agendamento** — WhatsApp do Victor e link para agendar.
+
+Dica: use o ícone do sol/lua no topo para alternar tema claro ou escuro.`;
+
+const IVI_KB=[
+  {keys:["tutorial","como usar","usar o portal","navegar","primeiro acesso","ajuda portal"],audience:["student","all"],answer:IVI_TUTORIAL_STUDENT},
+  {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online"],audience:["student","all"],answer:"Sua **Trilha** mostra toda a jornada até a fluência, dividida em módulos. Toque em uma lição para ver links de **Lição Online**, **Tarefa**, **PDF** e **Aula ao Vivo**. Lições concluídas ficam destacadas em verde. 🚀"},
+  {keys:["tarefa","homework","dever"],audience:["student","all"],answer:"As tarefas ficam na **Trilha** — abra a lição correspondente e clique em **Tarefa Online**. Se não aparecer, a tarefa ainda não foi liberada pelo professor."},
+  {keys:["material","pdf","drive","materiais"],audience:["student","all"],answer:"Acesse **Materiais** no menu ou abra a lição na **Trilha** e use os botões **Lição PDF** / **Material Completo**. 📚"},
+  {keys:["diário","diario","presença","presenca","falta","reposição"],audience:["student","all"],answer:"O **Diário** registra cada aula com data, presença, avaliação (F/A/L/E) e observações. É o histórico oficial do seu curso."},
+  {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. Dúvidas sobre valores ou negociação? Fale com o Victor pelo WhatsApp."},
+  {keys:["calendário","calendario","agenda de aulas","próxima aula"],audience:["student","all"],answer:"O **Calendário** mostra suas aulas previstas no mês, com base no seu plano de estudos. Você também pode agendar reposições pelo link em **Agendamento**."},
+  {keys:["agendar","agendamento","marcar aula","reposição"],audience:["student","all"],answer:`Para agendar ou remarcar, use **Agendamento** no portal ou este link: ${SCHED_URL}`},
+  {keys:["professor","victor","whatsapp","contato","falar"],audience:["all"],answer:`O professor Victor Gomes atende pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}`},
+  {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola"],audience:["visitor","all"],answer:`Que ótimo! 🎉 Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
+  {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa"],audience:["visitor","all"],answer:"Os valores dependem do programa escolhido (individual, Flash Talk, Corporate Speech etc.) e da frequência das aulas. A aula demonstrativa é **gratuita** — o Victor monta uma proposta personalizada. Chame no WhatsApp!"},
+  {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer"],audience:["visitor","all"],answer:"A **aula demonstrativa é gratuita**! É a melhor forma de conhecer o método PEH 5.0 e ver se a Fluency combina com você. Agende pelo site thefluency.studio ou WhatsApp."},
+  {keys:["método","metodo","peh","como funciona","metodologia","ensino"],audience:["all"],answer:"A Fluency Studio usa o método **PEH 5.0** (Personalizado, Estratégico e Humanizado) do professor Victor Gomes — 20 anos de experiência. Combina Input/Output, trilha estruturada e acompanhamento individual rumo à fluência."},
+  {keys:["curso","programa","flash talk","corporate","foundation","módulo de aula"],audience:["visitor","all"],answer:"A escola oferece programas para objetivos diferentes: **Fluency Foundation**, **Flash Talk**, **Corporate Speech** e aulas individuais personalizadas. Veja todos em thefluency.studio ou pergunte ao Victor no WhatsApp."},
+  {keys:["nível","nivel","cefr","a1","b1","teste de nivel"],audience:["all"],answer:"Os níveis seguem o **CEFR** (A1 a C2). Na aula demonstrativa o Victor avalia sua fluência real — não é prova, é conversa estratégica para montar sua trilha."},
+  {keys:["inglês","ingles","grammar","gramática","gramatica","vocabulário","pronúncia"],audience:["all"],answer:"Posso ajudar com dúvidas de inglês! Me diga o tema (tempos verbais, phrasal verbs, pronúncia…) e explico de forma clara. Para aprofundar, combine com suas lições na Trilha."},
+  {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
+  {keys:["agenda admin","painel agenda","google calendar sync"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e calendário unificado. Use **Sincronizar Google** para puxar eventos do calendário do Victor."},
+  {keys:["tema","dark","light","escuro","claro"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
+  {keys:["senha","login","email","entrar","acesso"],audience:["visitor","student","all"],answer:"Use o **email e senha** fornecidos na matrícula. Se esqueceu a senha ou não consegue entrar, fale com o Victor pelo WhatsApp que ele resolve."},
+];
+
+function iviWelcome(mode){
+  if(mode==="visitor")return "Olá! Sou a **iVi** 👋 Assistente virtual da Fluency Studio. Posso explicar nossos cursos, como se matricular, agendar aula demonstrativa ou tirar dúvidas sobre inglês. Como posso ajudar?";
+  if(mode==="admin")return "Olá, Victor! Sou a **iVi** — sua assistente no painel admin. Posso ajudar com cadastro de alunos, agenda, financeiro e uso do portal. O que precisa?";
+  return "Olá! Sou a **iVi** 👋 Sua assistente no portal. Posso ensinar a usar o site, tirar dúvidas sobre suas aulas, financeiro, trilha e inglês. Quer um **tutorial rápido**? É só pedir!";
 }
 
-function IVictor(){
+function iviQuickChips(mode){
+  if(mode==="visitor")return["Como me matricular?","Aula demonstrativa","Quais os cursos?","Falar com Victor"];
+  if(mode==="admin")return["Cadastrar aluno","Usar a agenda","Tutorial do portal"];
+  return["Tutorial do portal","Minha trilha","Financeiro","Falar com Victor"];
+}
+
+function iviRespond(question,mode){
+  const q=question.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  let best=null,bestScore=0;
+  IVI_KB.forEach(entry=>{
+    if(!entry.audience.includes(mode)&&!entry.audience.includes("all"))return;
+    let score=0;
+    entry.keys.forEach(k=>{
+      const kn=k.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      if(q.includes(kn))score+=kn.length;
+    });
+    if(score>bestScore){bestScore=score;best=entry;}
+  });
+  if(best&&bestScore>0)return best.answer;
+  if(/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi)$/i.test(q.trim()))return iviWelcome(mode);
+  if(mode==="visitor")return "Boa pergunta! Para informações sobre matrícula, valores e programas, o Victor atende pelo WhatsApp — é a forma mais rápida de ter uma resposta personalizada. Posso ajudar com mais alguma coisa sobre a escola?";
+  return "Entendi! Não tenho essa resposta específica ainda, mas o professor Victor pode ajudar pelo WhatsApp. Enquanto isso, pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal** — sei bastante sobre isso! 😊";
+}
+
+function IVi({mode="student"}){
   const [open,setOpen]=useState(false);
-  const [imgOk,setImgOk]=useState(!!VICTOR_PHOTO);
-  const [messages,setMessages]=useState([
-    { role: 'assistant', content: 'Olá! Sou o iVi 👋 Posso ajudar com dúvidas sobre inglês, a plataforma, metodologia ou sua jornada de estudos. O que você precisa?' }
-  ]);
-  const [input,setInput]=useState('');
+  const [imgOk,setImgOk]=useState(true);
+  const [messages,setMessages]=useState([{role:"assistant",content:iviWelcome(mode)}]);
+  const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
   const messagesEndRef=useRef(null);
+  const chips=iviQuickChips(mode);
 
   useEffect(()=>{
-    if(open&&messagesEndRef.current){
-      messagesEndRef.current.scrollIntoView({behavior:'smooth'});
-    }
+    if(open&&messagesEndRef.current)messagesEndRef.current.scrollIntoView({behavior:"smooth"});
   },[messages,open]);
 
-  async function sendMessage(){
-    const text=input.trim();
-    if(!text||loading)return;
-    const userMsg={role:'user',content:text};
-    const newMessages=[...messages,userMsg];
-    setMessages(newMessages);
-    setInput('');
-    setLoading(true);
-
-    try{
-      const response=await fetch("https://api.anthropic.com/v1/messages",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "x-api-key":"",
-          "anthropic-version":"2023-06-01"
-        },
-        body:JSON.stringify({
-          model:"claude-sonnet-4-6",
-          max_tokens:500,
-          system:`Você é o iVi, assistente virtual do Fluency Studio — uma escola de inglês premium. 
-Sua personalidade: amigável, direto, encorajador e especialista em inglês e aprendizado de idiomas.
-Você ajuda com: dúvidas de inglês (gramática, vocabulário, pronúncia), metodologia da escola, 
-como usar a plataforma, organização dos estudos, motivação.
-Quando o aluno precisar falar com o professor Victor, diga que ele pode usar o WhatsApp disponível em Recursos.
-Responda sempre em português, de forma concisa (máximo 3 parágrafos curtos). 
-Seja caloroso mas objetivo. Use emojis com moderação.`,
-          messages:newMessages.map(m=>({role:m.role,content:m.content})),
-        })
-      });
-      if(!response.ok)throw new Error('API error');
-      const data=await response.json();
-      const reply=data.content?.[0]?.text||ivisFallback(text);
-      setMessages(prev=>[...prev,{role:'assistant',content:reply}]);
-    }catch(err){
-      // Fallback local quando API não disponível
-      const fallback=ivisFallback(text);
-      setMessages(prev=>[...prev,{role:'assistant',content:fallback}]);
-    }finally{
-      setLoading(false);
+  useEffect(()=>{
+    if(mode==="student"&&!localStorage.getItem("fs-ivi-tutorial")){
+      const t=setTimeout(()=>{
+        setOpen(true);
+        localStorage.setItem("fs-ivi-tutorial","1");
+      },1200);
+      return()=>clearTimeout(t);
     }
+  },[mode]);
+
+  function reply(text){
+    setLoading(true);
+    setTimeout(()=>{
+      setMessages(prev=>[...prev,{role:"assistant",content:iviRespond(text,mode)}]);
+      setLoading(false);
+    },350+Math.random()*300);
+  }
+
+  function sendMessage(textOverride){
+    const text=(textOverride||input).trim();
+    if(!text||loading)return;
+    setMessages(prev=>[...prev,{role:"user",content:text}]);
+    setInput("");
+    reply(text);
   }
 
   function handleKey(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+    if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}
   }
 
   return(
     <>
       {open&&(
-        <div className="ivictor-panel" style={{width:320,maxHeight:'70vh',display:'flex',flexDirection:'column'}}>
-          {/* Header */}
+        <div className="ivictor-panel" style={{width:320,maxHeight:"70vh",display:"flex",flexDirection:"column"}}>
           <div className="ivictor-header">
             <div className="ivictor-avatar">
-              {imgOk&&VICTOR_PHOTO
-                ?<img src={VICTOR_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
-                :<div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:700,color:'rgba(44,122,142,1)'}}>iVi</div>
+              {imgOk
+                ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
+                :<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff"}}>iVi</div>
               }
             </div>
             <div>
               <div style={{fontWeight:700,fontSize:14}}>iVi</div>
-              <div style={{fontSize:11,color:'rgba(234,242,247,.65)'}}>Assistente do Fluency Studio</div>
+              <div style={{fontSize:11,color:"rgba(234,242,247,.75)"}}>Assistente · Fluency Studio</div>
             </div>
-            <button className="btn rounded-lg" style={{marginLeft:'auto',padding:'6px',border:'1px solid rgba(255,255,255,.20)',color:'rgba(255,255,255,.8)'}} onClick={()=>setOpen(false)}>
-              <Icon name="x" size={14} style={{color:'#fff'}}/>
+            <button className="btn btn-bar" style={{marginLeft:"auto",padding:"6px",borderRadius:8}} onClick={()=>setOpen(false)}>
+              <Icon name="x" size={14}/>
             </button>
           </div>
-
-          {/* Mensagens */}
-          <div className="ivictor-body" style={{flex:1,overflowY:'auto',padding:12,display:'flex',flexDirection:'column',gap:8,minHeight:0}}>
+          <div className="ivi-quick-chips">
+            {chips.map(c=><button key={c} type="button" className="ivi-chip" onClick={()=>sendMessage(c)}>{c}</button>)}
+          </div>
+          <div className="ivictor-body" style={{flex:1,overflowY:"auto",padding:12,display:"flex",flexDirection:"column",gap:8,minHeight:0}}>
             {messages.map((msg,i)=>(
-              <div key={i} style={{display:'flex',justifyContent:msg.role==='user'?'flex-end':'flex-start'}}>
+              <div key={i} style={{display:"flex",justifyContent:msg.role==="user"?"flex-end":"flex-start"}}>
                 <div style={{
-                  maxWidth:'82%',
-                  padding:'9px 13px',
-                  borderRadius:msg.role==='user'?'12px 12px 3px 12px':'12px 12px 12px 3px',
-                  fontSize:13,
-                  lineHeight:1.5,
-                  background:msg.role==='user'
-                    ?'linear-gradient(135deg,#1e8fa8,#145f7a)'
-                    :'rgba(30,143,168,.12)',
-                  border:msg.role==='user'?'none':'1px solid rgba(30,143,168,.22)',
-                  color:msg.role==='user'?'#fff':'var(--font)',
-                }}>
-                  {msg.content}
-                </div>
+                  maxWidth:"82%",padding:"9px 13px",fontSize:13,lineHeight:1.55,whiteSpace:"pre-wrap",
+                  borderRadius:msg.role==="user"?"12px 12px 3px 12px":"12px 12px 12px 3px",
+                  background:msg.role==="user"?"linear-gradient(135deg,#1e8fa8,#145f7a)":"rgba(30,143,168,.12)",
+                  border:msg.role==="user"?"none":"1px solid rgba(30,143,168,.22)",
+                  color:msg.role==="user"?"#fff":"var(--font)",
+                }}>{msg.content}</div>
               </div>
             ))}
             {loading&&(
-              <div style={{display:'flex',justifyContent:'flex-start'}}>
-                <div style={{
-                  padding:'9px 16px',
-                  borderRadius:'12px 12px 12px 3px',
-                  background:'rgba(30,143,168,.12)',
-                  border:'1px solid rgba(30,143,168,.22)',
-                  display:'flex',gap:4,alignItems:'center'
-                }}>
-                  {[0,1,2].map(i=>(
-                    <div key={i} style={{
-                      width:6,height:6,borderRadius:'50%',
-                      background:'rgba(44,122,142,.7)',
-                      animation:`bounce 1.2s ease infinite ${i*0.2}s`
-                    }}/>
-                  ))}
+              <div style={{display:"flex",justifyContent:"flex-start"}}>
+                <div style={{padding:"9px 16px",borderRadius:"12px 12px 12px 3px",background:"rgba(30,143,168,.12)",border:"1px solid rgba(30,143,168,.22)",display:"flex",gap:4}}>
+                  {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:"rgba(44,122,142,.7)",animation:`bounce 1.2s ease infinite ${i*0.2}s`}}/>)}
                 </div>
               </div>
             )}
             <div ref={messagesEndRef}/>
           </div>
-
-          {/* Input */}
           <div className="ivictor-footer">
-            <input
-              className="input"
-              style={{flex:1,borderRadius:10,padding:'8px 12px',fontSize:13}}
-              placeholder="Pergunte ao iVi..."
-              value={input}
-              onChange={e=>setInput(e.target.value)}
-              onKeyDown={handleKey}
-              disabled={loading}
-            />
-            <button
-              className="btn btn-primary"
-              style={{padding:'8px 12px',borderRadius:10,flexShrink:0}}
-              onClick={sendMessage}
-              disabled={loading||!input.trim()}
-            >
+            <input className="input" style={{flex:1,borderRadius:10,padding:"8px 12px",fontSize:13}} placeholder="Pergunte à iVi..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={handleKey} disabled={loading}/>
+            <button className="btn btn-primary" style={{padding:"8px 12px",borderRadius:10,flexShrink:0}} onClick={()=>sendMessage()} disabled={loading||!input.trim()}>
               <Icon name="send" size={14}/>
             </button>
           </div>
         </div>
       )}
-      <button
-        className="ivictor-btn"
-        onClick={()=>setOpen(o=>!o)}
-        title="iVi — Assistente"
-      >
-        {imgOk&&VICTOR_PHOTO
-          ?<img src={VICTOR_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
-          :<div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:13,color:'rgba(44,122,142,1)',fontFamily:"'Sora',sans-serif"}}>iVi</div>
+      <button className="ivictor-btn" onClick={()=>setOpen(o=>!o)} title="iVi — Assistente">
+        {imgOk
+          ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
+          :<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:13,color:"#fff",fontFamily:"'Sora',sans-serif"}}>iVi</div>
         }
       </button>
     </>
@@ -2641,7 +2665,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         ):renderStudentPage()}
       </main>
       {!isAdmin&&<WhatsAppFloat/>}
-      {!isAdmin&&<IVictor/>}
+      {!isAdmin&&<IVi mode="student"/>}
     </div>
   );
 }
@@ -4280,7 +4304,7 @@ function AdminApp({user}){
     <div className="min-h-screen">
       {showModal&&<ModalCadastro onClose={()=>setShowModal(false)} onSaved={()=>setShowModal(false)}/>}
       <LogoBar isAdmin={true} showLogout={true}/>
-      <div className="px-4 py-4 sticky top-[49px] z-40" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid var(--divider)"}}>
+      <div className="admin-toolbar px-4 py-4 sticky top-[49px] z-40" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid var(--divider)"}}>
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             {showBack&&(
@@ -4310,6 +4334,7 @@ function AdminApp({user}){
           :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
         }
       </main>
+      <IVi mode="admin"/>
     </div>
   );
 }
