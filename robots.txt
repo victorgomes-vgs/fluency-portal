@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Allow: /assets/
+Disallow: /portal.html?*
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
 
 Sitemap: https://thefluency.studio/sitemap.xml
