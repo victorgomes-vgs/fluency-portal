@@ -762,7 +762,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.07.5");
+console.info("Fluency Portal v2026.07.07.6");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -2364,42 +2364,55 @@ function WhatsAppFloat(){
 const IVI_TUTORIAL_STUDENT=`**Tutorial rápido do Portal** 🎓
 
 **Início** — visão geral: progresso, financeiro e atalhos.
-**Trilha** — suas lições por módulo. Clique na aula para abrir lição online, tarefa, PDF ou aula ao vivo.
+**Trilha** — lições por módulo. Cada lição pode ter: Lição Online, Tarefa, PDF e Aula ao Vivo. Concluídas aparecem em verde.
 **Materiais** — PDFs e recursos extras por módulo.
-**Diário** — registro de cada aula: presença, avaliação e observações.
-**Financeiro** — mensalidades, vencimentos e comprovantes.
-**Calendário** — suas aulas previstas no mês.
-**Contato / Agendamento** — WhatsApp do Victor e link para agendar.
+**Diário** — histórico oficial de cada aula: presença, avaliação (F/A/L/E) e observações do professor.
+**Financeiro** — mensalidades, vencimentos, status e comprovantes (boleto/Pix).
+**Calendário** — aulas previstas no mês, conforme seu plano de estudos.
+**Contato / Agendamento** — WhatsApp do Victor e link para marcar ou remarcar aulas.
 
-Dica: use o ícone do sol/lua no topo para alternar tema claro ou escuro.`;
+Dica: use o ícone de sol/lua no topo para alternar tema claro, escuro ou automático — sua preferência fica salva.`;
 
 const IVI_KB=[
-  {keys:["tutorial","como usar","usar o portal","navegar","primeiro acesso","ajuda portal"],audience:["student","all"],answer:IVI_TUTORIAL_STUDENT},
-  {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online"],audience:["student","all"],answer:"Sua **Trilha** mostra toda a jornada até a fluência, dividida em módulos. Toque em uma lição para ver links de **Lição Online**, **Tarefa**, **PDF** e **Aula ao Vivo**. Lições concluídas ficam destacadas em verde. 🚀"},
-  {keys:["tarefa","homework","dever"],audience:["student","all"],answer:"As tarefas ficam na **Trilha** — abra a lição correspondente e clique em **Tarefa Online**. Se não aparecer, a tarefa ainda não foi liberada pelo professor."},
-  {keys:["material","pdf","drive","materiais"],audience:["student","all"],answer:"Acesse **Materiais** no menu ou abra a lição na **Trilha** e use os botões **Lição PDF** / **Material Completo**. 📚"},
-  {keys:["diário","diario","presença","presenca","falta","reposição"],audience:["student","all"],answer:"O **Diário** registra cada aula com data, presença, avaliação (F/A/L/E) e observações. É o histórico oficial do seu curso."},
-  {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. Dúvidas sobre valores ou negociação? Fale com o Victor pelo WhatsApp."},
-  {keys:["calendário","calendario","agenda de aulas","próxima aula"],audience:["student","all"],answer:"O **Calendário** mostra suas aulas previstas no mês, com base no seu plano de estudos. Você também pode agendar reposições pelo link em **Agendamento**."},
-  {keys:["agendar","agendamento","marcar aula","reposição"],audience:["student","all"],answer:`Para agendar ou remarcar, use **Agendamento** no portal ou este link: ${SCHED_URL}`},
-  {keys:["professor","victor","whatsapp","contato","falar"],audience:["all"],answer:`O professor Victor Gomes atende pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}`},
-  {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola"],audience:["visitor","all"],answer:`Que ótimo! 🎉 Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
-  {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa"],audience:["visitor","all"],answer:"Os valores dependem do programa escolhido (individual, Flash Talk, Corporate Speech etc.) e da frequência das aulas. A aula demonstrativa é **gratuita** — o Victor monta uma proposta personalizada. Chame no WhatsApp!"},
-  {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer"],audience:["visitor","all"],answer:"A **aula demonstrativa é gratuita**! É a melhor forma de conhecer o método PEH 5.0 e ver se a Fluency combina com você. Agende pelo site thefluency.studio ou WhatsApp."},
-  {keys:["método","metodo","peh","como funciona","metodologia","ensino"],audience:["all"],answer:"A Fluency Studio usa o método **PEH 5.0** (Personalizado, Estratégico e Humanizado) do professor Victor Gomes — 20 anos de experiência. Combina Input/Output, trilha estruturada e acompanhamento individual rumo à fluência."},
-  {keys:["curso","programa","flash talk","corporate","foundation","módulo de aula"],audience:["visitor","all"],answer:"A escola oferece programas para objetivos diferentes: **Fluency Foundation**, **Flash Talk**, **Corporate Speech** e aulas individuais personalizadas. Veja todos em thefluency.studio ou pergunte ao Victor no WhatsApp."},
-  {keys:["nível","nivel","cefr","a1","b1","teste de nivel"],audience:["all"],answer:"Os níveis seguem o **CEFR** (A1 a C2). Na aula demonstrativa o Victor avalia sua fluência real — não é prova, é conversa estratégica para montar sua trilha."},
-  {keys:["inglês","ingles","grammar","gramática","gramatica","vocabulário","pronúncia"],audience:["all"],answer:"Posso ajudar com dúvidas de inglês! Me diga o tema (tempos verbais, phrasal verbs, pronúncia…) e explico de forma clara. Para aprofundar, combine com suas lições na Trilha."},
+  {keys:["tutorial","como usar","usar o portal","navegar","primeiro acesso","ajuda portal","nao sei mexer","não sei mexer","me ensina","cadê minhas aulas","onde vejo progresso"],audience:["student","all"],answer:IVI_TUTORIAL_STUDENT},
+  {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online","onde estao minhas licoes","cadê a próxima lição","proxima licao"],audience:["student","all"],answer:"Sua **Trilha** mostra toda a jornada até a fluência, dividida em módulos. Toque em uma lição para ver links de **Lição Online**, **Tarefa**, **PDF** e **Aula ao Vivo**. Lições concluídas ficam destacadas em verde. 🚀"},
+  {keys:["tarefa","homework","dever","tarefa de casa","nao encontro homework","tarefa nao aparece"],audience:["student","all"],answer:"As tarefas ficam na **Trilha** — abra a lição correspondente e clique em **Tarefa Online**. Se não aparecer, o professor ainda não liberou aquela tarefa."},
+  {keys:["material","pdf","drive","materiais","baixar pdf","material completo","preciso do material"],audience:["student","all"],answer:"Acesse **Materiais** no menu ou abra a lição na **Trilha** e use os botões **Lição PDF** / **Material Completo**. 📚"},
+  {keys:["diário","diario","presença","presenca","falta","reposição","historico de aulas","minhas faltas","avaliacao da aula"],audience:["student","all"],answer:"O **Diário** registra cada aula com data, presença, avaliação (F/A/L/E) e observações. É o histórico oficial do seu curso."},
+  {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento","pagar mensalidade","parcela atrasada","atraso"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. Para negociar valores ou prazos, fale direto com o Victor — eu não tenho acesso aos seus dados financeiros individuais."},
+  {keys:["calendário","calendario","agenda de aulas","próxima aula","proxima aula","quando é minha aula","horario da aula"],audience:["student","all"],answer:"Confira em **Calendário** no menu do portal — lá aparecem suas aulas previstas no mês conforme seu plano de estudos."},
+  {keys:["agendar","agendamento","marcar aula","reposição","remarcar","desmarcar","cancelar aula","reposicao"],audience:["student","all"],answer:`Para agendar, remarcar ou pedir reposição, use **Agendamento** no portal ou este link: ${SCHED_URL}. Também pode falar direto com o Victor no WhatsApp.`},
+  {keys:["professor","victor","whatsapp","contato","falar","falar com alguem","falar com alguém","teacher_victorgomes","instagram"],audience:["all"],answer:`O professor Victor Gomes atende alunos pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}. Instagram: @teacher_victorgomes`},
+  {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola","quero ser aluno","por onde comeco","não sei por onde","nao sei por onde","processo pra começar"],audience:["visitor","all"],answer:`Que ótimo! 🎉 Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
+  {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa","é caro","e caro","tem desconto","desconto","promoção","promocao","cupom"],audience:["visitor","all"],answer:"Os valores variam por programa e frequência de aulas — nunca invento números aqui. A aula demonstrativa é **gratuita** e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos."},
+  {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer","posso testar","conhecer antes de pagar","aula demo"],audience:["visitor","all"],answer:"A **aula demonstrativa é totalmente gratuita**, sem letras miúdas! É a melhor forma de conhecer o método PEH 5.0 e ver se a Fluency combina com você. Agende pelo site thefluency.studio ou WhatsApp."},
+  {keys:["método","metodo","peh","como funciona","metodologia","ensino","peh 5.0","por que escolher","como as aulas funcionam"],audience:["all"],answer:"A Fluency Studio usa o método exclusivo **PEH 5.0** do Victor Gomes:\n\n**P — Personalizado:** diagnóstico completo antes de qualquer aula.\n**E — Estratégico:** programa montado para seu estilo de aprendizagem.\n**H — Humanizado:** ambiente seguro para errar e tentar.\n\nNas aulas, o foco é a fala desde o primeiro dia — durante as aulas, nós só falamos."},
+  {keys:["fluency foundation","o que é foundation","programa completo","18 meses","foundation"],audience:["visitor","all"],answer:"O **Fluency Foundation** é nosso programa mais completo: fala, leitura, escrita e escuta, com fluência prevista em 18 meses (pode ser menos se você já tiver nível). Ideal para mercado de trabalho, viagens e exames internacionais. Material organizado sob medida, sem custo surpresa depois de começar."},
+  {keys:["flash talk","só quero falar","so quero falar","30 minutos","aula curta"],audience:["visitor","all"],answer:"O **Flash Talk** é para quem só quer conversação: aulas de 30 minutos, até 4x por semana, com temas do dia a dia escolhidos por você. Não precisa comprar material — é tudo apresentado na aula."},
+  {keys:["corporate speech","ingles corporativo","inglês corporativo","oratoria","oratória","apresentação em ingles","apresentacao em ingles"],audience:["visitor","all"],answer:"O **Corporate Speech** eleva sua capacidade de se expressar em inglês em ambientes de trabalho — vocabulário avançado e oratória de alto padrão. Requer nível mínimo B1. Vendido em módulos mensais avulsos."},
+  {keys:["curso","programa","módulo de aula","quais cursos","diferença entre programas","diferenca entre programas"],audience:["visitor","all"],answer:"A escola oferece três programas principais: **Fluency Foundation** (completo, 18 meses), **Flash Talk** (conversação, 30 min) e **Corporate Speech** (inglês corporativo, B1+). Veja todos em thefluency.studio ou pergunte ao Victor no WhatsApp."},
+  {keys:["premium","interactive","individual ou grupo","aula em grupo","aula individual","modalidade"],audience:["visitor","all"],answer:"Temos duas modalidades: **Premium** (só você e o professor) e **Interactive** (você e mais 2 ou 3 colegas, sempre em grupos reduzidos)."},
+  {keys:["quanto tempo","quanto tempo demora","quanto tempo pra ficar fluente","fluência em quanto tempo"],audience:["visitor","all"],answer:"No Fluency Foundation, a previsão é de 18 meses para fluência a partir da lição 1 — pode ser menos se você já tiver uma base e for nivelado direto num módulo mais avançado."},
+  {keys:["nível","nivel","cefr","a1","b1","c2","teste de nivel","prova de nivelamento","qual meu nivel"],audience:["all"],answer:"Os níveis seguem o **CEFR** (A1 a C2). Na aula demonstrativa o Victor avalia sua fluência de forma conversacional — não é prova, é conversa estratégica para montar sua trilha."},
+  {keys:["fluency studio","sobre a escola","quem é vocês","escola online","ao vivo","gravada","aulas gravadas"],audience:["visitor","all"],answer:"A **Fluency Studio** é uma escola de inglês 100% online, com aulas **ao vivo** (nunca gravadas), individuais ou em grupos reduzidos, do professor Victor Gomes. Slogan: *Fale, entenda e evolua com estratégia.*"},
+  {keys:["formação","formacao","experiencia","experiência","quem é o professor","victor gomes","ufscar","toefl","toeic"],audience:["visitor","all"],answer:"**Victor Gomes** — formado em Letras, pós-graduado em Ensino de Língua Estrangeira, Metodologias Ativas e Tecnologias pela UFScar. Morou meses nos EUA. 20 anos de carreira em escolas de idiomas e bilíngues/internacionais (Anglo, Objetivo, entre outras). Certificações TOEFL e TOEIC."},
+  {keys:["horario","horário","que horas","horario fixo","disponibilidade"],audience:["visitor","all"],answer:"Os horários são definidos conforme a disponibilidade do professor e do aluno. Uma vez fechado, o horário fica **fixo** — você se torna dono do horário."},
+  {keys:["contrato","multa","cancelar curso","fidelização","fidelizacao"],audience:["visitor","all"],answer:"O contrato é justo e parcelado. **Não há multas** — tudo que é pago corresponde a aulas realizadas."},
+  {keys:["frequencia","frequência","quantas vezes por semana","1x por semana","2x por semana","3x por semana","4x por semana","60 minutos","aula de 60"],audience:["visitor","all"],answer:"Sugestões de frequência:\n• **1x/semana** — manter o nível\n• **2x/semana** — equilíbrio (recomendado)\n• **3x/semana** — evolução mais rápida\n• **4x/semana** — intensivo\nAulas de **30 min** (Flash Talk) ou **60 min** (Foundation) conforme seu objetivo."},
+  {keys:["material didático","material didatico","comprar livro","livro de ingles","custo do material"],audience:["visitor","all"],answer:"No **Flash Talk** o material é apresentado na aula — não precisa comprar. No **Fluency Foundation**, o material é organizado personalizadamente no atendimento, sem surpresas de custo depois de começar. É proibido acrescentar materiais durante o curso."},
+  {keys:["inglês","ingles","grammar","gramática","gramatica","vocabulário","pronúncia","phrasal verb","phrasal verbs"],audience:["all"],answer:"Posso ajudar com dúvidas de inglês! Me diga o tema (tempos verbais, phrasal verbs, pronúncia…) e explico de forma clara. Continue praticando nas lições da sua **Trilha** também!"},
+  {keys:["make ou do","make vs do","diferenca make do","diferença make do"],audience:["all"],answer:"Ótima dúvida clássica! **Make** é usado para criar/produzir algo (make a cake, make a decision). **Do** é usado para atividades/tarefas genéricas (do homework, do the dishes). Vale revisar isso na sua Trilha também!"},
+  {keys:["present perfect","ja fiz","já fiz","have has"],audience:["all"],answer:"O **Present Perfect** (have/has + particípio) conecta o passado com o presente — usado quando o momento exato não importa ou a ação ainda tem efeito agora (I have finished my homework). Quer praticar mais? Isso costuma aparecer nas lições intermediárias da Trilha!"},
+  {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem problemas! Fale direto com o Victor pelo WhatsApp que ele reseta seu acesso rapidinho: ${WPP_VICTOR}`},
   {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
   {keys:["agenda admin","painel agenda","google calendar sync"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e calendário unificado. Use **Sincronizar Google** para puxar eventos do calendário do Victor."},
-  {keys:["tema","dark","light","escuro","claro"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
-  {keys:["senha","login","email","entrar","acesso"],audience:["visitor","student","all"],answer:"Use o **email e senha** fornecidos na matrícula. Se esqueceu a senha ou não consegue entrar, fale com o Victor pelo WhatsApp que ele resolve."},
+  {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
 ];
 
 function iviWelcome(mode){
-  if(mode==="visitor")return "Olá! Sou a **iVi** 👋 Assistente virtual da Fluency Studio. Posso explicar nossos cursos, como se matricular, agendar aula demonstrativa ou tirar dúvidas sobre inglês. Como posso ajudar?";
+  if(mode==="visitor")return "Olá! Sou a **iVi** 👋 Assistente virtual da Fluency Studio. Posso explicar nossos cursos, o método PEH 5.0, como se matricular ou agendar aula demonstrativa gratuita. Também tiro dúvidas gerais de inglês. Como posso ajudar?";
   if(mode==="admin")return "Olá, Victor! Sou a **iVi** — sua assistente no painel admin. Posso ajudar com cadastro de alunos, agenda, financeiro e uso do portal. O que precisa?";
-  return "Olá! Sou a **iVi** 👋 Sua assistente no portal. Posso ensinar a usar o site, tirar dúvidas sobre suas aulas, financeiro, trilha e inglês. Quer um **tutorial rápido**? É só pedir!";
+  return "Olá! Sou a **iVi** 👋 Sua assistente no portal. Posso ensinar a usar o site, tirar dúvidas sobre trilha, financeiro, materiais e inglês. Quer um **tutorial rápido**? É só pedir!";
 }
 
 function iviQuickChips(mode){
@@ -2422,8 +2435,9 @@ function iviRespond(question,mode){
   });
   if(best&&bestScore>0)return best.answer;
   if(/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi)$/i.test(q.trim()))return iviWelcome(mode);
-  if(mode==="visitor")return "Boa pergunta! Para informações sobre matrícula, valores e programas, o Victor atende pelo WhatsApp — é a forma mais rápida de ter uma resposta personalizada. Posso ajudar com mais alguma coisa sobre a escola?";
-  return "Entendi! Não tenho essa resposta específica ainda, mas o professor Victor pode ajudar pelo WhatsApp. Enquanto isso, pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal** — sei bastante sobre isso! 😊";
+  if(mode==="visitor")return `Boa pergunta! Para informações personalizadas sobre matrícula, valores e programas, o Victor atende pelo WhatsApp: ${WPP_SITE}. Posso ajudar com mais alguma coisa sobre a escola?`;
+  if(mode==="student")return `Não tenho essa resposta específica — e não tenho acesso aos seus dados individuais (notas, valores, datas). Para isso, fale com o Victor: ${WPP_VICTOR}. Ou pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal**!`;
+  return "Entendi! Não tenho essa resposta específica ainda. Pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal** — sei bastante sobre isso!";
 }
 
 function IVi({mode="student"}){
