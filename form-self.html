@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Aluno | Fluency Studio</title>
+  <meta name="description" content="Complete seu cadastro na Fluency Studio — escola de inglês online com método PEH 5.0." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="https://thefluency.studio/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
+      authDomain: "fluency-studio-portal.firebaseapp.com",
+      projectId: "fluency-studio-portal",
+      storageBucket: "fluency-studio-portal.firebasestorage.app",
+      messagingSenderId: "568224359300",
+      appId: "1:568224359300:web:6f4e283315deb93224b3d1",
+    });
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{height:100%;margin:0;padding:0;}
+    :root,[data-theme="light"]{
+      --bg:linear-gradient(152deg,#E0ECFF 0%,#f6faff 38%,#eef6ff 62%,#D4F7F2 100%);
+      --font:#174082;--font-muted:#3566B6;--card:rgba(255,255,255,.96);
+      --detail:rgba(224,236,255,.65);--divider:rgba(34,82,160,.20);
+      --input-bg:rgba(255,255,255,.92);--input-border:rgba(53,102,182,.28);
+      --shadow:0 10px 36px rgba(23,64,130,.11);--gradient-cta:linear-gradient(135deg,#3566B6 0%,#2252A0 45%,#187E74 100%);
+      --gradient-surface:linear-gradient(145deg,rgba(255,255,255,.98),rgba(224,236,255,.72));
+    }
+    body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 720px 480px at 8% 5%,rgba(53,102,182,.22),transparent 68%),
+                 radial-gradient(ellipse 560px 420px at 92% 88%,rgba(24,126,116,.16),transparent 70%),
+                 radial-gradient(ellipse 480px 360px at 55% 42%,rgba(134,207,255,.20),transparent 72%);
+      animation:mesh 14s ease-in-out infinite alternate;}
+    @keyframes mesh{0%{opacity:.85;transform:scale(1)}100%{opacity:1;transform:scale(1.03)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    #root{position:relative;z-index:1;}
+    .page-wrap{max-width:720px;margin:0 auto;padding:24px 16px 48px;}
+    .hero-card{background:var(--gradient-cta);border-radius:24px;padding:28px 28px 24px;color:#fff;
+      box-shadow:0 20px 50px rgba(23,64,130,.28);position:relative;overflow:hidden;margin-bottom:20px;}
+    .hero-card::after{content:'';position:absolute;top:-40%;right:-15%;width:280px;height:280px;
+      background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%);pointer-events:none;}
+    .hero-logo{height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));}
+    .form-card{background:var(--gradient-surface);border:1.5px solid rgba(53,102,182,.18);
+      border-radius:22px;box-shadow:var(--shadow);overflow:hidden;animation:slideUp .35s ease-out;}
+    .form-header{padding:18px 22px;border-bottom:1px solid var(--divider);background:rgba(255,255,255,.5);}
+    .form-body{padding:22px;max-height:none;}
+    .form-footer{padding:16px 22px;border-top:1px solid var(--divider);display:flex;gap:10px;
+      justify-content:space-between;align-items:center;flex-wrap:wrap;background:rgba(224,236,255,.35);}
+    .progress-track{display:flex;gap:6px;margin-top:14px;}
+    .progress-dot{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.28);transition:background .3s;}
+    .progress-dot.done,.progress-dot.active{background:#fff;}
+    .step-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;opacity:.8;letter-spacing:.04em;}
+    .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#0d5260;margin-bottom:5px;}
+    .form-section-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0a4a5c;
+      border-bottom:1px solid var(--divider);padding-bottom:6px;margin-bottom:12px;margin-top:18px;}
+    .form-section-title:first-child{margin-top:0;}
+    .input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);outline:none;color:var(--font);
+      font-family:'Outfit',sans-serif;border-radius:12px;padding:10px 14px;font-size:14px;}
+    .input:focus{border-color:rgba(53,102,182,.55);box-shadow:0 0 0 3px rgba(134,207,255,.35);}
+    .input:read-only{background:rgba(224,236,255,.5);color:#3566B6;cursor:default;}
+    .input-locked-wrap{position:relative;}
+    .input-locked-badge{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:800;
+      letter-spacing:.06em;text-transform:uppercase;color:#187E74;background:rgba(163,224,214,.45);
+      border:1px solid rgba(0,102,91,.25);padding:2px 7px;border-radius:99px;pointer-events:none;}
+    .btn{border:1.5px solid rgba(53,102,182,.20);background:rgba(255,255,255,.92);transition:all .15s;cursor:pointer;
+      color:var(--font);border-radius:12px;padding:10px 18px;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;}
+    .btn:hover{border-color:rgba(53,102,182,.35);box-shadow:0 4px 14px rgba(53,102,182,.12);}
+    .btn-primary{background:var(--gradient-cta);border:1px solid rgba(53,102,182,.35);color:#fff;
+      box-shadow:0 4px 18px rgba(34,82,160,.32);}
+    .btn-primary:hover{box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);}
+    .btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .err-box{background:rgba(200,60,70,.10);border:1px solid rgba(200,60,70,.30);border-radius:12px;
+      padding:10px 14px;font-size:13px;color:#c53030;margin-bottom:14px;}
+    .info-box{background:rgba(134,207,255,.18);border:1px solid rgba(53,102,182,.22);border-radius:12px;
+      padding:12px 14px;font-size:13px;color:#174082;line-height:1.55;margin-bottom:16px;}
+    .triagem-group{display:flex;flex-direction:column;gap:6px;}
+    .triagem-option{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;cursor:pointer;
+      border:1px solid var(--divider);background:var(--input-bg);font-size:13px;transition:all .13s;}
+    .triagem-option:hover{border-color:rgba(53,102,182,.35);background:rgba(134,207,255,.12);}
+    .triagem-option.selected{border-color:rgba(53,102,182,.40);background:rgba(134,207,255,.22);color:#174082;}
+    .triagem-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--input-border);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--input-bg);}
+    .triagem-option.selected .triagem-check{background:#3566B6;border-color:#3566B6;}
+    .rating-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+    .rating-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--divider);background:var(--input-bg);
+      color:var(--font-muted);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;
+      justify-content:center;transition:all .13s;}
+    .rating-btn.selected{background:linear-gradient(135deg,#3566B6,#2252A0);border-color:#2252A0;color:#fff;}
+    .day-pill{font-size:11px;padding:6px 14px;border-radius:99px;cursor:pointer;border:1.5px solid var(--divider);
+      background:var(--input-bg);font-weight:600;transition:all .13s;}
+    .day-pill.on{background:linear-gradient(135deg,rgba(163,224,214,.55),rgba(212,247,242,.8));
+      border-color:rgba(0,102,91,.35);color:#00665B;}
+    .trust-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+    .trust-chip{font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;
+      background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);}
+    .success-card{text-align:center;padding:40px 28px;animation:fadeIn .5s ease;}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#187E74,#00665B);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+      box-shadow:0 12px 32px rgba(0,102,91,.30);}
+    .peh-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+    .peh-item{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px;text-align:center;}
+    .peh-item strong{display:block;font-size:18px;font-family:'Sora',sans-serif;margin-bottom:2px;}
+    .peh-item span{font-size:10px;opacity:.85;letter-spacing:.04em;}
+    @media(max-width:520px){.peh-strip{grid-template-columns:1fr;}.form-footer{flex-direction:column;}.form-footer .btn{width:100%;text-align:center;}}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const LOGO_URL = "https://thefluency.studio/assets/logo_portal_jul2.png";
+const PORTAL_URL = "https://thefluency.studio/portal.html";
+const WPP_VICTOR = "https://wa.me/5511919756733";
+const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
+const MESES_CURTOS = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+const DIAS_SEMANA = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+const CONTRATOS = [
+  { v: "fluency_foundation", l: "Fluency Foundation" },
+  { v: "flash", l: "Flash (Just Talk)" },
+  { v: "speech", l: "Speech (Business)" },
+];
+
+const BLANK_TRIAGEM = {
+  idadeFaixa: "", estadoCivilT: "", formacao: "",
+  ocupacao: "", areaInteresse: "",
+  estudouIngles: "", ondeComo: [], qualidadeMaterial: 0, qualidadeProfessores: 0, qualidadeMetodologia: 0,
+  pontosPositivos: "", melhorias: "",
+  hobbies: {}, topicos: [], temasSemInteresse: "",
+  expectativas: [], objetivo: "", horasSemana: "", prazo: "", observacoes: "",
+};
+
+function parseUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  const dias = p.get("dias") ? p.get("dias").split(",").map(d => d.trim()).filter(Boolean) : [];
+  return {
+    contrato: p.get("contrato") || "",
+    duracao: p.get("duracao") || "",
+    dataInicio: p.get("dataInicio") || "",
+    licaoInicio: p.get("licaoInicio") || "",
+    diasAulas: dias,
+    horarioAulas: p.get("horario") || "",
+    valorCheio: p.get("valorCheio") || "",
+    descontos: p.get("descontos") || "",
+    valorFinal: p.get("valorFinal") || "",
+    diaVencimento: p.get("diaVencimento") || "",
+    numParcelas: p.get("numParcelas") || "",
+    locked: p.get("locked") === "1",
+  };
+}
+
+function gerarParcelas(dataInicio, diaVenc, valorFinal, numParcelas) {
+  if (!dataInicio || !diaVenc || !valorFinal || !numParcelas) return [];
+  const base = new Date(dataInicio + "T12:00:00");
+  const parcelas = [];
+  for (let i = 0; i < numParcelas; i++) {
+    const d = new Date(base.getFullYear(), base.getMonth() + i, parseInt(diaVenc, 10));
+    const mesStr = MESES_CURTOS[d.getMonth()] + "/" + String(d.getFullYear()).slice(2);
+    parcelas.push({
+      id: Date.now().toString() + i,
+      mes: mesStr,
+      dataVencimento: d.toISOString().slice(0, 10),
+      valor: parseFloat(valorFinal) || 0,
+      valorDesconto: 0,
+      status: "a_vencer",
+      comprovante: "",
+      boletoPix: "",
+      dataPagamento: "",
+    });
+  }
+  return parcelas;
+}
+
+function LockedInput({ label, value, onChange, locked, type = "text", placeholder, min, max }) {
+  const isLocked = locked && value;
+  return (
+    <div>
+      <label className="form-label">{label}</label>
+      <div className="input-locked-wrap">
+        <input
+          type={type}
+          className="input"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          readOnly={isLocked}
+          placeholder={placeholder}
+          min={min}
+          max={max}
+        />
+        {isLocked && <span className="input-locked-badge">Contrato</span>}
+      </div>
+    </div>
+  );
+}
+
+const STEPS = ["Boas-vindas", "Dados Pessoais", "Seu Programa", "Perfil do Aluno"];
+
+function FormSelf() {
+  const urlPrefill = useMemo(() => parseUrlParams(), []);
+  const contractLocked = urlPrefill.locked;
+
+  const [step, setStep] = useState(0);
+  const [dados, setDados] = useState({
+    foto: "",
+    nome: "",
+    nacionalidade: "Brasileira",
+    estadoCivil: "",
+    profissao: "",
+    dataNasc: "",
+    cpf: "",
+    rg: "",
+    email: "",
+    telefone: "",
+    telefone2: "",
+    endereco: "",
+    senha: "",
+    senha2: "",
+    contrato: urlPrefill.contrato || "fluency_foundation",
+    duracao: urlPrefill.duracao || "",
+    dataInicio: urlPrefill.dataInicio || "",
+    licaoInicio: urlPrefill.licaoInicio || "1",
+    diasAulas: urlPrefill.diasAulas.length ? urlPrefill.diasAulas : [],
+    horarioAulas: urlPrefill.horarioAulas || "",
+    valorCheio: urlPrefill.valorCheio || "",
+    descontos: urlPrefill.descontos || "",
+    valorFinal: urlPrefill.valorFinal || "",
+    diaVencimento: urlPrefill.diaVencimento || "",
+    numParcelas: urlPrefill.numParcelas || "18",
+  });
+  const [triagem, setTriagem] = useState(BLANK_TRIAGEM);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(false);
+
+  function setD(k, v) { setDados(p => ({ ...p, [k]: v })); }
+  function setT(k, v) { setTriagem(p => ({ ...p, [k]: v })); }
+  function toggleDia(d) {
+    if (contractLocked && urlPrefill.diasAulas.length) return;
+    setDados(p => ({
+      ...p,
+      diasAulas: p.diasAulas.includes(d) ? p.diasAulas.filter(x => x !== d) : [...p.diasAulas, d],
+    }));
+  }
+
+  function TriagemOption({ label, field, value }) {
+    const sel = triagem[field] === value;
+    return (
+      <div className={"triagem-option" + (sel ? " selected" : "")} onClick={() => setT(field, value)}>
+        <div className="triagem-check">{sel && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}</div>
+        {label}
+      </div>
+    );
+  }
+  function TriagemMulti({ label, field, value }) {
+    const arr = triagem[field] || [];
+    const sel = arr.includes(value);
+    return (
+      <div className={"triagem-option" + (sel ? " selected" : "")} onClick={() => setT(field, sel ? arr.filter(x => x !== value) : [...arr, value])}>
+        <div className="triagem-check">{sel && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}</div>
+        {label}
+      </div>
+    );
+  }
+  function Rating({ field, label }) {
+    return (
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--font-muted)", marginBottom: 4 }}>{label}</div>
+        <div className="rating-row">
+          {[1, 2, 3, 4, 5].map(n => (
+            <button key={n} type="button" className={"rating-btn" + (triagem[field] === n ? " selected" : "")} onClick={() => setT(field, n)}>{n}</button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function validateStep(s) {
+    setErr("");
+    if (s === 1) {
+      if (!dados.nome.trim()) return "Nome completo é obrigatório.";
+      if (!dados.email.trim()) return "Email é obrigatório.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return "Informe um email válido.";
+      if (!dados.telefone.trim()) return "Telefone / WhatsApp é obrigatório.";
+      if (!dados.senha || dados.senha.length < 6) return "Crie uma senha com pelo menos 6 caracteres.";
+      if (dados.senha !== dados.senha2) return "As senhas não coincidem.";
+    }
+    if (s === 2) {
+      if (!dados.contrato) return "Selecione o tipo de contrato.";
+      if (!dados.dataInicio) return "Informe a data de início das aulas.";
+    }
+    return "";
+  }
+
+  function nextStep() {
+    const v = validateStep(step);
+    if (v) { setErr(v); return; }
+    setErr("");
+    setStep(s => Math.min(s + 1, 3));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function prevStep() {
+    setErr("");
+    setStep(s => Math.max(s - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function handleSubmit() {
+    const v = validateStep(1);
+    if (v) { setErr(v); setStep(1); return; }
+    setSaving(true);
+    setErr("");
+    try {
+      const email = dados.email.trim().toLowerCase();
+      const cred = await auth.createUserWithEmailAndPassword(email, dados.senha);
+      const uid = cred.user.uid;
+
+      const parcelas = gerarParcelas(
+        dados.dataInicio,
+        dados.diaVencimento,
+        dados.valorFinal,
+        parseInt(dados.numParcelas, 10) || 18
+      );
+      const financeiro = {
+        ...FINANCEIRO_DEFAULT,
+        parcelas: parcelas.length ? parcelas : FINANCEIRO_DEFAULT.parcelas,
+      };
+
+      const programName = dados.contrato === "fluency_foundation"
+        ? "Fluency Foundation"
+        : dados.contrato === "flash" ? "Flash (Just Talk)" : "Speech (Business)";
+
+      const payload = {
+        name: dados.nome.trim(),
+        email,
+        phone: dados.telefone.trim(),
+        telefone2: dados.telefone2.trim(),
+        cpf: dados.cpf.trim(),
+        rg: dados.rg.trim(),
+        dataNasc: dados.dataNasc,
+        estadoCivil: dados.estadoCivil,
+        profissao: dados.profissao.trim(),
+        nacionalidade: dados.nacionalidade.trim(),
+        endereco: dados.endereco.trim(),
+        foto: dados.foto.trim(),
+        dataCadastro: new Date().toISOString().slice(0, 10),
+        contrato: dados.contrato,
+        duracao: dados.duracao.trim(),
+        diasAulas: dados.diasAulas,
+        horarioAulas: dados.horarioAulas.trim(),
+        valorCheio: parseFloat(dados.valorCheio) || 0,
+        descontos: parseFloat(dados.descontos) || 0,
+        valorFinal: parseFloat(dados.valorFinal) || 0,
+        diaVencimento: parseInt(dados.diaVencimento, 10) || 1,
+        dataInicio: dados.dataInicio || "",
+        licaoInicio: parseInt(dados.licaoInicio, 10) || 1,
+        numParcelas: parseInt(dados.numParcelas, 10) || 18,
+        status: "ativo",
+        triagem,
+        level: "A1",
+        program: programName,
+        coach: "Victor Gomes",
+        birthday: dados.dataNasc || "",
+        profession: dados.profissao.trim(),
+        links: [
+          { id: 1, label: "Materiais (Drive)", url: "https://drive.google.com/" },
+          { id: 2, label: "Tarefas (Classroom)", url: "https://classroom.google.com/" },
+        ],
+        trilha: {},
+        financeiro,
+        modulosOcultos: [],
+        cadastroOrigem: "form-self",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      await db.collection("students").doc(uid).set(payload);
+      await db.collection("users").doc(uid).set({
+        name: dados.nome.trim(),
+        email,
+        role: "student",
+        studentId: uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await auth.signOut();
+      setDone(true);
+      setStep(4);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      let msg = "Erro ao salvar cadastro. Tente novamente.";
+      if (e.code === "auth/email-already-in-use") msg = "Este email já está cadastrado. Use outro email ou acesse o portal para entrar.";
+      else if (e.code === "auth/weak-password") msg = "A senha deve ter pelo menos 6 caracteres.";
+      else if (e.code === "auth/invalid-email") msg = "Email inválido.";
+      else if (e.message) msg = e.message;
+      setErr(msg);
+      setSaving(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <div className="page-wrap">
+        <div className="hero-card" style={{ marginBottom: 24 }}>
+          <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
+          <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "14px 0 6px" }}>Cadastro concluído!</h1>
+          <p style={{ fontSize: 14, opacity: .9, lineHeight: 1.55, margin: 0 }}>Bem-vindo(a) à Fluency Studio. Seu perfil já está no sistema e o professor Victor foi notificado.</p>
+        </div>
+        <div className="form-card">
+          <div className="success-card">
+            <div className="success-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Tudo pronto, {dados.nome.split(" ")[0]}!</h2>
+            <p style={{ color: "var(--font-muted)", fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
+              Use o email <strong>{dados.email}</strong> e a senha que você criou para acessar o portal do aluno.
+            </p>
+            <a href={PORTAL_URL} className="btn btn-primary" style={{ display: "inline-block", textDecoration: "none", marginBottom: 12 }}>
+              Acessar o Portal do Aluno →
+            </a>
+            <p style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 16 }}>
+              Dúvidas? Fale com o Victor no <a href={WPP_VICTOR} target="_blank" rel="noopener" style={{ color: "#187E74", fontWeight: 700 }}>WhatsApp</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-wrap">
+      <div className="hero-card">
+        <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
+        <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, margin: "14px 0 6px" }}>
+          {step === 0 ? "Bem-vindo(a) à Fluency Studio" : "Cadastro do Aluno"}
+        </h1>
+        <p style={{ fontSize: 14, opacity: .88, lineHeight: 1.55, margin: 0 }}>
+          {step === 0
+            ? "Complete seu cadastro para iniciar sua jornada rumo à fluência em inglês."
+            : "Preencha com atenção — usamos essas informações para personalizar suas aulas."}
+        </p>
+        {step > 0 && (
+          <>
+            <div className="progress-track">
+              {[1, 2, 3].map(i => (
+                <div key={i} className={"progress-dot" + (step >= i ? " active" : "") + (step > i ? " done" : "")} />
+              ))}
+            </div>
+            <div className="step-labels">
+              <span>Dados</span><span>Programa</span><span>Perfil</span>
+            </div>
+          </>
+        )}
+        {step === 0 && (
+          <div className="peh-strip">
+            <div className="peh-item"><strong>P</strong><span>Personalizado</span></div>
+            <div className="peh-item"><strong>E</strong><span>Estratégico</span></div>
+            <div className="peh-item"><strong>H</strong><span>Humanizado</span></div>
+          </div>
+        )}
+        <div className="trust-row">
+          <span className="trust-chip">🔒 Dados protegidos</span>
+          <span className="trust-chip">🎯 Método PEH 5.0</span>
+          <span className="trust-chip">🎓 Aulas ao vivo</span>
+        </div>
+      </div>
+
+      <div className="form-card">
+        {step === 0 && (
+          <>
+            <div className="form-body">
+              <div className="info-box">
+                <strong>Parabéns pela decisão!</strong><br />
+                Este formulário leva cerca de 8 minutos. Ao final, seu acesso ao portal será criado automaticamente e o professor Victor receberá seu perfil completo para personalizar suas aulas desde o primeiro dia.
+              </div>
+              <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.65 }}>
+                Você vai preencher três etapas: <strong>dados pessoais</strong>, <strong>informações do seu programa</strong> e <strong>perfil de aprendizagem</strong> — as mesmas perguntas do cadastro oficial da escola.
+              </p>
+            </div>
+            <div className="form-footer" style={{ justifyContent: "flex-end" }}>
+              <button className="btn btn-primary" onClick={() => setStep(1)}>Começar cadastro →</button>
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <div className="form-header">
+              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Dados Pessoais</div>
+              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Identificação, contato e acesso ao portal</div>
+            </div>
+            <div className="form-body">
+              {err && <div className="err-box">{err}</div>}
+
+              <div className="form-section-title">Identificação</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="form-label">Foto (URL) — opcional</label>
+                  <input className="input" placeholder="https://... (link da sua foto)" value={dados.foto} onChange={e => setD("foto", e.target.value)} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="form-label">Nome Completo *</label>
+                  <input className="input" placeholder="Nome completo" value={dados.nome} onChange={e => setD("nome", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Nacionalidade</label>
+                  <input className="input" placeholder="Brasileira" value={dados.nacionalidade} onChange={e => setD("nacionalidade", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Estado Civil</label>
+                  <select className="input" value={dados.estadoCivil} onChange={e => setD("estadoCivil", e.target.value)}>
+                    <option value="">Selecione...</option>
+                    {["Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "União Estável", "Outro"].map(o => <option key={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label">Profissão</label>
+                  <input className="input" placeholder="Ex: Médica, Engenheiro..." value={dados.profissao} onChange={e => setD("profissao", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Data de Nascimento</label>
+                  <input type="date" className="input" value={dados.dataNasc} onChange={e => setD("dataNasc", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">CPF</label>
+                  <input className="input" placeholder="000.000.000-00" value={dados.cpf} onChange={e => setD("cpf", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">RG</label>
+                  <input className="input" placeholder="00.000.000-0" value={dados.rg} onChange={e => setD("rg", e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-section-title">Contato</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="form-label">Email *</label>
+                  <input type="email" className="input" placeholder="seuemail@exemplo.com" value={dados.email} onChange={e => setD("email", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Telefone / WhatsApp *</label>
+                  <input className="input" placeholder="+55 11 9..." value={dados.telefone} onChange={e => setD("telefone", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Telefone 2</label>
+                  <input className="input" placeholder="+55 11 9..." value={dados.telefone2} onChange={e => setD("telefone2", e.target.value)} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="form-label">Endereço</label>
+                  <input className="input" placeholder="Rua, número, bairro, cidade — UF" value={dados.endereco} onChange={e => setD("endereco", e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-section-title">Acesso ao Portal</div>
+              <div className="info-box" style={{ marginTop: 0 }}>
+                Crie uma senha para entrar no portal do aluno. Você usará este email e senha para acompanhar suas aulas, trilha e financeiro.
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="form-label">Senha *</label>
+                  <input type="password" className="input" placeholder="Mínimo 6 caracteres" value={dados.senha} onChange={e => setD("senha", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Confirmar Senha *</label>
+                  <input type="password" className="input" placeholder="Repita a senha" value={dados.senha2} onChange={e => setD("senha2", e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="form-footer">
+              <button className="btn" onClick={prevStep}>← Voltar</button>
+              <button className="btn btn-primary" onClick={nextStep}>Seu Programa →</button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className="form-header">
+              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Seu Programa</div>
+              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Informações do contrato e cronograma</div>
+            </div>
+            <div className="form-body">
+              {err && <div className="err-box">{err}</div>}
+              {contractLocked && (
+                <div className="info-box">Os campos marcados como <strong>Contrato</strong> foram definidos pelo professor Victor e não podem ser alterados.</div>
+              )}
+
+              <div className="form-section-title">Contrato</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="form-label">Tipo de Contrato *</label>
+                  {contractLocked && urlPrefill.contrato ? (
+                    <LockedInput label="" value={CONTRATOS.find(c => c.v === dados.contrato)?.l || dados.contrato} onChange={() => {}} locked />
+                  ) : (
+                    <select className="input" value={dados.contrato} onChange={e => setD("contrato", e.target.value)}>
+                      {CONTRATOS.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
+                    </select>
+                  )}
+                </div>
+                <LockedInput label="Duração" value={dados.duracao} onChange={v => setD("duracao", v)} locked={contractLocked} placeholder="Ex: 18 meses" />
+                <LockedInput label="Data de Início *" value={dados.dataInicio} onChange={v => setD("dataInicio", v)} locked={contractLocked} type="date" />
+                <div>
+                  <label className="form-label">Lição de Início (1–150)</label>
+                  {contractLocked && urlPrefill.licaoInicio ? (
+                    <LockedInput label="" value={dados.licaoInicio} onChange={() => {}} locked />
+                  ) : (
+                    <select className="input" value={dados.licaoInicio} onChange={e => setD("licaoInicio", e.target.value)}>
+                      {Array.from({ length: 150 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
+                    </select>
+                  )}
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="form-label">Dias das Aulas</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
+                    {DIAS_SEMANA.map(d => (
+                      <button key={d} type="button" onClick={() => toggleDia(d)} className={"day-pill" + (dados.diasAulas.includes(d) ? " on" : "")}>{d}</button>
+                    ))}
+                  </div>
+                </div>
+                <LockedInput label="Horário das Aulas" value={dados.horarioAulas} onChange={v => setD("horarioAulas", v)} locked={contractLocked} placeholder="Ex: 19:00 – 20:00" />
+                <LockedInput label="Valor Cheio (R$)" value={dados.valorCheio} onChange={v => setD("valorCheio", v)} locked={contractLocked} type="number" placeholder="0,00" />
+                <LockedInput label="Descontos (R$)" value={dados.descontos} onChange={v => setD("descontos", v)} locked={contractLocked} type="number" placeholder="0,00" />
+                <LockedInput label="Valor Final (R$)" value={dados.valorFinal} onChange={v => setD("valorFinal", v)} locked={contractLocked} type="number" placeholder="0,00" />
+                <LockedInput label="Dia de Vencimento" value={dados.diaVencimento} onChange={v => setD("diaVencimento", v)} locked={contractLocked} type="number" min="1" max="31" placeholder="Ex: 10" />
+                <LockedInput label="Nº de Parcelas" value={dados.numParcelas} onChange={v => setD("numParcelas", v)} locked={contractLocked} type="number" min="1" placeholder="18" />
+              </div>
+            </div>
+            <div className="form-footer">
+              <button className="btn" onClick={prevStep}>← Dados Pessoais</button>
+              <button className="btn btn-primary" onClick={nextStep}>Perfil do Aluno →</button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <div className="form-header">
+              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Perfil do Aluno</div>
+              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Personalização da sua experiência no curso</div>
+            </div>
+            <div className="form-body">
+              {err && <div className="err-box">{err}</div>}
+              <p style={{ fontSize: 12, color: "var(--font-muted)", marginBottom: 16, fontStyle: "italic" }}>
+                Todas as informações serão usadas exclusivamente para personalizar a experiência no curso.
+              </p>
+
+              <div className="form-section-title">1. Faixa Etária</div>
+              <div className="triagem-group">
+                {["Menos de 18 anos", "18–24 anos", "25–34 anos", "35–44 anos", "45–54 anos", "55+ anos"].map(v => (
+                  <TriagemOption key={v} label={v} field="idadeFaixa" value={v} />
+                ))}
+              </div>
+
+              <div className="form-section-title">2. Formação</div>
+              <div className="triagem-group">
+                {["Ensino Fundamental Incompleto", "Ensino Fundamental Completo", "Ensino Médio Incompleto", "Ensino Médio Completo", "Ensino Superior Incompleto", "Ensino Superior Completo", "Pós-graduação ou mais"].map(v => (
+                  <TriagemOption key={v} label={v} field="formacao" value={v} />
+                ))}
+              </div>
+
+              <div className="form-section-title">3. Situação Profissional</div>
+              <div className="triagem-group">
+                {["Estudante", "Autônomo", "Funcionário público", "CLT", "Empreendedor", "Outro"].map(v => (
+                  <TriagemOption key={v} label={v} field="ocupacao" value={v} />
+                ))}
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <label className="form-label">Área de interesse (se não estiver trabalhando)</label>
+                <input className="input" placeholder="Ex: Marketing, Saúde..." value={triagem.areaInteresse} onChange={e => setT("areaInteresse", e.target.value)} />
+              </div>
+
+              <div className="form-section-title">4. Experiência com Inglês</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Já estudou inglês antes?</label>
+                <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                  {["Sim", "Não"].map(v => (
+                    <button key={v} type="button" onClick={() => setT("estudouIngles", v)}
+                      className={"day-pill" + (triagem.estudouIngles === v ? " on" : "")}>{v}</button>
+                  ))}
+                </div>
+              </div>
+              {triagem.estudouIngles === "Sim" && (
+                <>
+                  <div style={{ marginBottom: 8 }}>
+                    <label className="form-label">Onde estudou (pode marcar mais de um)</label>
+                    <div className="triagem-group" style={{ marginTop: 4 }}>
+                      {["Escola regular", "Curso de idiomas", "Online", "Outro"].map(v => (
+                        <TriagemMulti key={v} label={v} field="ondeComo" value={v} />
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <label className="form-label">Avaliação da experiência anterior (1 = muito ruim · 5 = excelente)</label>
+                    <div style={{ marginTop: 8 }}>
+                      <Rating field="qualidadeMaterial" label="Qualidade do material" />
+                      <Rating field="qualidadeProfessores" label="Professores" />
+                      <Rating field="qualidadeMetodologia" label="Metodologia" />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <label className="form-label">Pontos positivos</label>
+                    <textarea className="input" rows={2} style={{ resize: "vertical" }} value={triagem.pontosPositivos} onChange={e => setT("pontosPositivos", e.target.value)} />
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <label className="form-label">O que poderia ter sido melhor</label>
+                    <textarea className="input" rows={2} style={{ resize: "vertical" }} value={triagem.melhorias} onChange={e => setT("melhorias", e.target.value)} />
+                  </div>
+                </>
+              )}
+
+              <div className="form-section-title">5. Interesses e Hobbies</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Selecione os tópicos de interesse</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["Cultura (artes, história, tradições)", "Tecnologia", "Esportes", "Moda e tendências", "Negócios e economia", "Sustentabilidade e meio ambiente"].map(v => (
+                    <TriagemMulti key={v} label={v} field="topicos" value={v} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <label className="form-label">Temas que não gosta de conversar</label>
+                <textarea className="input" rows={2} style={{ resize: "vertical" }} placeholder="Ex: Política, Religião..." value={triagem.temasSemInteresse} onChange={e => setT("temasSemInteresse", e.target.value)} />
+              </div>
+
+              <div className="form-section-title">6. Expectativas</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Objetivo principal</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["Conseguir um emprego", "Falar fluentemente em viagens", "Passar em testes de proficiência", "Melhorar minha confiança na comunicação", "Outro"].map(v => (
+                    <TriagemOption key={v} label={v} field="objetivo" value={v} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Horas por semana disponíveis</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["Menos de 1 hora", "1–2 horas", "3–4 horas", "Mais de 4 horas"].map(v => (
+                    <TriagemOption key={v} label={v} field="horasSemana" value={v} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Prazo esperado para atingir os objetivos</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["3 meses", "6 meses", "1 ano", "Mais de 1 ano"].map(v => (
+                    <TriagemOption key={v} label={v} field="prazo" value={v} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="form-label">Observações e motivações adicionais</label>
+                <textarea className="input" rows={3} style={{ resize: "vertical" }} placeholder="Compartilhe o que quiser sobre suas motivações ou expectativas..." value={triagem.observacoes} onChange={e => setT("observacoes", e.target.value)} />
+              </div>
+            </div>
+            <div className="form-footer">
+              <button className="btn" onClick={prevStep} disabled={saving}>← Seu Programa</button>
+              <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
+                {saving ? "Salvando..." : "✓ Finalizar Cadastro"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <p style={{ textAlign: "center", fontSize: 11, color: "var(--font-muted)", marginTop: 20 }}>
+        Fluency Studio · Fale, entenda e evolua com estratégia
+      </p>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<FormSelf />);
+</script>
+</body>
+</html>
