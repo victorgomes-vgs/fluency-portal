@@ -865,6 +865,9 @@ const ICONS = {
   "chevron-left":  <polyline points="15 18 9 12 15 6"/>,
   "arrow-right":   <><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>,
   "qr-code":       <><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h.01"/><path d="M20 14h.01"/><path d="M14 20h.01"/><path d="M20 20h.01"/><path d="M17 17h.01"/></>,
+  "rocket":        <><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></>,
+  "clipboard-check":<><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></>,
+  "info":          <><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>,
 };
 function Icon({name,size=18,className="",style={}}){
   const p=ICONS[name]; if(!p) return null;
@@ -2405,6 +2408,7 @@ const IVI_KB=[
   {keys:["present perfect","ja fiz","já fiz","have has"],audience:["all"],answer:"O **Present Perfect** (have/has + particípio) conecta o passado com o presente — usado quando o momento exato não importa ou a ação ainda tem efeito agora (I have finished my homework). Quer praticar mais? Isso costuma aparecer nas lições intermediárias da Trilha!"},
   {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem problemas! Fale direto com o Victor pelo WhatsApp que ele reseta seu acesso rapidinho: ${WPP_VICTOR}`},
   {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
+  {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente"],audience:["admin"],answer:"Alunos que preencheram o **form-self** aparecem em **Cadastros Pendentes** (botão laranja no dashboard). Revise as respostas, complete financeiro e clique em **AUTORIZAR LANÇAR** para criar o login e perfil no sistema."},
   {keys:["agenda admin","painel agenda","google calendar sync"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e calendário unificado. Use **Sincronizar Google** para puxar eventos do calendário do Victor."},
   {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
 ];
@@ -2417,7 +2421,7 @@ function iviWelcome(mode){
 
 function iviQuickChips(mode){
   if(mode==="visitor")return["Como me matricular?","Aula demonstrativa","Quais os cursos?","Falar com Victor"];
-  if(mode==="admin")return["Cadastrar aluno","Usar a agenda","Tutorial do portal"];
+  if(mode==="admin")return["Cadastros pendentes","Cadastrar aluno","Usar a agenda"];
   return["Tutorial do portal","Minha trilha","Financeiro","Falar com Victor"];
 }
 
@@ -3062,6 +3066,318 @@ function ModalCadastro({onClose,onSaved}){
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ── CADASTROS PENDENTES (form-self) ── */
+function ModalAutorizarLancar({pendente,onClose,onLaunched}){
+  const raw=pendente.dados||{};
+  const [tab,setTab]=useState(0);
+  const [dados,setDados]=useState({
+    nome:raw.nome||pendente.nome||"",cpf:raw.cpf||"",rg:raw.rg||"",
+    email:raw.email||pendente.email||"",telefone:raw.telefone||"",telefone2:raw.telefone2||"",
+    dataNasc:raw.dataNasc||"",estadoCivil:raw.estadoCivil||"",
+    profissao:raw.profissao||"",nacionalidade:raw.nacionalidade||"",
+    endereco:raw.endereco||"",foto:raw.foto||"",
+    contrato:raw.contrato||"fluency_foundation",duracao:raw.duracao||"",
+    diasAulas:raw.diasAulas||[],horarioAulas:raw.horarioAulas||"",
+    valorCheio:raw.valorCheio||"",descontos:raw.descontos||"",
+    valorFinal:raw.valorFinal||"",diaVencimento:raw.diaVencimento||"",
+    dataInicio:raw.dataInicio||"",licaoInicio:raw.licaoInicio||"1",
+    numParcelas:raw.numParcelas||18,
+  });
+  const triagem=pendente.triagem||BLANK_TRIAGEM;
+  const [level,setLevel]=useState("A1");
+  const [status,setStatus]=useState("ativo");
+  const [saving,setSaving]=useState(false);
+  const [err,setErr]=useState("");
+  const senhaPortal=pendente.senhaPortal||"";
+
+  function setD(k,v){setDados(p=>({...p,[k]:v}));}
+  function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
+
+  function TriRead({label,field}){
+    const v=triagem[field];
+    if(!v||(Array.isArray(v)&&!v.length))return null;
+    return <div style={{marginBottom:8,fontSize:13}}><span style={{fontWeight:700,color:"var(--font-muted)",fontSize:11,textTransform:"uppercase"}}>{label}: </span>{Array.isArray(v)?v.join(", "):v}</div>;
+  }
+
+  async function handleLancar(){
+    if(!dados.nome.trim()){setErr("Nome é obrigatório.");return;}
+    if(!dados.email.trim()){setErr("Email é obrigatório.");return;}
+    if(!senhaPortal){setErr("Senha do aluno não encontrada no cadastro pendente.");return;}
+    if(!confirm(`Autorizar e lançar ${dados.nome.trim()} no sistema?\n\nSerá criado login Firebase + perfil completo.`))return;
+    setSaving(true);setErr("");
+    try{
+      const email=dados.email.trim().toLowerCase();
+      const firebaseConfig={
+        apiKey:"AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
+        authDomain:"fluency-studio-portal.firebaseapp.com",
+        projectId:"fluency-studio-portal",
+        storageBucket:"fluency-studio-portal.firebasestorage.app",
+        messagingSenderId:"568224359300",
+        appId:"1:568224359300:web:6f4e283315deb93224b3d1",
+      };
+      const appName="launch-"+pendente.id;
+      const secondApp=firebase.apps.find(a=>a.name===appName)||firebase.initializeApp(firebaseConfig,appName);
+      const secondAuth=secondApp.auth();
+      let uid;
+      try{
+        const cred=await secondAuth.createUserWithEmailAndPassword(email,senhaPortal);
+        uid=cred.user.uid;
+      }catch(authErr){
+        if(authErr.code==="auth/email-already-in-use"){
+          const cred2=await secondAuth.signInWithEmailAndPassword(email,senhaPortal);
+          uid=cred2.user.uid;
+        }else throw authErr;
+      }
+      await secondAuth.signOut();
+
+      const parcelas=gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,dados.numParcelas||18,[])||[];
+      const financeiro={...FINANCEIRO_DEFAULT,parcelas};
+      const programName=CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation";
+
+      await db.collection("students").doc(uid).set({
+        name:dados.nome.trim(),email,
+        phone:dados.telefone.trim(),telefone2:dados.telefone2.trim(),
+        cpf:dados.cpf.trim(),rg:dados.rg.trim(),
+        dataNasc:dados.dataNasc,estadoCivil:dados.estadoCivil,
+        profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
+        endereco:dados.endereco.trim(),foto:dados.foto.trim(),
+        dataCadastro:new Date().toISOString().slice(0,10),
+        contrato:dados.contrato,duracao:dados.duracao.trim(),
+        diasAulas:dados.diasAulas,horarioAulas:dados.horarioAulas.trim(),
+        valorCheio:parseFloat(dados.valorCheio)||0,
+        descontos:parseFloat(dados.descontos)||0,
+        valorFinal:parseFloat(dados.valorFinal)||0,
+        diaVencimento:parseInt(dados.diaVencimento,10)||1,
+        dataInicio:dados.dataInicio||"",
+        licaoInicio:parseInt(dados.licaoInicio,10)||1,
+        numParcelas:parseInt(dados.numParcelas,10)||18,
+        status,level,triagem,
+        program:programName,coach:"Victor Gomes",
+        birthday:dados.dataNasc||"",profession:dados.profissao.trim(),
+        links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],
+        trilha:{},financeiro,modulosOcultos:[],
+        cadastroOrigem:"form-self",pendenteId:pendente.id,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      await db.collection("users").doc(uid).set({
+        name:dados.nome.trim(),email,role:"student",studentId:uid,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      await db.collection("cadastros_pendentes").doc(pendente.id).update({
+        status:"autorizado",studentUid:uid,
+        autorizadoAt:firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      onLaunched(uid);onClose();
+    }catch(e){
+      setErr("Erro ao lançar: "+(e.message||e.code||"desconhecido"));
+      setSaving(false);
+    }
+  }
+
+  async function handleRejeitar(){
+    if(!confirm("Rejeitar este cadastro pendente?"))return;
+    await db.collection("cadastros_pendentes").doc(pendente.id).update({status:"rejeitado",rejeitadoAt:firebase.firestore.FieldValue.serverTimestamp()});
+    onClose();
+  }
+
+  const tabLabels=["Respostas do Aluno","Contrato & Financeiro","Autorizar"];
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="modal-box" style={{maxWidth:800}}>
+        <div className="modal-header">
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <Icon name="clipboard-check" size={18}/>
+            <div>
+              <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Revisar Cadastro</div>
+              <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.nome} · form-self</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
+        </div>
+        <div className="modal-tab-bar">
+          {tabLabels.map((l,i)=><button key={i} className={"modal-tab"+(tab===i?" modal-tab-active":"")} onClick={()=>setTab(i)}>{l}</button>)}
+        </div>
+        <div className="modal-body">
+          {tab===0&&(
+            <div>
+              <div className="form-section-title">Dados Pessoais</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 16px",fontSize:13,marginBottom:16}}>
+                {[["Nome",dados.nome],["Email",dados.email],["Telefone",dados.telefone],["CPF",dados.cpf],["Profissão",dados.profissao],["Nascimento",dados.dataNasc],["Endereço",dados.endereco]].map(([l,v])=>
+                  v?<div key={l}><span style={{fontSize:10,fontWeight:700,color:"var(--font-muted)",textTransform:"uppercase"}}>{l}</span><div style={{marginTop:2}}>{v}</div></div>:null
+                )}
+              </div>
+              <div className="form-section-title">Perfil do Aluno (Triagem)</div>
+              <TriRead label="Faixa etária" field="idadeFaixa"/>
+              <TriRead label="Formação" field="formacao"/>
+              <TriRead label="Ocupação" field="ocupacao"/>
+              <TriRead label="Área interesse" field="areaInteresse"/>
+              <TriRead label="Estudou inglês" field="estudouIngles"/>
+              <TriRead label="Onde estudou" field="ondeComo"/>
+              <TriRead label="Objetivo" field="objetivo"/>
+              <TriRead label="Horas/semana" field="horasSemana"/>
+              <TriRead label="Prazo" field="prazo"/>
+              {triagem.observacoes&&<div style={{marginTop:8,padding:12,borderRadius:10,background:"var(--detail)",fontSize:13}}><strong>Observações:</strong> {triagem.observacoes}</div>}
+            </div>
+          )}
+          {tab===1&&(
+            <div>
+              <p style={{fontSize:12,color:"var(--font-muted)",marginBottom:14}}>Confira e complete o que faltar — especialmente financeiro e datas.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div><label className="form-label">Tipo de Contrato</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.contrato} onChange={e=>setD("contrato",e.target.value)}>
+                    {CONTRATOS.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
+                  </select>
+                </div>
+                <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
+                <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
+                <div><label className="form-label">Lição de Início</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
+                    {Array.from({length:150},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
+                  </select>
+                </div>
+                <div style={{gridColumn:"1/-1"}}><label className="form-label">Dias das Aulas</label>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>
+                    {DIAS_SEMANA.map(d=><button key={d} type="button" onClick={()=>toggleDia(d)} className={"status-pill "+(dados.diasAulas.includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11,padding:"5px 12px"}}>{d}</button>)}
+                  </div>
+                </div>
+                <div><label className="form-label">Horário</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.horarioAulas} onChange={e=>setD("horarioAulas",e.target.value)}/></div>
+                <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
+                <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
+                <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
+                <div><label className="form-label">Dia Vencimento</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.diaVencimento} onChange={e=>setD("diaVencimento",e.target.value)}>
+                    <option value="">—</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>Dia {i+1}</option>)}
+                  </select>
+                </div>
+                <div><label className="form-label">Nº Parcelas</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas} onChange={e=>setD("numParcelas",parseInt(e.target.value))}>
+                    {Array.from({length:24},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
+                  </select>
+                </div>
+              </div>
+              {dados.dataInicio&&dados.diaVencimento&&dados.valorFinal&&(
+                <div style={{marginTop:14,padding:"12px 14px",borderRadius:12,background:"rgba(30,143,168,.08)",border:"1px solid rgba(30,143,168,.25)",fontSize:12}}>
+                  <Icon name="info" size={12} style={{display:"inline",marginRight:4}}/>Ao autorizar, serão geradas <strong>{dados.numParcelas||18} parcelas</strong> de {formatCurrency(parseFloat(dados.valorFinal)||0)} automaticamente.
+                </div>
+              )}
+            </div>
+          )}
+          {tab===2&&(
+            <div>
+              <div className="info-box" style={{background:"rgba(30,160,110,.10)",border:"1px solid rgba(30,160,110,.30)",borderRadius:12,padding:14,marginBottom:16,fontSize:13}}>
+                <strong style={{color:"#60daa8"}}>Pronto para lançar?</strong><br/>
+                Ao clicar em <strong>Autorizar Lançar</strong>, o sistema cria o login do aluno, o perfil completo no Firestore e marca este cadastro como autorizado.
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div><label className="form-label">Nível Inicial</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={level} onChange={e=>setLevel(e.target.value)}>
+                    {["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}
+                  </select>
+                </div>
+                <div><label className="form-label">Status</label>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={status} onChange={e=>setStatus(e.target.value)}>
+                    {STATUS_OPTIONS.map(s=><option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{marginTop:14,fontSize:13,color:"var(--font-muted)"}}>
+                <div>📧 {dados.email}</div>
+                <div>🔑 Senha definida pelo aluno no formulário</div>
+                <div>📋 Programa: {CONTRATOS.find(c=>c.v===dados.contrato)?.l||dados.contrato}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        {err&&<div className="err-box" style={{margin:"0 20px 12px"}}>{err}</div>}
+        <div className="modal-footer">
+          <button className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={handleRejeitar} disabled={saving}>Rejeitar</button>
+          <div style={{flex:1}}/>
+          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose} disabled={saving}>Fechar</button>
+          <button className="btn btn-primary rounded-xl px-6 py-2.5 text-sm font-bold inline-flex items-center gap-2"
+            style={{background:"linear-gradient(135deg,#60daa8,#187E74)",border:"none",boxShadow:"0 4px 20px rgba(30,160,110,.35)"}}
+            onClick={handleLancar} disabled={saving}>
+            {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="rocket" size={16}/>}
+            {saving?"Lançando...":"AUTORIZAR LANÇAR"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AdminCadastrosPendentes({onBack,onLaunched}){
+  const [pendentes,setPendentes]=useState(null);
+  const [selected,setSelected]=useState(null);
+  const [filtro,setFiltro]=useState("pendente");
+
+  useEffect(()=>{
+    return db.collection("cadastros_pendentes").onSnapshot(snap=>{
+      const items=snap.docs.map(d=>({id:d.id,...d.data()}));
+      items.sort((a,b)=>{
+        const ta=a.submittedAt?.toMillis?.()||0;
+        const tb=b.submittedAt?.toMillis?.()||0;
+        return tb-ta;
+      });
+      setPendentes(items);
+    },()=>setPendentes([]));
+  },[]);
+
+  const lista=useMemo(()=>(pendentes||[]).filter(p=>filtro==="todos"||p.status===filtro),[pendentes,filtro]);
+  const countPendente=(pendentes||[]).filter(p=>p.status==="pendente").length;
+
+  return(
+    <div>
+      {selected&&<ModalAutorizarLancar pendente={selected} onClose={()=>setSelected(null)} onLaunched={uid=>{setSelected(null);onLaunched&&onLaunched(uid);}}/>}
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,flexWrap:"wrap"}}>
+        <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Dashboard</button>
+        <div style={{flex:1}}>
+          <h2 style={{fontFamily:"'Sora',sans-serif",fontWeight:800,fontSize:18}}>Cadastros Pendentes</h2>
+          <p style={{fontSize:12,color:"var(--font-muted)"}}>Formulários enviados pelos alunos via form-self</p>
+        </div>
+        {countPendente>0&&<span className="status-pill status-pill-interesse" style={{fontSize:12,padding:"6px 14px"}}>{countPendente} aguardando</span>}
+      </div>
+      <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
+        {[{v:"pendente",l:"Pendentes"},{v:"autorizado",l:"Autorizados"},{v:"rejeitado",l:"Rejeitados"},{v:"todos",l:"Todos"}].map(f=>
+          <button key={f.v} className={"status-pill "+(filtro===f.v?"status-pill-ativo":"status-pill-inactive")} onClick={()=>setFiltro(f.v)} style={{fontSize:11}}>{f.l}</button>
+        )}
+      </div>
+      {!pendentes?<LoadingScreen/>:lista.length===0
+        ?<div className="glass rounded-2xl p-8 text-center" style={{color:"var(--font-muted)"}}>Nenhum cadastro {filtro==="pendente"?"pendente":"neste filtro"}.</div>
+        :<div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {lista.map(p=>{
+            const sub=p.submittedAt?.toDate?p.submittedAt.toDate().toLocaleDateString("pt-BR"):"—";
+            const stCls={pendente:"status-pill-interesse",autorizado:"status-pill-ativo",rejeitado:"status-pill-evadido"}[p.status]||"status-pill-inactive";
+            const stLbl={pendente:"Pendente",autorizado:"Autorizado",rejeitado:"Rejeitado"}[p.status]||p.status;
+            return(
+              <div key={p.id} className="glass rounded-2xl p-4" style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+                <div style={{width:44,height:44,borderRadius:"50%",background:"var(--gradient-cta)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:800,fontSize:16,flexShrink:0}}>
+                  {(p.nome||"?")[0].toUpperCase()}
+                </div>
+                <div style={{flex:1,minWidth:160}}>
+                  <div style={{fontWeight:700,fontSize:15}}>{p.nome||"Sem nome"}</div>
+                  <div style={{fontSize:12,color:"var(--font-muted)"}}>{p.email} · {sub}</div>
+                  {p.dados?.contrato&&<div style={{fontSize:11,marginTop:4}}>{CONTRATOS.find(c=>c.v===p.dados.contrato)?.l||p.dados.contrato}</div>}
+                </div>
+                <span className={"status-pill "+stCls} style={{fontSize:10}}>{stLbl}</span>
+                {p.status==="pendente"&&(
+                  <button className="btn btn-primary rounded-xl px-5 py-2.5 text-sm font-bold inline-flex items-center gap-2"
+                    style={{background:"linear-gradient(135deg,#60daa8,#187E74)",border:"none"}}
+                    onClick={()=>setSelected(p)}>
+                    <Icon name="clipboard-check" size={14}/> Revisar & Lançar
+                  </button>
+                )}
+                {p.status==="autorizado"&&p.studentUid&&(
+                  <span style={{fontSize:11,color:"var(--font-muted)"}}>UID: {p.studentUid.slice(0,8)}…</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      }
     </div>
   );
 }
@@ -4138,7 +4454,7 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName}){
 }
 
 /* ── DASHBOARD ── */
-function AdminDashboard({students,onNavigate}){
+function AdminDashboard({students,onNavigate,pendentesCount=0}){
   const hoje=new Date();
   const hojeISO=hoje.toISOString().slice(0,10);
 
@@ -4159,6 +4475,7 @@ function AdminDashboard({students,onNavigate}){
 
   const navBtns=[
     {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#1e8fa8", ativo:true},
+    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#f0a060", ativo:true},
     {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#60daa8", ativo:true},
     {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#f0cc60", ativo:true},
     {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#c0a0f8", ativo:false},
@@ -4227,9 +4544,10 @@ function AdminDashboard({students,onNavigate}){
       {/* NAVEGAÇÃO */}
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
         {navBtns.map(b=>(
-          <button key={b.id} className="dash-nav-btn" onClick={()=>b.ativo&&onNavigate(b.id)} style={{opacity:b.ativo?1:.6,cursor:b.ativo?"pointer":"default"}}>
+          <button key={b.id} className="dash-nav-btn" onClick={()=>b.ativo&&onNavigate(b.id)} style={{opacity:b.ativo?1:.6,cursor:b.ativo?"pointer":"default",position:"relative"}}>
             <Icon name={b.icon} size={22} style={{color:b.cor}}/>
             <span>{b.label}</span>
+            {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#e8a94c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
             {!b.ativo&&<span style={{fontSize:9,color:"var(--font-muted)",marginTop:-4}}>Em breve</span>}
           </button>
         ))}
@@ -4312,16 +4630,18 @@ function AdminAlunos({students,onSelectUid}){
 /* ── ADMINAPP ── */
 function AdminApp({user}){
   const [students,setStudents]=useState(null);
+  const [pendentesCount,setPendentesCount]=useState(0);
   const [selectedUid,setSelectedUid]=useState(null);
   const [selectedInitialTab,setSelectedInitialTab]=useState(null);
   const [showModal,setShowModal]=useState(false);
   const [adminView,setAdminView]=useState("dashboard");
 
   useEffect(()=>db.collection("students").onSnapshot(snap=>setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})))),[]);
+  useEffect(()=>db.collection("cadastros_pendentes").where("status","==","pendente").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
 
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
 
-  const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",financeiro:"Financeiro",agenda:"Agenda"};
+  const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda"};
   const showBack=adminView!=="dashboard";
 
   return(
@@ -4341,16 +4661,26 @@ function AdminApp({user}){
               <p style={{fontSize:12,color:"var(--font-muted)"}}>Fluency Studio · Área Administrativa</p>
             </div>
           </div>
-          <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
-            <Icon name="user-plus" size={16}/> Novo Aluno
-          </button>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            {pendentesCount>0&&(
+              <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
+                style={{background:"linear-gradient(135deg,rgba(232,169,76,.25),rgba(240,204,96,.15))",border:"1px solid rgba(232,169,76,.45)",color:"#c8860a"}}>
+                <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
+              </button>
+            )}
+            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
+              <Icon name="user-plus" size={16}/> Novo Aluno
+            </button>
+          </div>
         </div>
       </div>
       <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
         {!students
           ?<LoadingScreen/>
           :adminView==="dashboard"
-          ?<AdminDashboard students={students} onNavigate={id=>{if(id==="alunos")setAdminView("alunos");if(id==="financeiro")setAdminView("financeiro");if(id==="agenda")setAdminView("agenda");}}/>
+          ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{if(id==="alunos")setAdminView("alunos");if(id==="cadastros")setAdminView("cadastros");if(id==="financeiro")setAdminView("financeiro");if(id==="agenda")setAdminView("agenda");}}/>
+          :adminView==="cadastros"
+          ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
           :adminView==="financeiro"
           ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
           :adminView==="agenda"

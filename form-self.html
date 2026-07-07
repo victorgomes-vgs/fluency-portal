@@ -11,7 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script>
     firebase.initializeApp({
@@ -116,21 +115,204 @@
     .peh-item strong{display:block;font-size:18px;font-family:'Sora',sans-serif;margin-bottom:2px;}
     .peh-item span{font-size:10px;opacity:.85;letter-spacing:.04em;}
     @media(max-width:520px){.peh-strip{grid-template-columns:1fr;}.form-footer{flex-direction:column;}.form-footer .btn{width:100%;text-align:center;}}
+    .float-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(40px);opacity:.45;}
+    .orb1{width:220px;height:220px;background:rgba(53,102,182,.35);top:8%;left:-4%;animation:floatOrb 18s ease-in-out infinite;}
+    .orb2{width:180px;height:180px;background:rgba(24,126,116,.28);bottom:12%;right:-2%;animation:floatOrb 22s ease-in-out infinite reverse;}
+    @keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+    .ivi-pulse{animation:iviPulse 2.4s ease-in-out infinite;}
+    @keyframes iviPulse{0%,100%{box-shadow:0 4px 24px rgba(53,102,182,.35),0 0 0 0 rgba(53,102,182,.4)}50%{box-shadow:0 6px 32px rgba(53,102,182,.45),0 0 0 8px rgba(53,102,182,0)}}
+    .ivictor-btn{position:fixed;bottom:22px;right:22px;z-index:900;width:62px;height:62px;border-radius:50%;overflow:hidden;
+      border:2.5px solid rgba(53,102,182,.55);box-shadow:0 4px 24px rgba(23,64,130,.30),0 0 0 4px rgba(134,207,255,.20);
+      cursor:pointer;transition:transform .18s;background:#174082;}
+    .ivictor-btn:hover{transform:scale(1.08);}
+    .ivictor-panel{position:fixed;bottom:96px;right:22px;z-index:900;width:340px;border-radius:20px;overflow:hidden;
+      box-shadow:0 16px 48px rgba(23,64,130,.28);animation:slideUp .28s ease-out;border:1px solid rgba(53,102,182,.18);}
+    .ivictor-header{background:var(--gradient-cta);padding:14px 16px;display:flex;align-items:center;gap:10px;color:#fff;}
+    .ivictor-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.35);flex-shrink:0;background:#174082;}
+    .ivictor-footer{padding:10px 12px;border-top:1px solid var(--divider);background:rgba(224,236,255,.5);display:flex;gap:8px;}
+    .ivi-quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 4px;background:rgba(255,255,255,.6);}
+    .ivi-chip{font-size:11px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;
+      border:1px solid rgba(53,102,182,.22);background:rgba(134,207,255,.18);color:#174082;transition:background .15s;}
+    .ivi-chip:hover{background:rgba(134,207,255,.35);}
+    .ivi-hint-bar{background:linear-gradient(90deg,rgba(134,207,255,.25),rgba(163,224,214,.20));
+      border-bottom:1px solid rgba(53,102,182,.12);padding:10px 14px;font-size:12px;line-height:1.5;color:#174082;}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+    @media(max-width:520px){.ivictor-panel{width:calc(100vw - 32px)!important;right:16px!important;}}
   </style>
 </head>
 <body>
+<div class="float-orb orb1"></div>
+<div class="float-orb orb2"></div>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useMemo } = React;
-const auth = firebase.auth();
+const { useState, useEffect, useMemo, useRef } = React;
 const db = firebase.firestore();
 
 const LOGO_URL = "https://thefluency.studio/assets/logo_portal_jul2.png";
+const IVI_PHOTO = "assets/ivi.png";
 const PORTAL_URL = "https://thefluency.studio/portal.html";
 const WPP_VICTOR = "https://wa.me/5511919756733";
-const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
-const MESES_CURTOS = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
+const IVI_STEP_HINTS = {
+  0: "Oi! Sou a **iVi** — vou te guiar em cada etapa deste cadastro. Quando estiver pronto(a), toque em **Começar cadastro**. Leva uns 8 minutinhos e cada resposta ajuda o Victor a montar suas aulas sob medida! 🎯",
+  1: "Primeira etapa: **seus dados pessoais**. Preencha nome, email e WhatsApp com cuidado — é assim que o Victor vai te contatar. Crie também uma **senha** para o portal do aluno.",
+  2: "Agora confira as informações do **seu programa**. Se o Victor já definiu algo no contrato, os campos aparecem travados — é normal! Só confira se está tudo certo.",
+  3: "Última etapa — e a mais importante para personalizar suas aulas! Responda com sinceridade: objetivos, interesses e experiência com inglês. Não existe resposta errada. 💬",
+  4: "Pronto! Seu cadastro foi enviado. O Victor vai revisar tudo e liberar seu acesso ao portal em breve.",
+};
+
+const IVI_CHIPS = {
+  0: ["Por que preencher?", "Quanto tempo leva?", "É seguro?"],
+  1: ["O que é a senha?", "Preciso de foto?", "Próxima etapa"],
+  2: ["O que é Fluency Foundation?", "Dias das aulas", "Próxima etapa"],
+  3: ["Por que o perfil?", "Não sei meu objetivo", "Enviar cadastro"],
+};
+
+const IVI_KB = [
+  { keys: ["por que preencher", "pra que serve", "por que cadastro"], answer: "Este cadastro é o **diagnóstico PEH 5.0** — o Victor usa cada resposta para montar suas aulas personalizadas desde o dia 1. Quanto mais completo, melhor sua experiência!" },
+  { keys: ["quanto tempo", "demora", "minutos"], answer: "Cerca de **8 minutos**, em 3 etapas rápidas. Vou te guiando em cada uma — pode ir no seu ritmo!" },
+  { keys: ["seguro", "dados", "privacidade", "protegido"], answer: "Seus dados ficam protegidos no sistema da Fluency Studio e são usados **somente** para seu curso. Não compartilhamos com terceiros." },
+  { keys: ["senha", "portal", "login", "acesso"], answer: "A senha é para você entrar no **portal do aluno** depois que o Victor revisar e liberar seu cadastro. Guarde bem — você vai usar email + senha para acessar trilha, financeiro e materiais." },
+  { keys: ["foto", "imagem", "url foto"], answer: "A foto é **opcional**! Se quiser, cole um link de imagem (Google Drive, Instagram, etc.). Se não tiver, sem problema — o Victor pode adicionar depois." },
+  { keys: ["proxima", "próxima", "continuar", "seguinte"], answer: "Quando terminar esta etapa, toque no botão azul no rodapé do formulário para avançar. Estou aqui se tiver dúvida!" },
+  { keys: ["fluency foundation", "foundation", "programa"], answer: "**Fluency Foundation** é o programa completo: fala, leitura, escrita e escuta, com fluência prevista em 18 meses. Ideal para trabalho, viagens e exames internacionais." },
+  { keys: ["flash", "just talk"], answer: "**Flash (Just Talk)** é focado em conversação — aulas de 30 minutos, temas do dia a dia. Perfeito para quem já tem base e quer praticar fala." },
+  { keys: ["speech", "corporate", "corporativo"], answer: "**Speech (Business)** é inglês corporativo e oratória profissional. Requer nível mínimo B1." },
+  { keys: ["dias", "horario", "horário", "aulas"], answer: "Marque os **dias da semana** em que você tem aula. Se o Victor já definiu no contrato, os dias podem vir pré-selecionados — só confira!" },
+  { keys: ["perfil", "objetivo", "por que perfil", "triagem"], answer: "O perfil de aprendizagem é o coração do método **PEH 5.0**! Com ele, o Victor sabe seus interesses, objetivos e experiência — e monta aulas que você realmente vai gostar de fazer." },
+  { keys: ["nao sei objetivo", "não sei objetivo", "indeciso"], answer: "Sem pressão! Escolha o que mais se aproxima — ou escreva nas **observações** o que você imagina. O Victor conversa com você na primeira aula para refinar." },
+  { keys: ["enviar", "finalizar", "concluir"], answer: "Revise suas respostas e toque em **✓ Enviar Cadastro**. O Victor recebe tudo, confere e libera seu acesso ao portal. Você recebe confirmação nesta tela!" },
+  { keys: ["victor", "professor", "whatsapp"], answer: `Dúvidas urgentes? Fale com o Victor no WhatsApp: ${WPP_VICTOR}` },
+  { keys: ["peh", "metodo", "método"], answer: "O **PEH 5.0** é o método exclusivo da Fluency:\n**P** — Personalizado\n**E** — Estratégico\n**H** — Humanizado\nEste formulário é o primeiro passo do **P**!" },
+];
+
+function iviRespond(q) {
+  const norm = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  let best = null, bestScore = 0;
+  IVI_KB.forEach(entry => {
+    let score = 0;
+    entry.keys.forEach(k => {
+      const kn = k.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (norm.includes(kn)) score += kn.length;
+    });
+    if (score > bestScore) { bestScore = score; best = entry; }
+  });
+  if (best && bestScore > 0) return best.answer;
+  if (/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi|e aí)$/i.test(norm.trim()))
+    return IVI_STEP_HINTS[0];
+  return "Boa pergunta! Posso ajudar com o cadastro, o portal, os programas ou o método PEH 5.0. O que quer saber?";
+}
+
+function IViForm({ step, onAdvance }) {
+  const [open, setOpen] = useState(false);
+  const [imgOk, setImgOk] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [hint, setHint] = useState(IVI_STEP_HINTS[0]);
+  const endRef = useRef(null);
+  const lastStepRef = useRef(-1);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setOpen(true);
+      setMessages([{ role: "assistant", content: IVI_STEP_HINTS[0] }]);
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (step !== lastStepRef.current && IVI_STEP_HINTS[step]) {
+      lastStepRef.current = step;
+      const msg = IVI_STEP_HINTS[step];
+      setHint(msg);
+      setMessages(prev => {
+        if (prev.some(m => m.content === msg)) return prev;
+        return [...prev, { role: "assistant", content: msg }];
+      });
+    }
+  }, [step]);
+
+  useEffect(() => {
+    if (open && endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages, open]);
+
+  function reply(text) {
+    setLoading(true);
+    setTimeout(() => {
+      let answer = iviRespond(text);
+      if (/próxima|proxima|continuar|seguinte/i.test(text) && step < 3) {
+        answer += "\n\nQuando estiver pronto(a), use o botão azul abaixo do formulário para avançar!";
+      }
+      setMessages(prev => [...prev, { role: "assistant", content: answer }]);
+      setLoading(false);
+    }, 380 + Math.random() * 280);
+  }
+
+  function send(textOverride) {
+    const text = (textOverride || input).trim();
+    if (!text || loading) return;
+    setMessages(prev => [...prev, { role: "user", content: text }]);
+    setInput("");
+    reply(text);
+  }
+
+  const chips = IVI_CHIPS[step] || IVI_CHIPS[0];
+
+  return (
+    <>
+      {open && (
+        <div className="ivictor-panel" style={{ maxHeight: "72vh", display: "flex", flexDirection: "column" }}>
+          <div className="ivictor-header">
+            <div className="ivictor-avatar">
+              {imgOk
+                ? <img src={IVI_PHOTO} alt="iVi" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setImgOk(false)} />
+                : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#fff" }}>iVi</div>}
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "'Sora',sans-serif" }}>iVi</div>
+              <div style={{ fontSize: 11, opacity: .85 }}>Sua guia neste cadastro</div>
+            </div>
+            <button onClick={() => setOpen(false)} style={{ marginLeft: "auto", background: "rgba(255,255,255,.18)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", color: "#fff" }}>✕</button>
+          </div>
+          <div className="ivi-hint-bar" dangerouslySetInnerHTML={{ __html: hint.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br/>") }} />
+          <div className="ivi-quick-chips">
+            {chips.map(c => <button key={c} type="button" className="ivi-chip" onClick={() => send(c)}>{c}</button>)}
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: 12, display: "flex", flexDirection: "column", gap: 8, minHeight: 0, background: "rgba(255,255,255,.88)" }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                <div style={{
+                  maxWidth: "85%", padding: "10px 14px", fontSize: 13, lineHeight: 1.55, whiteSpace: "pre-wrap",
+                  borderRadius: msg.role === "user" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
+                  background: msg.role === "user" ? "var(--gradient-cta)" : "rgba(134,207,255,.20)",
+                  border: msg.role === "user" ? "none" : "1px solid rgba(53,102,182,.15)",
+                  color: msg.role === "user" ? "#fff" : "#174082",
+                }}>{msg.content}</div>
+              </div>
+            ))}
+            {loading && (
+              <div style={{ display: "flex", gap: 4, padding: "8px 12px" }}>
+                {[0, 1, 2].map(i => <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#3566B6", animation: `bounce 1.2s ease infinite ${i * 0.2}s` }} />)}
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+          <div className="ivictor-footer">
+            <input className="input" style={{ flex: 1, padding: "9px 12px", fontSize: 13 }} placeholder="Pergunte à iVi..." value={input}
+              onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} disabled={loading} />
+            <button className="btn btn-primary" style={{ padding: "9px 14px" }} onClick={() => send()} disabled={loading || !input.trim()}>→</button>
+          </div>
+        </div>
+      )}
+      <button className={"ivictor-btn" + (open ? "" : " ivi-pulse")} onClick={() => setOpen(o => !o)} title="iVi — Sua guia">
+        {imgOk
+          ? <img src={IVI_PHOTO} alt="iVi" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setImgOk(false)} />
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, color: "#fff", fontFamily: "'Sora',sans-serif" }}>iVi</div>}
+      </button>
+    </>
+  );
+}
 const DIAS_SEMANA = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
 const CONTRATOS = [
   { v: "fluency_foundation", l: "Fluency Foundation" },
@@ -164,28 +346,6 @@ function parseUrlParams() {
     numParcelas: p.get("numParcelas") || "",
     locked: p.get("locked") === "1",
   };
-}
-
-function gerarParcelas(dataInicio, diaVenc, valorFinal, numParcelas) {
-  if (!dataInicio || !diaVenc || !valorFinal || !numParcelas) return [];
-  const base = new Date(dataInicio + "T12:00:00");
-  const parcelas = [];
-  for (let i = 0; i < numParcelas; i++) {
-    const d = new Date(base.getFullYear(), base.getMonth() + i, parseInt(diaVenc, 10));
-    const mesStr = MESES_CURTOS[d.getMonth()] + "/" + String(d.getFullYear()).slice(2);
-    parcelas.push({
-      id: Date.now().toString() + i,
-      mes: mesStr,
-      dataVencimento: d.toISOString().slice(0, 10),
-      valor: parseFloat(valorFinal) || 0,
-      valorDesconto: 0,
-      status: "a_vencer",
-      comprovante: "",
-      boletoPix: "",
-      dataPagamento: "",
-    });
-  }
-  return parcelas;
 }
 
 function LockedInput({ label, value, onChange, locked, type = "text", placeholder, min, max }) {
@@ -329,86 +489,36 @@ function FormSelf() {
     setErr("");
     try {
       const email = dados.email.trim().toLowerCase();
-      const cred = await auth.createUserWithEmailAndPassword(email, dados.senha);
-      const uid = cred.user.uid;
 
-      const parcelas = gerarParcelas(
-        dados.dataInicio,
-        dados.diaVencimento,
-        dados.valorFinal,
-        parseInt(dados.numParcelas, 10) || 18
-      );
-      const financeiro = {
-        ...FINANCEIRO_DEFAULT,
-        parcelas: parcelas.length ? parcelas : FINANCEIRO_DEFAULT.parcelas,
-      };
+      const pendSnap = await db.collection("cadastros_pendentes")
+        .where("email", "==", email).where("status", "==", "pendente").limit(1).get();
+      if (!pendSnap.empty) {
+        setErr("Já existe um cadastro pendente com este email. Aguarde a liberação do professor Victor ou use outro email.");
+        setSaving(false);
+        return;
+      }
 
-      const programName = dados.contrato === "fluency_foundation"
-        ? "Fluency Foundation"
-        : dados.contrato === "flash" ? "Flash (Just Talk)" : "Speech (Business)";
-
-      const payload = {
-        name: dados.nome.trim(),
+      const { senha, senha2, ...dadosSemSenha } = dados;
+      await db.collection("cadastros_pendentes").add({
+        status: "pendente",
         email,
-        phone: dados.telefone.trim(),
-        telefone2: dados.telefone2.trim(),
-        cpf: dados.cpf.trim(),
-        rg: dados.rg.trim(),
-        dataNasc: dados.dataNasc,
-        estadoCivil: dados.estadoCivil,
-        profissao: dados.profissao.trim(),
-        nacionalidade: dados.nacionalidade.trim(),
-        endereco: dados.endereco.trim(),
-        foto: dados.foto.trim(),
-        dataCadastro: new Date().toISOString().slice(0, 10),
-        contrato: dados.contrato,
-        duracao: dados.duracao.trim(),
-        diasAulas: dados.diasAulas,
-        horarioAulas: dados.horarioAulas.trim(),
-        valorCheio: parseFloat(dados.valorCheio) || 0,
-        descontos: parseFloat(dados.descontos) || 0,
-        valorFinal: parseFloat(dados.valorFinal) || 0,
-        diaVencimento: parseInt(dados.diaVencimento, 10) || 1,
-        dataInicio: dados.dataInicio || "",
-        licaoInicio: parseInt(dados.licaoInicio, 10) || 1,
-        numParcelas: parseInt(dados.numParcelas, 10) || 18,
-        status: "ativo",
+        nome: dados.nome.trim(),
+        dados: dadosSemSenha,
+        senhaPortal: senha,
         triagem,
-        level: "A1",
-        program: programName,
-        coach: "Victor Gomes",
-        birthday: dados.dataNasc || "",
-        profession: dados.profissao.trim(),
-        links: [
-          { id: 1, label: "Materiais (Drive)", url: "https://drive.google.com/" },
-          { id: 2, label: "Tarefas (Classroom)", url: "https://classroom.google.com/" },
-        ],
-        trilha: {},
-        financeiro,
-        modulosOcultos: [],
+        urlParams: urlPrefill,
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        autorizadoAt: null,
+        studentUid: null,
         cadastroOrigem: "form-self",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      };
-
-      await db.collection("students").doc(uid).set(payload);
-      await db.collection("users").doc(uid).set({
-        name: dados.nome.trim(),
-        email,
-        role: "student",
-        studentId: uid,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      await auth.signOut();
       setDone(true);
       setStep(4);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
-      let msg = "Erro ao salvar cadastro. Tente novamente.";
-      if (e.code === "auth/email-already-in-use") msg = "Este email já está cadastrado. Use outro email ou acesse o portal para entrar.";
-      else if (e.code === "auth/weak-password") msg = "A senha deve ter pelo menos 6 caracteres.";
-      else if (e.code === "auth/invalid-email") msg = "Email inválido.";
-      else if (e.message) msg = e.message;
+      let msg = "Erro ao enviar cadastro. Tente novamente ou fale com o Victor.";
+      if (e.message) msg = e.message;
       setErr(msg);
       setSaving(false);
     }
@@ -416,34 +526,43 @@ function FormSelf() {
 
   if (done) {
     return (
-      <div className="page-wrap">
-        <div className="hero-card" style={{ marginBottom: 24 }}>
-          <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
-          <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "14px 0 6px" }}>Cadastro concluído!</h1>
-          <p style={{ fontSize: 14, opacity: .9, lineHeight: 1.55, margin: 0 }}>Bem-vindo(a) à Fluency Studio. Seu perfil já está no sistema e o professor Victor foi notificado.</p>
-        </div>
-        <div className="form-card">
-          <div className="success-card">
-            <div className="success-icon">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <>
+        <IViForm step={4} />
+        <div className="page-wrap">
+          <div className="hero-card" style={{ marginBottom: 24 }}>
+            <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
+            <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "14px 0 6px" }}>Cadastro enviado!</h1>
+            <p style={{ fontSize: 14, opacity: .9, lineHeight: 1.55, margin: 0 }}>O professor Victor vai revisar suas respostas e liberar seu acesso ao portal.</p>
+          </div>
+          <div className="form-card">
+            <div className="success-card">
+              <div className="success-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h2 style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Recebemos tudo, {dados.nome.split(" ")[0]}!</h2>
+              <p style={{ color: "var(--font-muted)", fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>
+                Seu cadastro está na fila de revisão. O Victor vai conferir seus dados, completar o financeiro e **autorizar seu lançamento** no sistema.
+              </p>
+              <div className="info-box" style={{ textAlign: "left", marginBottom: 20 }}>
+                <strong>O que acontece agora?</strong><br />
+                1. Victor revisa seu perfil completo<br />
+                2. Confere contrato e financeiro<br />
+                3. Libera seu acesso ao portal<br />
+                4. Você entra com <strong>{dados.email}</strong> + sua senha
+              </div>
+              <p style={{ fontSize: 12, color: "var(--font-muted)" }}>
+                Dúvidas? Fale com o Victor no <a href={WPP_VICTOR} target="_blank" rel="noopener" style={{ color: "#187E74", fontWeight: 700 }}>WhatsApp</a>.
+              </p>
             </div>
-            <h2 style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Tudo pronto, {dados.nome.split(" ")[0]}!</h2>
-            <p style={{ color: "var(--font-muted)", fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
-              Use o email <strong>{dados.email}</strong> e a senha que você criou para acessar o portal do aluno.
-            </p>
-            <a href={PORTAL_URL} className="btn btn-primary" style={{ display: "inline-block", textDecoration: "none", marginBottom: 12 }}>
-              Acessar o Portal do Aluno →
-            </a>
-            <p style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 16 }}>
-              Dúvidas? Fale com o Victor no <a href={WPP_VICTOR} target="_blank" rel="noopener" style={{ color: "#187E74", fontWeight: 700 }}>WhatsApp</a>.
-            </p>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
+    <>
+    <IViForm step={step} />
     <div className="page-wrap">
       <div className="hero-card">
         <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
@@ -487,7 +606,7 @@ function FormSelf() {
             <div className="form-body">
               <div className="info-box">
                 <strong>Parabéns pela decisão!</strong><br />
-                Este formulário leva cerca de 8 minutos. Ao final, seu acesso ao portal será criado automaticamente e o professor Victor receberá seu perfil completo para personalizar suas aulas desde o primeiro dia.
+                Este formulário leva cerca de 8 minutos. A iVi vai te guiar em cada etapa! Ao final, o professor Victor recebe seu perfil completo, revisa e libera seu acesso ao portal.
               </div>
               <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.65 }}>
                 Você vai preencher três etapas: <strong>dados pessoais</strong>, <strong>informações do seu programa</strong> e <strong>perfil de aprendizagem</strong> — as mesmas perguntas do cadastro oficial da escola.
@@ -771,7 +890,7 @@ function FormSelf() {
             <div className="form-footer">
               <button className="btn" onClick={prevStep} disabled={saving}>← Seu Programa</button>
               <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
-                {saving ? "Salvando..." : "✓ Finalizar Cadastro"}
+                {saving ? "Enviando..." : "✓ Enviar Cadastro"}
               </button>
             </div>
           </>
@@ -782,6 +901,7 @@ function FormSelf() {
         Fluency Studio · Fale, entenda e evolua com estratégia
       </p>
     </div>
+    </>
   );
 }
 
