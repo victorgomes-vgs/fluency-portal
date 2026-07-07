@@ -94,7 +94,7 @@
                 ],
                 "sameAs": [
                     "https://instagram.com/teacher_victorgomes",
-                    "https://thefluency.studio/portal.html?v=5"
+                    "https://thefluency.studio/portal.html?v=4"
                 ],
                 "founder": { "@id": "https://thefluency.studio/#founder" },
                 "employee": { "@id": "https://thefluency.studio/#founder" },
@@ -305,8 +305,8 @@
                 "width": 1281,
                 "height": 1228,
                 "encodingFormat": "image/png",
-                "name": "iVi — Assistente Fluency Studio",
-                "caption": "iVi, assistente virtual da Fluency Studio para dúvidas sobre cursos de inglês"
+                "name": "iVi — Assistente IA Fluency Studio",
+                "caption": "iVi, assistente de inteligência artificial da Fluency Studio para dúvidas sobre cursos de inglês"
             },
             {
                 "@type": "ImageGallery",
@@ -884,9 +884,7 @@
                 font-size: 0.9rem;
             }
 
-            .floating-widget-text {
-                display: none;
-            }
+
 
             .orbit-explainer {
                 position: fixed;
@@ -2060,33 +2058,421 @@
             flex-wrap: wrap;
         }
 
-        .floating-widget-avatar {
-            width: 2.75rem;
-            height: 2.75rem;
+        @media (min-width: 768px) {
+            .hero-mobile-only { display: none !important; }
+        }
+
+        /* iVi — Assistente IA */
+        .ivi-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 89;
+            background: transparent;
+            display: none;
+        }
+
+        .ivi-backdrop.is-visible {
+            display: block;
+        }
+
+        .ivi-widget {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        @media (min-width: 768px) {
+            .ivi-widget {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+
+        .ivi-widget > * {
+            pointer-events: auto;
+        }
+
+        .ivi-hint-btn {
+            background: #fff;
+            color: #0f172a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1.35;
+            padding: 0.45rem 0.75rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 168, 157, 0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            max-width: 13.5rem;
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ivi-hint-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 24px rgba(0, 168, 157, 0.22);
+        }
+
+        .ivi-hint-btn.is-hidden {
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+        }
+
+        @keyframes ivi-ring-pulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 4px 14px rgba(0, 168, 157, 0.35), 0 0 0 0 rgba(0, 168, 157, 0.4); }
+            50% { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 4px 14px rgba(0, 168, 157, 0.35), 0 0 0 8px rgba(0, 168, 157, 0); }
+        }
+
+        .ivi-avatar-btn.is-pulsing {
+            animation: ivi-ring-pulse 2.5s ease-in-out infinite;
+        }
+
+        .ivi-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ivi-avatar-btn {
+            width: 3.25rem;
+            height: 3.25rem;
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
             border: 2.5px solid #00a89d;
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 4px 14px rgba(0, 168, 157, 0.35);
             background: #00a89d;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .floating-widget-avatar img {
+        .ivi-avatar-btn:hover {
+            transform: scale(1.06);
+        }
+
+        .ivi-avatar-btn img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center 18%;
             display: block;
+        }
+
+        .ivi-whatsapp-fab {
+            width: 2.5rem;
+            height: 2.5rem;
             border-radius: 50%;
+            background: #25D366;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+            transition: transform 0.2s ease, background 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ivi-whatsapp-fab:hover {
+            background: #1fb855;
+            transform: scale(1.06);
+        }
+
+        .ivi-whatsapp-fab svg {
+            width: 1.35rem;
+            height: 1.35rem;
+        }
+
+        .ivi-chat-panel {
+            position: fixed;
+            bottom: 5.5rem;
+            right: 1rem;
+            width: min(22rem, calc(100vw - 2rem));
+            max-height: min(28rem, calc(100vh - 7rem));
+            background: #0f172a;
+            border: 1px solid rgba(0, 232, 208, 0.25);
+            border-radius: 1rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(12px) scale(0.96);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 91;
+        }
+
+        .ivi-chat-panel.is-open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
 
         @media (min-width: 768px) {
-            .hero-mobile-only { display: none !important; }
-
-            .floating-widget-avatar {
-                width: 3rem;
-                height: 3rem;
+            .ivi-chat-panel {
+                bottom: 6rem;
+                right: 1.5rem;
             }
+        }
+
+        .ivi-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.85rem 1rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1a2a42 100%);
+            border-bottom: 1px solid rgba(0, 232, 208, 0.15);
+        }
+
+        .ivi-chat-header-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #00a89d;
+            flex-shrink: 0;
+        }
+
+        .ivi-chat-header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 18%;
+        }
+
+        .ivi-chat-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ivi-chat-header-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .ivi-chat-header-status {
+            font-size: 0.68rem;
+            color: #00e8d0;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ivi-chat-header-status::before {
+            content: '';
+            width: 0.4rem;
+            height: 0.4rem;
+            border-radius: 50%;
+            background: #00e8d0;
+            animation: ivi-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes ivi-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .ivi-chat-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0.15rem 0.35rem;
+            border-radius: 0.35rem;
+            transition: color 0.2s ease;
+        }
+
+        .ivi-chat-close:hover {
+            color: #fff;
+        }
+
+        .ivi-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            min-height: 10rem;
+            max-height: 16rem;
+        }
+
+        .ivi-msg {
+            max-width: 88%;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.85rem;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        .ivi-msg-bot {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            border-bottom-left-radius: 0.2rem;
+            white-space: pre-line;
+        }
+
+        .ivi-msg-bot strong {
+            color: #7ee8d8;
+            font-weight: 600;
+        }
+
+        .ivi-msg-bot em {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .ivi-msg-user {
+            align-self: flex-end;
+            background: #00a89d;
+            color: #fff;
+            border-bottom-right-radius: 0.2rem;
+        }
+
+        .ivi-msg-typing {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.55rem 0.85rem;
+            border-radius: 0.85rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .ivi-msg-typing span {
+            width: 0.35rem;
+            height: 0.35rem;
+            border-radius: 50%;
+            background: #00e8d0;
+            animation: ivi-dot 1.2s ease-in-out infinite;
+        }
+
+        .ivi-msg-typing span:nth-child(2) { animation-delay: 0.15s; }
+        .ivi-msg-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes ivi-dot {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        .ivi-quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            padding: 0 1rem 0.65rem;
+        }
+
+        .ivi-quick-btn {
+            font-size: 0.65rem;
+            padding: 0.35rem 0.6rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 232, 208, 0.35);
+            background: rgba(0, 232, 208, 0.08);
+            color: #7ee8d8;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ivi-quick-btn:hover {
+            background: rgba(0, 232, 208, 0.18);
+            border-color: #00e8d0;
+        }
+
+        .ivi-chat-input-row {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.65rem 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .ivi-chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.6rem;
+            padding: 0.5rem 0.7rem;
+            font-size: 0.78rem;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .ivi-chat-input::placeholder {
+            color: #64748b;
+        }
+
+        .ivi-chat-input:focus {
+            border-color: rgba(0, 232, 208, 0.5);
+        }
+
+        .ivi-chat-send {
+            background: #00a89d;
+            border: none;
+            border-radius: 0.6rem;
+            color: #fff;
+            padding: 0.5rem 0.7rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ivi-chat-send:hover {
+            background: #00c4b6;
+        }
+
+        .ivi-chat-send svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .ivi-chat-footer {
+            padding: 0.5rem 0.85rem 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .ivi-chat-whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            width: 100%;
+            padding: 0.55rem;
+            border-radius: 0.55rem;
+            background: #25D366;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ivi-chat-whatsapp-btn:hover {
+            background: #1fb855;
+        }
+
+        .ivi-chat-whatsapp-btn svg {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
         }
 
         .intensity-pick {
@@ -2447,7 +2833,7 @@
 
             <!-- Nav Actions -->
             <div class="header-actions grid grid-cols-2 gap-2 md:flex md:items-center md:gap-6 text-[10px] md:text-sm font-medium w-full md:w-auto">
-                <a href="https://thefluency.studio/portal.html?v=5" target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center justify-center gap-1 md:gap-2 px-3 py-2.5 md:px-5 md:py-2.5 rounded-md text-center leading-tight">
+                <a href="https://thefluency.studio/portal.html?v=4" target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center justify-center gap-1 md:gap-2 px-3 py-2.5 md:px-5 md:py-2.5 rounded-md text-center leading-tight">
                     <svg class="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <span>ÁREA DO ALUNO</span>
                 </a>
@@ -2573,15 +2959,6 @@
             </div>
         </div>
 
-        <!-- Floating Widget -->
-        <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos." target="_blank" rel="noopener noreferrer" class="btn-touch fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex items-center gap-2 md:gap-3 bg-white text-brand-dark p-2 pr-3 md:pr-4 rounded-full shadow-2xl hover:scale-105" aria-label="Pergunte sobre os cursos no WhatsApp">
-            <div class="floating-widget-avatar" aria-hidden="true">
-                <img src="assets/ivi.png" alt="iVi — assistente virtual da Fluency Studio para tirar dúvidas sobre cursos de inglês" title="iVi — Assistente Fluency Studio" width="1281" height="1228" loading="lazy" decoding="async">
-            </div>
-            <div class="floating-widget-text text-sm font-semibold pr-2">
-                Pergunte sobre<br>os cursos!
-            </div>
-        </a>
     </section>
 
     <div class="cta-strip">
@@ -3121,7 +3498,7 @@
                     <li><a href="#intensidade" class="hover:text-brand-teal transition-colors">Horários</a></li>
                     <li><a href="#faq" class="hover:text-brand-teal transition-colors">Perguntas Frequentes</a></li>
                     <li><a href="#contato" class="hover:text-brand-teal transition-colors">Contato</a></li>
-                    <li><a href="https://thefluency.studio/portal.html?v=5" class="hover:text-brand-teal transition-colors">Área do Aluno</a></li>
+                    <li><a href="https://thefluency.studio/portal.html?v=4" class="hover:text-brand-teal transition-colors">Área do Aluno</a></li>
                 </ul>
             </nav>
             <div>
@@ -3137,6 +3514,54 @@
             <p>© 2026 Fluency Studio — Victor Gomes. Todos os direitos reservados.</p>
         </div>
     </footer>
+
+    <!-- iVi — Assistente IA -->
+    <div class="ivi-backdrop" id="ivi-backdrop" aria-hidden="true"></div>
+    <div class="ivi-widget" id="ivi-widget">
+        <button type="button" class="ivi-hint-btn btn-touch" id="ivi-hint-btn" aria-label="Abrir assistente iVi">
+            Eu sou o iVi, se precisar de ajuda estou aqui.
+        </button>
+        <div class="ivi-actions">
+            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos." target="_blank" rel="noopener noreferrer" class="ivi-whatsapp-fab btn-touch" aria-label="Falar no WhatsApp">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+            </a>
+            <button type="button" class="ivi-avatar-btn btn-touch" id="ivi-avatar-btn" aria-label="Abrir chat com iVi">
+                <img src="assets/ivi.png" alt="iVi — assistente de inteligência artificial da Fluency Studio" title="iVi — Assistente IA" width="1281" height="1228" loading="lazy" decoding="async">
+            </button>
+        </div>
+    </div>
+
+    <div class="ivi-chat-panel" id="ivi-chat-panel" role="dialog" aria-label="Chat com iVi" aria-hidden="true">
+        <div class="ivi-chat-header">
+            <div class="ivi-chat-header-avatar">
+                <img src="assets/ivi.png" alt="" width="1281" height="1228" loading="lazy" decoding="async">
+            </div>
+            <div class="ivi-chat-header-info">
+                <div class="ivi-chat-header-name">iVi</div>
+                <div class="ivi-chat-header-status">Inteligência artificial · online</div>
+            </div>
+            <button type="button" class="ivi-chat-close" id="ivi-chat-close" aria-label="Fechar chat">&times;</button>
+        </div>
+        <div class="ivi-chat-messages" id="ivi-chat-messages"></div>
+        <div class="ivi-quick-questions" id="ivi-quick-questions">
+            <button type="button" class="ivi-quick-btn" data-q="Como me matricular?">Matrícula</button>
+            <button type="button" class="ivi-quick-btn" data-q="Aula demonstrativa">Aula demo</button>
+            <button type="button" class="ivi-quick-btn" data-q="Quais os cursos?">Cursos</button>
+            <button type="button" class="ivi-quick-btn" data-q="Quanto custa?">Valores</button>
+        </div>
+        <div class="ivi-chat-input-row">
+            <input type="text" class="ivi-chat-input" id="ivi-chat-input" placeholder="Digite sua dúvida..." autocomplete="off" maxlength="300">
+            <button type="button" class="ivi-chat-send" id="ivi-chat-send" aria-label="Enviar mensagem">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </div>
+        <div class="ivi-chat-footer">
+            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos." target="_blank" rel="noopener noreferrer" class="ivi-chat-whatsapp-btn btn-touch">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+                Falar com Victor no WhatsApp
+            </a>
+        </div>
+    </div>
 
     <!-- Modal Aula Demo -->
     <div id="demo-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6 modal-overlay overflow-y-auto">
@@ -3282,10 +3707,13 @@
             if (btn) btn.addEventListener('click', demoControls.show);
         });
 
+        let iviChatOpen = false;
+
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
             if (!scheduleModal.classList.contains('hidden')) scheduleControls.hide();
             if (!demoModal.classList.contains('hidden')) demoControls.hide();
+            if (iviChatOpen && typeof closeIviChat === 'function') closeIviChat();
         });
 
         const estudouSim = document.getElementById('estudou-sim');
@@ -3619,6 +4047,179 @@
 
         intensityExplainerClose?.addEventListener('click', closeIntensityExplainer);
         intensityExplainerBackdrop?.addEventListener('click', closeIntensityExplainer);
+
+        /* iVi — Assistente IA */
+        const iviChatPanel = document.getElementById('ivi-chat-panel');
+        const iviChatMessages = document.getElementById('ivi-chat-messages');
+        const iviChatInput = document.getElementById('ivi-chat-input');
+        const iviHintBtn = document.getElementById('ivi-hint-btn');
+        const iviAvatarBtn = document.getElementById('ivi-avatar-btn');
+        const iviChatClose = document.getElementById('ivi-chat-close');
+        const iviChatSend = document.getElementById('ivi-chat-send');
+        const iviQuickQuestions = document.getElementById('ivi-quick-questions');
+        const iviBackdrop = document.getElementById('ivi-backdrop');
+        const WPP_SITE = `https://wa.me/${WHATSAPP_NUMBER}`;
+        let iviInitialized = false;
+        let iviTyping = false;
+
+        const IVI_WELCOME = 'Olá! Sou o **iVi** — assistente de inteligência artificial da Fluency Studio. Posso explicar nossos cursos, o método PEH 5.0, como se matricular ou agendar aula demonstrativa gratuita. Também tiro dúvidas gerais de inglês. Como posso ajudar?';
+
+        const IVI_KB = [
+            { keys: ['matricul', 'inscri', 'comecar', 'começar a estudar', 'quero estudar', 'entrar na escola', 'quero ser aluno', 'por onde comeco', 'nao sei por onde', 'processo pra comecar'], answer: `Que ótimo! Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}` },
+            { keys: ['valor', 'preco', 'preço', 'quanto custa', 'investimento', 'mensalidade custa', 'e caro', 'é caro', 'tem desconto', 'desconto', 'promocao', 'promoção', 'cupom'], answer: 'Os valores variam por programa e frequência de aulas — nunca invento números aqui. A aula demonstrativa é **gratuita** e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos.' },
+            { keys: ['demonstrativ', 'aula gratis', 'aula grátis', 'teste', 'conhecer', 'posso testar', 'conhecer antes de pagar', 'aula demo'], answer: 'A **aula demonstrativa é totalmente gratuita**, sem letras miúdas! É a melhor forma de conhecer o método PEH 5.0 e ver se a Fluency combina com você. Agende pelos botões do site ou pelo WhatsApp.' },
+            { keys: ['metodo', 'método', 'peh', 'como funciona', 'metodologia', 'ensino', 'peh 5.0', 'por que escolher', 'adaptativo', 'estrategia'], answer: 'A Fluency Studio usa o método exclusivo **PEH 5.0** do Victor Gomes:\n\n**P — Personalizado:** diagnóstico completo antes de qualquer aula.\n**E — Estratégico:** programa montado para seu estilo de aprendizagem.\n**H — Humanizado:** ambiente seguro para errar e tentar.\n\nNas aulas, o foco é a fala desde o primeiro dia — durante as aulas, nós só falamos.' },
+            { keys: ['fluency foundation', 'o que e foundation', 'programa completo', '18 meses', 'foundation'], answer: 'O **Fluency Foundation** é nosso programa mais completo: fala, leitura, escrita e escuta, com fluência prevista em 18 meses (pode ser menos se você já tiver nível). Ideal para mercado de trabalho, viagens e exames internacionais. Material organizado sob medida, sem custo surpresa depois de começar.' },
+            { keys: ['flash talk', 'so quero falar', 'só quero falar', '30 minutos', 'aula curta', 'conversacao', 'conversação'], answer: 'O **Flash Talk** é para quem só quer conversação: aulas de 30 minutos, até 4x por semana, com temas do dia a dia escolhidos por você. Não precisa comprar material — é tudo apresentado na aula.' },
+            { keys: ['corporate speech', 'ingles corporativo', 'inglês corporativo', 'oratoria', 'oratória', 'apresentacao em ingles', 'trabalho', 'empresa', 'b1'], answer: 'O **Corporate Speech** eleva sua capacidade de se expressar em inglês em ambientes de trabalho — vocabulário avançado e oratória de alto padrão. Requer nível mínimo B1. Vendido em módulos mensais avulsos.' },
+            { keys: ['curso', 'programa', 'modulo de aula', 'quais cursos', 'diferenca entre programas', 'diferença entre programas', 'quais sao'], answer: 'A escola oferece três programas principais: **Fluency Foundation** (completo, 18 meses), **Flash Talk** (conversação, 30 min) e **Corporate Speech** (inglês corporativo, B1+). Qual combina mais com você?' },
+            { keys: ['premium', 'interactive', 'individual ou grupo', 'aula em grupo', 'aula individual', 'modalidade', 'individual', 'grupo'], answer: 'Temos duas modalidades: **Premium** (só você e o professor) e **Interactive** (você e mais 2 ou 3 colegas, sempre em grupos reduzidos).' },
+            { keys: ['quanto tempo', 'quanto tempo demora', 'quanto tempo pra ficar fluente', 'fluencia em quanto tempo'], answer: 'No Fluency Foundation, a previsão é de 18 meses para fluência a partir da lição 1 — pode ser menos se você já tiver uma base e for nivelado direto num módulo mais avançado.' },
+            { keys: ['nivel', 'nível', 'cefr', 'a1', 'b1', 'c2', 'teste de nivel', 'prova de nivelamento', 'qual meu nivel'], answer: 'Os níveis seguem o **CEFR** (A1 a C2). Na aula demonstrativa o Victor avalia sua fluência de forma conversacional — não é prova, é conversa estratégica para montar sua trilha.' },
+            { keys: ['fluency studio', 'sobre a escola', 'quem e voces', 'escola online', 'ao vivo', 'gravada', 'aulas gravadas', 'online'], answer: 'A **Fluency Studio** é uma escola de inglês 100% online, com aulas **ao vivo** (nunca gravadas), individuais ou em grupos reduzidos, do professor Victor Gomes. Slogan: *Fale, entenda e evolua com estratégia.*' },
+            { keys: ['formacao', 'formação', 'experiencia', 'experiência', 'quem e o professor', 'victor gomes', 'professor', 'victor', 'ufscar', 'toefl', 'toeic'], answer: '**Victor Gomes** — formado em Letras, pós-graduado em Ensino de Língua Estrangeira, Metodologias Ativas e Tecnologias pela UFScar. Morou meses nos EUA. 20 anos de carreira em escolas de idiomas e bilíngues/internacionais (Anglo, Objetivo, entre outras). Certificações TOEFL e TOEIC.' },
+            { keys: ['horario', 'horário', 'que horas', 'horario fixo', 'disponibilidade', 'agenda'], answer: 'Os horários são definidos conforme a disponibilidade do professor e do aluno. Uma vez fechado, o horário fica **fixo** — você se torna dono do horário.' },
+            { keys: ['contrato', 'multa', 'cancelar curso', 'fidelizacao', 'fidelização', 'fidelidade'], answer: 'O contrato é justo e parcelado. **Não há multas** — tudo que é pago corresponde a aulas realizadas.' },
+            { keys: ['frequencia', 'frequência', 'quantas vezes por semana', '1x por semana', '2x por semana', '3x por semana', '4x por semana', '60 minutos', 'aula de 60', 'intensidade', 'duracao', 'duração'], answer: 'Sugestões de frequência:\n• **1x/semana** — manter o nível\n• **2x/semana** — equilíbrio (recomendado)\n• **3x/semana** — evolução mais rápida\n• **4x/semana** — intensivo\nAulas de **30 min** (Flash Talk) ou **60 min** (Foundation) conforme seu objetivo.' },
+            { keys: ['material didatico', 'material didático', 'comprar livro', 'livro de ingles', 'custo do material', 'material', 'apostila'], answer: 'No **Flash Talk** o material é apresentado na aula — não precisa comprar. No **Fluency Foundation**, o material é organizado personalizadamente no atendimento, sem surpresas de custo depois de começar. É proibido acrescentar materiais durante o curso.' },
+            { keys: ['falar', 'fala', 'primeiro dia', 'desde o inicio', 'conversar'], answer: 'Todos os cursos colocam você para falar desde o primeiro momento — durante as aulas, vocês só falam. A diferença: Fluency Foundation é mais completo (com exercícios e tarefas); Flash Talk é só conversação.' },
+            { keys: ['ingles', 'inglês', 'grammar', 'gramatica', 'gramática', 'vocabulario', 'vocabulário', 'pronuncia', 'pronúncia', 'phrasal verb', 'phrasal verbs'], answer: 'Posso ajudar com dúvidas de inglês! Me diga o tema (tempos verbais, phrasal verbs, pronúncia…) e explico de forma clara.' },
+            { keys: ['make ou do', 'make vs do', 'diferenca make do', 'diferença make do'], answer: 'Ótima dúvida clássica! **Make** é usado para criar/produzir algo (make a cake, make a decision). **Do** é usado para atividades/tarefas genéricas (do homework, do the dishes).' },
+            { keys: ['present perfect', 'ja fiz', 'já fiz', 'have has'], answer: 'O **Present Perfect** (have/has + particípio) conecta o passado com o presente — usado quando o momento exato não importa ou a ação ainda tem efeito agora (I have finished my homework).' },
+            { keys: ['whatsapp', 'contato', 'telefone', 'falar com victor', 'falar com alguem', 'falar com alguém'], answer: `Para falar diretamente com o Victor, clique no botão verde do WhatsApp aqui no chat ou ao lado da minha foto. Número: (11) 91199-9759.\n\nLink: ${WPP_SITE}` },
+            { keys: ['instagram', 'rede social', 'redes', 'teacher_victorgomes'], answer: 'Siga o professor no Instagram: **@teacher_victorgomes**. Lá você vê conteúdo sobre inglês e a metodologia da escola.' },
+            { keys: ['esqueci senha', 'esqueci a senha', 'nao consigo entrar', 'não consigo entrar', 'recuperar senha', 'login nao funciona', 'area do aluno', 'portal'], answer: `Para acessar o portal do aluno, use o link **Área do Aluno** no topo do site. Esqueceu a senha? Fale com o Victor no WhatsApp: ${WPP_SITE}` },
+            { keys: ['obrigado', 'obrigada', 'valeu', 'thanks', 'agradeço'], answer: 'Por nada! Se tiver mais dúvidas, estou aqui. Boa sorte na sua jornada com o inglês!' }
+        ];
+
+        function normalizeIviText(text) {
+            return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function formatIviMarkdown(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>');
+        }
+
+        function findIviAnswer(question) {
+            const q = normalizeIviText(question.trim());
+            if (/^(oi|ola|olá|hey|bom dia|boa tarde|boa noite|hi|e ai)$/i.test(q)) return IVI_WELCOME;
+
+            let best = null;
+            let bestScore = 0;
+
+            IVI_KB.forEach((entry) => {
+                let score = 0;
+                entry.keys.forEach((key) => {
+                    const kn = normalizeIviText(key);
+                    if (q.includes(kn)) score += kn.length;
+                });
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = entry;
+                }
+            });
+
+            if (best && bestScore > 0) return best.answer;
+
+            return `Boa pergunta! Para informações personalizadas sobre matrícula, valores e programas, o Victor atende pelo WhatsApp: ${WPP_SITE}. Posso ajudar com mais alguma coisa sobre a escola?`;
+        }
+
+        function appendIviMessage(text, type) {
+            const msg = document.createElement('div');
+            msg.className = `ivi-msg ivi-msg-${type}`;
+            if (type === 'bot') {
+                msg.innerHTML = formatIviMarkdown(text);
+            } else {
+                msg.textContent = text;
+            }
+            iviChatMessages.appendChild(msg);
+            iviChatMessages.scrollTop = iviChatMessages.scrollHeight;
+        }
+
+        function showIviTyping() {
+            const typing = document.createElement('div');
+            typing.className = 'ivi-msg-typing';
+            typing.id = 'ivi-typing-indicator';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            iviChatMessages.appendChild(typing);
+            iviChatMessages.scrollTop = iviChatMessages.scrollHeight;
+        }
+
+        function hideIviTyping() {
+            document.getElementById('ivi-typing-indicator')?.remove();
+        }
+
+        function sendIviQuestion(question) {
+            const trimmed = question.trim();
+            if (!trimmed || iviTyping) return;
+
+            if (!iviChatOpen) openIviChat();
+
+            appendIviMessage(trimmed, 'user');
+            iviChatInput.value = '';
+            iviTyping = true;
+            showIviTyping();
+
+            const delay = 400 + Math.min(trimmed.length * 10, 900);
+            setTimeout(() => {
+                hideIviTyping();
+                appendIviMessage(findIviAnswer(trimmed), 'bot');
+                iviTyping = false;
+            }, delay);
+        }
+
+        function openIviChat() {
+            iviChatOpen = true;
+            iviChatPanel.classList.add('is-open');
+            iviChatPanel.setAttribute('aria-hidden', 'false');
+            iviBackdrop?.classList.add('is-visible');
+            iviHintBtn?.classList.add('is-hidden');
+            iviAvatarBtn?.classList.remove('is-pulsing');
+
+            if (!iviInitialized) {
+                iviInitialized = true;
+                appendIviMessage(IVI_WELCOME, 'bot');
+            }
+
+            setTimeout(() => iviChatInput?.focus(), 300);
+        }
+
+        function closeIviChat() {
+            iviChatOpen = false;
+            iviChatPanel.classList.remove('is-open');
+            iviChatPanel.setAttribute('aria-hidden', 'true');
+            iviBackdrop?.classList.remove('is-visible');
+            iviHintBtn?.classList.remove('is-hidden');
+        }
+
+        function toggleIviChat() {
+            if (iviChatOpen) closeIviChat();
+            else openIviChat();
+        }
+
+        iviHintBtn?.addEventListener('click', openIviChat);
+        iviAvatarBtn?.addEventListener('click', toggleIviChat);
+        iviChatClose?.addEventListener('click', closeIviChat);
+        iviBackdrop?.addEventListener('click', closeIviChat);
+        iviChatSend?.addEventListener('click', () => sendIviQuestion(iviChatInput.value));
+
+        iviChatInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendIviQuestion(iviChatInput.value);
+            }
+        });
+
+        iviQuickQuestions?.querySelectorAll('.ivi-quick-btn').forEach((btn) => {
+            btn.addEventListener('click', () => sendIviQuestion(btn.dataset.q));
+        });
+
+        iviAvatarBtn?.classList.add('is-pulsing');
     </script>
 
 </body>
