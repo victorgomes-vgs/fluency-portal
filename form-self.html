@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script>
     firebase.initializeApp({
@@ -146,7 +147,9 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
+const auth = firebase.auth();
 const db = firebase.firestore();
+const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
 
 const LOGO_URL = "https://thefluency.studio/assets/logo_portal_jul2.png";
 const IVI_PHOTO = "assets/ivi.png";
@@ -490,35 +493,75 @@ function FormSelf() {
     try {
       const email = dados.email.trim().toLowerCase();
 
-      const pendSnap = await db.collection("cadastros_pendentes")
-        .where("email", "==", email).where("status", "==", "pendente").limit(1).get();
+      const pendSnap = await db.collection("students")
+        .where("email", "==", email).where("status", "==", "pendente_aprovacao").limit(1).get();
       if (!pendSnap.empty) {
-        setErr("Já existe um cadastro pendente com este email. Aguarde a liberação do professor Victor ou use outro email.");
+        setErr("Já existe um cadastro aguardando aprovação com este email. Fale com o professor Victor.");
         setSaving(false);
         return;
       }
 
-      const { senha, senha2, ...dadosSemSenha } = dados;
-      await db.collection("cadastros_pendentes").add({
-        status: "pendente",
+      const cred = await auth.createUserWithEmailAndPassword(email, dados.senha);
+      const uid = cred.user.uid;
+      const programName = dados.contrato === "fluency_foundation"
+        ? "Fluency Foundation"
+        : dados.contrato === "flash" ? "Flash (Just Talk)" : "Speech (Business)";
+
+      await db.collection("students").doc(uid).set({
+        name: dados.nome.trim(),
         email,
-        nome: dados.nome.trim(),
-        dados: dadosSemSenha,
-        senhaPortal: senha,
+        phone: dados.telefone.trim(),
+        telefone2: dados.telefone2.trim(),
+        cpf: dados.cpf.trim(),
+        rg: dados.rg.trim(),
+        dataNasc: dados.dataNasc,
+        estadoCivil: dados.estadoCivil,
+        profissao: dados.profissao.trim(),
+        nacionalidade: dados.nacionalidade.trim(),
+        endereco: dados.endereco.trim(),
+        foto: dados.foto.trim(),
+        dataCadastro: new Date().toISOString().slice(0, 10),
+        contrato: dados.contrato,
+        duracao: dados.duracao.trim(),
+        diasAulas: dados.diasAulas,
+        horarioAulas: dados.horarioAulas.trim(),
+        valorCheio: parseFloat(dados.valorCheio) || 0,
+        descontos: parseFloat(dados.descontos) || 0,
+        valorFinal: parseFloat(dados.valorFinal) || 0,
+        diaVencimento: parseInt(dados.diaVencimento, 10) || 1,
+        dataInicio: dados.dataInicio || "",
+        licaoInicio: parseInt(dados.licaoInicio, 10) || 1,
+        numParcelas: parseInt(dados.numParcelas, 10) || 18,
+        status: "pendente_aprovacao",
+        aguardandoLancamento: true,
         triagem,
+        level: "A1",
+        program: programName,
+        coach: "Victor Gomes",
+        birthday: dados.dataNasc || "",
+        profession: dados.profissao.trim(),
+        links: [
+          { id: 1, label: "Materiais (Drive)", url: "https://drive.google.com/" },
+          { id: 2, label: "Tarefas (Classroom)", url: "https://classroom.google.com/" },
+        ],
+        trilha: {},
+        financeiro: FINANCEIRO_DEFAULT,
+        modulosOcultos: [],
+        cadastroOrigem: "form-self",
         urlParams: urlPrefill,
         submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        autorizadoAt: null,
-        studentUid: null,
-        cadastroOrigem: "form-self",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
+      await auth.signOut();
       setDone(true);
       setStep(4);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       let msg = "Erro ao enviar cadastro. Tente novamente ou fale com o Victor.";
-      if (e.message) msg = e.message;
+      if (e.code === "auth/email-already-in-use") msg = "Este email já está cadastrado. Use outro email ou acesse o portal.";
+      else if (e.code === "auth/weak-password") msg = "A senha deve ter pelo menos 6 caracteres.";
+      else if (e.message) msg = e.message;
       setErr(msg);
       setSaving(false);
     }

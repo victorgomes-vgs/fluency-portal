@@ -3072,13 +3072,14 @@ function ModalCadastro({onClose,onSaved}){
 
 /* ── CADASTROS PENDENTES (form-self) ── */
 function ModalAutorizarLancar({pendente,onClose,onLaunched}){
-  const raw=pendente.dados||{};
+  const raw=pendente;
+  const studentUid=pendente.uid;
   const [tab,setTab]=useState(0);
   const [dados,setDados]=useState({
-    nome:raw.nome||pendente.nome||"",cpf:raw.cpf||"",rg:raw.rg||"",
-    email:raw.email||pendente.email||"",telefone:raw.telefone||"",telefone2:raw.telefone2||"",
+    nome:raw.name||raw.nome||"",cpf:raw.cpf||"",rg:raw.rg||"",
+    email:raw.email||"",telefone:raw.phone||raw.telefone||"",telefone2:raw.telefone2||"",
     dataNasc:raw.dataNasc||"",estadoCivil:raw.estadoCivil||"",
-    profissao:raw.profissao||"",nacionalidade:raw.nacionalidade||"",
+    profissao:raw.profissao||raw.profession||"",nacionalidade:raw.nacionalidade||"",
     endereco:raw.endereco||"",foto:raw.foto||"",
     contrato:raw.contrato||"fluency_foundation",duracao:raw.duracao||"",
     diasAulas:raw.diasAulas||[],horarioAulas:raw.horarioAulas||"",
@@ -3088,11 +3089,10 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
     numParcelas:raw.numParcelas||18,
   });
   const triagem=pendente.triagem||BLANK_TRIAGEM;
-  const [level,setLevel]=useState("A1");
+  const [level,setLevel]=useState(pendente.level||"A1");
   const [status,setStatus]=useState("ativo");
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
-  const senhaPortal=pendente.senhaPortal||"";
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
@@ -3106,46 +3106,22 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
   async function handleLancar(){
     if(!dados.nome.trim()){setErr("Nome é obrigatório.");return;}
     if(!dados.email.trim()){setErr("Email é obrigatório.");return;}
-    if(!senhaPortal){setErr("Senha do aluno não encontrada no cadastro pendente.");return;}
-    if(!confirm(`Autorizar e lançar ${dados.nome.trim()} no sistema?\n\nSerá criado login Firebase + perfil completo.`))return;
+    if(!studentUid){setErr("UID do aluno não encontrado.");return;}
+    if(!confirm(`Autorizar e lançar ${dados.nome.trim()} no sistema?\n\nLogin já existe — será ativado o perfil completo com financeiro.`))return;
     setSaving(true);setErr("");
     try{
       const email=dados.email.trim().toLowerCase();
-      const firebaseConfig={
-        apiKey:"AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
-        authDomain:"fluency-studio-portal.firebaseapp.com",
-        projectId:"fluency-studio-portal",
-        storageBucket:"fluency-studio-portal.firebasestorage.app",
-        messagingSenderId:"568224359300",
-        appId:"1:568224359300:web:6f4e283315deb93224b3d1",
-      };
-      const appName="launch-"+pendente.id;
-      const secondApp=firebase.apps.find(a=>a.name===appName)||firebase.initializeApp(firebaseConfig,appName);
-      const secondAuth=secondApp.auth();
-      let uid;
-      try{
-        const cred=await secondAuth.createUserWithEmailAndPassword(email,senhaPortal);
-        uid=cred.user.uid;
-      }catch(authErr){
-        if(authErr.code==="auth/email-already-in-use"){
-          const cred2=await secondAuth.signInWithEmailAndPassword(email,senhaPortal);
-          uid=cred2.user.uid;
-        }else throw authErr;
-      }
-      await secondAuth.signOut();
-
       const parcelas=gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,dados.numParcelas||18,[])||[];
       const financeiro={...FINANCEIRO_DEFAULT,parcelas};
       const programName=CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation";
 
-      await db.collection("students").doc(uid).set({
+      await db.collection("students").doc(studentUid).update({
         name:dados.nome.trim(),email,
         phone:dados.telefone.trim(),telefone2:dados.telefone2.trim(),
         cpf:dados.cpf.trim(),rg:dados.rg.trim(),
         dataNasc:dados.dataNasc,estadoCivil:dados.estadoCivil,
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:dados.foto.trim(),
-        dataCadastro:new Date().toISOString().slice(0,10),
         contrato:dados.contrato,duracao:dados.duracao.trim(),
         diasAulas:dados.diasAulas,horarioAulas:dados.horarioAulas.trim(),
         valorCheio:parseFloat(dados.valorCheio)||0,
@@ -3156,22 +3132,17 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         licaoInicio:parseInt(dados.licaoInicio,10)||1,
         numParcelas:parseInt(dados.numParcelas,10)||18,
         status,level,triagem,
-        program:programName,coach:"Victor Gomes",
+        program:programName,
         birthday:dados.dataNasc||"",profession:dados.profissao.trim(),
-        links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],
-        trilha:{},financeiro,modulosOcultos:[],
-        cadastroOrigem:"form-self",pendenteId:pendente.id,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      });
-      await db.collection("users").doc(uid).set({
-        name:dados.nome.trim(),email,role:"student",studentId:uid,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      });
-      await db.collection("cadastros_pendentes").doc(pendente.id).update({
-        status:"autorizado",studentUid:uid,
+        financeiro,
+        aguardandoLancamento:false,
         autorizadoAt:firebase.firestore.FieldValue.serverTimestamp(),
       });
-      onLaunched(uid);onClose();
+      await db.collection("users").doc(studentUid).set({
+        name:dados.nome.trim(),email,role:"student",studentId:studentUid,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      },{merge:true});
+      onLaunched(studentUid);onClose();
     }catch(e){
       setErr("Erro ao lançar: "+(e.message||e.code||"desconhecido"));
       setSaving(false);
@@ -3180,7 +3151,10 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
 
   async function handleRejeitar(){
     if(!confirm("Rejeitar este cadastro pendente?"))return;
-    await db.collection("cadastros_pendentes").doc(pendente.id).update({status:"rejeitado",rejeitadoAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await db.collection("students").doc(studentUid).update({
+      status:"rejeitado",aguardandoLancamento:false,
+      rejeitadoAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
     onClose();
   }
 
@@ -3193,7 +3167,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
             <Icon name="clipboard-check" size={18}/>
             <div>
               <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Revisar Cadastro</div>
-              <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.nome} · form-self</div>
+              <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.name} · form-self</div>
             </div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
@@ -3270,7 +3244,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
             <div>
               <div className="info-box" style={{background:"rgba(30,160,110,.10)",border:"1px solid rgba(30,160,110,.30)",borderRadius:12,padding:14,marginBottom:16,fontSize:13}}>
                 <strong style={{color:"#60daa8"}}>Pronto para lançar?</strong><br/>
-                Ao clicar em <strong>Autorizar Lançar</strong>, o sistema cria o login do aluno, o perfil completo no Firestore e marca este cadastro como autorizado.
+                Ao clicar em <strong>Autorizar Lançar</strong>, o login do aluno (já criado no form-self) é ativado com financeiro, parcelas e status definitivo.
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="form-label">Nível Inicial</label>
@@ -3315,19 +3289,25 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
   const [filtro,setFiltro]=useState("pendente");
 
   useEffect(()=>{
-    return db.collection("cadastros_pendentes").onSnapshot(snap=>{
-      const items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    return db.collection("students").where("cadastroOrigem","==","form-self").onSnapshot(snap=>{
+      const items=snap.docs.map(d=>({uid:d.id,...d.data()}));
       items.sort((a,b)=>{
-        const ta=a.submittedAt?.toMillis?.()||0;
-        const tb=b.submittedAt?.toMillis?.()||0;
+        const ta=a.submittedAt?.toMillis?.()||a.createdAt?.toMillis?.()||0;
+        const tb=b.submittedAt?.toMillis?.()||b.createdAt?.toMillis?.()||0;
         return tb-ta;
       });
       setPendentes(items);
     },()=>setPendentes([]));
   },[]);
 
-  const lista=useMemo(()=>(pendentes||[]).filter(p=>filtro==="todos"||p.status===filtro),[pendentes,filtro]);
-  const countPendente=(pendentes||[]).filter(p=>p.status==="pendente").length;
+  const lista=useMemo(()=>(pendentes||[]).filter(p=>{
+    if(filtro==="todos")return true;
+    if(filtro==="pendente")return p.status==="pendente_aprovacao";
+    if(filtro==="autorizado")return p.status==="ativo"&&p.autorizadoAt;
+    if(filtro==="rejeitado")return p.status==="rejeitado";
+    return true;
+  }),[pendentes,filtro]);
+  const countPendente=(pendentes||[]).filter(p=>p.status==="pendente_aprovacao").length;
 
   return(
     <div>
@@ -3350,28 +3330,28 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
         :<div style={{display:"flex",flexDirection:"column",gap:10}}>
           {lista.map(p=>{
             const sub=p.submittedAt?.toDate?p.submittedAt.toDate().toLocaleDateString("pt-BR"):"—";
-            const stCls={pendente:"status-pill-interesse",autorizado:"status-pill-ativo",rejeitado:"status-pill-evadido"}[p.status]||"status-pill-inactive";
-            const stLbl={pendente:"Pendente",autorizado:"Autorizado",rejeitado:"Rejeitado"}[p.status]||p.status;
+            const stCls=p.status==="pendente_aprovacao"?"status-pill-interesse":p.status==="ativo"?"status-pill-ativo":p.status==="rejeitado"?"status-pill-evadido":"status-pill-inactive";
+            const stLbl=p.status==="pendente_aprovacao"?"Pendente":p.status==="ativo"?"Autorizado":p.status==="rejeitado"?"Rejeitado":p.status;
             return(
-              <div key={p.id} className="glass rounded-2xl p-4" style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+              <div key={p.uid} className="glass rounded-2xl p-4" style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
                 <div style={{width:44,height:44,borderRadius:"50%",background:"var(--gradient-cta)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:800,fontSize:16,flexShrink:0}}>
-                  {(p.nome||"?")[0].toUpperCase()}
+                  {(p.name||"?")[0].toUpperCase()}
                 </div>
                 <div style={{flex:1,minWidth:160}}>
-                  <div style={{fontWeight:700,fontSize:15}}>{p.nome||"Sem nome"}</div>
+                  <div style={{fontWeight:700,fontSize:15}}>{p.name||"Sem nome"}</div>
                   <div style={{fontSize:12,color:"var(--font-muted)"}}>{p.email} · {sub}</div>
-                  {p.dados?.contrato&&<div style={{fontSize:11,marginTop:4}}>{CONTRATOS.find(c=>c.v===p.dados.contrato)?.l||p.dados.contrato}</div>}
+                  {p.contrato&&<div style={{fontSize:11,marginTop:4}}>{CONTRATOS.find(c=>c.v===p.contrato)?.l||p.contrato}</div>}
                 </div>
                 <span className={"status-pill "+stCls} style={{fontSize:10}}>{stLbl}</span>
-                {p.status==="pendente"&&(
+                {p.status==="pendente_aprovacao"&&(
                   <button className="btn btn-primary rounded-xl px-5 py-2.5 text-sm font-bold inline-flex items-center gap-2"
                     style={{background:"linear-gradient(135deg,#60daa8,#187E74)",border:"none"}}
                     onClick={()=>setSelected(p)}>
                     <Icon name="clipboard-check" size={14}/> Revisar & Lançar
                   </button>
                 )}
-                {p.status==="autorizado"&&p.studentUid&&(
-                  <span style={{fontSize:11,color:"var(--font-muted)"}}>UID: {p.studentUid.slice(0,8)}…</span>
+                {p.status==="ativo"&&p.autorizadoAt&&(
+                  <span style={{fontSize:11,color:"var(--font-muted)"}}>UID: {p.uid.slice(0,8)}…</span>
                 )}
               </div>
             );
@@ -4637,7 +4617,7 @@ function AdminApp({user}){
   const [adminView,setAdminView]=useState("dashboard");
 
   useEffect(()=>db.collection("students").onSnapshot(snap=>setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})))),[]);
-  useEffect(()=>db.collection("cadastros_pendentes").where("status","==","pendente").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
+  useEffect(()=>db.collection("students").where("status","==","pendente_aprovacao").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
 
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
 
@@ -4693,6 +4673,47 @@ function AdminApp({user}){
   );
 }
 
+function WaitingApproval({email}){
+  return(
+    <div className="min-h-screen flex flex-col items-center justify-center px-5">
+      <div className="login-logo-wrap"><BrandLogo large/></div>
+      <div className="w-full max-w-md glass rounded-2xl p-8 text-center">
+        <div style={{width:64,height:64,borderRadius:"50%",background:"linear-gradient(135deg,#f0cc60,#e8a94c)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(232,169,76,.35)"}}>
+          <Icon name="clipboard-check" size={28} style={{color:"#fff"}}/>
+        </div>
+        <h1 className="text-xl font-bold mb-2" style={{fontFamily:"'Sora',sans-serif"}}>Cadastro em análise</h1>
+        <p className="muted text-sm" style={{lineHeight:1.65,marginBottom:16}}>
+          Recebemos seu formulário! O professor Victor está revisando seus dados e em breve libera seu acesso completo ao portal.
+        </p>
+        {email&&<p className="text-xs muted">Conta: <strong>{email}</strong></p>}
+        <a href={WPP_VICTOR} target="_blank" rel="noopener" className="btn btn-primary rounded-xl px-5 py-3 mt-6 inline-flex items-center gap-2 text-sm font-semibold" style={{textDecoration:"none"}}>
+          <Icon name="message-circle" size={16}/> Falar com o Victor
+        </a>
+        <button className="btn rounded-xl px-4 py-2.5 mt-3 text-sm w-full" onClick={()=>auth.signOut()}>Sair</button>
+      </div>
+    </div>
+  );
+}
+
+function PendingApprovalGate({uid,userEmail}){
+  const [status,setStatus]=useState(undefined);
+  useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>{
+    setStatus(doc.exists()?doc.data().status:null);
+  },()=>setStatus(null)),[uid]);
+  if(status===undefined)return <LoadingScreen/>;
+  if(status==="pendente_aprovacao")return <WaitingApproval email={userEmail}/>;
+  if(status==="rejeitado")return(
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
+        <p className="text-sm mb-4">Seu cadastro não foi aprovado. Entre em contato com o professor Victor.</p>
+        <a href={WPP_VICTOR} className="btn btn-primary rounded-xl px-4 py-2.5 text-sm" style={{textDecoration:"none",display:"inline-block"}}>WhatsApp</a>
+        <button className="btn rounded-xl px-4 py-2.5 mt-3 text-sm w-full" onClick={()=>auth.signOut()}>Sair</button>
+      </div>
+    </div>
+  );
+  return <StudentDetail uid={uid} isAdmin={false}/>;
+}
+
 function App(){
   const [user,setUser]=useState(undefined);
   const [authErr,setAuthErr]=useState("");
@@ -4717,7 +4738,7 @@ function App(){
   );
   if(!user)return <Login/>;
   if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
-  return <StudentDetail uid={user.uid} isAdmin={false}/>;
+  return <PendingApprovalGate uid={user.uid} userEmail={user.email}/>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
