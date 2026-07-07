@@ -152,8 +152,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
 
-const FORMCAPA_URL = "assets/formcapa.png";
-const FORMCAPA_FALLBACK = "assets/capa_portal_jul.png";
+const FORMCAPA_URL = "assets/formcapa.jpg";
 const IVI_PHOTO = "assets/ivi.png";
 const PORTAL_URL = "https://thefluency.studio/portal.html";
 const WPP_VICTOR = "https://wa.me/5511919756733";
@@ -348,10 +347,9 @@ function parseUrlParams() {
 const STEPS = ["Boas-vindas", "Dados Pessoais", "Perfil do Aluno"];
 
 function HeroBanner() {
-  const [src, setSrc] = useState(FORMCAPA_URL);
   return (
     <div className="hero-banner">
-      <img src={src} alt="Fluency Studio" onError={() => { if (src !== FORMCAPA_FALLBACK) setSrc(FORMCAPA_FALLBACK); }} />
+      <img src={FORMCAPA_URL} alt="Fluency Studio" />
     </div>
   );
 }
