@@ -493,14 +493,6 @@ function FormSelf() {
     try {
       const email = dados.email.trim().toLowerCase();
 
-      const pendSnap = await db.collection("students")
-        .where("email", "==", email).where("status", "==", "pendente_aprovacao").limit(1).get();
-      if (!pendSnap.empty) {
-        setErr("Já existe um cadastro aguardando aprovação com este email. Fale com o professor Victor.");
-        setSaving(false);
-        return;
-      }
-
       const cred = await auth.createUserWithEmailAndPassword(email, dados.senha);
       const uid = cred.user.uid;
       const programName = dados.contrato === "fluency_foundation"
