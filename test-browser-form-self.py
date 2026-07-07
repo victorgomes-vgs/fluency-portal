@@ -74,28 +74,10 @@ def run():
         page.locator('input[placeholder="Repita a senha"]').fill(PASS)
         page.screenshot(path="C:/Projetos/fluency-portal/test-shot-1-dados.png")
         shots.append("dados")
-        page.get_by_role("button", name="Seu Programa").click()
-        page.wait_for_selector("text=Seu Programa", timeout=10000)
-
-        # Step 2 — programa
-        page.locator('input[type="date"]').fill("2026-08-15")
-        page.get_by_role("button", name="Segunda").click()
-        page.get_by_role("button", name="Quarta").click()
-        page.locator('input[placeholder="Ex: 19:00 – 20:00"]').fill("19:00 – 20:00")
-        # valores — pegar inputs number na seção contrato
-        nums = page.locator('input[type="number"]')
-        if nums.count() >= 3:
-            nums.nth(0).fill("1200")
-            nums.nth(1).fill("200")
-            nums.nth(2).fill("1000")
-        if nums.count() >= 4:
-            nums.nth(3).fill("10")
-        page.screenshot(path="C:/Projetos/fluency-portal/test-shot-2-programa.png")
-        shots.append("programa")
         page.get_by_role("button", name="Perfil do Aluno").click()
-        page.wait_for_selector("text=Perfil do Aluno", timeout=10000)
+        page.wait_for_selector("text=Faixa Etária", timeout=10000)
 
-        # Step 3 — triagem
+        # Step 2 — triagem
         page.locator(".triagem-option", has_text="25–34 anos").click()
         page.locator(".triagem-option", has_text="Ensino Superior Completo").click()
         page.locator(".triagem-option", has_text="CLT").click()

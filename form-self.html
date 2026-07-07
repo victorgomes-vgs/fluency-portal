@@ -49,21 +49,26 @@
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     #root{position:relative;z-index:1;}
     .page-wrap{max-width:720px;margin:0 auto;padding:24px 16px 48px;}
-    .hero-card{background:var(--gradient-cta);border-radius:24px;padding:28px 28px 24px;color:#fff;
-      box-shadow:0 20px 50px rgba(23,64,130,.28);position:relative;overflow:hidden;margin-bottom:20px;}
-    .hero-card::after{content:'';position:absolute;top:-40%;right:-15%;width:280px;height:280px;
-      background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%);pointer-events:none;}
-    .hero-logo{height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));}
+    .hero-card{background:#fff;border-radius:24px;padding:0 0 22px;color:var(--font);
+      box-shadow:0 20px 50px rgba(23,64,130,.18);position:relative;overflow:hidden;margin-bottom:20px;
+      border:1.5px solid rgba(53,102,182,.14);}
+    .hero-banner{width:100%;line-height:0;overflow:hidden;background:linear-gradient(135deg,#174082,#2252A0);}
+    .hero-banner img{width:100%;height:auto;max-height:220px;object-fit:cover;display:block;}
+    .hero-body{padding:20px 24px 0;}
+    .hero-logo{height:40px;object-fit:contain;margin-bottom:10px;}
     .form-card{background:var(--gradient-surface);border:1.5px solid rgba(53,102,182,.18);
       border-radius:22px;box-shadow:var(--shadow);overflow:hidden;animation:slideUp .35s ease-out;}
     .form-header{padding:18px 22px;border-bottom:1px solid var(--divider);background:rgba(255,255,255,.5);}
     .form-body{padding:22px;max-height:none;}
     .form-footer{padding:16px 22px;border-top:1px solid var(--divider);display:flex;gap:10px;
       justify-content:space-between;align-items:center;flex-wrap:wrap;background:rgba(224,236,255,.35);}
-    .progress-track{display:flex;gap:6px;margin-top:14px;}
-    .progress-dot{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.28);transition:background .3s;}
-    .progress-dot.done,.progress-dot.active{background:#fff;}
-    .step-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;opacity:.8;letter-spacing:.04em;}
+    .progress-track{display:flex;gap:6px;margin-top:16px;}
+    .progress-dot{flex:1;height:5px;border-radius:99px;background:rgba(53,102,182,.15);transition:background .3s;}
+    .progress-dot.done,.progress-dot.active{background:linear-gradient(90deg,#3566B6,#187E74);}
+    .step-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--font-muted);letter-spacing:.04em;font-weight:600;}
+    .admin-lock-box{background:linear-gradient(135deg,rgba(224,236,255,.95),rgba(212,247,242,.85));
+      border:1.5px solid rgba(53,102,182,.22);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.6;color:#174082;}
+    .admin-lock-box strong{display:block;font-family:'Sora',sans-serif;font-size:14px;margin-bottom:6px;}
     .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#0d5260;margin-bottom:5px;}
     .form-section-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0a4a5c;
       border-bottom:1px solid var(--divider);padding-bottom:6px;margin-bottom:12px;margin-top:18px;}
@@ -104,18 +109,12 @@
       background:var(--input-bg);font-weight:600;transition:all .13s;}
     .day-pill.on{background:linear-gradient(135deg,rgba(163,224,214,.55),rgba(212,247,242,.8));
       border-color:rgba(0,102,91,.35);color:#00665B;}
-    .trust-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
-    .trust-chip{font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;
-      background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);}
+
     .success-card{text-align:center;padding:40px 28px;animation:fadeIn .5s ease;}
     .success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#187E74,#00665B);
       display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
       box-shadow:0 12px 32px rgba(0,102,91,.30);}
-    .peh-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
-    .peh-item{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px;text-align:center;}
-    .peh-item strong{display:block;font-size:18px;font-family:'Sora',sans-serif;margin-bottom:2px;}
-    .peh-item span{font-size:10px;opacity:.85;letter-spacing:.04em;}
-    @media(max-width:520px){.peh-strip{grid-template-columns:1fr;}.form-footer{flex-direction:column;}.form-footer .btn{width:100%;text-align:center;}}
+    @media(max-width:520px){.form-footer{flex-direction:column;}.form-footer .btn{width:100%;text-align:center;}}
     .float-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(40px);opacity:.45;}
     .orb1{width:220px;height:220px;background:rgba(53,102,182,.35);top:8%;left:-4%;animation:floatOrb 18s ease-in-out infinite;}
     .orb2{width:180px;height:180px;background:rgba(24,126,116,.28);bottom:12%;right:-2%;animation:floatOrb 22s ease-in-out infinite reverse;}
@@ -127,16 +126,18 @@
       cursor:pointer;transition:transform .18s;background:#174082;}
     .ivictor-btn:hover{transform:scale(1.08);}
     .ivictor-panel{position:fixed;bottom:96px;right:22px;z-index:900;width:340px;border-radius:20px;overflow:hidden;
-      box-shadow:0 16px 48px rgba(23,64,130,.28);animation:slideUp .28s ease-out;border:1px solid rgba(53,102,182,.18);}
+      box-shadow:0 16px 48px rgba(23,64,130,.35);animation:slideUp .28s ease-out;border:1px solid rgba(53,102,182,.25);
+      background:#fff;}
     .ivictor-header{background:var(--gradient-cta);padding:14px 16px;display:flex;align-items:center;gap:10px;color:#fff;}
     .ivictor-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.35);flex-shrink:0;background:#174082;}
-    .ivictor-footer{padding:10px 12px;border-top:1px solid var(--divider);background:rgba(224,236,255,.5);display:flex;gap:8px;}
-    .ivi-quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 4px;background:rgba(255,255,255,.6);}
+    .ivictor-footer{padding:10px 12px;border-top:1px solid var(--divider);background:#f0f6ff;display:flex;gap:8px;}
+    .ivi-quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 4px;background:#fff;}
+    .ivi-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;background:#fff;}
     .ivi-chip{font-size:11px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;
       border:1px solid rgba(53,102,182,.22);background:rgba(134,207,255,.18);color:#174082;transition:background .15s;}
     .ivi-chip:hover{background:rgba(134,207,255,.35);}
-    .ivi-hint-bar{background:linear-gradient(90deg,rgba(134,207,255,.25),rgba(163,224,214,.20));
-      border-bottom:1px solid rgba(53,102,182,.12);padding:10px 14px;font-size:12px;line-height:1.5;color:#174082;}
+    .ivi-hint-bar{background:#e8f2ff;border-bottom:1px solid rgba(53,102,182,.15);
+      padding:10px 14px;font-size:12px;line-height:1.5;color:#174082;}
     @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
     @media(max-width:520px){.ivictor-panel{width:calc(100vw - 32px)!important;right:16px!important;}}
   </style>
@@ -151,29 +152,29 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
 
-const LOGO_URL = "https://thefluency.studio/assets/logo_portal_jul2.png";
+const FORMCAPA_URL = "assets/formcapa.png";
+const FORMCAPA_FALLBACK = "assets/capa_portal_jul.png";
 const IVI_PHOTO = "assets/ivi.png";
 const PORTAL_URL = "https://thefluency.studio/portal.html";
 const WPP_VICTOR = "https://wa.me/5511919756733";
 
 const IVI_STEP_HINTS = {
-  0: "Oi! Sou a **iVi** — vou te guiar em cada etapa deste cadastro. Quando estiver pronto(a), toque em **Começar cadastro**. Leva uns 8 minutinhos e cada resposta ajuda o Victor a montar suas aulas sob medida! 🎯",
+  0: "Oi! Sou a **iVi** — vou te guiar em cada etapa deste cadastro. Quando estiver pronto(a), toque em **Começar cadastro**. Leva uns 6 minutinhos e cada resposta ajuda o Victor a montar suas aulas sob medida! 🎯",
   1: "Primeira etapa: **seus dados pessoais**. Preencha nome, email e WhatsApp com cuidado — é assim que o Victor vai te contatar. Crie também uma **senha** para o portal do aluno.",
-  2: "Agora confira as informações do **seu programa**. Se o Victor já definiu algo no contrato, os campos aparecem travados — é normal! Só confira se está tudo certo.",
-  3: "Última etapa — e a mais importante para personalizar suas aulas! Responda com sinceridade: objetivos, interesses e experiência com inglês. Não existe resposta errada. 💬",
-  4: "Pronto! Seu cadastro foi enviado. O Victor vai revisar tudo e liberar seu acesso ao portal em breve.",
+  2: "Última etapa — e a mais importante para personalizar suas aulas! Responda com sinceridade: objetivos, interesses e experiência com inglês. Não existe resposta errada. 💬",
+  3: "Pronto! Seu cadastro foi enviado. O Victor vai revisar tudo, definir contrato e horários, e liberar seu acesso ao portal em breve.",
 };
 
 const IVI_CHIPS = {
   0: ["Por que preencher?", "Quanto tempo leva?", "É seguro?"],
   1: ["O que é a senha?", "Preciso de foto?", "Próxima etapa"],
-  2: ["O que é Fluency Foundation?", "Dias das aulas", "Próxima etapa"],
-  3: ["Por que o perfil?", "Não sei meu objetivo", "Enviar cadastro"],
+  2: ["Por que o perfil?", "Não sei meu objetivo", "Enviar cadastro"],
 };
 
 const IVI_KB = [
   { keys: ["por que preencher", "pra que serve", "por que cadastro"], answer: "Este cadastro é o **diagnóstico PEH 5.0** — o Victor usa cada resposta para montar suas aulas personalizadas desde o dia 1. Quanto mais completo, melhor sua experiência!" },
-  { keys: ["quanto tempo", "demora", "minutos"], answer: "Cerca de **8 minutos**, em 3 etapas rápidas. Vou te guiando em cada uma — pode ir no seu ritmo!" },
+  { keys: ["quanto tempo", "demora", "minutos"], answer: "Cerca de **6 minutos**, em 2 etapas rápidas. Vou te guiando em cada uma — pode ir no seu ritmo!" },
+  { keys: ["contrato", "parcelas", "valor", "horario", "horário", "programa", "agenda"], answer: "Contrato, valores, parcelas e horários são definidos pelo **professor Victor** após você enviar o cadastro. Você não precisa preencher essa parte — ele cuida de tudo no lançamento!" },
   { keys: ["seguro", "dados", "privacidade", "protegido"], answer: "Seus dados ficam protegidos no sistema da Fluency Studio e são usados **somente** para seu curso. Não compartilhamos com terceiros." },
   { keys: ["senha", "portal", "login", "acesso"], answer: "A senha é para você entrar no **portal do aluno** depois que o Victor revisar e liberar seu cadastro. Guarde bem — você vai usar email + senha para acessar trilha, financeiro e materiais." },
   { keys: ["foto", "imagem", "url foto"], answer: "A foto é **opcional**! Se quiser, cole um link de imagem (Google Drive, Instagram, etc.). Se não tiver, sem problema — o Victor pode adicionar depois." },
@@ -244,7 +245,7 @@ function IViForm({ step, onAdvance }) {
     setLoading(true);
     setTimeout(() => {
       let answer = iviRespond(text);
-      if (/próxima|proxima|continuar|seguinte/i.test(text) && step < 3) {
+      if (/próxima|proxima|continuar|seguinte/i.test(text) && step < 2) {
         answer += "\n\nQuando estiver pronto(a), use o botão azul abaixo do formulário para avançar!";
       }
       setMessages(prev => [...prev, { role: "assistant", content: answer }]);
@@ -282,7 +283,7 @@ function IViForm({ step, onAdvance }) {
           <div className="ivi-quick-chips">
             {chips.map(c => <button key={c} type="button" className="ivi-chip" onClick={() => send(c)}>{c}</button>)}
           </div>
-          <div style={{ flex: 1, overflowY: "auto", padding: 12, display: "flex", flexDirection: "column", gap: 8, minHeight: 0, background: "rgba(255,255,255,.88)" }}>
+          <div className="ivi-messages">
             {messages.map((msg, i) => (
               <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
                 <div style={{
@@ -316,13 +317,6 @@ function IViForm({ step, onAdvance }) {
     </>
   );
 }
-const DIAS_SEMANA = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
-const CONTRATOS = [
-  { v: "fluency_foundation", l: "Fluency Foundation" },
-  { v: "flash", l: "Flash (Just Talk)" },
-  { v: "speech", l: "Speech (Business)" },
-];
-
 const BLANK_TRIAGEM = {
   idadeFaixa: "", estadoCivilT: "", formacao: "",
   ocupacao: "", areaInteresse: "",
@@ -351,33 +345,19 @@ function parseUrlParams() {
   };
 }
 
-function LockedInput({ label, value, onChange, locked, type = "text", placeholder, min, max }) {
-  const isLocked = locked && value;
+const STEPS = ["Boas-vindas", "Dados Pessoais", "Perfil do Aluno"];
+
+function HeroBanner() {
+  const [src, setSrc] = useState(FORMCAPA_URL);
   return (
-    <div>
-      <label className="form-label">{label}</label>
-      <div className="input-locked-wrap">
-        <input
-          type={type}
-          className="input"
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          readOnly={isLocked}
-          placeholder={placeholder}
-          min={min}
-          max={max}
-        />
-        {isLocked && <span className="input-locked-badge">Contrato</span>}
-      </div>
+    <div className="hero-banner">
+      <img src={src} alt="Fluency Studio" onError={() => { if (src !== FORMCAPA_FALLBACK) setSrc(FORMCAPA_FALLBACK); }} />
     </div>
   );
 }
 
-const STEPS = ["Boas-vindas", "Dados Pessoais", "Seu Programa", "Perfil do Aluno"];
-
 function FormSelf() {
   const urlPrefill = useMemo(() => parseUrlParams(), []);
-  const contractLocked = urlPrefill.locked;
 
   const [step, setStep] = useState(0);
   const [dados, setDados] = useState({
@@ -414,14 +394,6 @@ function FormSelf() {
 
   function setD(k, v) { setDados(p => ({ ...p, [k]: v })); }
   function setT(k, v) { setTriagem(p => ({ ...p, [k]: v })); }
-  function toggleDia(d) {
-    if (contractLocked && urlPrefill.diasAulas.length) return;
-    setDados(p => ({
-      ...p,
-      diasAulas: p.diasAulas.includes(d) ? p.diasAulas.filter(x => x !== d) : [...p.diasAulas, d],
-    }));
-  }
-
   function TriagemOption({ label, field, value }) {
     const sel = triagem[field] === value;
     return (
@@ -464,10 +436,6 @@ function FormSelf() {
       if (!dados.senha || dados.senha.length < 6) return "Crie uma senha com pelo menos 6 caracteres.";
       if (dados.senha !== dados.senha2) return "As senhas não coincidem.";
     }
-    if (s === 2) {
-      if (!dados.contrato) return "Selecione o tipo de contrato.";
-      if (!dados.dataInicio) return "Informe a data de início das aulas.";
-    }
     return "";
   }
 
@@ -475,7 +443,7 @@ function FormSelf() {
     const v = validateStep(step);
     if (v) { setErr(v); return; }
     setErr("");
-    setStep(s => Math.min(s + 1, 3));
+    setStep(s => Math.min(s + 1, 2));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -547,7 +515,7 @@ function FormSelf() {
 
       await auth.signOut();
       setDone(true);
-      setStep(4);
+      setStep(3);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       let msg = "Erro ao enviar cadastro. Tente novamente ou fale com o Victor.";
@@ -562,12 +530,14 @@ function FormSelf() {
   if (done) {
     return (
       <>
-        <IViForm step={4} />
+        <IViForm step={3} />
         <div className="page-wrap">
           <div className="hero-card" style={{ marginBottom: 24 }}>
-            <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
-            <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "14px 0 6px" }}>Cadastro enviado!</h1>
-            <p style={{ fontSize: 14, opacity: .9, lineHeight: 1.55, margin: 0 }}>O professor Victor vai revisar suas respostas e liberar seu acesso ao portal.</p>
+            <HeroBanner />
+            <div className="hero-body">
+              <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 6px" }}>Cadastro enviado!</h1>
+              <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.55, margin: 0 }}>O professor Victor vai revisar suas respostas e liberar seu acesso ao portal.</p>
+            </div>
           </div>
           <div className="form-card">
             <div className="success-card">
@@ -600,38 +570,28 @@ function FormSelf() {
     <IViForm step={step} />
     <div className="page-wrap">
       <div className="hero-card">
-        <img src={LOGO_URL} alt="Fluency Studio" className="hero-logo" onError={e => { e.target.style.display = "none"; }} />
-        <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, margin: "14px 0 6px" }}>
-          {step === 0 ? "Bem-vindo(a) à Fluency Studio" : "Cadastro do Aluno"}
-        </h1>
-        <p style={{ fontSize: 14, opacity: .88, lineHeight: 1.55, margin: 0 }}>
-          {step === 0
-            ? "Complete seu cadastro para iniciar sua jornada rumo à fluência em inglês."
-            : "Preencha com atenção — usamos essas informações para personalizar suas aulas."}
-        </p>
-        {step > 0 && (
-          <>
-            <div className="progress-track">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={"progress-dot" + (step >= i ? " active" : "") + (step > i ? " done" : "")} />
-              ))}
-            </div>
-            <div className="step-labels">
-              <span>Dados</span><span>Programa</span><span>Perfil</span>
-            </div>
-          </>
-        )}
-        {step === 0 && (
-          <div className="peh-strip">
-            <div className="peh-item"><strong>P</strong><span>Personalizado</span></div>
-            <div className="peh-item"><strong>E</strong><span>Estratégico</span></div>
-            <div className="peh-item"><strong>H</strong><span>Humanizado</span></div>
-          </div>
-        )}
-        <div className="trust-row">
-          <span className="trust-chip">🔒 Dados protegidos</span>
-          <span className="trust-chip">🎯 Método PEH 5.0</span>
-          <span className="trust-chip">🎓 Aulas ao vivo</span>
+        <HeroBanner />
+        <div className="hero-body">
+          <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, margin: "0 0 6px" }}>
+            {step === 0 ? "Bem-vindo(a) à Fluency Studio" : "Cadastro do Aluno"}
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.55, margin: 0 }}>
+            {step === 0
+              ? "Complete seu cadastro para iniciar sua jornada rumo à fluência em inglês."
+              : "Preencha com atenção — usamos essas informações para personalizar suas aulas."}
+          </p>
+          {step > 0 && (
+            <>
+              <div className="progress-track">
+                {[1, 2].map(i => (
+                  <div key={i} className={"progress-dot" + (step >= i ? " active" : "") + (step > i ? " done" : "")} />
+                ))}
+              </div>
+              <div className="step-labels">
+                <span>Dados Pessoais</span><span>Perfil do Aluno</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -641,10 +601,14 @@ function FormSelf() {
             <div className="form-body">
               <div className="info-box">
                 <strong>Parabéns pela decisão!</strong><br />
-                Este formulário leva cerca de 8 minutos. A iVi vai te guiar em cada etapa! Ao final, o professor Victor recebe seu perfil completo, revisa e libera seu acesso ao portal.
+                Este formulário leva cerca de 6 minutos. A iVi vai te guiar em cada etapa! Ao final, o professor Victor recebe seu perfil completo, revisa e libera seu acesso ao portal.
+              </div>
+              <div className="admin-lock-box" style={{ marginBottom: 16 }}>
+                <strong>Contrato, valores e horários</strong>
+                Essa parte é feita pelo administrador (professor Victor) após você enviar o cadastro. Você não precisa escolher contrato, parcelas nem horário aqui.
               </div>
               <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.65 }}>
-                Você vai preencher três etapas: <strong>dados pessoais</strong>, <strong>informações do seu programa</strong> e <strong>perfil de aprendizagem</strong> — as mesmas perguntas do cadastro oficial da escola.
+                Você vai preencher duas etapas: <strong>dados pessoais</strong> e <strong>perfil de aprendizagem</strong> — as mesmas perguntas do cadastro oficial da escola.
               </p>
             </div>
             <div className="form-footer" style={{ justifyContent: "flex-end" }}>
@@ -738,71 +702,12 @@ function FormSelf() {
             </div>
             <div className="form-footer">
               <button className="btn" onClick={prevStep}>← Voltar</button>
-              <button className="btn btn-primary" onClick={nextStep}>Seu Programa →</button>
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <div className="form-header">
-              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Seu Programa</div>
-              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Informações do contrato e cronograma</div>
-            </div>
-            <div className="form-body">
-              {err && <div className="err-box">{err}</div>}
-              {contractLocked && (
-                <div className="info-box">Os campos marcados como <strong>Contrato</strong> foram definidos pelo professor Victor e não podem ser alterados.</div>
-              )}
-
-              <div className="form-section-title">Contrato</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="form-label">Tipo de Contrato *</label>
-                  {contractLocked && urlPrefill.contrato ? (
-                    <LockedInput label="" value={CONTRATOS.find(c => c.v === dados.contrato)?.l || dados.contrato} onChange={() => {}} locked />
-                  ) : (
-                    <select className="input" value={dados.contrato} onChange={e => setD("contrato", e.target.value)}>
-                      {CONTRATOS.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
-                    </select>
-                  )}
-                </div>
-                <LockedInput label="Duração" value={dados.duracao} onChange={v => setD("duracao", v)} locked={contractLocked} placeholder="Ex: 18 meses" />
-                <LockedInput label="Data de Início *" value={dados.dataInicio} onChange={v => setD("dataInicio", v)} locked={contractLocked} type="date" />
-                <div>
-                  <label className="form-label">Lição de Início (1–150)</label>
-                  {contractLocked && urlPrefill.licaoInicio ? (
-                    <LockedInput label="" value={dados.licaoInicio} onChange={() => {}} locked />
-                  ) : (
-                    <select className="input" value={dados.licaoInicio} onChange={e => setD("licaoInicio", e.target.value)}>
-                      {Array.from({ length: 150 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
-                    </select>
-                  )}
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="form-label">Dias das Aulas</label>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
-                    {DIAS_SEMANA.map(d => (
-                      <button key={d} type="button" onClick={() => toggleDia(d)} className={"day-pill" + (dados.diasAulas.includes(d) ? " on" : "")}>{d}</button>
-                    ))}
-                  </div>
-                </div>
-                <LockedInput label="Horário das Aulas" value={dados.horarioAulas} onChange={v => setD("horarioAulas", v)} locked={contractLocked} placeholder="Ex: 19:00 – 20:00" />
-                <LockedInput label="Valor Cheio (R$)" value={dados.valorCheio} onChange={v => setD("valorCheio", v)} locked={contractLocked} type="number" placeholder="0,00" />
-                <LockedInput label="Descontos (R$)" value={dados.descontos} onChange={v => setD("descontos", v)} locked={contractLocked} type="number" placeholder="0,00" />
-                <LockedInput label="Valor Final (R$)" value={dados.valorFinal} onChange={v => setD("valorFinal", v)} locked={contractLocked} type="number" placeholder="0,00" />
-                <LockedInput label="Dia de Vencimento" value={dados.diaVencimento} onChange={v => setD("diaVencimento", v)} locked={contractLocked} type="number" min="1" max="31" placeholder="Ex: 10" />
-                <LockedInput label="Nº de Parcelas" value={dados.numParcelas} onChange={v => setD("numParcelas", v)} locked={contractLocked} type="number" min="1" placeholder="18" />
-              </div>
-            </div>
-            <div className="form-footer">
-              <button className="btn" onClick={prevStep}>← Dados Pessoais</button>
               <button className="btn btn-primary" onClick={nextStep}>Perfil do Aluno →</button>
             </div>
           </>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <>
             <div className="form-header">
               <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Perfil do Aluno</div>
@@ -923,7 +828,7 @@ function FormSelf() {
               </div>
             </div>
             <div className="form-footer">
-              <button className="btn" onClick={prevStep} disabled={saving}>← Seu Programa</button>
+              <button className="btn" onClick={prevStep} disabled={saving}>← Dados Pessoais</button>
               <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
                 {saving ? "Enviando..." : "✓ Enviar Cadastro"}
               </button>
