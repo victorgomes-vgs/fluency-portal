@@ -762,7 +762,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.06.4");
+console.info("Fluency Portal v2026.07.07.5");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -2472,7 +2472,7 @@ function IVi({mode="student"}){
           <div className="ivictor-header">
             <div className="ivictor-avatar">
               {imgOk
-                ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
+                ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" loading="lazy" decoding="async" onError={()=>setImgOk(false)}/>
                 :<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff"}}>iVi</div>
               }
             </div>
@@ -2518,7 +2518,7 @@ function IVi({mode="student"}){
       )}
       <button className="ivictor-btn" onClick={()=>setOpen(o=>!o)} title="iVi — Assistente">
         {imgOk
-          ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" onError={()=>setImgOk(false)}/>
+          ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" loading="lazy" decoding="async" onError={()=>setImgOk(false)}/>
           :<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:13,color:"#fff",fontFamily:"'Sora',sans-serif"}}>iVi</div>
         }
       </button>
@@ -2544,22 +2544,29 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   }
   const [editProfile,setEditProfile]=useState(false);
   const [editFields,setEditFields]=useState({});
+  const [profileErr,setProfileErr]=useState("");
 
   useEffect(()=>{
     const ref=db.collection("students").doc(uid);
+    let cancelled=false;
+    const t=setTimeout(()=>{
+      if(!cancelled)setProfileErr(prev=>prev||"Conexão lenta. Aguarde ou recarregue com Ctrl+Shift+R.");
+    },10000);
     if(isAdmin){
       ref.get().then(doc=>{
         if(!doc.exists)ref.set({name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",profession:"",birthday:"",foto:"",links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[]});
       }).catch(()=>{});
     }
-    return ref.onSnapshot(doc=>{
+    const unsub=ref.onSnapshot(doc=>{
       if(doc.exists){
         const d=doc.data();
         setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach,profession:d.profession||"",birthday:d.birthday||d.dataNasc||"",foto:d.foto||"",email:d.email||"",phone:d.phone||""});
         setLinks(d.links||[]);setTrilhaData(d.trilha||{});setMateriaisData(d.materiais||{});setFinanceiro(d.financeiro||FINANCEIRO_DEFAULT);setModulosOcultos(d.modulosOcultos||[]);
         setStudentSchedule({dataInicio:d.dataInicio||"",diasAulas:d.diasAulas||[],horarioAulas:d.horarioAulas||"",calendarioCompleto:d.calendarioCompleto||[],calendarioResumo:d.calendarioResumo||null,program:d.program||"",licaoInicio:d.licaoInicio||1});
-      }
-    },()=>{});
+        setProfileErr("");
+      }else if(!isAdmin)setProfileErr("Seu perfil ainda não foi configurado. Fale com o professor Victor pelo WhatsApp.");
+    },()=>setProfileErr("Erro ao carregar perfil. Recarregue a página ou fale com o professor."));
+    return()=>{cancelled=true;clearTimeout(t);unsub();};
   },[uid,isAdmin]);
 
   const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
@@ -2567,6 +2574,14 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   async function saveProfile(){await db.collection("students").doc(uid).update(editFields);setEditProfile(false);}
   function startEditProfile(){setEditFields({name:profile.name,level:profile.level,profession:profile.profession,birthday:profile.birthday,email:profile.email||"",phone:profile.phone||"",foto:profile.foto||""});setEditProfile(true);}
   function calcAge(bday){if(!bday)return null;const[y,m,d]=bday.split("-").map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m||(today.getMonth()+1===m&&today.getDate()<d))age--;return age;}
+  if(profileErr&&!profile)return(
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
+        <p className="text-sm" style={{color:"#f0a0a8"}}>{profileErr}</p>
+        <button className="btn btn-primary rounded-xl px-4 py-2.5 mt-4 text-sm font-semibold" onClick={()=>window.location.reload()}>Recarregar</button>
+      </div>
+    </div>
+  );
   if(!profile)return <LoadingScreen/>;
   const age=calcAge(profile.birthday);
 
