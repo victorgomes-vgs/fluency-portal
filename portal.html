@@ -762,7 +762,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.06.3");
+console.info("Fluency Portal v2026.07.06.4");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -1110,7 +1110,6 @@ function Login(){
       <div className="login-logo-wrap" style={{filter:'drop-shadow(0 4px 12px rgba(0,0,0,.25))'}}>
         <BrandLogo large/>
       </div>
-      <IVi mode="visitor"/>
       <div className="w-full max-w-md glass rounded-2xl p-7">
           <div className="text-center mb-6">
             <h1 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Bem-vindo ao Portal</h1>
@@ -2441,12 +2440,8 @@ function IVi({mode="student"}){
   },[messages,open]);
 
   useEffect(()=>{
-    if(mode==="student"&&!localStorage.getItem("fs-ivi-tutorial")){
-      const t=setTimeout(()=>{
-        setOpen(true);
-        localStorage.setItem("fs-ivi-tutorial","1");
-      },1200);
-      return()=>clearTimeout(t);
+    if(mode==="student"&&!localStorage.getItem("fs-ivi-hint")){
+      localStorage.setItem("fs-ivi-hint","1");
     }
   },[mode]);
 
@@ -4341,8 +4336,26 @@ function AdminApp({user}){
 
 function App(){
   const [user,setUser]=useState(undefined);
-  useEffect(()=>auth.onAuthStateChanged(u=>setUser(u||null)),[]);
-  if(user===undefined)return <LoadingScreen/>;
+  const [authErr,setAuthErr]=useState("");
+  useEffect(()=>{
+    const unsub=auth.onAuthStateChanged(u=>setUser(u||null));
+    const t=setTimeout(()=>{
+      setAuthErr(prev=>prev||"Conexão lenta. Verifique sua internet e recarregue (Ctrl+Shift+R).");
+    },8000);
+    return()=>{unsub();clearTimeout(t);};
+  },[]);
+  useEffect(()=>{
+    if(user!==undefined)setAuthErr("");
+  },[user]);
+  if(user===undefined)return(
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"/>
+        <p className="muted text-sm">Carregando portal...</p>
+        {authErr&&<p className="text-xs mt-3" style={{color:"#f0a0a8"}}>{authErr}</p>}
+      </div>
+    </div>
+  );
   if(!user)return <Login/>;
   if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
   return <StudentDetail uid={user.uid} isAdmin={false}/>;
