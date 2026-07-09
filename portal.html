@@ -762,7 +762,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.07.6");
+console.info("Fluency Portal v2026.07.09.1");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
@@ -4698,7 +4698,7 @@ function WaitingApproval({email}){
 function PendingApprovalGate({uid,userEmail}){
   const [status,setStatus]=useState(undefined);
   useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>{
-    setStatus(doc.exists()?doc.data().status:null);
+    setStatus(doc.exists?doc.data().status:null);
   },()=>setStatus(null)),[uid]);
   if(status===undefined)return <LoadingScreen/>;
   if(status==="pendente_aprovacao")return <WaitingApproval email={userEmail}/>;
