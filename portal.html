@@ -15,6 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <script>
     firebase.initializeApp({
       apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
@@ -762,10 +763,99 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.09.1");
+console.info("Fluency Portal v2026.07.09.4");
 const auth = firebase.auth();
 const db   = firebase.firestore();
+const storage = firebase.storage();
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
+const FOTO_MAX_MB = 12;
+const FOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
+
+/** Redimensiona/comprime imagem no browser antes do upload (JPEG). */
+function compressImageFile(file, maxSide, quality){
+  maxSide=maxSide||900; quality=quality==null?0.85:quality;
+  return new Promise((resolve,reject)=>{
+    if(!file||!String(file.type||"").startsWith("image/")){
+      reject(new Error("Selecione um arquivo de imagem (JPG, PNG ou WEBP)."));
+      return;
+    }
+    if(file.size>FOTO_MAX_MB*1024*1024){
+      reject(new Error("Foto muito grande (máximo "+FOTO_MAX_MB+" MB)."));
+      return;
+    }
+    const objUrl=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      URL.revokeObjectURL(objUrl);
+      let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+      if(!w||!h){reject(new Error("Imagem inválida."));return;}
+      if(w>maxSide||h>maxSide){
+        if(w>=h){h=Math.round(h*maxSide/w);w=maxSide;}
+        else{w=Math.round(w*maxSide/h);h=maxSide;}
+      }
+      const canvas=document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,w,h);
+      canvas.toBlob(blob=>{
+        if(!blob)reject(new Error("Falha ao processar a imagem."));
+        else resolve(blob);
+      },"image/jpeg",quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(objUrl);reject(new Error("Não foi possível ler a imagem."));};
+    img.src=objUrl;
+  });
+}
+
+/** Envia foto do aluno para Firebase Storage e retorna URL pública de download. */
+async function uploadStudentFoto(file, studentUid){
+  if(!studentUid)throw new Error("ID do aluno ausente para salvar a foto.");
+  if(!file)throw new Error("Nenhuma foto selecionada.");
+  const blob=await compressImageFile(file);
+  const path="students/"+studentUid+"/foto.jpg";
+  const ref=storage.ref(path);
+  await ref.put(blob,{contentType:"image/jpeg",cacheControl:"public,max-age=3600"});
+  const url=await ref.getDownloadURL();
+  return url+(url.indexOf("?")>=0?"&":"?")+"v="+Date.now();
+}
+
+/** Campo de foto: preview + upload do dispositivo (arquivo fica pendente ou sobe na hora). */
+function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
+  const inputRef=useRef(null);
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+      <div style={{width:76,height:76,borderRadius:"50%",overflow:"hidden",background:"var(--badge)",border:"2px solid var(--divider)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        {previewUrl
+          ?<img src={previewUrl} alt="Foto" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
+          :<Icon name="user" size={30} style={{opacity:.55}}/>}
+      </div>
+      <div style={{flex:1,minWidth:180}}>
+        <label className="form-label">Foto do aluno</label>
+        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:6}}>
+          <button type="button" className="btn btn-primary rounded-xl px-3 py-2 text-sm font-semibold inline-flex items-center gap-1.5"
+            disabled={disabled||busy}
+            onClick={()=>inputRef.current&&inputRef.current.click()}>
+            <Icon name="camera" size={14}/>{busy?"Enviando…":"Enviar do dispositivo"}
+          </button>
+          {previewUrl?(
+            <button type="button" className="btn rounded-xl px-3 py-2 text-sm" disabled={disabled||busy} onClick={onClear}>
+              Remover
+            </button>
+          ):null}
+        </div>
+        <p style={{fontSize:11,color:"var(--font-muted)",marginTop:6,lineHeight:1.4}}>
+          {hint||"JPG, PNG ou WEBP · até "+FOTO_MAX_MB+" MB · salva na nuvem (Firebase Storage) e aparece no perfil e nas listas."}
+        </p>
+        <input ref={inputRef} type="file" accept={FOTO_ACCEPT} style={{display:"none"}}
+          onChange={e=>{
+            const f=e.target.files&&e.target.files[0];
+            e.target.value="";
+            if(f&&onSelectFile)onSelectFile(f);
+          }}/>
+      </div>
+    </div>
+  );
+}
 const WPP_VICTOR = "https://wa.me/5511919756733";
 const SCHED_URL  = "https://calendar.app.google/t19iBmkthDc6Ev8N7";
 const GCAL_EMAIL     = "victor.gomes.gs@gmail.com";
@@ -868,6 +958,7 @@ const ICONS = {
   "rocket":        <><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></>,
   "clipboard-check":<><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></>,
   "info":          <><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>,
+  "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
 };
 function Icon({name,size=18,className="",style={}}){
   const p=ICONS[name]; if(!p) return null;
@@ -899,20 +990,26 @@ function computeStudioFinanceMonth(students,monthKey){
 function filterStudentsByStatus(students,statusFilter){
   if(!students)return[];
   if(statusFilter==="todos")return students;
-  return students.filter(s=>(s.status||"lead")===statusFilter);
+  return students.filter(s=>{
+    const st=s.status||normalizeStatus(null,s);
+    return st===statusFilter;
+  });
 }
 const ADMIN_STATUS_FILTERS=[
-  {v:"ativo",       l:"Ativos",       cls:"status-pill-ativo"},
   {v:"todos",       l:"Todos",        cls:"status-pill-all"},
+  {v:"ativo",       l:"Ativos",       cls:"status-pill-ativo"},
   {v:"lead",        l:"Lead",         cls:"status-pill-lead"},
   {v:"interessado", l:"Interessados", cls:"status-pill-interesse"},
   {v:"trancado",    l:"Trancados",    cls:"status-pill-trancado"},
   {v:"evadido",     l:"Evadidos",     cls:"status-pill-evadido"},
+  {v:"pendente_aprovacao", l:"Pendentes", cls:"status-pill-interesse"},
 ];
 function getAdminStatusCounts(students){
   if(!students)return{};
   const c={todos:students.length};
-  ["ativo","lead","interessado","trancado","evadido"].forEach(s=>{c[s]=students.filter(a=>(a.status||"lead")===s).length;});
+  ["ativo","lead","interessado","trancado","evadido","pendente_aprovacao"].forEach(s=>{
+    c[s]=students.filter(a=>(a.status||normalizeStatus(null,a))===s).length;
+  });
   return c;
 }
 function getTodayISO(){const t=new Date();return`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;}
@@ -1017,6 +1114,167 @@ const FIN_STATUS=[
 const finStatusMap=Object.fromEntries(FIN_STATUS.map(s=>[s.value,s]));
 const FINANCEIRO_DEFAULT={tipo:"mensalidade",creditosTotal:0,creditosUsados:0,parcelas:[]};
 
+/* ── Helpers de aluno (legado + auth) ─────────────────────────────────────── */
+const STATUS_LEGACY_MAP={
+  active:"ativo",ativo:"ativo",Active:"ativo",ACTIVE:"ativo",
+  lead:"lead",Lead:"lead",
+  interessado:"interessado",interesse:"interessado",
+  trancado:"trancado",trancada:"trancado",
+  evadido:"evadido",inativo:"evadido",
+  pendente_aprovacao:"pendente_aprovacao",pendente:"pendente_aprovacao",
+  rejeitado:"rejeitado",
+};
+function normalizeStatus(raw,data){
+  if(raw!=null&&raw!==""){
+    const mapped=STATUS_LEGACY_MAP[raw]||STATUS_LEGACY_MAP[String(raw).toLowerCase()]||String(raw).toLowerCase();
+    return mapped;
+  }
+  // Documentos antigos sem status: se parece matriculado → ativo
+  if(data&&(data.financeiro||data.trilha||data.program||data.contrato||data.dataInicio||data.diasAulas?.length))return"ativo";
+  return"lead";
+}
+function normalizeFinanceiro(fin){
+  if(!fin||typeof fin!=="object")return{...FINANCEIRO_DEFAULT,parcelas:[]};
+  return{
+    tipo:fin.tipo||"mensalidade",
+    creditosTotal:Number(fin.creditosTotal)||0,
+    creditosUsados:Number(fin.creditosUsados)||0,
+    parcelas:Array.isArray(fin.parcelas)?fin.parcelas:[],
+  };
+}
+function normalizeTrilha(trilha){
+  if(!trilha||typeof trilha!=="object"||Array.isArray(trilha))return{};
+  return trilha;
+}
+/** Normaliza doc Firestore → objeto de aluno seguro para UI (alunos antigos inclusos). */
+function normalizeStudent(id,raw){
+  const d=raw&&typeof raw==="object"?raw:{};
+  const name=(d.name||d.nome||d.displayName||"").toString().trim()||"Aluno";
+  const email=(d.email||"").toString().trim().toLowerCase();
+  return{
+    ...d,
+    uid:id,
+    name,
+    nome:name,
+    email,
+    phone:(d.phone||d.telefone||d.whatsapp||"").toString().trim(),
+    status:normalizeStatus(d.status,d),
+    level:d.level||"A1",
+    program:d.program||d.contrato||"Fluency Studio",
+    coach:d.coach||"Victor Gomes",
+    profession:d.profession||d.profissao||"",
+    birthday:d.birthday||d.dataNasc||"",
+    foto:d.foto||"",
+    trilha:normalizeTrilha(d.trilha),
+    materiais:d.materiais&&typeof d.materiais==="object"?d.materiais:{},
+    financeiro:normalizeFinanceiro(d.financeiro),
+    modulosOcultos:Array.isArray(d.modulosOcultos)?d.modulosOcultos:[],
+    links:Array.isArray(d.links)?d.links:[],
+    diasAulas:Array.isArray(d.diasAulas)?d.diasAulas:[],
+  };
+}
+/** Auth secundário: cria login sem deslogar o admin. */
+function getSecondaryAuth(){
+  let app;
+  try{app=firebase.app("Secondary");}
+  catch(e){app=firebase.initializeApp(firebase.app().options,"Secondary");}
+  return app.auth();
+}
+function emailVariants(email){
+  const raw=(email||"").toString().trim();
+  if(!raw)return[];
+  const low=raw.toLowerCase();
+  const set=new Set([raw,low]);
+  // Hotmail/Outlook às vezes salvos com espaços ou maiúsculas
+  set.add(low.replace(/\s+/g,""));
+  return[...set];
+}
+
+/**
+ * Resolve o ID do documento do aluno:
+ * 1) students/{authUid}
+ * 2) users/{authUid}.studentId
+ * 3) students where email == email do login (várias capitalizações)
+ */
+async function resolveStudentDocId(authUid,email){
+  if(!authUid)return null;
+  try{
+    const byUid=await db.collection("students").doc(authUid).get();
+    if(byUid.exists)return authUid;
+  }catch(e){console.warn("resolveStudentDocId byUid:",e);}
+  try{
+    const userMap=await db.collection("users").doc(authUid).get();
+    if(userMap.exists){
+      const sid=userMap.data().studentId;
+      if(sid){
+        const chk=await db.collection("students").doc(sid).get();
+        if(chk.exists)return sid;
+      }
+    }
+  }catch(e){console.warn("resolveStudentDocId users map:",e);}
+  const variants=emailVariants(email);
+  for(const em of variants){
+    try{
+      const q=await db.collection("students").where("email","==",em).limit(5).get();
+      if(q.empty)continue;
+      const docs=q.docs;
+      const preferred=docs.find(x=>{
+        const st=normalizeStatus(x.data().status,x.data());
+        return st==="ativo"||st==="lead"||st==="interessado"||st==="trancado";
+      })||docs[0];
+      const sid=preferred.id;
+      const emailNorm=em.toLowerCase();
+      try{
+        await db.collection("users").doc(authUid).set({
+          email:emailNorm,role:"student",studentId:sid,authUid,
+          linkedAt:firebase.firestore.FieldValue.serverTimestamp(),
+        },{merge:true});
+        await db.collection("students").doc(sid).set({authUid,email:emailNorm,hasPortalLogin:true},{merge:true});
+      }catch(linkErr){console.warn("link student map:",linkErr);}
+      return sid;
+    }catch(e){console.warn("resolveStudentDocId email:",em,e);}
+  }
+  return authUid;
+}
+
+/** Admin: cria/vincula login Firebase a um doc de aluno já existente. */
+async function linkStudentPortalLogin(studentUid,email,password){
+  const em=(email||"").toString().trim().toLowerCase();
+  const pass=(password||"").toString();
+  if(!studentUid)throw new Error("UID do aluno ausente.");
+  if(!em)throw new Error("Email obrigatório.");
+  if(pass.length<6)throw new Error("Senha com no mínimo 6 caracteres.");
+  const secondary=getSecondaryAuth();
+  let authUid=null;
+  let created=false;
+  try{
+    try{
+      const cred=await secondary.createUserWithEmailAndPassword(em,pass);
+      authUid=cred.user.uid;
+      created=true;
+    }catch(authErr){
+      if(authErr.code==="auth/email-already-in-use"){
+        // Conta Auth já existe: só normaliza email e marca login (aluno entra com senha atual)
+        await db.collection("students").doc(studentUid).set({
+          email:em,hasPortalLogin:true,loginNote:"email-already-in-use",
+        },{merge:true});
+        return{created:false,alreadyExists:true,studentUid,email:em};
+      }
+      throw authErr;
+    }
+  }finally{
+    try{await secondary.signOut();}catch(e){}
+  }
+  await db.collection("students").doc(studentUid).set({
+    email:em,authUid,hasPortalLogin:true,
+  },{merge:true});
+  await db.collection("users").doc(authUid).set({
+    email:em,role:"student",studentId:studentUid,authUid,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+  },{merge:true});
+  return{created,alreadyExists:false,studentUid,authUid,email:em};
+}
+
 // ── MODIFICAÇÃO 1c: ThemeSwitcher ──────────────────────────────────────────
 function ThemeSwitcher() {
   const [mode, setMode] = useState(() => localStorage.getItem('fs-theme') || 'system');
@@ -1107,7 +1365,34 @@ function LoadingScreen(){
 
 function Login(){
   const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
-  async function handleLogin(){if(!email||!pass){setErr("Preencha email e senha.");return;}setLoading(true);setErr("");try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){setErr("Email ou senha incorretos.");setLoading(false);}}
+  const [info,setInfo]=useState("");
+  async function handleLogin(){
+    if(!email||!pass){setErr("Preencha email e senha.");return;}
+    setLoading(true);setErr("");setInfo("");
+    try{
+      await auth.signInWithEmailAndPassword(email.trim().toLowerCase(),pass);
+    }catch(e){
+      let msg="Email ou senha incorretos.";
+      if(e.code==="auth/user-not-found"||e.code==="auth/invalid-credential")msg="Conta não encontrada ou senha incorreta. Peça ao Victor para criar/vincular seu login.";
+      else if(e.code==="auth/wrong-password")msg="Senha incorreta.";
+      else if(e.code==="auth/too-many-requests")msg="Muitas tentativas. Aguarde um pouco e tente de novo.";
+      else if(e.code==="auth/network-request-failed")msg="Sem conexão com a internet.";
+      setErr(msg);setLoading(false);
+    }
+  }
+  async function handleReset(){
+    const em=email.trim().toLowerCase();
+    if(!em){setErr("Digite seu email para recuperar a senha.");return;}
+    setLoading(true);setErr("");setInfo("");
+    try{
+      await auth.sendPasswordResetEmail(em);
+      setInfo("Enviamos um link de redefinição para "+em+" (confira spam).");
+    }catch(e){
+      if(e.code==="auth/user-not-found")setErr("Não há conta com este email. Peça ao Victor para criar seu acesso.");
+      else setErr("Não foi possível enviar o email. Tente de novo ou fale com o Victor.");
+    }
+    setLoading(false);
+  }
   return(
     <div className="min-h-screen flex flex-col items-center justify-center px-5">
       <div className="login-logo-wrap" style={{filter:'drop-shadow(0 4px 12px rgba(0,0,0,.25))'}}>
@@ -1122,9 +1407,11 @@ function Login(){
             <div><label className="block text-sm muted mb-1">Email</label><input className="w-full input rounded-xl px-4 py-3" placeholder="seuemail@exemplo.com" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></div>
             <div><label className="block text-sm muted mb-1">Senha</label><input type="password" className="w-full input rounded-xl px-4 py-3" placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} autoComplete="current-password" onKeyDown={e=>e.key==="Enter"&&handleLogin()}/></div>
             {err&&<div className="err-box">{err}</div>}
+            {info&&<div style={{background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.35)",borderRadius:12,padding:"10px 14px",fontSize:13,color:"#60daa8"}}>{info}</div>}
             <button className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" onClick={handleLogin} disabled={loading}>
               {loading?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="log-in" size={16}/>}{loading?"Entrando...":"Entrar"}
             </button>
+            <button type="button" className="w-full btn rounded-xl px-4 py-2.5 text-sm" onClick={handleReset} disabled={loading}>Esqueci a senha</button>
           </div>
       </div>
     </div>
@@ -2563,34 +2850,92 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   const [editProfile,setEditProfile]=useState(false);
   const [editFields,setEditFields]=useState({});
   const [profileErr,setProfileErr]=useState("");
+  const [fotoFile,setFotoFile]=useState(null);
+  const [fotoPreview,setFotoPreview]=useState("");
+  const [fotoBusy,setFotoBusy]=useState(false);
 
   useEffect(()=>{
+    if(!uid){setProfileErr("ID do aluno inválido.");return;}
     const ref=db.collection("students").doc(uid);
     let cancelled=false;
     const t=setTimeout(()=>{
       if(!cancelled)setProfileErr(prev=>prev||"Conexão lenta. Aguarde ou recarregue com Ctrl+Shift+R.");
-    },10000);
+    },12000);
     if(isAdmin){
       ref.get().then(doc=>{
-        if(!doc.exists)ref.set({name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",profession:"",birthday:"",foto:"",links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[]});
+        if(!doc.exists)ref.set({
+          name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",
+          profession:"",birthday:"",foto:"",email:"",phone:"",status:"lead",
+          links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[],
+        });
       }).catch(()=>{});
     }
     const unsub=ref.onSnapshot(doc=>{
+      if(cancelled)return;
       if(doc.exists){
-        const d=doc.data();
-        setProfile({uid,name:d.name,level:d.level,program:d.program,coach:d.coach,profession:d.profession||"",birthday:d.birthday||d.dataNasc||"",foto:d.foto||"",email:d.email||"",phone:d.phone||""});
-        setLinks(d.links||[]);setTrilhaData(d.trilha||{});setMateriaisData(d.materiais||{});setFinanceiro(d.financeiro||FINANCEIRO_DEFAULT);setModulosOcultos(d.modulosOcultos||[]);
-        setStudentSchedule({dataInicio:d.dataInicio||"",diasAulas:d.diasAulas||[],horarioAulas:d.horarioAulas||"",calendarioCompleto:d.calendarioCompleto||[],calendarioResumo:d.calendarioResumo||null,program:d.program||"",licaoInicio:d.licaoInicio||1});
+        const n=normalizeStudent(uid,doc.data());
+        setProfile({
+          uid:n.uid,name:n.name,level:n.level,program:n.program,coach:n.coach,
+          profession:n.profession,birthday:n.birthday,foto:n.foto,email:n.email,phone:n.phone,status:n.status,
+        });
+        setLinks(n.links);
+        setTrilhaData(n.trilha);
+        setMateriaisData(n.materiais);
+        setFinanceiro(n.financeiro);
+        setModulosOcultos(n.modulosOcultos);
+        setStudentSchedule({
+          dataInicio:n.dataInicio||"",diasAulas:n.diasAulas||[],horarioAulas:n.horarioAulas||"",
+          calendarioCompleto:n.calendarioCompleto||[],calendarioResumo:n.calendarioResumo||null,
+          program:n.program||"",licaoInicio:n.licaoInicio||1,
+        });
         setProfileErr("");
-      }else if(!isAdmin)setProfileErr("Seu perfil ainda não foi configurado. Fale com o professor Victor pelo WhatsApp.");
-    },()=>setProfileErr("Erro ao carregar perfil. Recarregue a página ou fale com o professor."));
+      }else if(!isAdmin){
+        setProfileErr("Seu perfil ainda não foi encontrado. Se você já é aluno, fale com o Victor no WhatsApp para vincular sua conta.");
+      }
+    },err=>{
+      console.error("StudentDetail snapshot:",err);
+      if(!cancelled)setProfileErr("Erro ao carregar perfil. Recarregue a página ou fale com o professor.");
+    });
     return()=>{cancelled=true;clearTimeout(t);unsub();};
   },[uid,isAdmin]);
 
   const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
   const currentMod=useMemo(()=>getCurrentModule(books,modulosOcultos),[books,modulosOcultos]);
-  async function saveProfile(){await db.collection("students").doc(uid).update(editFields);setEditProfile(false);}
-  function startEditProfile(){setEditFields({name:profile.name,level:profile.level,profession:profile.profession,birthday:profile.birthday,email:profile.email||"",phone:profile.phone||"",foto:profile.foto||""});setEditProfile(true);}
+  async function saveProfile(){
+    setFotoBusy(true);
+    try{
+      const fields={...editFields};
+      if(fotoFile){
+        fields.foto=await uploadStudentFoto(fotoFile,uid);
+      }
+      await db.collection("students").doc(uid).update(fields);
+      if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+      setFotoFile(null);setFotoPreview("");
+      setEditProfile(false);
+    }catch(e){
+      alert("Erro ao salvar perfil: "+(e.message||e.code||"desconhecido"));
+    }finally{
+      setFotoBusy(false);
+    }
+  }
+  function startEditProfile(){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(null);
+    setFotoPreview(profile.foto||"");
+    setEditFields({name:profile.name,level:profile.level,profession:profile.profession,birthday:profile.birthday,email:profile.email||"",phone:profile.phone||"",foto:profile.foto||""});
+    setEditProfile(true);
+  }
+  function handleProfileFotoSelect(file){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(file);
+    setFotoPreview(URL.createObjectURL(file));
+  }
+  function handleProfileFotoClear(){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(null);
+    setFotoPreview("");
+    setEditFields(p=>({...p,foto:""}));
+  }
   function calcAge(bday){if(!bday)return null;const[y,m,d]=bday.split("-").map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m||(today.getMonth()+1===m&&today.getDate()<d))age--;return age;}
   if(profileErr&&!profile)return(
     <div className="min-h-screen flex items-center justify-center p-6">
@@ -2650,18 +2995,32 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
           <>
             <div className="glass rounded-2xl p-5 mb-5">
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>{profile.name}</h1>
-                  {!editProfile&&<div className="flex flex-wrap gap-2 mt-2">
-                    {profile.profession&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{profile.profession}</span>}
-                    {age!==null&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{age} anos</span>}
-                    {profile.birthday&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">🎂 {formatDateBR(profile.birthday).slice(0,5)}</span>}
-                    <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:MODULES[currentMod-1]?.accent+".12)",border:"1px solid "+MODULES[currentMod-1]?.accent+".30)",color:"var(--font)"}}>Módulo {currentMod} · {MODULES[currentMod-1]?.name}</span>
-                  </div>}
+                <div className="flex items-start gap-3 flex-1 min-w-0">
+                  {!editProfile&&(
+                    profile.foto
+                      ?<img src={profile.foto} alt="" style={{width:56,height:56,borderRadius:"50%",objectFit:"cover",border:"2.5px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                      :<div style={{width:56,height:56,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"2px solid var(--divider)"}}><Icon name="user" size={24}/></div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>{profile.name}</h1>
+                    {!editProfile&&<div className="flex flex-wrap gap-2 mt-2">
+                      {profile.profession&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{profile.profession}</span>}
+                      {age!==null&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{age} anos</span>}
+                      {profile.birthday&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">🎂 {formatDateBR(profile.birthday).slice(0,5)}</span>}
+                      <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:MODULES[currentMod-1]?.accent+".12)",border:"1px solid "+MODULES[currentMod-1]?.accent+".30)",color:"var(--font)"}}>Módulo {currentMod} · {MODULES[currentMod-1]?.name}</span>
+                    </div>}
+                  </div>
                 </div>
                 {!editProfile&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5 shrink-0" onClick={startEditProfile}><Icon name="pencil" size={12}/> Perfil</button>}
               </div>
               {editProfile&&<div className="mt-4 space-y-3">
+                <FotoUploadField
+                  previewUrl={fotoPreview||editFields.foto||""}
+                  onSelectFile={handleProfileFotoSelect}
+                  onClear={handleProfileFotoClear}
+                  disabled={fotoBusy}
+                  busy={fotoBusy}
+                />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div><div className="detail-label">Nome</div><input className="input-light mt-1" value={editFields.name||""} onChange={e=>setEditFields(p=>({...p,name:e.target.value}))}/></div>
                   <div><div className="detail-label">Nível (CEFR)</div><select className="input-light mt-1" value={editFields.level||"A1"} onChange={e=>setEditFields(p=>({...p,level:e.target.value}))}>{["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}</select></div>
@@ -2669,9 +3028,11 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                   <div><div className="detail-label">Telefone</div><input className="input-light mt-1" value={editFields.phone||""} onChange={e=>setEditFields(p=>({...p,phone:e.target.value}))}/></div>
                   <div><div className="detail-label">Profissão</div><input className="input-light mt-1" value={editFields.profession||""} onChange={e=>setEditFields(p=>({...p,profession:e.target.value}))}/></div>
                   <div><div className="detail-label">Data de Nascimento</div><input type="date" className="input-light mt-1" value={editFields.birthday||""} onChange={e=>setEditFields(p=>({...p,birthday:e.target.value}))}/></div>
-                  <div className="sm:col-span-2"><div className="detail-label">Foto (URL)</div><input className="input-light mt-1" placeholder="https://" value={editFields.foto||""} onChange={e=>setEditFields(p=>({...p,foto:e.target.value}))}/></div>
                 </div>
-                <div className="flex gap-2"><button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveProfile}>Salvar</button><button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setEditProfile(false)}>Cancelar</button></div>
+                <div className="flex gap-2">
+                  <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveProfile} disabled={fotoBusy}>{fotoBusy?"Salvando…":"Salvar"}</button>
+                  <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){} setFotoFile(null);setFotoPreview("");setEditProfile(false);}} disabled={fotoBusy}>Cancelar</button>
+                </div>
               </div>}
             </div>
             <div className="tab-bar mb-5">
@@ -2705,6 +3066,8 @@ function StatusBadge({status}){
     interessado:{cls:"status-pill-interesse",label:"Interessado"},
     trancado: {cls:"status-pill-trancado", label:"Trancado"},
     evadido:  {cls:"status-pill-evadido",  label:"Evadido"},
+    pendente_aprovacao:{cls:"status-pill-interesse",label:"Pendente"},
+    rejeitado:{cls:"status-pill-evadido",label:"Rejeitado"},
   };
   const s=map[status]||{cls:"status-pill-inactive",label:status||"—"};
   return <span className={"status-pill "+s.cls} style={{fontSize:10,padding:"2px 8px"}}>{s.label}</span>;
@@ -2744,9 +3107,24 @@ function ModalCadastro({onClose,onSaved}){
   const [triagem,setTriagem]=useState(BLANK_TRIAGEM);
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
+  const [senha,setSenha]=useState("");
+  const [fotoFile,setFotoFile]=useState(null);
+  const [fotoPreview,setFotoPreview]=useState("");
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function setT(k,v){setTriagem(p=>({...p,[k]:v}));}
+  function handleFotoSelect(file){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(file);
+    setFotoPreview(URL.createObjectURL(file));
+    setErr("");
+  }
+  function handleFotoClear(){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(null);
+    setFotoPreview("");
+    setD("foto","");
+  }
 
   function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
 
@@ -2785,12 +3163,33 @@ function ModalCadastro({onClose,onSaved}){
   async function handleSave(){
     if(!dados.nome.trim()){setErr("Nome completo é obrigatório.");return;}
     if(!dados.email.trim()){setErr("Email é obrigatório.");return;}
+    const email=dados.email.trim().toLowerCase();
+    const pass=(senha||"").trim();
+    if(pass&&pass.length<6){setErr("A senha do portal deve ter pelo menos 6 caracteres.");return;}
     setSaving(true);setErr("");
     try{
-      const docRef=db.collection("students").doc();
+      let uid=null;
+      if(pass){
+        const secondary=getSecondaryAuth();
+        try{
+          const cred=await secondary.createUserWithEmailAndPassword(email,pass);
+          uid=cred.user.uid;
+        }catch(authErr){
+          if(authErr.code==="auth/email-already-in-use"){
+            setErr("Este email já tem login no Firebase. Cadastre sem senha e vincule depois, ou use outro email.");
+            setSaving(false);return;
+          }
+          throw authErr;
+        }finally{
+          try{await secondary.signOut();}catch(e){}
+        }
+      }
+      const docRef=uid?db.collection("students").doc(uid):db.collection("students").doc();
+      const studentUid=docRef.id;
+      const programName=dados.contrato==="fluency_foundation"?"Fluency Foundation":dados.contrato==="flash"?"Flash (Just Talk)":"Speech (Business)";
       await docRef.set({
         name:dados.nome.trim(),
-        email:dados.email.trim(),
+        email,
         phone:dados.telefone.trim()||dados.whatsapp.trim(),
         telefone2:dados.telefone2.trim(),
         cpf:dados.cpf.trim(),rg:dados.rg.trim(),
@@ -2799,7 +3198,7 @@ function ModalCadastro({onClose,onSaved}){
         profissao:dados.profissao.trim(),
         nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),
-        foto:dados.foto.trim(),
+        foto:(dados.foto||"").trim(),
         dataCadastro:dados.dataCadastro,
         contrato:dados.contrato,
         duracao:dados.duracao.trim(),
@@ -2811,17 +3210,38 @@ function ModalCadastro({onClose,onSaved}){
         diaVencimento:parseInt(dados.diaVencimento)||1,
         dataInicio:dados.dataInicio||"",
         licaoInicio:parseInt(dados.licaoInicio,10)||1,
-        status:dados.status,
+        status:dados.status||"lead",
         triagem,
         level:"A1",
-        program:dados.contrato==="fluency_foundation"?"Fluency Foundation":dados.contrato==="flash"?"Flash (Just Talk)":"Speech (Business)",
+        program:programName,
         coach:"Victor Gomes",
+        birthday:dados.dataNasc||"",
+        profession:dados.profissao.trim(),
         links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],
-        trilha:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[],
+        trilha:{},financeiro:{...FINANCEIRO_DEFAULT,parcelas:[]},modulosOcultos:[],
+        authUid:uid||null,
+        hasPortalLogin:!!uid,
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),
       });
+      if(fotoFile){
+        try{
+          const fotoUrl=await uploadStudentFoto(fotoFile,studentUid);
+          await docRef.update({foto:fotoUrl});
+        }catch(fotoErr){
+          console.error("Upload foto cadastro:",fotoErr);
+          setErr("Aluno salvo, mas a foto falhou: "+(fotoErr.message||fotoErr.code||"erro de Storage. Verifique as regras do Firebase Storage."));
+          setSaving(false);
+          return;
+        }
+      }
+      if(uid){
+        await db.collection("users").doc(uid).set({
+          name:dados.nome.trim(),email,role:"student",studentId:studentUid,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        },{merge:true});
+      }
       onSaved();onClose();
-    }catch(e){setErr("Erro ao salvar: "+e.message);setSaving(false);}
+    }catch(e){setErr("Erro ao salvar: "+(e.message||e.code||"desconhecido"));setSaving(false);}
   }
 
   const tabLabels=["Dados Pessoais","Perfil do Aluno"];
@@ -2852,9 +3272,14 @@ function ModalCadastro({onClose,onSaved}){
             <div>
               <div className="form-section-title">Identificação</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div style={{gridColumn:"1/-1"}}>
-                  <label className="form-label">Foto (URL)</label>
-                  <input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="https://..." value={dados.foto} onChange={e=>setD("foto",e.target.value)}/>
+                <div style={{gridColumn:"1/-1",marginBottom:4}}>
+                  <FotoUploadField
+                    previewUrl={fotoPreview||dados.foto||""}
+                    onSelectFile={handleFotoSelect}
+                    onClear={handleFotoClear}
+                    disabled={saving}
+                    busy={saving&&!!fotoFile}
+                  />
                 </div>
                 <div style={{gridColumn:"1/-1"}}>
                   <label className="form-label">Nome Completo *</label>
@@ -2873,11 +3298,16 @@ function ModalCadastro({onClose,onSaved}){
                 <div><label className="form-label">RG</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="00.000.000-0" value={dados.rg} onChange={e=>setD("rg",e.target.value)}/></div>
               </div>
 
-              <div className="form-section-title" style={{marginTop:20}}>Contato</div>
+              <div className="form-section-title" style={{marginTop:20}}>Contato & Acesso ao Portal</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div style={{gridColumn:"1/-1"}}>
                   <label className="form-label">Email *</label>
                   <input type="email" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="aluno@email.com" value={dados.email} onChange={e=>setD("email",e.target.value)}/>
+                </div>
+                <div style={{gridColumn:"1/-1"}}>
+                  <label className="form-label">Senha do portal (opcional)</label>
+                  <input type="text" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Mín. 6 caracteres — cria login Firebase" value={senha} onChange={e=>setSenha(e.target.value)} autoComplete="new-password"/>
+                  <p style={{fontSize:11,color:"var(--font-muted)",marginTop:4}}>Com senha, o aluno entra no portal na hora. Sem senha, só o cadastro fica no painel.</p>
                 </div>
                 <div><label className="form-label">Telefone / WhatsApp</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="+55 11 9..." value={dados.telefone} onChange={e=>setD("telefone",e.target.value)}/></div>
                 <div><label className="form-label">Telefone 2</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="+55 11 9..." value={dados.telefone2} onChange={e=>setD("telefone2",e.target.value)}/></div>
@@ -3472,7 +3902,7 @@ function collectStudentLessonEvents(students,monthKey,onlyUid=null){
   const events=[];
   (students||[]).forEach(s=>{
     if(onlyUid&&s.uid!==onlyUid)return;
-    if(!onlyUid&&(s.status||"lead")!=="ativo")return;
+    if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
     const push=(date,lessonNum,extra={})=>{
       if(!date||!date.startsWith(monthKey))return;
       events.push({date,type:"aula",label:`${s.name||"Aluno"} · Lição ${lessonNum}`,time:s.horarioAulas||"",studentUid:s.uid,studentName:s.name||"Aluno",lessonNum,color:"#1e8fa8",...extra});
@@ -3492,7 +3922,7 @@ function findProximaAula(students){
   const today=new Date().toISOString().slice(0,10);
   let best=null;
   (students||[]).forEach(s=>{
-    if((s.status||"lead")!=="ativo")return;
+    if((s.status||normalizeStatus(null,s))!=="ativo")return;
     const scan=(date,lessonNum,lesson,extra={})=>{
       if(!date||date<today)return;
       if(lesson?.status==="concluida"||lesson?.status==="realizada")return;
@@ -3525,7 +3955,7 @@ function collectRecurringClassEvents(students,monthKey,onlyUid=null){
   const events=[];
   (students||[]).forEach(s=>{
     if(onlyUid&&s.uid!==onlyUid)return;
-    if(!onlyUid&&(s.status||"lead")!=="ativo")return;
+    if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
     if(!s.diasAulas?.length)return;
     const diasSet=new Set(s.diasAulas);
     for(let d=1;d<=daysInMonth;d++){
@@ -3817,10 +4247,10 @@ function findProximaAulaUnified(students,agendaExtra={}){
 function ModalEdicao({student,onClose,onSaved}){
   const [tab,setTab]=useState(0);
   const [dados,setDados]=useState({
-    nome:student.name||"",cpf:student.cpf||"",rg:student.rg||"",
-    email:student.email||"",telefone:student.phone||"",telefone2:student.telefone2||"",
-    dataNasc:student.dataNasc||"",estadoCivil:student.estadoCivil||"",
-    profissao:student.profissao||"",nacionalidade:student.nacionalidade||"",
+    nome:student.name||student.nome||"",cpf:student.cpf||"",rg:student.rg||"",
+    email:student.email||"",telefone:student.phone||student.telefone||"",telefone2:student.telefone2||"",
+    dataNasc:student.dataNasc||student.birthday||"",estadoCivil:student.estadoCivil||"",
+    profissao:student.profissao||student.profession||"",nacionalidade:student.nacionalidade||"",
     endereco:student.endereco||"",foto:student.foto||"",
     dataCadastro:student.dataCadastro||new Date().toISOString().slice(0,10),
     contrato:student.contrato||"fluency_foundation",duracao:student.duracao||"",
@@ -3833,10 +4263,47 @@ function ModalEdicao({student,onClose,onSaved}){
   const [triagem,setTriagem]=useState(student.triagem||BLANK_TRIAGEM);
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
+  const [novaSenha,setNovaSenha]=useState("");
+  const [loginMsg,setLoginMsg]=useState("");
+  const [fotoFile,setFotoFile]=useState(null);
+  const [fotoPreview,setFotoPreview]=useState(student.foto||"");
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function setT(k,v){setTriagem(p=>({...p,[k]:v}));}
   function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
+  function handleFotoSelect(file){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(file);
+    setFotoPreview(URL.createObjectURL(file));
+    setErr("");
+  }
+  function handleFotoClear(){
+    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+    setFotoFile(null);
+    setFotoPreview("");
+    setD("foto","");
+  }
+
+  async function handleCreateLogin(){
+    const email=(dados.email||"").trim().toLowerCase();
+    const pass=(novaSenha||"").trim();
+    if(!email){setErr("Informe o email do aluno antes de criar o login.");return;}
+    if(pass.length<6){setErr("Senha com no mínimo 6 caracteres.");return;}
+    setSaving(true);setErr("");setLoginMsg("");
+    try{
+      const res=await linkStudentPortalLogin(student.uid,email,pass);
+      if(res.alreadyExists){
+        setLoginMsg("Email já tem login no Firebase. Vinculamos o cadastro — a aluna entra com a senha que já usa (ou use Esqueci a senha no login).");
+      }else{
+        setLoginMsg("Login criado! Pode entrar com "+email+" e a senha definida.");
+      }
+      setNovaSenha("");
+    }catch(e){
+      setErr("Erro ao criar login: "+(e.message||e.code||"desconhecido"));
+    }finally{
+      setSaving(false);
+    }
+  }
 
   function TriOpt({label,field,value}){
     const sel=triagem[field]===value;
@@ -3859,13 +4326,18 @@ function ModalEdicao({student,onClose,onSaved}){
     if(!dados.nome.trim()){setErr("Nome é obrigatório.");return;}
     setSaving(true);setErr("");
     try{
+      const email=(dados.email||"").trim().toLowerCase();
+      let fotoUrl=(dados.foto||"").trim();
+      if(fotoFile){
+        fotoUrl=await uploadStudentFoto(fotoFile,student.uid);
+      }
       await db.collection("students").doc(student.uid).update({
-        name:dados.nome.trim(),email:dados.email.trim(),
+        name:dados.nome.trim(),email,
         phone:dados.telefone.trim(),telefone2:dados.telefone2.trim(),
         cpf:dados.cpf.trim(),rg:dados.rg.trim(),
         dataNasc:dados.dataNasc,estadoCivil:dados.estadoCivil,
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
-        endereco:dados.endereco.trim(),foto:dados.foto.trim(),
+        endereco:dados.endereco.trim(),foto:fotoUrl,
         dataCadastro:dados.dataCadastro,contrato:dados.contrato,
         duracao:dados.duracao.trim(),diasAulas:dados.diasAulas,
         horarioAulas:dados.horarioAulas.trim(),
@@ -3877,6 +4349,8 @@ function ModalEdicao({student,onClose,onSaved}){
         dataInicio:dados.dataInicio,
         licaoInicio:parseInt(dados.licaoInicio)||1,
         program:CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation",
+        birthday:dados.dataNasc||"",
+        profession:dados.profissao.trim(),
         triagem,
       });
       onSaved();onClose();
@@ -3902,7 +4376,15 @@ function ModalEdicao({student,onClose,onSaved}){
             <div>
               <div className="form-section-title">Identificação</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div style={{gridColumn:"1/-1"}}><label className="form-label">Foto (URL)</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="https://..." value={dados.foto} onChange={e=>setD("foto",e.target.value)}/></div>
+                <div style={{gridColumn:"1/-1",marginBottom:4}}>
+                  <FotoUploadField
+                    previewUrl={fotoPreview||dados.foto||""}
+                    onSelectFile={handleFotoSelect}
+                    onClear={handleFotoClear}
+                    disabled={saving}
+                    busy={saving&&!!fotoFile}
+                  />
+                </div>
                 <div style={{gridColumn:"1/-1"}}><label className="form-label">Nome Completo *</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.nome} onChange={e=>setD("nome",e.target.value)}/></div>
                 <div><label className="form-label">Nacionalidade</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.nacionalidade} onChange={e=>setD("nacionalidade",e.target.value)}/></div>
                 <div><label className="form-label">Estado Civil</label>
@@ -3923,6 +4405,25 @@ function ModalEdicao({student,onClose,onSaved}){
                 <div><label className="form-label">Telefone 2</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.telefone2} onChange={e=>setD("telefone2",e.target.value)}/></div>
                 <div style={{gridColumn:"1/-1"}}><label className="form-label">Endereço</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.endereco} onChange={e=>setD("endereco",e.target.value)}/></div>
               </div>
+              <div className="form-section-title">Acesso ao Portal (alunos antigos)</div>
+              <div style={{padding:"12px 14px",borderRadius:12,background:"rgba(30,143,168,.08)",border:"1px solid rgba(30,143,168,.25)",marginBottom:12,fontSize:12,lineHeight:1.5}}>
+                {student.hasPortalLogin||student.authUid
+                  ?<>Login já vinculado{student.authUid?<> · authUid: <code style={{fontSize:10}}>{student.authUid}</code></>:null}. O aluno entra com o email cadastrado.</>
+                  :<>Este aluno pode não ter login Firebase. Defina uma senha e clique em <strong>Criar login</strong> para liberar o portal.</>
+                }
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{marginBottom:8}}>
+                <div>
+                  <label className="form-label">Nova senha do portal</label>
+                  <input type="text" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="mín. 6 caracteres" value={novaSenha} onChange={e=>setNovaSenha(e.target.value)} autoComplete="new-password"/>
+                </div>
+                <div style={{display:"flex",alignItems:"flex-end"}}>
+                  <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold w-full" onClick={handleCreateLogin} disabled={saving}>
+                    {saving?"Aguarde...":"Criar / vincular login"}
+                  </button>
+                </div>
+              </div>
+              {loginMsg&&<div style={{fontSize:12,color:"#60daa8",marginBottom:10,padding:"8px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)"}}>{loginMsg}</div>}
               <div className="form-section-title">Contrato</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="form-label">Tipo de Contrato</label>
@@ -4438,20 +4939,13 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
   const hoje=new Date();
   const hojeISO=hoje.toISOString().slice(0,10);
 
-  const ativos=useMemo(()=>(students||[]).filter(s=>(s.status||"lead")==="ativo"),[students]);
+  const ativos=useMemo(()=>(students||[]).filter(s=>(s.status||normalizeStatus(null,s))==="ativo"),[students]);
 
   const totalRecebidoMes=useMemo(()=>computeStudioFinanceMonth(students,getMonthKey(hoje)).recebido,[students]);
 
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO]);
 
-  const contadores={
-    todos:(students||[]).length,
-    ativo:ativos.length,
-    lead:(students||[]).filter(s=>(s.status||"lead")==="lead").length,
-    interessado:(students||[]).filter(s=>s.status==="interessado").length,
-    trancado:(students||[]).filter(s=>s.status==="trancado").length,
-    evadido:(students||[]).filter(s=>s.status==="evadido").length,
-  };
+  const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
 
   const navBtns=[
     {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#1e8fa8", ativo:true},
@@ -4538,15 +5032,86 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
 /* ── LISTA DE ALUNOS ── */
 function AdminAlunos({students,onSelectUid}){
-  const [filtroStatus,setFiltroStatus]=useState("ativo");
+  const [filtroStatus,setFiltroStatus]=useState("todos");
+  const [busca,setBusca]=useState("");
   const [editStudent,setEditStudent]=useState(null);
+  const [repairTarget,setRepairTarget]=useState(null);
+  const [repairPass,setRepairPass]=useState("");
+  const [repairBusy,setRepairBusy]=useState(false);
+  const [repairMsg,setRepairMsg]=useState("");
+  const [repairErr,setRepairErr]=useState("");
 
-  const alunosFiltrados=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
+  const alunosFiltrados=useMemo(()=>{
+    let list=filterStudentsByStatus(students,filtroStatus);
+    const q=busca.trim().toLowerCase();
+    if(q){
+      list=list.filter(s=>
+        (s.name||"").toLowerCase().includes(q)||
+        (s.email||"").toLowerCase().includes(q)||
+        (s.phone||"").toLowerCase().includes(q)
+      );
+    }
+    return [...list].sort((a,b)=>(a.name||"").localeCompare(b.name||"","pt-BR"));
+  },[students,filtroStatus,busca]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
+
+  async function runRepair(){
+    if(!repairTarget)return;
+    setRepairBusy(true);setRepairErr("");setRepairMsg("");
+    try{
+      const email=(repairTarget.email||"").trim().toLowerCase();
+      if(!email){setRepairErr("Este aluno não tem email cadastrado. Edite o perfil e salve o email primeiro.");setRepairBusy(false);return;}
+      // Normaliza email no doc (evita falha de busca por maiúsculas)
+      await db.collection("students").doc(repairTarget.uid).set({email},{merge:true});
+      const res=await linkStudentPortalLogin(repairTarget.uid,email,repairPass);
+      if(res.alreadyExists){
+        setRepairMsg("Conta Auth já existia. Cadastro vinculado a "+email+". Peça para ela usar «Esqueci a senha» se não lembrar.");
+      }else{
+        setRepairMsg("Login criado para "+email+". Senha: a que você digitou agora.");
+      }
+      setRepairPass("");
+    }catch(e){
+      setRepairErr(e.message||String(e));
+    }finally{
+      setRepairBusy(false);
+    }
+  }
 
   return(
     <div>
       {editStudent&&<ModalEdicao student={editStudent} onClose={()=>setEditStudent(null)} onSaved={()=>setEditStudent(null)}/>}
+      {repairTarget&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget){setRepairTarget(null);setRepairMsg("");setRepairErr("");}}}>
+          <div className="modal-box" style={{maxWidth:440}}>
+            <div className="modal-header">
+              <div>
+                <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Reparar acesso ao portal</div>
+                <div style={{fontSize:11,opacity:.75}}>{repairTarget.name} · {repairTarget.email||"sem email"}</div>
+              </div>
+              <button onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+            </div>
+            <div className="modal-body">
+              <p style={{fontSize:13,color:"var(--font-muted)",marginBottom:12,lineHeight:1.55}}>
+                Cria ou vincula o login Firebase a este cadastro (necessário para alunos antigos).
+              </p>
+              <label className="form-label">Senha temporária (mín. 6)</label>
+              <input type="text" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="ex: fluency2026" value={repairPass} onChange={e=>setRepairPass(e.target.value)} autoComplete="new-password"/>
+              {repairErr&&<div className="err-box" style={{marginTop:12}}>{repairErr}</div>}
+              {repairMsg&&<div style={{marginTop:12,padding:"10px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)",fontSize:13,color:"#60daa8"}}>{repairMsg}</div>}
+            </div>
+            <div className="modal-footer">
+              <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}}>Fechar</button>
+              <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={runRepair} disabled={repairBusy||!repairPass.trim()}>
+                {repairBusy?"Salvando...":"Criar / vincular login"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div style={{marginBottom:14,position:"relative"}}>
+        <Icon name="search" size={14} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",opacity:.5}}/>
+        <input className="input-light" style={{paddingLeft:34,width:"100%"}} placeholder="Buscar por nome, email ou telefone... (ex: lorrayne)" value={busca} onChange={e=>setBusca(e.target.value)}/>
+      </div>
       <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:20}}>
         {ADMIN_STATUS_FILTERS.map(f=>(
           <button key={f.v} className={"status-pill "+(filtroStatus===f.v?f.cls:"status-pill-inactive")} onClick={()=>setFiltroStatus(f.v)} style={{fontSize:11}}>
@@ -4557,48 +5122,69 @@ function AdminAlunos({students,onSelectUid}){
       {alunosFiltrados.length===0
         ?<div className="glass rounded-2xl p-12 text-center" style={{color:"var(--font-muted)"}}>
             <Icon name="users" size={40} className="mx-auto mb-4 opacity-30"/>
-            <p>{filtroStatus==="ativo"?"Nenhum aluno ativo no momento. Use os filtros acima para ver leads, trancados ou todos.":filtroStatus==="todos"?"Nenhum aluno cadastrado ainda.":"Nenhum aluno com este status."}</p>
+            <p>{busca.trim()?"Nenhum aluno encontrado na busca.":filtroStatus==="todos"?"Nenhum aluno cadastrado ainda.":"Nenhum aluno com este status. Tente o filtro Todos."}</p>
           </div>
         :(
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {alunosFiltrados.map(s=>{
-              const merged=mergeBooks(s.trilha||{});let done=0,total=0;
-              merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida")done++;}));
-              const pct=total?Math.round((done/total)*100):0;
-              const mod=getCurrentModule(merged);
-              const finVencida=resolveFinanceSnapshot(s.financeiro?.parcelas||[]).isLate;
-              return(
-                <div key={s.uid} className="student-card" style={{position:"relative"}}>
-                  <button onClick={e=>{e.stopPropagation();setEditStudent(s);}}
-                    style={{position:"absolute",top:10,right:10,background:"var(--badge)",border:"1px solid var(--divider)",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"var(--font-muted)",zIndex:2}}>
-                    <Icon name="pencil" size={11}/>Editar
-                  </button>
-                  <div onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer"}}>
-                    <div className="flex items-center gap-3 mb-3">
-                      {s.foto
-                        ?<img src={s.foto} alt={s.name} style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}}/>
-                        :<div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div>
-                      }
-                      <div className="flex-1 min-w-0" style={{paddingRight:56}}>
-                        <div className="font-bold truncate">{s.name||"Aluno"}</div>
-                        <div style={{fontSize:11,color:"var(--font-muted)"}}>Módulo {mod} · Nível {s.level||"—"}</div>
+              try{
+                const merged=mergeBooks(s.trilha||{});let done=0,total=0;
+                merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida"||i.status==="realizada")done++;}));
+                const pct=total?Math.round((done/total)*100):0;
+                const mod=getCurrentModule(merged,s.modulosOcultos);
+                const finVencida=resolveFinanceSnapshot(s.financeiro?.parcelas||[]).isLate;
+                return(
+                  <div key={s.uid} className="student-card" style={{position:"relative"}}>
+                    <div style={{position:"absolute",top:10,right:10,display:"flex",gap:6,zIndex:2}}>
+                      {!(s.hasPortalLogin||s.authUid)&&(
+                        <button onClick={e=>{e.stopPropagation();setRepairTarget(s);setRepairPass("");setRepairMsg("");setRepairErr("");}}
+                          style={{background:"rgba(232,169,76,.18)",border:"1px solid rgba(232,169,76,.45)",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#c8860a"}}
+                          title="Criar/vincular login do portal">
+                          <Icon name="log-in" size={11}/>Acesso
+                        </button>
+                      )}
+                      <button onClick={e=>{e.stopPropagation();setEditStudent(s);}}
+                        style={{background:"var(--badge)",border:"1px solid var(--divider)",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"var(--font-muted)"}}>
+                        <Icon name="pencil" size={11}/>Editar
+                      </button>
+                    </div>
+                    <div onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer"}}>
+                      <div className="flex items-center gap-3 mb-3">
+                        {s.foto
+                          ?<img src={s.foto} alt={s.name} style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                          :<div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div>
+                        }
+                        <div className="flex-1 min-w-0" style={{paddingRight:56}}>
+                          <div className="font-bold truncate">{s.name||"Aluno"}</div>
+                          <div style={{fontSize:11,color:"var(--font-muted)"}}>Módulo {mod} · Nível {s.level||"—"}</div>
+                          {s.email&&<div style={{fontSize:10,color:"var(--font-muted)",opacity:.8,marginTop:2}} className="truncate">{s.email}</div>}
+                        </div>
                       </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:8}}>
+                        <StatusBadge status={s.status||"lead"}/>
+                        {s.hasPortalLogin||s.authUid?<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"rgba(30,160,110,.15)",border:"1px solid rgba(30,160,110,.35)",color:"#60daa8"}}>Login OK</span>:null}
+                        {finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}
+                        {s.contrato&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"var(--badge)",border:"1px solid var(--divider)",color:"var(--font-muted)"}}>{CONTRATOS.find(c=>c.v===s.contrato)?.l||s.contrato}</span>}
+                      </div>
+                      <div className="flex items-center justify-between text-xs mb-1" style={{color:"var(--font-muted)"}}>
+                        <span>Progresso</span><span className="font-semibold">{pct}%</span>
+                      </div>
+                      <div className="h-1.5 rounded-full overflow-hidden" style={{background:"var(--badge)"}}>
+                        <div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/>
+                      </div>
+                      <div style={{fontSize:11,color:"var(--font-muted)",marginTop:6}}>{done} de {total} lições concluídas</div>
                     </div>
-                    <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:8}}>
-                      <StatusBadge status={s.status||"lead"}/>
-                      {finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}
-                      {s.contrato&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"var(--badge)",border:"1px solid var(--divider)",color:"var(--font-muted)"}}>{CONTRATOS.find(c=>c.v===s.contrato)?.l||s.contrato}</span>}
-                    </div>
-                    <div className="flex items-center justify-between text-xs mb-1" style={{color:"var(--font-muted)"}}>
-                      <span>Progresso</span><span className="font-semibold">{pct}%</span>
-                    </div>
-                    <div className="h-1.5 rounded-full overflow-hidden" style={{background:"var(--badge)"}}>
-                      <div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/>
-                    </div>
-                    <div style={{fontSize:11,color:"var(--font-muted)",marginTop:6}}>{done} de {total} lições concluídas</div>
                   </div>
-                </div>
-              );
+                );
+              }catch(cardErr){
+                console.error("card aluno",s?.uid,cardErr);
+                return(
+                  <div key={s.uid||Math.random()} className="student-card" onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer"}}>
+                    <div className="font-bold">{s.name||s.email||"Aluno"}</div>
+                    <div style={{fontSize:12,color:"var(--font-muted)",marginTop:6}}>Dados incompletos — clique para abrir</div>
+                  </div>
+                );
+              }
             })}
           </div>
         )
@@ -4610,13 +5196,42 @@ function AdminAlunos({students,onSelectUid}){
 /* ── ADMINAPP ── */
 function AdminApp({user}){
   const [students,setStudents]=useState(null);
+  const [studentsErr,setStudentsErr]=useState("");
   const [pendentesCount,setPendentesCount]=useState(0);
   const [selectedUid,setSelectedUid]=useState(null);
   const [selectedInitialTab,setSelectedInitialTab]=useState(null);
   const [showModal,setShowModal]=useState(false);
   const [adminView,setAdminView]=useState("dashboard");
 
-  useEffect(()=>db.collection("students").onSnapshot(snap=>setStudents(snap.docs.map(d=>({uid:d.id,...d.data()})))),[]);
+  useEffect(()=>{
+    const unsub=db.collection("students").onSnapshot(snap=>{
+      try{
+        const list=snap.docs.map(d=>normalizeStudent(d.id,d.data()));
+        list.sort((a,b)=>(a.name||"").localeCompare(b.name||"","pt-BR"));
+        setStudents(list);
+        setStudentsErr("");
+        // Heal silencioso: email em minúsculas (evita falha de lookup case-sensitive)
+        snap.docs.forEach(d=>{
+          const raw=d.data().email;
+          if(typeof raw==="string"&&raw.trim()){
+            const norm=raw.trim().toLowerCase();
+            if(raw!==norm){
+              d.ref.set({email:norm},{merge:true}).catch(()=>{});
+            }
+          }
+        });
+      }catch(e){
+        console.error("AdminApp normalize:",e);
+        setStudents(snap.docs.map(d=>({uid:d.id,...d.data(),name:d.data().name||d.data().nome||"Aluno"})));
+        setStudentsErr("");
+      }
+    },err=>{
+      console.error("AdminApp students:",err);
+      setStudents([]);
+      setStudentsErr("Não foi possível carregar os alunos. Verifique a conexão e as regras do Firestore.");
+    });
+    return()=>unsub();
+  },[]);
   useEffect(()=>db.collection("students").where("status","==","pendente_aprovacao").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
 
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
@@ -4655,6 +5270,12 @@ function AdminApp({user}){
         </div>
       </div>
       <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
+        {studentsErr&&(
+          <div className="err-box mb-4" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <span>{studentsErr}</span>
+            <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
+          </div>
+        )}
         {!students
           ?<LoadingScreen/>
           :adminView==="dashboard"
@@ -4697,9 +5318,26 @@ function WaitingApproval({email}){
 
 function PendingApprovalGate({uid,userEmail}){
   const [status,setStatus]=useState(undefined);
-  useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>{
-    setStatus(doc.exists?doc.data().status:null);
-  },()=>setStatus(null)),[uid]);
+  const [gateErr,setGateErr]=useState("");
+  useEffect(()=>{
+    if(!uid){setStatus(null);return;}
+    const unsub=db.collection("students").doc(uid).onSnapshot(doc=>{
+      // Firebase compat: doc.exists é propriedade booleana (NÃO método)
+      if(doc.exists){
+        const n=normalizeStudent(uid,doc.data());
+        setStatus(n.status||null);
+        setGateErr("");
+      }else{
+        setStatus(null);
+        setGateErr("");
+      }
+    },err=>{
+      console.error("PendingApprovalGate:",err);
+      setStatus(null);
+      setGateErr("Erro ao carregar perfil. Recarregue a página (Ctrl+Shift+R).");
+    });
+    return()=>unsub();
+  },[uid]);
   if(status===undefined)return <LoadingScreen/>;
   if(status==="pendente_aprovacao")return <WaitingApproval email={userEmail}/>;
   if(status==="rejeitado")return(
@@ -4711,17 +5349,64 @@ function PendingApprovalGate({uid,userEmail}){
       </div>
     </div>
   );
+  if(gateErr)return(
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
+        <p className="text-sm mb-4" style={{color:"#f0a0a8"}}>{gateErr}</p>
+        <button className="btn btn-primary rounded-xl px-4 py-2.5 text-sm w-full" onClick={()=>window.location.reload()}>Recarregar</button>
+        <button className="btn rounded-xl px-4 py-2.5 mt-3 text-sm w-full" onClick={()=>auth.signOut()}>Sair</button>
+      </div>
+    </div>
+  );
   return <StudentDetail uid={uid} isAdmin={false}/>;
+}
+
+/** Resolve students/{uid} OU doc legado pelo email (alunos antigos). */
+function StudentSession({user}){
+  const [studentUid,setStudentUid]=useState(undefined);
+  const [resolveErr,setResolveErr]=useState("");
+  useEffect(()=>{
+    let cancelled=false;
+    setStudentUid(undefined);
+    setResolveErr("");
+    (async()=>{
+      try{
+        const id=await resolveStudentDocId(user.uid,user.email);
+        if(!cancelled)setStudentUid(id||user.uid);
+      }catch(e){
+        console.error("StudentSession resolve:",e);
+        if(!cancelled){
+          setStudentUid(user.uid);
+          setResolveErr("Não foi possível localizar seu cadastro automaticamente.");
+        }
+      }
+    })();
+    return()=>{cancelled=true;};
+  },[user.uid,user.email]);
+  if(studentUid===undefined)return(
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"/>
+        <p className="muted text-sm">Conectando seu perfil...</p>
+        {resolveErr&&<p className="text-xs mt-3" style={{color:"#f0a0a8"}}>{resolveErr}</p>}
+      </div>
+    </div>
+  );
+  return <PendingApprovalGate uid={studentUid} userEmail={user.email}/>;
 }
 
 function App(){
   const [user,setUser]=useState(undefined);
   const [authErr,setAuthErr]=useState("");
   useEffect(()=>{
-    const unsub=auth.onAuthStateChanged(u=>setUser(u||null));
+    const unsub=auth.onAuthStateChanged(u=>setUser(u||null),err=>{
+      console.error("onAuthStateChanged:",err);
+      setUser(null);
+      setAuthErr("Falha na autenticação. Recarregue a página.");
+    });
     const t=setTimeout(()=>{
       setAuthErr(prev=>prev||"Conexão lenta. Verifique sua internet e recarregue (Ctrl+Shift+R).");
-    },8000);
+    },10000);
     return()=>{unsub();clearTimeout(t);};
   },[]);
   useEffect(()=>{
@@ -4738,7 +5423,7 @@ function App(){
   );
   if(!user)return <Login/>;
   if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
-  return <PendingApprovalGate uid={user.uid} userEmail={user.email}/>;
+  return <StudentSession user={user}/>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
