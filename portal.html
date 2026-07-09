@@ -763,19 +763,48 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.09.4");
+console.info("Fluency Portal v2026.07.09.5");
 const auth = firebase.auth();
 const db   = firebase.firestore();
-const storage = firebase.storage();
+let storage=null;
+try{storage=firebase.storage();}catch(e){console.warn("Firebase Storage indisponível:",e);}
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
 const FOTO_MAX_MB = 12;
 const FOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
+const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
+
+function withTimeout(promise, ms, label){
+  let timer;
+  return Promise.race([
+    Promise.resolve(promise).finally(()=>{if(timer)clearTimeout(timer);}),
+    new Promise((_,reject)=>{
+      timer=setTimeout(()=>reject(new Error((label||"Operação")+" demorou demais. Tente uma foto menor.")), ms);
+    }),
+  ]);
+}
+
+function dataUrlFromCanvas(canvas, quality){
+  const dataUrl=canvas.toDataURL("image/jpeg", quality);
+  if(!dataUrl||dataUrl==="data:,")throw new Error("Falha ao processar a imagem.");
+  return dataUrl;
+}
+function dataUrlToBlob(dataUrl){
+  const parts=String(dataUrl).split(",");
+  const mime=(parts[0].match(/:(.*?);/)||[])[1]||"image/jpeg";
+  const bin=atob(parts[1]||"");
+  const arr=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
 
 /** Redimensiona/comprime imagem no browser antes do upload (JPEG). */
 function compressImageFile(file, maxSide, quality){
-  maxSide=maxSide||900; quality=quality==null?0.85:quality;
+  maxSide=maxSide||520; quality=quality==null?0.75:quality;
   return new Promise((resolve,reject)=>{
-    if(!file||!String(file.type||"").startsWith("image/")){
+    if(!file){reject(new Error("Nenhuma foto selecionada."));return;}
+    const type=String(file.type||"");
+    // Alguns celulares mandam type vazio — ainda tentamos ler como imagem
+    if(type&&!type.startsWith("image/")&&type!=="application/octet-stream"){
       reject(new Error("Selecione um arquivo de imagem (JPG, PNG ou WEBP)."));
       return;
     }
@@ -786,40 +815,76 @@ function compressImageFile(file, maxSide, quality){
     const objUrl=URL.createObjectURL(file);
     const img=new Image();
     img.onload=()=>{
-      URL.revokeObjectURL(objUrl);
-      let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
-      if(!w||!h){reject(new Error("Imagem inválida."));return;}
-      if(w>maxSide||h>maxSide){
-        if(w>=h){h=Math.round(h*maxSide/w);w=maxSide;}
-        else{w=Math.round(w*maxSide/h);h=maxSide;}
-      }
-      const canvas=document.createElement("canvas");
-      canvas.width=w; canvas.height=h;
-      const ctx=canvas.getContext("2d");
-      ctx.drawImage(img,0,0,w,h);
-      canvas.toBlob(blob=>{
-        if(!blob)reject(new Error("Falha ao processar a imagem."));
-        else resolve(blob);
-      },"image/jpeg",quality);
+      try{
+        URL.revokeObjectURL(objUrl);
+        let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+        if(!w||!h){reject(new Error("Imagem inválida."));return;}
+        if(w>maxSide||h>maxSide){
+          if(w>=h){h=Math.round(h*maxSide/w);w=maxSide;}
+          else{w=Math.round(w*maxSide/h);h=maxSide;}
+        }
+        const canvas=document.createElement("canvas");
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,w,h);
+        if(canvas.toBlob){
+          canvas.toBlob(blob=>{
+            if(blob&&blob.size>0)resolve(blob);
+            else{
+              try{resolve(dataUrlToBlob(dataUrlFromCanvas(canvas,quality)));}
+              catch(err){reject(err);}
+            }
+          },"image/jpeg",quality);
+        }else{
+          try{resolve(dataUrlToBlob(dataUrlFromCanvas(canvas,quality)));}
+          catch(err){reject(err);}
+        }
+      }catch(err){reject(err||new Error("Falha ao processar a imagem."));}
     };
-    img.onerror=()=>{URL.revokeObjectURL(objUrl);reject(new Error("Não foi possível ler a imagem."));};
+    img.onerror=()=>{URL.revokeObjectURL(objUrl);reject(new Error("Não foi possível ler a imagem. Use JPG ou PNG."));};
     img.src=objUrl;
   });
 }
 
-/** Envia foto do aluno para Firebase Storage e retorna URL pública de download. */
+function blobToDataUrl(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(new Error("Falha ao converter a foto."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+/** Comprime até tamanho seguro para gravar no perfil (Firestore). */
+async function prepareStudentFotoBlob(file){
+  let maxSide=520, quality=0.75;
+  let blob=await compressImageFile(file, maxSide, quality);
+  let tries=0;
+  while(blob.size>FOTO_MAX_STORE_BYTES && tries<5){
+    maxSide=Math.max(220, Math.round(maxSide*0.78));
+    quality=Math.max(0.48, quality-0.08);
+    blob=await compressImageFile(file, maxSide, quality);
+    tries++;
+  }
+  if(blob.size>350*1024){
+    throw new Error("A foto ainda ficou grande demais após compressão. Escolha outra imagem.");
+  }
+  return blob;
+}
+
+/**
+ * Prepara a foto do aluno e devolve valor para o campo `foto`.
+ * Comprime no browser e grava como data URL no Firestore (campo students.foto).
+ * Não depende do Firebase Storage — evita travar em "Enviando/Salvando".
+ */
 async function uploadStudentFoto(file, studentUid){
   if(!studentUid)throw new Error("ID do aluno ausente para salvar a foto.");
   if(!file)throw new Error("Nenhuma foto selecionada.");
-  const blob=await compressImageFile(file);
-  const path="students/"+studentUid+"/foto.jpg";
-  const ref=storage.ref(path);
-  await ref.put(blob,{contentType:"image/jpeg",cacheControl:"public,max-age=3600"});
-  const url=await ref.getDownloadURL();
-  return url+(url.indexOf("?")>=0?"&":"?")+"v="+Date.now();
+  const blob=await withTimeout(prepareStudentFotoBlob(file), 20000, "Processamento da foto");
+  return await withTimeout(blobToDataUrl(blob), 10000, "Salvar foto");
 }
 
-/** Campo de foto: preview + upload do dispositivo (arquivo fica pendente ou sobe na hora). */
+/** Campo de foto: preview + escolha do dispositivo (upload real ao salvar o formulário). */
 function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
   const inputRef=useRef(null);
   return(
@@ -835,7 +900,7 @@ function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
           <button type="button" className="btn btn-primary rounded-xl px-3 py-2 text-sm font-semibold inline-flex items-center gap-1.5"
             disabled={disabled||busy}
             onClick={()=>inputRef.current&&inputRef.current.click()}>
-            <Icon name="camera" size={14}/>{busy?"Enviando…":"Enviar do dispositivo"}
+            <Icon name="camera" size={14}/>{busy?"Salvando foto…":"Enviar do dispositivo"}
           </button>
           {previewUrl?(
             <button type="button" className="btn rounded-xl px-3 py-2 text-sm" disabled={disabled||busy} onClick={onClear}>
@@ -844,9 +909,9 @@ function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
           ):null}
         </div>
         <p style={{fontSize:11,color:"var(--font-muted)",marginTop:6,lineHeight:1.4}}>
-          {hint||"JPG, PNG ou WEBP · até "+FOTO_MAX_MB+" MB · salva na nuvem (Firebase Storage) e aparece no perfil e nas listas."}
+          {hint||"JPG, PNG ou WEBP · até "+FOTO_MAX_MB+" MB · a foto é salva na nuvem e aparece no perfil e nas listas."}
         </p>
-        <input ref={inputRef} type="file" accept={FOTO_ACCEPT} style={{display:"none"}}
+        <input ref={inputRef} type="file" accept={FOTO_ACCEPT} capture="environment" style={{display:"none"}}
           onChange={e=>{
             const f=e.target.files&&e.target.files[0];
             e.target.value="";
@@ -2907,12 +2972,16 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       const fields={...editFields};
       if(fotoFile){
         fields.foto=await uploadStudentFoto(fotoFile,uid);
+        setEditFields(p=>({...p,foto:fields.foto}));
+        setFotoPreview(fields.foto);
       }
       await db.collection("students").doc(uid).update(fields);
-      if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
-      setFotoFile(null);setFotoPreview("");
+      if(fotoPreview&&String(fotoPreview).indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+      setFotoFile(null);
+      setFotoPreview(fields.foto||"");
       setEditProfile(false);
     }catch(e){
+      console.error("saveProfile:",e);
       alert("Erro ao salvar perfil: "+(e.message||e.code||"desconhecido"));
     }finally{
       setFotoBusy(false);
@@ -3227,9 +3296,11 @@ function ModalCadastro({onClose,onSaved}){
         try{
           const fotoUrl=await uploadStudentFoto(fotoFile,studentUid);
           await docRef.update({foto:fotoUrl});
+          setD("foto",fotoUrl);
         }catch(fotoErr){
           console.error("Upload foto cadastro:",fotoErr);
-          setErr("Aluno salvo, mas a foto falhou: "+(fotoErr.message||fotoErr.code||"erro de Storage. Verifique as regras do Firebase Storage."));
+          // Cadastro já existe — não bloquear; avisar e fechar se o resto ok
+          setErr("Aluno salvo, mas a foto falhou: "+(fotoErr.message||fotoErr.code||"erro ao processar imagem"));
           setSaving(false);
           return;
         }
@@ -3241,7 +3312,11 @@ function ModalCadastro({onClose,onSaved}){
         },{merge:true});
       }
       onSaved();onClose();
-    }catch(e){setErr("Erro ao salvar: "+(e.message||e.code||"desconhecido"));setSaving(false);}
+    }catch(e){
+      console.error("ModalCadastro save:",e);
+      setErr("Erro ao salvar: "+(e.message||e.code||"desconhecido"));
+      setSaving(false);
+    }
   }
 
   const tabLabels=["Dados Pessoais","Perfil do Aluno"];
@@ -4330,6 +4405,8 @@ function ModalEdicao({student,onClose,onSaved}){
       let fotoUrl=(dados.foto||"").trim();
       if(fotoFile){
         fotoUrl=await uploadStudentFoto(fotoFile,student.uid);
+        setD("foto",fotoUrl);
+        setFotoPreview(fotoUrl);
       }
       await db.collection("students").doc(student.uid).update({
         name:dados.nome.trim(),email,
@@ -4353,8 +4430,15 @@ function ModalEdicao({student,onClose,onSaved}){
         profession:dados.profissao.trim(),
         triagem,
       });
+      if(fotoPreview&&String(fotoPreview).indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
+      setFotoFile(null);
       onSaved();onClose();
-    }catch(e){setErr("Erro: "+e.message);setSaving(false);}
+    }catch(e){
+      console.error("ModalEdicao save:",e);
+      setErr("Erro: "+(e.message||e.code||"desconhecido"));
+    }finally{
+      setSaving(false);
+    }
   }
 
   return(
