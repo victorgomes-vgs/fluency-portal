@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7 Homework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Background inspired by the deep blue studio environment */
+            background-color: #050b14; 
+            background-image: radial-gradient(circle at top right, #0a192f 0%, #050b14 100%);
+        }
+        
+        /* Subtle glow animation for the card */
+        @keyframes subtleGlow {
+            0% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.05); }
+            50% { box-shadow: 0 0 30px rgba(0, 180, 216, 0.15); }
+            100% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.05); }
+        }
+        
+        .glass-panel {
+            background: rgba(19, 31, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 180, 216, 0.1);
+            animation: subtleGlow 4s infinite alternate;
+        }
+
+        /* Custom scrollbar for webkit if needed later */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060b14; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2d4a; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00b4d8; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-white">
+
+    <main class="glass-panel w-full max-w-2xl rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+        
+        <!-- Decorative accent line inspired by the cyan swoosh in the image -->
+        <div class="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-[#00b4d8] to-transparent opacity-50"></div>
+
+        <div class="text-center mb-10">
+            <p class="text-[#00b4d8] font-semibold tracking-widest text-sm mb-2 uppercase">Fluency Practice</p>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">LESSON 7 HOMEWORK</h1>
+            
+            <div class="bg-[#0a1120] border border-[#1e2d4a] rounded-xl p-5 text-gray-300 text-base md:text-lg leading-relaxed inline-block">
+                Aperte o botão <strong class="text-white">"copiar"</strong> abaixo e cole na linha digitável do ChatGPT.<br/>
+                <span class="text-gray-400 text-sm mt-2 block">Ele assumirá o papel do seu parceiro de conversação.</span>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <label class="block text-sm font-medium text-gray-400 mb-2 ml-1">Prompt de Configuração</label>
+            
+            <div class="flex flex-col sm:flex-row items-center bg-[#050b14] border border-[#1e2d4a] rounded-2xl p-2 gap-3 transition-all focus-within:border-[#00b4d8]">
+                
+                <!-- Single line preview -->
+                <div class="flex-grow w-full px-4 overflow-hidden">
+                    <p class="text-gray-500 font-mono text-sm whitespace-nowrap text-ellipsis overflow-hidden select-none">
+                        You are my English conversation partner. My English level is A1 (beginner)...
+                    </p>
+                </div>
+
+                <!-- Action Button styled with accent color -->
+                <button id="copyBtn" onclick="copyPromptText()" class="w-full sm:w-auto flex-shrink-0 bg-[#00b4d8] hover:bg-[#0096b4] text-white font-semibold py-3 px-6 rounded-xl transition duration-300 ease-in-out flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,180,216,0.3)] hover:shadow-[0_0_20px_rgba(0,180,216,0.5)] focus:outline-none focus:ring-2 focus:ring-[#00b4d8] focus:ring-offset-2 focus:ring-offset-[#050b14]">
+                    <svg id="copyIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span id="btnText">Copiar</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // The massive prompt text stored as a constant
+        const payloadText = `You are my English conversation partner.
+My English level is A1 (beginner).
+Your goal is to help me practice speaking English in a calm, patient, and encouraging way.
+Please follow these rules carefully:
+
+Speak ONLY in English.
+Speak slowly and clearly.
+Ask ONE question at a time.
+After asking a question, wait silently for my answer. Do not interrupt me.
+Give me enough time to think. Do not rush me.
+If I ask you to repeat, repeat the same question slowly, without changing the words.
+If I ask you to skip a question, simply go to the next one.
+If I don't understand, explain the question using very simple English. Avoid translating unless absolutely necessary.
+If my answer has small mistakes, let me finish first. Then briefly correct the sentence and ask me to repeat the corrected version once.
+If my answer is correct, say something short like "Good!", "Very good!", or "Nice answer!" and continue.
+Keep corrections short. The main goal is speaking practice, not grammar lessons.
+If I answer with only one word, encourage me to say a complete sentence.
+Stay patient, positive, and never make me feel pressured.
+Ask these questions in this exact order:
+
+Where do you live?
+Do you live in Brazil?
+Do you want to live in another country?
+Which country do you want to live in?
+Which city do you want to live in?
+Do you live in a big city?
+Do you study English?
+Do you understand English?
+Do you understand Italian?
+Which languages do you understand?
+Which languages do you want to study?
+Do you study with a teacher?
+Do you study with a classmate?
+Do you like studying English?
+Do you prefer studying alone or with a teacher?
+Do you prefer living in a city or in the countryside?
+Do you live abroad?
+Do you want to live abroad?
+Which country do you like the most?
+Which city do you like the most?
+What is your favorite language?
+Do you understand this word?
+Do you understand that word?
+Do your friends study English?
+Where do your friends live?
+After question 25, continue with these extra challenge questions only if I am comfortable:
+
+Why do you want to live in that country?
+Why do you like that city?
+Which language is difficult for you?
+Which language is easy for you?
+Do you understand your English teacher?
+When we finish all the questions, give me two feedbacks.
+FIRST FEEDBACK (for me, the student)
+Use simple English.
+Tell me:
+
+What I did well.
+My pronunciation.
+My grammar.
+My vocabulary.
+My fluency.
+Three sentences I should practice again.
+Three words I should review.
+One thing to improve in the next practice.
+SECOND FEEDBACK (for my teacher)
+Write this report in English.
+Include:
+Student Speaking Report
+Student Level Estimate:
+(A1 / A1+ / A2)
+Communication:
+
+Could answer independently?
+Needed frequent help?
+Used complete sentences?
+Confidence level.
+Pronunciation:
+
+Sounds that caused difficulty.
+Overall pronunciation score (1–10).
+Grammar:
+
+Main grammar mistakes.
+Grammar accuracy score (1–10).
+Vocabulary:
+
+Vocabulary range.
+Words the student did not know.
+Vocabulary score (1–10).
+Listening Comprehension:
+
+Understood questions easily?
+Needed repetition?
+Listening score (1–10).
+Fluency:
+
+Response speed.
+Hesitation level.
+Fluency score (1–10).
+Most frequent mistakes:
+
+List the five most common errors with corrections.
+Strengths:
+
+List the student's strongest points.
+Recommendations:
+
+What should be practiced in the next lesson?
+Finally, give an overall score from 1 to 10 and write a brief professional summary for the teacher.`;
+
+        function copyPromptText() {
+            // Using a temporary textarea to ensure compatibility with execCommand
+            // as requested for environments where clipboard API might be restricted.
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = payloadText;
+            
+            // Move it off-screen to avoid visual flashing
+            tempTextArea.style.position = "absolute";
+            tempTextArea.style.left = "-9999px";
+            tempTextArea.style.top = "0";
+            
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Execute the copy command
+                document.execCommand("copy");
+                
+                // Visual feedback
+                const btn = document.getElementById("copyBtn");
+                const btnText = document.getElementById("btnText");
+                const icon = document.getElementById("copyIcon");
+                
+                // Change style to green to indicate success
+                btn.classList.remove("bg-[#00b4d8]", "hover:bg-[#0096b4]", "shadow-[0_0_15px_rgba(0,180,216,0.3)]");
+                btn.classList.add("bg-green-500", "hover:bg-green-600", "shadow-[0_0_15px_rgba(34,197,94,0.4)]");
+                
+                btnText.innerText = "Copiado!";
+                
+                // Change icon to a checkmark
+                icon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+                icon.setAttribute("viewBox", "0 0 24 24");
+
+                // Revert after 3 seconds
+                setTimeout(() => {
+                    btn.classList.add("bg-[#00b4d8]", "hover:bg-[#0096b4]", "shadow-[0_0_15px_rgba(0,180,216,0.3)]");
+                    btn.classList.remove("bg-green-500", "hover:bg-green-600", "shadow-[0_0_15px_rgba(34,197,94,0.4)]");
+                    
+                    btnText.innerText = "Copiar";
+                    
+                    // Revert icon to copy symbol
+                    icon.innerHTML = `<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>`;
+                }, 3000);
+
+            } catch (err) {
+                console.error('Falha ao tentar copiar o texto: ', err);
+                // Fallback alert just in case, though highly unlikely to fail
+                // We were instructed to avoid alerts, so we log to console instead.
+            }
+
+            // Cleanup
+            document.body.removeChild(tempTextArea);
+        }
+    </script>
+</body>
+</html>
