@@ -2760,7 +2760,7 @@ const IVI_KB=[
   {keys:["present perfect","ja fiz","já fiz","have has"],audience:["all"],answer:"O **Present Perfect** (have/has + particípio) conecta o passado com o presente — usado quando o momento exato não importa ou a ação ainda tem efeito agora (I have finished my homework). Quer praticar mais? Isso costuma aparecer nas lições intermediárias da Trilha!"},
   {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem problemas! Fale direto com o Victor pelo WhatsApp que ele reseta seu acesso rapidinho: ${WPP_VICTOR}`},
   {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
-  {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente"],audience:["admin"],answer:"Alunos que preencheram o **form-self** aparecem em **Cadastros Pendentes** (botão laranja no dashboard). Revise as respostas, complete financeiro e clique em **AUTORIZAR LANÇAR** para criar o login e perfil no sistema."},
+  {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente","terceirizado","alunosfora"],audience:["admin"],answer:"Alunos do **form-self** e **form-self-alunosfora** (terceirizados) aparecem em **Cadastros Pendentes**. Revise, complete o que faltar (financeiro é opcional para terceirizados) e clique em **AUTORIZAR LANÇAR**."},
   {keys:["agenda admin","painel agenda","google calendar sync"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e calendário unificado. Use **Sincronizar Google** para puxar eventos do calendário do Victor."},
   {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
 ];
@@ -3577,8 +3577,10 @@ function ModalCadastro({onClose,onSaved}){
 
 /* ── CADASTROS PENDENTES (form-self) ── */
 function ModalAutorizarLancar({pendente,onClose,onLaunched}){
-  const raw=pendente;
-  const studentUid=pendente.uid;
+  const raw=pendente||{};
+  const studentUid=pendente?.uid;
+  const isTerceirizado=!!(raw.alunoTerceirizado||raw.cadastroOrigem==="form-self-alunosfora");
+  const origemLabel=isTerceirizado?"form-self-alunosfora (terceirizado)":(raw.cadastroOrigem||"form-self");
   const [tab,setTab]=useState(0);
   const [dados,setDados]=useState({
     nome:raw.name||raw.nome||"",cpf:raw.cpf||"",rg:raw.rg||"",
@@ -3587,11 +3589,11 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
     profissao:raw.profissao||raw.profession||"",nacionalidade:raw.nacionalidade||"",
     endereco:raw.endereco||"",foto:raw.foto||"",
     contrato:raw.contrato||"fluency_foundation",duracao:raw.duracao||"",
-    diasAulas:raw.diasAulas||[],horarioAulas:raw.horarioAulas||"",
-    valorCheio:raw.valorCheio||"",descontos:raw.descontos||"",
-    valorFinal:raw.valorFinal||"",diaVencimento:raw.diaVencimento||"",
+    diasAulas:Array.isArray(raw.diasAulas)?raw.diasAulas:[],horarioAulas:raw.horarioAulas||"",
+    valorCheio:raw.valorCheio??"",descontos:raw.descontos??"",
+    valorFinal:raw.valorFinal??"",diaVencimento:raw.diaVencimento??"",
     dataInicio:raw.dataInicio||"",licaoInicio:raw.licaoInicio||"1",
-    numParcelas:raw.numParcelas||18,
+    numParcelas:isTerceirizado?(raw.numParcelas||0):(raw.numParcelas||18),
   });
   const triagem=pendente.triagem||BLANK_TRIAGEM;
   const [level,setLevel]=useState(pendente.level||"A1");
@@ -3600,7 +3602,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
   const [err,setErr]=useState("");
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
-  function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
+  function toggleDia(d){setDados(p=>({...p,diasAulas:(p.diasAulas||[]).includes(d)?p.diasAulas.filter(x=>x!==d):[...(p.diasAulas||[]),d]}));}
 
   function TriRead({label,field}){
     const v=triagem[field];
@@ -3612,11 +3614,17 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
     if(!dados.nome.trim()){setErr("Nome é obrigatório.");return;}
     if(!dados.email.trim()){setErr("Email é obrigatório.");return;}
     if(!studentUid){setErr("UID do aluno não encontrado.");return;}
-    if(!confirm(`Autorizar e lançar ${dados.nome.trim()} no sistema?\n\nLogin já existe — será ativado o perfil completo com financeiro.`))return;
+    const confMsg=isTerceirizado
+      ?`Autorizar e lançar ${dados.nome.trim()} (aluno terceirizado)?\n\nLogin já existe — acesso ao conteúdo será liberado. Financeiro é opcional neste tipo de cadastro.`
+      :`Autorizar e lançar ${dados.nome.trim()} no sistema?\n\nLogin já existe — será ativado o perfil completo com financeiro.`;
+    if(!confirm(confMsg))return;
     setSaving(true);setErr("");
     try{
       const email=dados.email.trim().toLowerCase();
-      const parcelas=gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,dados.numParcelas||18,[])||[];
+      const nParcelas=parseInt(dados.numParcelas,10)||0;
+      const parcelas=(!isTerceirizado||(dados.dataInicio&&dados.diaVencimento&&dados.valorFinal&&nParcelas>0))
+        ? (gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,nParcelas||18,[])||[])
+        : [];
       const financeiro={...FINANCEIRO_DEFAULT,parcelas};
       const programName=CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation";
 
@@ -3628,18 +3636,19 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:dados.foto.trim(),
         contrato:dados.contrato,duracao:dados.duracao.trim(),
-        diasAulas:dados.diasAulas,horarioAulas:dados.horarioAulas.trim(),
+        diasAulas:dados.diasAulas||[],horarioAulas:dados.horarioAulas.trim(),
         valorCheio:parseFloat(dados.valorCheio)||0,
         descontos:parseFloat(dados.descontos)||0,
         valorFinal:parseFloat(dados.valorFinal)||0,
         diaVencimento:parseInt(dados.diaVencimento,10)||1,
         dataInicio:dados.dataInicio||"",
         licaoInicio:parseInt(dados.licaoInicio,10)||1,
-        numParcelas:parseInt(dados.numParcelas,10)||18,
+        numParcelas:isTerceirizado?nParcelas:(nParcelas||18),
         status,level,triagem,
         program:programName,
         birthday:dados.dataNasc||"",profession:dados.profissao.trim(),
         financeiro,
+        alunoTerceirizado:isTerceirizado,
         aguardandoLancamento:false,
         autorizadoAt:firebase.firestore.FieldValue.serverTimestamp(),
       });
@@ -3672,7 +3681,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
             <Icon name="clipboard-check" size={18}/>
             <div>
               <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Revisar Cadastro</div>
-              <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.name} · form-self</div>
+              <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.name} · {origemLabel}</div>
             </div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
@@ -3683,6 +3692,11 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         <div className="modal-body">
           {tab===0&&(
             <div>
+              {isTerceirizado&&(
+                <div className="info-box" style={{marginBottom:14,background:"rgba(30,143,168,.10)",border:"1px solid rgba(30,143,168,.28)"}}>
+                  <strong>Aluno terceirizado</strong> — contrato com outra escola. CPF, RG, foto e financeiro não foram solicitados no formulário.
+                </div>
+              )}
               <div className="form-section-title">Dados Pessoais</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 16px",fontSize:13,marginBottom:16}}>
                 {[["Nome",dados.nome],["Email",dados.email],["Telefone",dados.telefone],["CPF",dados.cpf],["Profissão",dados.profissao],["Nascimento",dados.dataNasc],["Endereço",dados.endereco]].map(([l,v])=>
@@ -3704,7 +3718,11 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
           )}
           {tab===1&&(
             <div>
-              <p style={{fontSize:12,color:"var(--font-muted)",marginBottom:14}}>Confira e complete o que faltar — especialmente financeiro e datas.</p>
+              <p style={{fontSize:12,color:"var(--font-muted)",marginBottom:14}}>
+                {isTerceirizado
+                  ?"Aluno terceirizado: financeiro é opcional. Preencha só se quiser controlar acesso/conteúdo ou datas de aula na plataforma."
+                  :"Confira e complete o que faltar — especialmente financeiro e datas."}
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="form-label">Tipo de Contrato</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.contrato} onChange={e=>setD("contrato",e.target.value)}>
@@ -3720,7 +3738,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                 </div>
                 <div style={{gridColumn:"1/-1"}}><label className="form-label">Dias das Aulas</label>
                   <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>
-                    {DIAS_SEMANA.map(d=><button key={d} type="button" onClick={()=>toggleDia(d)} className={"status-pill "+(dados.diasAulas.includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11,padding:"5px 12px"}}>{d}</button>)}
+                    {DIAS_SEMANA.map(d=><button key={d} type="button" onClick={()=>toggleDia(d)} className={"status-pill "+((dados.diasAulas||[]).includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11,padding:"5px 12px"}}>{d}</button>)}
                   </div>
                 </div>
                 <div><label className="form-label">Horário</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.horarioAulas} onChange={e=>setD("horarioAulas",e.target.value)}/></div>
@@ -3733,12 +3751,13 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                   </select>
                 </div>
                 <div><label className="form-label">Nº Parcelas</label>
-                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas} onChange={e=>setD("numParcelas",parseInt(e.target.value))}>
+                  <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas} onChange={e=>setD("numParcelas",parseInt(e.target.value)||0)}>
+                    {isTerceirizado&&<option value={0}>0 (sem parcelas)</option>}
                     {Array.from({length:24},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
                   </select>
                 </div>
               </div>
-              {dados.dataInicio&&dados.diaVencimento&&dados.valorFinal&&(
+              {dados.dataInicio&&dados.diaVencimento&&dados.valorFinal&&(parseInt(dados.numParcelas,10)||0)>0&&(
                 <div style={{marginTop:14,padding:"12px 14px",borderRadius:12,background:"rgba(30,143,168,.08)",border:"1px solid rgba(30,143,168,.25)",fontSize:12}}>
                   <Icon name="info" size={12} style={{display:"inline",marginRight:4}}/>Ao autorizar, serão geradas <strong>{dados.numParcelas||18} parcelas</strong> de {formatCurrency(parseFloat(dados.valorFinal)||0)} automaticamente.
                 </div>
@@ -3749,7 +3768,9 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
             <div>
               <div className="info-box" style={{background:"rgba(30,160,110,.10)",border:"1px solid rgba(30,160,110,.30)",borderRadius:12,padding:14,marginBottom:16,fontSize:13}}>
                 <strong style={{color:"#60daa8"}}>Pronto para lançar?</strong><br/>
-                Ao clicar em <strong>Autorizar Lançar</strong>, o login do aluno (já criado no form-self) é ativado com financeiro, parcelas e status definitivo.
+                {isTerceirizado
+                  ?<>Ao clicar em <strong>Autorizar Lançar</strong>, o login do aluno terceirizado é ativado e o acesso ao conteúdo personalizado é liberado.</>
+                  :<>Ao clicar em <strong>Autorizar Lançar</strong>, o login do aluno (já criado no form-self) é ativado com financeiro, parcelas e status definitivo.</>}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="form-label">Nível Inicial</label>
@@ -3788,21 +3809,42 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
   );
 }
 
+const FORM_SELF_ORIGENS=["form-self","form-self-alunosfora"];
+
 function AdminCadastrosPendentes({onBack,onLaunched}){
   const [pendentes,setPendentes]=useState(null);
   const [selected,setSelected]=useState(null);
   const [filtro,setFiltro]=useState("pendente");
+  const [listErr,setListErr]=useState("");
 
   useEffect(()=>{
-    return db.collection("students").where("cadastroOrigem","==","form-self").onSnapshot(snap=>{
-      const items=snap.docs.map(d=>({uid:d.id,...d.data()}));
+    let unsubFallback=null;
+    const sortItems=items=>{
       items.sort((a,b)=>{
         const ta=a.submittedAt?.toMillis?.()||a.createdAt?.toMillis?.()||0;
         const tb=b.submittedAt?.toMillis?.()||b.createdAt?.toMillis?.()||0;
         return tb-ta;
       });
-      setPendentes(items);
-    },()=>setPendentes([]));
+      return items;
+    };
+    // Inclui form-self normal e alunos terceirizados (form-self-alunosfora)
+    const unsubMain=db.collection("students").where("cadastroOrigem","in",FORM_SELF_ORIGENS).onSnapshot(snap=>{
+      setPendentes(sortItems(snap.docs.map(d=>({uid:d.id,...d.data()}))));
+      setListErr("");
+    },err=>{
+      console.error("AdminCadastrosPendentes:",err);
+      // Fallback: status pendente (caso índice "in" falhe)
+      unsubFallback=db.collection("students").where("status","==","pendente_aprovacao").onSnapshot(snap=>{
+        const items=snap.docs.map(d=>({uid:d.id,...d.data()}))
+          .filter(p=>!p.cadastroOrigem||FORM_SELF_ORIGENS.includes(p.cadastroOrigem)||String(p.cadastroOrigem).startsWith("form-self"));
+        setPendentes(sortItems(items));
+        setListErr("");
+      },e2=>{
+        setPendentes([]);
+        setListErr(e2.message||err.message||"Erro ao carregar cadastros.");
+      });
+    });
+    return()=>{unsubMain();if(unsubFallback)unsubFallback();};
   },[]);
 
   const lista=useMemo(()=>(pendentes||[]).filter(p=>{
@@ -3821,10 +3863,11 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
         <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Dashboard</button>
         <div style={{flex:1}}>
           <h2 style={{fontFamily:"'Sora',sans-serif",fontWeight:800,fontSize:18}}>Cadastros Pendentes</h2>
-          <p style={{fontSize:12,color:"var(--font-muted)"}}>Formulários enviados pelos alunos via form-self</p>
+          <p style={{fontSize:12,color:"var(--font-muted)"}}>Formulários form-self e alunos terceirizados (outra escola)</p>
         </div>
         {countPendente>0&&<span className="status-pill status-pill-interesse" style={{fontSize:12,padding:"6px 14px"}}>{countPendente} aguardando</span>}
       </div>
+      {listErr&&<div className="err-box" style={{marginBottom:12,fontSize:12}}>{listErr}</div>}
       <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
         {[{v:"pendente",l:"Pendentes"},{v:"autorizado",l:"Autorizados"},{v:"rejeitado",l:"Rejeitados"},{v:"todos",l:"Todos"}].map(f=>
           <button key={f.v} className={"status-pill "+(filtro===f.v?"status-pill-ativo":"status-pill-inactive")} onClick={()=>setFiltro(f.v)} style={{fontSize:11}}>{f.l}</button>
@@ -3837,21 +3880,26 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
             const sub=p.submittedAt?.toDate?p.submittedAt.toDate().toLocaleDateString("pt-BR"):"—";
             const stCls=p.status==="pendente_aprovacao"?"status-pill-interesse":p.status==="ativo"?"status-pill-ativo":p.status==="rejeitado"?"status-pill-evadido":"status-pill-inactive";
             const stLbl=p.status==="pendente_aprovacao"?"Pendente":p.status==="ativo"?"Autorizado":p.status==="rejeitado"?"Rejeitado":p.status;
+            const isTerc=!!(p.alunoTerceirizado||p.cadastroOrigem==="form-self-alunosfora");
             return(
-              <div key={p.uid} className="glass rounded-2xl p-4" style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+              <div key={p.uid} className="glass rounded-2xl p-4" style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",cursor:p.status==="pendente_aprovacao"?"pointer":"default"}}
+                onClick={()=>{if(p.status==="pendente_aprovacao")setSelected(p);}}>
                 <div style={{width:44,height:44,borderRadius:"50%",background:"var(--gradient-cta)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:800,fontSize:16,flexShrink:0}}>
                   {(p.name||"?")[0].toUpperCase()}
                 </div>
                 <div style={{flex:1,minWidth:160}}>
                   <div style={{fontWeight:700,fontSize:15}}>{p.name||"Sem nome"}</div>
                   <div style={{fontSize:12,color:"var(--font-muted)"}}>{p.email} · {sub}</div>
-                  {p.contrato&&<div style={{fontSize:11,marginTop:4}}>{CONTRATOS.find(c=>c.v===p.contrato)?.l||p.contrato}</div>}
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:4}}>
+                    {isTerc&&<span className="status-pill status-pill-lead" style={{fontSize:10}}>Terceirizado</span>}
+                    {p.contrato&&<span style={{fontSize:11}}>{CONTRATOS.find(c=>c.v===p.contrato)?.l||p.contrato}</span>}
+                  </div>
                 </div>
                 <span className={"status-pill "+stCls} style={{fontSize:10}}>{stLbl}</span>
                 {p.status==="pendente_aprovacao"&&(
                   <button className="btn btn-primary rounded-xl px-5 py-2.5 text-sm font-bold inline-flex items-center gap-2"
                     style={{background:"linear-gradient(135deg,#60daa8,#187E74)",border:"none"}}
-                    onClick={()=>setSelected(p)}>
+                    onClick={e=>{e.stopPropagation();setSelected(p);}}>
                     <Icon name="clipboard-check" size={14}/> Revisar & Lançar
                   </button>
                 )}
