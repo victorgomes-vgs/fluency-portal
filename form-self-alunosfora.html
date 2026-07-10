@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro Alunos Terceirizados | Fluency Studio</title>
+  <meta name="description" content="Formulário para acesso ao conteúdo personalizado — alunos terceirizados (contrato com outra escola)." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="https://thefluency.studio/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
+      authDomain: "fluency-studio-portal.firebaseapp.com",
+      projectId: "fluency-studio-portal",
+      storageBucket: "fluency-studio-portal.firebasestorage.app",
+      messagingSenderId: "568224359300",
+      appId: "1:568224359300:web:6f4e283315deb93224b3d1",
+    });
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{height:100%;margin:0;padding:0;}
+    :root,[data-theme="light"]{
+      --bg:linear-gradient(152deg,#E0ECFF 0%,#f6faff 38%,#eef6ff 62%,#D4F7F2 100%);
+      --font:#174082;--font-muted:#3566B6;--card:rgba(255,255,255,.96);
+      --detail:rgba(224,236,255,.65);--divider:rgba(34,82,160,.20);
+      --input-bg:rgba(255,255,255,.92);--input-border:rgba(53,102,182,.28);
+      --shadow:0 10px 36px rgba(23,64,130,.11);--gradient-cta:linear-gradient(135deg,#3566B6 0%,#2252A0 45%,#187E74 100%);
+      --gradient-surface:linear-gradient(145deg,rgba(255,255,255,.98),rgba(224,236,255,.72));
+    }
+    body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 720px 480px at 8% 5%,rgba(53,102,182,.22),transparent 68%),
+                 radial-gradient(ellipse 560px 420px at 92% 88%,rgba(24,126,116,.16),transparent 70%),
+                 radial-gradient(ellipse 480px 360px at 55% 42%,rgba(134,207,255,.20),transparent 72%);
+      animation:mesh 14s ease-in-out infinite alternate;}
+    @keyframes mesh{0%{opacity:.85;transform:scale(1)}100%{opacity:1;transform:scale(1.03)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    #root{position:relative;z-index:1;}
+    .page-wrap{max-width:720px;margin:0 auto;padding:24px 16px 48px;}
+    .hero-card{background:#fff;border-radius:24px;padding:0 0 22px;color:var(--font);
+      box-shadow:0 20px 50px rgba(23,64,130,.18);position:relative;overflow:hidden;margin-bottom:20px;
+      border:1.5px solid rgba(53,102,182,.14);}
+    .hero-banner{width:100%;line-height:0;overflow:hidden;background:linear-gradient(135deg,#174082,#2252A0);}
+    .hero-banner img{width:100%;height:auto;max-height:220px;object-fit:cover;display:block;}
+    .hero-body{padding:20px 24px 0;}
+    .hero-logo{height:40px;object-fit:contain;margin-bottom:10px;}
+    .form-card{background:var(--gradient-surface);border:1.5px solid rgba(53,102,182,.18);
+      border-radius:22px;box-shadow:var(--shadow);overflow:hidden;animation:slideUp .35s ease-out;}
+    .form-header{padding:18px 22px;border-bottom:1px solid var(--divider);background:rgba(255,255,255,.5);}
+    .form-body{padding:22px;max-height:none;}
+    .form-footer{padding:16px 22px;border-top:1px solid var(--divider);display:flex;gap:10px;
+      justify-content:space-between;align-items:center;flex-wrap:wrap;background:rgba(224,236,255,.35);}
+    .progress-track{display:flex;gap:6px;margin-top:16px;}
+    .progress-dot{flex:1;height:5px;border-radius:99px;background:rgba(53,102,182,.15);transition:background .3s;}
+    .progress-dot.done,.progress-dot.active{background:linear-gradient(90deg,#3566B6,#187E74);}
+    .step-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--font-muted);letter-spacing:.04em;font-weight:600;}
+    .admin-lock-box{background:linear-gradient(135deg,rgba(224,236,255,.95),rgba(212,247,242,.85));
+      border:1.5px solid rgba(53,102,182,.22);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.6;color:#174082;}
+    .admin-lock-box strong{display:block;font-family:'Sora',sans-serif;font-size:14px;margin-bottom:6px;}
+    .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#0d5260;margin-bottom:5px;}
+    .form-section-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0a4a5c;
+      border-bottom:1px solid var(--divider);padding-bottom:6px;margin-bottom:12px;margin-top:18px;}
+    .form-section-title:first-child{margin-top:0;}
+    .input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);outline:none;color:var(--font);
+      font-family:'Outfit',sans-serif;border-radius:12px;padding:10px 14px;font-size:14px;}
+    .input:focus{border-color:rgba(53,102,182,.55);box-shadow:0 0 0 3px rgba(134,207,255,.35);}
+    .input:read-only{background:rgba(224,236,255,.5);color:#3566B6;cursor:default;}
+    .input-locked-wrap{position:relative;}
+    .input-locked-badge{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:800;
+      letter-spacing:.06em;text-transform:uppercase;color:#187E74;background:rgba(163,224,214,.45);
+      border:1px solid rgba(0,102,91,.25);padding:2px 7px;border-radius:99px;pointer-events:none;}
+    .btn{border:1.5px solid rgba(53,102,182,.20);background:rgba(255,255,255,.92);transition:all .15s;cursor:pointer;
+      color:var(--font);border-radius:12px;padding:10px 18px;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;}
+    .btn:hover{border-color:rgba(53,102,182,.35);box-shadow:0 4px 14px rgba(53,102,182,.12);}
+    .btn-primary{background:var(--gradient-cta);border:1px solid rgba(53,102,182,.35);color:#fff;
+      box-shadow:0 4px 18px rgba(34,82,160,.32);}
+    .btn-primary:hover{box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);}
+    .btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .err-box{background:rgba(200,60,70,.10);border:1px solid rgba(200,60,70,.30);border-radius:12px;
+      padding:10px 14px;font-size:13px;color:#c53030;margin-bottom:14px;}
+    .info-box{background:rgba(134,207,255,.18);border:1px solid rgba(53,102,182,.22);border-radius:12px;
+      padding:12px 14px;font-size:13px;color:#174082;line-height:1.55;margin-bottom:16px;}
+    .triagem-group{display:flex;flex-direction:column;gap:6px;}
+    .triagem-option{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;cursor:pointer;
+      border:1px solid var(--divider);background:var(--input-bg);font-size:13px;transition:all .13s;}
+    .triagem-option:hover{border-color:rgba(53,102,182,.35);background:rgba(134,207,255,.12);}
+    .triagem-option.selected{border-color:rgba(53,102,182,.40);background:rgba(134,207,255,.22);color:#174082;}
+    .triagem-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--input-border);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--input-bg);}
+    .triagem-option.selected .triagem-check{background:#3566B6;border-color:#3566B6;}
+    .rating-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+    .rating-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--divider);background:var(--input-bg);
+      color:var(--font-muted);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;
+      justify-content:center;transition:all .13s;}
+    .rating-btn.selected{background:linear-gradient(135deg,#3566B6,#2252A0);border-color:#2252A0;color:#fff;}
+    .day-pill{font-size:11px;padding:6px 14px;border-radius:99px;cursor:pointer;border:1.5px solid var(--divider);
+      background:var(--input-bg);font-weight:600;transition:all .13s;}
+    .day-pill.on{background:linear-gradient(135deg,rgba(163,224,214,.55),rgba(212,247,242,.8));
+      border-color:rgba(0,102,91,.35);color:#00665B;}
+
+    .success-card{text-align:center;padding:40px 28px;animation:fadeIn .5s ease;}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#187E74,#00665B);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+      box-shadow:0 12px 32px rgba(0,102,91,.30);}
+    @media(max-width:520px){.form-footer{flex-direction:column;}.form-footer .btn{width:100%;text-align:center;}}
+    .float-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(40px);opacity:.45;}
+    .orb1{width:220px;height:220px;background:rgba(53,102,182,.35);top:8%;left:-4%;animation:floatOrb 18s ease-in-out infinite;}
+    .orb2{width:180px;height:180px;background:rgba(24,126,116,.28);bottom:12%;right:-2%;animation:floatOrb 22s ease-in-out infinite reverse;}
+    @keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}
+    .ivi-pulse{animation:iviPulse 2.4s ease-in-out infinite;}
+    @keyframes iviPulse{0%,100%{box-shadow:0 4px 24px rgba(53,102,182,.35),0 0 0 0 rgba(53,102,182,.4)}50%{box-shadow:0 6px 32px rgba(53,102,182,.45),0 0 0 8px rgba(53,102,182,0)}}
+    .ivictor-btn{position:fixed;bottom:22px;right:22px;z-index:900;width:62px;height:62px;border-radius:50%;overflow:hidden;
+      border:2.5px solid rgba(53,102,182,.55);box-shadow:0 4px 24px rgba(23,64,130,.30),0 0 0 4px rgba(134,207,255,.20);
+      cursor:pointer;transition:transform .18s;background:#174082;}
+    .ivictor-btn:hover{transform:scale(1.08);}
+    .ivictor-panel{position:fixed;bottom:96px;right:22px;z-index:900;width:340px;border-radius:20px;overflow:hidden;
+      box-shadow:0 16px 48px rgba(23,64,130,.35);animation:slideUp .28s ease-out;border:1px solid rgba(53,102,182,.25);
+      background:#fff;}
+    .ivictor-header{background:var(--gradient-cta);padding:14px 16px;display:flex;align-items:center;gap:10px;color:#fff;}
+    .ivictor-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.35);flex-shrink:0;background:#174082;}
+    .ivictor-footer{padding:10px 12px;border-top:1px solid var(--divider);background:#f0f6ff;display:flex;gap:8px;}
+    .ivi-quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 4px;background:#fff;}
+    .ivi-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;background:#fff;}
+    .ivi-chip{font-size:11px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;
+      border:1px solid rgba(53,102,182,.22);background:rgba(134,207,255,.18);color:#174082;transition:background .15s;}
+    .ivi-chip:hover{background:rgba(134,207,255,.35);}
+    .ivi-hint-bar{background:#e8f2ff;border-bottom:1px solid rgba(53,102,182,.15);
+      padding:10px 14px;font-size:12px;line-height:1.5;color:#174082;}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+    @media(max-width:520px){.ivictor-panel{width:calc(100vw - 32px)!important;right:16px!important;}}
+  </style>
+</head>
+<body>
+<div class="float-orb orb1"></div>
+<div class="float-orb orb2"></div>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+const auth = firebase.auth();
+const db = firebase.firestore();
+const FINANCEIRO_DEFAULT = { tipo: "mensalidade", creditosTotal: 0, creditosUsados: 0, parcelas: [] };
+
+const FORMCAPA_URL = "assets/formcapa.jpg";
+const IVI_PHOTO = "assets/ivi.png";
+const PORTAL_URL = "https://thefluency.studio/portal.html";
+const WPP_VICTOR = "https://wa.me/5511919756733";
+
+const IVI_STEP_HINTS = {
+  0: "Oi! Sou a **iVi** — este formulário é para **alunos terceirizados** (contrato com outra escola). Você preenche só o essencial para cadastro na plataforma e o perfil de personalização. Quando estiver pronto(a), toque em **Começar cadastro**! 🎯",
+  1: "Primeira etapa: **dados de cadastro**. Preencha nome, email e WhatsApp com cuidado — é assim que o Victor vai te contatar. Crie também uma **senha** para o portal. Foto, CPF, RG e dados financeiros **não são necessários** neste formulário.",
+  2: "Última etapa — o **perfil de aprendizagem**! Responda com sinceridade: objetivos, interesses e experiência com inglês. Isso ajuda a personalizar o conteúdo. Não existe resposta errada. 💬",
+  3: "Pronto! Seu cadastro foi enviado. O Victor vai revisar e autorizar seu acesso ao conteúdo personalizado no portal.",
+};
+
+const IVI_CHIPS = {
+  0: ["Por que preencher?", "Quanto tempo leva?", "É seguro?"],
+  1: ["O que é a senha?", "Preciso de CPF?", "Próxima etapa"],
+  2: ["Por que o perfil?", "Não sei meu objetivo", "Enviar cadastro"],
+};
+
+const IVI_KB = [
+  { keys: ["por que preencher", "pra que serve", "por que cadastro"], answer: "Este formulário é para **alunos terceirizados** terem acesso ao conteúdo personalizado na plataforma. Você preenche dados básicos de cadastro + o perfil de aprendizagem — sem CPF, RG, foto ou dados financeiros." },
+  { keys: ["quanto tempo", "demora", "minutos"], answer: "Cerca de **5 a 6 minutos**, em 2 etapas rápidas. Vou te guiando em cada uma — pode ir no seu ritmo!" },
+  { keys: ["contrato", "parcelas", "valor", "horario", "horário", "programa", "agenda", "financeiro", "cpf", "rg"], answer: "Como você é aluno **terceirizado** (contrato com outra escola), **não** preenche dados financeiros, CPF, RG nem foto aqui. Só o essencial para cadastro e personalização. O Victor autoriza o acesso na plataforma." },
+  { keys: ["seguro", "dados", "privacidade", "protegido"], answer: "Seus dados ficam protegidos no sistema da Fluency Studio e são usados **somente** para seu acesso ao conteúdo. Não compartilhamos com terceiros." },
+  { keys: ["senha", "portal", "login", "acesso"], answer: "A senha é para você entrar no **portal do aluno** depois que o Victor revisar e liberar seu cadastro. Guarde bem — você vai usar email + senha para acessar trilha, materiais e conteúdo personalizado." },
+  { keys: ["foto", "imagem", "url foto"], answer: "Neste formulário de alunos terceirizados a **foto não é solicitada**. Não precisa enviar!" },
+  { keys: ["proxima", "próxima", "continuar", "seguinte"], answer: "Quando terminar esta etapa, toque no botão azul no rodapé do formulário para avançar. Estou aqui se tiver dúvida!" },
+  { keys: ["fluency foundation", "foundation", "programa"], answer: "**Fluency Foundation** é o programa completo: fala, leitura, escrita e escuta, com fluência prevista em 18 meses. Ideal para trabalho, viagens e exames internacionais." },
+  { keys: ["flash", "just talk"], answer: "**Flash (Just Talk)** é focado em conversação — aulas de 30 minutos, temas do dia a dia. Perfeito para quem já tem base e quer praticar fala." },
+  { keys: ["speech", "corporate", "corporativo"], answer: "**Speech (Business)** é inglês corporativo e oratória profissional. Requer nível mínimo B1." },
+  { keys: ["dias", "horario", "horário", "aulas"], answer: "Marque os **dias da semana** em que você tem aula. Se o Victor já definiu no contrato, os dias podem vir pré-selecionados — só confira!" },
+  { keys: ["perfil", "objetivo", "por que perfil", "triagem"], answer: "O perfil de aprendizagem é o coração do método **PEH 5.0**! Com ele, o Victor sabe seus interesses, objetivos e experiência — e monta aulas que você realmente vai gostar de fazer." },
+  { keys: ["nao sei objetivo", "não sei objetivo", "indeciso"], answer: "Sem pressão! Escolha o que mais se aproxima — ou escreva nas **observações** o que você imagina. O Victor conversa com você na primeira aula para refinar." },
+  { keys: ["enviar", "finalizar", "concluir"], answer: "Revise suas respostas e toque em **✓ Enviar Cadastro**. O Victor recebe tudo, confere e libera seu acesso ao portal. Você recebe confirmação nesta tela!" },
+  { keys: ["victor", "professor", "whatsapp"], answer: `Dúvidas urgentes? Fale com o Victor no WhatsApp: ${WPP_VICTOR}` },
+  { keys: ["peh", "metodo", "método"], answer: "O **PEH 5.0** é o método exclusivo da Fluency:\n**P** — Personalizado\n**E** — Estratégico\n**H** — Humanizado\nEste formulário é o primeiro passo do **P**!" },
+];
+
+function iviRespond(q) {
+  const norm = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  let best = null, bestScore = 0;
+  IVI_KB.forEach(entry => {
+    let score = 0;
+    entry.keys.forEach(k => {
+      const kn = k.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (norm.includes(kn)) score += kn.length;
+    });
+    if (score > bestScore) { bestScore = score; best = entry; }
+  });
+  if (best && bestScore > 0) return best.answer;
+  if (/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi|e aí)$/i.test(norm.trim()))
+    return IVI_STEP_HINTS[0];
+  return "Boa pergunta! Posso ajudar com o cadastro, o portal, os programas ou o método PEH 5.0. O que quer saber?";
+}
+
+function IViForm({ step, onAdvance }) {
+  const [open, setOpen] = useState(false);
+  const [imgOk, setImgOk] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [hint, setHint] = useState(IVI_STEP_HINTS[0]);
+  const endRef = useRef(null);
+  const lastStepRef = useRef(-1);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setOpen(true);
+      setMessages([{ role: "assistant", content: IVI_STEP_HINTS[0] }]);
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (step !== lastStepRef.current && IVI_STEP_HINTS[step]) {
+      lastStepRef.current = step;
+      const msg = IVI_STEP_HINTS[step];
+      setHint(msg);
+      setMessages(prev => {
+        if (prev.some(m => m.content === msg)) return prev;
+        return [...prev, { role: "assistant", content: msg }];
+      });
+    }
+  }, [step]);
+
+  useEffect(() => {
+    if (open && endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages, open]);
+
+  function reply(text) {
+    setLoading(true);
+    setTimeout(() => {
+      let answer = iviRespond(text);
+      if (/próxima|proxima|continuar|seguinte/i.test(text) && step < 2) {
+        answer += "\n\nQuando estiver pronto(a), use o botão azul abaixo do formulário para avançar!";
+      }
+      setMessages(prev => [...prev, { role: "assistant", content: answer }]);
+      setLoading(false);
+    }, 380 + Math.random() * 280);
+  }
+
+  function send(textOverride) {
+    const text = (textOverride || input).trim();
+    if (!text || loading) return;
+    setMessages(prev => [...prev, { role: "user", content: text }]);
+    setInput("");
+    reply(text);
+  }
+
+  const chips = IVI_CHIPS[step] || IVI_CHIPS[0];
+
+  return (
+    <>
+      {open && (
+        <div className="ivictor-panel" style={{ maxHeight: "72vh", display: "flex", flexDirection: "column" }}>
+          <div className="ivictor-header">
+            <div className="ivictor-avatar">
+              {imgOk
+                ? <img src={IVI_PHOTO} alt="iVi" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setImgOk(false)} />
+                : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#fff" }}>iVi</div>}
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "'Sora',sans-serif" }}>iVi</div>
+              <div style={{ fontSize: 11, opacity: .85 }}>Sua guia neste cadastro</div>
+            </div>
+            <button onClick={() => setOpen(false)} style={{ marginLeft: "auto", background: "rgba(255,255,255,.18)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", color: "#fff" }}>✕</button>
+          </div>
+          <div className="ivi-hint-bar" dangerouslySetInnerHTML={{ __html: hint.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br/>") }} />
+          <div className="ivi-quick-chips">
+            {chips.map(c => <button key={c} type="button" className="ivi-chip" onClick={() => send(c)}>{c}</button>)}
+          </div>
+          <div className="ivi-messages">
+            {messages.map((msg, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                <div style={{
+                  maxWidth: "85%", padding: "10px 14px", fontSize: 13, lineHeight: 1.55, whiteSpace: "pre-wrap",
+                  borderRadius: msg.role === "user" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
+                  background: msg.role === "user" ? "var(--gradient-cta)" : "rgba(134,207,255,.20)",
+                  border: msg.role === "user" ? "none" : "1px solid rgba(53,102,182,.15)",
+                  color: msg.role === "user" ? "#fff" : "#174082",
+                }}>{msg.content}</div>
+              </div>
+            ))}
+            {loading && (
+              <div style={{ display: "flex", gap: 4, padding: "8px 12px" }}>
+                {[0, 1, 2].map(i => <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#3566B6", animation: `bounce 1.2s ease infinite ${i * 0.2}s` }} />)}
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+          <div className="ivictor-footer">
+            <input className="input" style={{ flex: 1, padding: "9px 12px", fontSize: 13 }} placeholder="Pergunte à iVi..." value={input}
+              onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} disabled={loading} />
+            <button className="btn btn-primary" style={{ padding: "9px 14px" }} onClick={() => send()} disabled={loading || !input.trim()}>→</button>
+          </div>
+        </div>
+      )}
+      <button className={"ivictor-btn" + (open ? "" : " ivi-pulse")} onClick={() => setOpen(o => !o)} title="iVi — Sua guia">
+        {imgOk
+          ? <img src={IVI_PHOTO} alt="iVi" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setImgOk(false)} />
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, color: "#fff", fontFamily: "'Sora',sans-serif" }}>iVi</div>}
+      </button>
+    </>
+  );
+}
+const FORMACAO_NIVEIS = ["Ensino Fundamental", "Ensino Médio", "Ensino Superior"];
+const OCUPACOES = [
+  { v: "Estudante", ph: "Conte mais — curso, instituição, etc." },
+  { v: "Trabalhando", ph: "Conte mais — cargo, área, empresa, etc." },
+  { v: "À procura de emprego", ph: "Conte mais — área de interesse, situação atual, etc." },
+];
+const AREAS_INTERESSE = [
+  "Tecnologia e TI", "Negócios e Administração", "Marketing e Vendas", "Educação",
+  "Saúde e Bem-estar", "Direito", "Engenharia", "Finanças e Investimentos",
+  "Turismo e Hotelaria", "Comunicação e Mídia", "Artes e Design",
+  "Meio Ambiente e Sustentabilidade", "Recursos Humanos", "Logística e Comércio Exterior",
+  "Gastronomia", "Outro",
+];
+const ONDE_ESTUDOU = [
+  "Escola regular", "Escola de idiomas presencial", "Escola de idiomas online",
+  "Professor particular", "Outro",
+];
+const TOPICOS_INTERESSE = [
+  "Cultura (artes, história, tradições)", "Tecnologia", "Esportes", "Moda e tendências",
+  "Negócios e economia", "Sustentabilidade e meio ambiente", "Música", "Cinema e séries",
+  "Games", "Viagens", "Gastronomia e culinária", "Literatura e leitura", "Ciência",
+  "Saúde e bem-estar", "Família e relacionamentos", "Outro",
+];
+const OBJETIVOS = [
+  "Conseguir um emprego", "Falar fluentemente em viagens",
+  "Passar em testes de proficiência", "Melhorar minha confiança na comunicação", "Outro",
+];
+
+const BLANK_TRIAGEM = {
+  idadeFaixa: "",
+  formacao: "", formacaoStatus: "", cursoSuperior: "", posGraduacao: "",
+  ocupacao: "", ocupacaoDetalhe: "",
+  areasInteresse: [], areaInteresseOutro: "", areaInteresse: "",
+  estudouIngles: "",
+  ondeComo: "", ondeComoOutro: "", instituicaoNome: "",
+  qualidadeMaterial: 0, qualidadeProfessores: 0, qualidadeMetodologia: 0,
+  pontosPositivos: "", melhorias: "",
+  topicos: [], topicosOutro: "", temasSemInteresse: "",
+  objetivo: "", objetivoOutro: "", horasSemana: "", prazo: "", observacoes: "",
+};
+
+function calcIdadeFaixa(dataNasc) {
+  if (!dataNasc) return "";
+  const birth = new Date(dataNasc + "T12:00:00");
+  if (isNaN(birth.getTime())) return "";
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  if (age < 18) return "Menos de 18 anos";
+  if (age <= 24) return "18–24 anos";
+  if (age <= 34) return "25–34 anos";
+  if (age <= 44) return "35–44 anos";
+  if (age <= 54) return "45–54 anos";
+  return "55+ anos";
+}
+
+function parseUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  const dias = p.get("dias") ? p.get("dias").split(",").map(d => d.trim()).filter(Boolean) : [];
+  return {
+    contrato: p.get("contrato") || "",
+    duracao: p.get("duracao") || "",
+    dataInicio: p.get("dataInicio") || "",
+    licaoInicio: p.get("licaoInicio") || "",
+    diasAulas: dias,
+    horarioAulas: p.get("horario") || "",
+    valorCheio: p.get("valorCheio") || "",
+    descontos: p.get("descontos") || "",
+    valorFinal: p.get("valorFinal") || "",
+    diaVencimento: p.get("diaVencimento") || "",
+    numParcelas: p.get("numParcelas") || "",
+    locked: p.get("locked") === "1",
+  };
+}
+
+const STEPS = ["Boas-vindas", "Dados Pessoais", "Perfil do Aluno"];
+
+function HeroBanner() {
+  return (
+    <div className="hero-banner">
+      <img src={FORMCAPA_URL} alt="Fluency Studio" />
+    </div>
+  );
+}
+
+function FormSelf() {
+  const urlPrefill = useMemo(() => parseUrlParams(), []);
+
+  const [step, setStep] = useState(0);
+  const [dados, setDados] = useState({
+    foto: "",
+    nome: "",
+    nacionalidade: "Brasileira",
+    estadoCivil: "",
+    profissao: "",
+    dataNasc: "",
+    cpf: "",
+    rg: "",
+    email: "",
+    telefone: "",
+    telefone2: "",
+    endereco: "",
+    senha: "",
+    senha2: "",
+    contrato: urlPrefill.contrato || "fluency_foundation",
+    duracao: urlPrefill.duracao || "",
+    dataInicio: urlPrefill.dataInicio || "",
+    licaoInicio: urlPrefill.licaoInicio || "1",
+    diasAulas: urlPrefill.diasAulas.length ? urlPrefill.diasAulas : [],
+    horarioAulas: urlPrefill.horarioAulas || "",
+    // Alunos terceirizados: dados financeiros não são coletados
+    valorCheio: "",
+    descontos: "",
+    valorFinal: "",
+    diaVencimento: "",
+    numParcelas: "",
+  });
+  const DRAFT_KEY = "fs_form_self_alunosfora_draft_v1";
+  const [triagem, setTriagem] = useState(BLANK_TRIAGEM);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
+
+  // Restaura progresso parcial (aluno pode sair e voltar)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d && d.dados) {
+        setDados(p => ({ ...p, ...d.dados, senha: "", senha2: "" }));
+        if (d.triagem) setTriagem({ ...BLANK_TRIAGEM, ...d.triagem });
+        if (typeof d.step === "number" && d.step >= 0 && d.step <= 2) setStep(d.step);
+        setDraftRestored(true);
+      }
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  // Salva progresso parcial a cada mudança
+  useEffect(() => {
+    if (done) return;
+    try {
+      const { senha, senha2, ...dadosSafe } = dados;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ step, dados: dadosSafe, triagem, savedAt: Date.now() }));
+    } catch (e) { /* ignore */ }
+  }, [step, dados, triagem, done]);
+
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  }
+
+  function setD(k, v) { setDados(p => ({ ...p, [k]: v })); }
+  function setT(k, v) { setTriagem(p => ({ ...p, [k]: v })); }
+  function TriagemOption({ label, field, value }) {
+    const sel = triagem[field] === value;
+    return (
+      <div className={"triagem-option" + (sel ? " selected" : "")} onClick={() => setT(field, value)}>
+        <div className="triagem-check">{sel && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}</div>
+        {label}
+      </div>
+    );
+  }
+  function TriagemMulti({ label, field, value }) {
+    const arr = triagem[field] || [];
+    const sel = arr.includes(value);
+    return (
+      <div className={"triagem-option" + (sel ? " selected" : "")} onClick={() => setT(field, sel ? arr.filter(x => x !== value) : [...arr, value])}>
+        <div className="triagem-check">{sel && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}</div>
+        {label}
+      </div>
+    );
+  }
+  function Rating({ field, label }) {
+    return (
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ fontSize: 12, color: "var(--font-muted)", marginBottom: 4 }}>{label}</div>
+        <div className="rating-row">
+          {[1, 2, 3, 4, 5].map(n => (
+            <button key={n} type="button" className={"rating-btn" + (triagem[field] === n ? " selected" : "")} onClick={() => setT(field, n)}>{n}</button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function validateStep(s) {
+    setErr("");
+    if (s === 1) {
+      if (!dados.nome.trim()) return "Nome completo é obrigatório.";
+      if (!dados.email.trim()) return "Email é obrigatório.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return "Informe um email válido.";
+      if (!dados.telefone.trim()) return "Telefone / WhatsApp é obrigatório.";
+      if (!dados.senha || dados.senha.length < 6) return "Crie uma senha com pelo menos 6 caracteres.";
+      if (dados.senha !== dados.senha2) return "As senhas não coincidem.";
+    }
+    return "";
+  }
+
+  function nextStep() {
+    const v = validateStep(step);
+    if (v) { setErr(v); return; }
+    setErr("");
+    setStep(s => Math.min(s + 1, 2));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function prevStep() {
+    setErr("");
+    setStep(s => Math.max(s - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function handleSubmit() {
+    const v = validateStep(1);
+    if (v) { setErr(v); setStep(1); return; }
+    setSaving(true);
+    setErr("");
+    try {
+      const email = dados.email.trim().toLowerCase();
+
+      const cred = await auth.createUserWithEmailAndPassword(email, dados.senha);
+      const uid = cred.user.uid;
+      const programName = dados.contrato === "fluency_foundation"
+        ? "Fluency Foundation"
+        : dados.contrato === "flash" ? "Flash (Just Talk)" : "Speech (Business)";
+
+      const triagemFinal = {
+        ...triagem,
+        idadeFaixa: calcIdadeFaixa(dados.dataNasc),
+        formacaoLabel: [triagem.formacao, triagem.formacaoStatus].filter(Boolean).join(" — "),
+        areaInteresse: [
+          ...(triagem.areasInteresse || []).filter(a => a !== "Outro"),
+          triagem.areaInteresseOutro ? (triagem.areasInteresse || []).includes("Outro") ? triagem.areaInteresseOutro : "" : "",
+        ].filter(Boolean).join(", "),
+      };
+
+      await db.collection("students").doc(uid).set({
+        name: dados.nome.trim(),
+        email,
+        phone: dados.telefone.trim(),
+        telefone2: dados.telefone2.trim(),
+        // Alunos terceirizados: documentos e foto não coletados
+        cpf: "",
+        rg: "",
+        dataNasc: dados.dataNasc,
+        estadoCivil: dados.estadoCivil,
+        profissao: dados.profissao.trim(),
+        nacionalidade: dados.nacionalidade.trim(),
+        endereco: dados.endereco.trim(),
+        foto: "",
+        dataCadastro: new Date().toISOString().slice(0, 10),
+        contrato: dados.contrato,
+        duracao: dados.duracao.trim(),
+        diasAulas: dados.diasAulas,
+        horarioAulas: dados.horarioAulas.trim(),
+        // Sem dados financeiros (contrato com outra escola)
+        valorCheio: 0,
+        descontos: 0,
+        valorFinal: 0,
+        diaVencimento: 1,
+        dataInicio: dados.dataInicio || "",
+        licaoInicio: parseInt(dados.licaoInicio, 10) || 1,
+        numParcelas: 0,
+        status: "pendente_aprovacao",
+        aguardandoLancamento: true,
+        triagem: triagemFinal,
+        level: "A1",
+        program: programName,
+        coach: "Victor Gomes",
+        birthday: dados.dataNasc || "",
+        profession: dados.profissao.trim(),
+        links: [
+          { id: 1, label: "Materiais (Drive)", url: "https://drive.google.com/" },
+          { id: 2, label: "Tarefas (Classroom)", url: "https://classroom.google.com/" },
+        ],
+        trilha: {},
+        financeiro: FINANCEIRO_DEFAULT,
+        modulosOcultos: [],
+        cadastroOrigem: "form-self-alunosfora",
+        alunoTerceirizado: true,
+        urlParams: urlPrefill,
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await auth.signOut();
+      clearDraft();
+      setDone(true);
+      setStep(3);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      let msg = "Erro ao enviar cadastro. Tente novamente ou fale com o Victor.";
+      if (e.code === "auth/email-already-in-use") msg = "Este email já está cadastrado. Use outro email ou acesse o portal.";
+      else if (e.code === "auth/weak-password") msg = "A senha deve ter pelo menos 6 caracteres.";
+      else if (e.message) msg = e.message;
+      setErr(msg);
+      setSaving(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <>
+        <IViForm step={3} />
+        <div className="page-wrap">
+          <div className="hero-card" style={{ marginBottom: 24 }}>
+            <HeroBanner />
+            <div className="hero-body">
+              <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, margin: "0 0 6px" }}>Cadastro enviado!</h1>
+              <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.55, margin: 0 }}>O professor Victor vai revisar e autorizar seu acesso ao conteúdo personalizado.</p>
+            </div>
+          </div>
+          <div className="form-card">
+            <div className="success-card">
+              <div className="success-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h2 style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Recebemos tudo, {dados.nome.split(" ")[0]}!</h2>
+              <p style={{ color: "var(--font-muted)", fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>
+                Seu cadastro de aluno terceirizado está na fila de revisão. O Victor vai conferir seus dados e **autorizar seu lançamento** no portal.
+              </p>
+              <div className="info-box" style={{ textAlign: "left", marginBottom: 20 }}>
+                <strong>O que acontece agora?</strong><br />
+                1. Victor revisa seu cadastro e perfil<br />
+                2. Autoriza seu acesso à plataforma<br />
+                3. Libera o conteúdo personalizado no portal<br />
+                4. Você entra com <strong>{dados.email}</strong> + sua senha
+              </div>
+              <p style={{ fontSize: 12, color: "var(--font-muted)" }}>
+                Dúvidas? Fale com o Victor no <a href={WPP_VICTOR} target="_blank" rel="noopener" style={{ color: "#187E74", fontWeight: 700 }}>WhatsApp</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+    <IViForm step={step} />
+    <div className="page-wrap">
+      <div className="hero-card">
+        <HeroBanner />
+        <div className="hero-body">
+          <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, margin: "0 0 6px" }}>
+            {step === 0 ? "Bem-vindo(a) à Fluency Studio" : "Cadastro — Aluno Terceirizado"}
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.55, margin: 0 }}>
+            {step === 0
+              ? "Formulário para acesso ao conteúdo personalizado."
+              : "Preencha com atenção — usamos essas informações para personalizar o conteúdo."}
+          </p>
+          {step > 0 && (
+            <>
+              <div className="progress-track">
+                {[1, 2].map(i => (
+                  <div key={i} className={"progress-dot" + (step >= i ? " active" : "") + (step > i ? " done" : "")} />
+                ))}
+              </div>
+              <div className="step-labels">
+                <span>Dados Pessoais</span><span>Perfil do Aluno</span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="form-card">
+        {step === 0 && (
+          <>
+            <div className="form-body">
+              <div className="admin-lock-box" style={{ marginBottom: 16 }}>
+                <strong>Formulário para acesso ao conteúdo personalizado</strong>
+                Alunos terceirizados (contrato com outra escola) só preenchem alguns dados para cadastro na plataforma.
+              </div>
+              <div className="info-box">
+                <strong>O que você vai preencher</strong><br />
+                Este formulário leva cerca de 5 a 6 minutos e tem duas partes:<br />
+                1. <strong>Dados de cadastro</strong> — nome, contato e senha do portal<br />
+                2. <strong>Perfil do aluno</strong> — para personalização do conteúdo
+              </div>
+              <div className="info-box" style={{ background: "rgba(163,224,214,.18)", borderColor: "rgba(0,102,91,.22)" }}>
+                <strong>Não é necessário neste formulário:</strong><br />
+                Foto, CPF, RG nem qualquer dado financeiro — seu contrato é com outra escola.
+              </div>
+              <p style={{ fontSize: 14, color: "var(--font-muted)", lineHeight: 1.65 }}>
+                Após o envio, o Victor revisa e <strong>autoriza</strong> seu acesso ao portal. Qualquer dúvida, use a <strong>iVi</strong> aqui na página.
+              </p>
+            </div>
+            <div className="form-footer" style={{ justifyContent: "flex-end" }}>
+              <button className="btn btn-primary" onClick={() => setStep(1)}>Começar cadastro →</button>
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <div className="form-header">
+              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Dados de Cadastro</div>
+              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Identificação, contato e acesso ao portal (sem CPF, RG, foto ou financeiro)</div>
+            </div>
+            <div className="form-body">
+              {err && <div className="err-box">{err}</div>}
+              {draftRestored && step === 1 && (
+                <div className="info-box" style={{ marginBottom: 14 }}>
+                  Restauramos o progresso que você já tinha preenchido. Continue de onde parou — ou limpe e recomece se preferir.
+                  <button type="button" className="btn" style={{ marginTop: 8, fontSize: 12, padding: "6px 12px" }}
+                    onClick={() => { clearDraft(); window.location.reload(); }}>Limpar rascunho</button>
+                </div>
+              )}
+
+              <div className="form-section-title">Identificação</div>
+              <div className="info-box" style={{ marginBottom: 12 }}>
+                Foto, CPF e RG não são solicitados para alunos terceirizados.
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="form-label">Nome Completo *</label>
+                  <input className="input" placeholder="Nome completo" value={dados.nome} onChange={e => setD("nome", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Nacionalidade</label>
+                  <input className="input" placeholder="Brasileira" value={dados.nacionalidade} onChange={e => setD("nacionalidade", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Estado Civil</label>
+                  <select className="input" value={dados.estadoCivil} onChange={e => setD("estadoCivil", e.target.value)}>
+                    <option value="">Selecione...</option>
+                    {["Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "União Estável", "Outro"].map(o => <option key={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label">Profissão</label>
+                  <input className="input" placeholder="Ex: Médica, Engenheiro..." value={dados.profissao} onChange={e => setD("profissao", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Data de Nascimento</label>
+                  <input type="date" className="input" value={dados.dataNasc} onChange={e => setD("dataNasc", e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-section-title">Contato</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="form-label">Email *</label>
+                  <input type="email" className="input" placeholder="seuemail@exemplo.com" value={dados.email} onChange={e => setD("email", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Telefone / WhatsApp *</label>
+                  <input className="input" placeholder="+55 11 9..." value={dados.telefone} onChange={e => setD("telefone", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Telefone 2</label>
+                  <input className="input" placeholder="+55 11 9..." value={dados.telefone2} onChange={e => setD("telefone2", e.target.value)} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="form-label">Endereço</label>
+                  <input className="input" placeholder="Rua, número, bairro, cidade — UF" value={dados.endereco} onChange={e => setD("endereco", e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-section-title">Acesso ao Portal</div>
+              <div className="info-box" style={{ marginTop: 0 }}>
+                Crie uma senha para entrar no portal do aluno. Você usará este email e senha para acessar trilha, materiais e conteúdo personalizado. Dados financeiros não se aplicam a este cadastro.
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="form-label">Senha *</label>
+                  <input type="password" className="input" placeholder="Mínimo 6 caracteres" value={dados.senha} onChange={e => setD("senha", e.target.value)} />
+                </div>
+                <div>
+                  <label className="form-label">Confirmar Senha *</label>
+                  <input type="password" className="input" placeholder="Repita a senha" value={dados.senha2} onChange={e => setD("senha2", e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="form-footer">
+              <button className="btn" onClick={prevStep}>← Voltar</button>
+              <button className="btn btn-primary" onClick={nextStep}>Perfil do Aluno →</button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className="form-header">
+              <div style={{ fontWeight: 800, fontFamily: "'Sora',sans-serif", fontSize: 16 }}>Perfil do Aluno</div>
+              <div style={{ fontSize: 12, color: "var(--font-muted)", marginTop: 2 }}>Personalização da sua experiência no curso</div>
+            </div>
+            <div className="form-body">
+              {err && <div className="err-box">{err}</div>}
+              <p style={{ fontSize: 12, color: "var(--font-muted)", marginBottom: 16, fontStyle: "italic" }}>
+                Todas as informações serão usadas exclusivamente para personalizar a experiência no curso.
+              </p>
+
+              {/* 1. Faixa etária: oculta — calculada da data de nascimento */}
+
+              <div className="form-section-title">2. Formação</div>
+              <label className="form-label">Nível de escolaridade</label>
+              <div className="triagem-group">
+                {FORMACAO_NIVEIS.map(v => (
+                  <TriagemOption key={v} label={v} field="formacao" value={v} />
+                ))}
+              </div>
+              {triagem.formacao && (
+                <div style={{ marginTop: 10 }}>
+                  <label className="form-label">{triagem.formacao} — situação</label>
+                  <div style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                    {["Completo", "Incompleto"].map(v => (
+                      <button key={v} type="button" onClick={() => setT("formacaoStatus", v)}
+                        className={"day-pill" + (triagem.formacaoStatus === v ? " on" : "")}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {triagem.formacao === "Ensino Superior" && triagem.formacaoStatus === "Completo" && (
+                <div style={{ marginTop: 10 }}>
+                  <label className="form-label">Qual curso?</label>
+                  <input className="input" placeholder="Ex: Administração, Engenharia Civil..." value={triagem.cursoSuperior} onChange={e => setT("cursoSuperior", e.target.value)} />
+                </div>
+              )}
+              <div style={{ marginTop: 12 }}>
+                <label className="form-label">Pós-graduação, especializações e outros cursos (opcional)</label>
+                <input className="input" placeholder="Espaço para digitar..." value={triagem.posGraduacao} onChange={e => setT("posGraduacao", e.target.value)} />
+              </div>
+
+              <div className="form-section-title">3. Situação Profissional</div>
+              <label className="form-label">Selecione uma opção</label>
+              <div className="triagem-group">
+                {OCUPACOES.map(o => (
+                  <TriagemOption key={o.v} label={o.v} field="ocupacao" value={o.v} />
+                ))}
+              </div>
+              {triagem.ocupacao && (
+                <div style={{ marginTop: 10 }}>
+                  <label className="form-label">Conte mais</label>
+                  <input className="input"
+                    placeholder={(OCUPACOES.find(o => o.v === triagem.ocupacao) || {}).ph || "Conte mais..."}
+                    value={triagem.ocupacaoDetalhe}
+                    onChange={e => setT("ocupacaoDetalhe", e.target.value)} />
+                </div>
+              )}
+              <div style={{ marginTop: 14 }}>
+                <label className="form-label">Área de interesse (seleção múltipla)</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {AREAS_INTERESSE.map(v => (
+                    <TriagemMulti key={v} label={v} field="areasInteresse" value={v} />
+                  ))}
+                </div>
+                {(triagem.areasInteresse || []).includes("Outro") && (
+                  <div style={{ marginTop: 8 }}>
+                    <input className="input" placeholder="Qual área?" value={triagem.areaInteresseOutro} onChange={e => setT("areaInteresseOutro", e.target.value)} />
+                  </div>
+                )}
+              </div>
+
+              <div className="form-section-title">4. Experiência com Inglês</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Já estudou inglês antes?</label>
+                <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                  {["Não", "Sim"].map(v => (
+                    <button key={v} type="button" onClick={() => setT("estudouIngles", v)}
+                      className={"day-pill" + (triagem.estudouIngles === v ? " on" : "")}>{v}</button>
+                  ))}
+                </div>
+              </div>
+              {triagem.estudouIngles === "Sim" && (
+                <>
+                  <div style={{ marginBottom: 10 }}>
+                    <label className="form-label">Onde estudou</label>
+                    <div className="triagem-group" style={{ marginTop: 4 }}>
+                      {ONDE_ESTUDOU.map(v => (
+                        <TriagemOption key={v} label={v} field="ondeComo" value={v} />
+                      ))}
+                    </div>
+                    {triagem.ondeComo === "Outro" && (
+                      <div style={{ marginTop: 8 }}>
+                        <input className="input" placeholder="Onde estudou?" value={triagem.ondeComoOutro} onChange={e => setT("ondeComoOutro", e.target.value)} />
+                      </div>
+                    )}
+                    {triagem.ondeComo && (
+                      <div style={{ marginTop: 10 }}>
+                        <label className="form-label">Nome da instituição / professor</label>
+                        <input className="input" placeholder="Nome da instituição ou professor" value={triagem.instituicaoNome} onChange={e => setT("instituicaoNome", e.target.value)} />
+                      </div>
+                    )}
+                  </div>
+                  {triagem.ondeComo && (triagem.instituicaoNome || "").trim() && (
+                    <>
+                      <div style={{ marginBottom: 8 }}>
+                        <label className="form-label">Avaliação da experiência anterior (1 = muito ruim · 5 = excelente)</label>
+                        <div style={{ marginTop: 8 }}>
+                          <Rating field="qualidadeMaterial" label="Qualidade do material" />
+                          <Rating field="qualidadeProfessores" label="Professores" />
+                          <Rating field="qualidadeMetodologia" label="Metodologia" />
+                        </div>
+                      </div>
+                      <div style={{ marginBottom: 8 }}>
+                        <label className="form-label">Pontos positivos</label>
+                        <textarea className="input" rows={2} style={{ resize: "vertical" }} value={triagem.pontosPositivos} onChange={e => setT("pontosPositivos", e.target.value)} />
+                      </div>
+                      <div style={{ marginBottom: 8 }}>
+                        <label className="form-label">O que poderia ter sido melhor</label>
+                        <textarea className="input" rows={2} style={{ resize: "vertical" }} value={triagem.melhorias} onChange={e => setT("melhorias", e.target.value)} />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              <div className="form-section-title">5. Interesses e Hobbies</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Selecione os tópicos de interesse (seleção múltipla)</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {TOPICOS_INTERESSE.map(v => (
+                    <TriagemMulti key={v} label={v} field="topicos" value={v} />
+                  ))}
+                </div>
+                {(triagem.topicos || []).includes("Outro") && (
+                  <div style={{ marginTop: 8 }}>
+                    <input className="input" placeholder="Qual tópico?" value={triagem.topicosOutro} onChange={e => setT("topicosOutro", e.target.value)} />
+                  </div>
+                )}
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <label className="form-label">Temas que não gosta de conversar</label>
+                <textarea className="input" rows={2} style={{ resize: "vertical" }} placeholder="Ex: Política, Religião..." value={triagem.temasSemInteresse} onChange={e => setT("temasSemInteresse", e.target.value)} />
+              </div>
+
+              <div className="form-section-title">6. Expectativas</div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Objetivo principal</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {OBJETIVOS.map(v => (
+                    <TriagemOption key={v} label={v} field="objetivo" value={v} />
+                  ))}
+                </div>
+                {triagem.objetivo === "Outro" && (
+                  <div style={{ marginTop: 8 }}>
+                    <input className="input" placeholder="Qual o seu objetivo?" value={triagem.objetivoOutro} onChange={e => setT("objetivoOutro", e.target.value)} />
+                  </div>
+                )}
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Horas por semana disponíveis</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["Menos de 1 hora", "1–2 horas", "3–4 horas", "Mais de 4 horas"].map(v => (
+                    <TriagemOption key={v} label={v} field="horasSemana" value={v} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <label className="form-label">Prazo esperado para atingir os objetivos</label>
+                <div className="triagem-group" style={{ marginTop: 4 }}>
+                  {["3 meses", "6 meses", "1 ano", "Mais de 1 ano"].map(v => (
+                    <TriagemOption key={v} label={v} field="prazo" value={v} />
+                  ))}
+                </div>
+                <div className="info-box" style={{ marginTop: 10, marginBottom: 0 }}>
+                  <strong>Atenção:</strong> esta pergunta tem caráter informativo, não garantindo o tempo para atingir o objetivo. Para saber mais, fale com o professor.
+                </div>
+              </div>
+              <div>
+                <label className="form-label">O que o professor precisa saber</label>
+                <textarea className="input" rows={4} style={{ resize: "vertical" }}
+                  placeholder="O que você adicionaria, que considera importante o seu professor saber, para você atingir o seu objetivo no aprendizado e ser fluente? O que mais acrescentaria?"
+                  value={triagem.observacoes} onChange={e => setT("observacoes", e.target.value)} />
+              </div>
+            </div>
+            <div className="form-footer">
+              <button className="btn" onClick={prevStep} disabled={saving}>← Dados Pessoais</button>
+              <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
+                {saving ? "Enviando..." : "✓ Enviar Cadastro"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <p style={{ textAlign: "center", fontSize: 11, color: "var(--font-muted)", marginTop: 20 }}>
+        Fluency Studio · Fale, entenda e evolua com estratégia
+      </p>
+    </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<FormSelf />);
+</script>
+</body>
+</html>
