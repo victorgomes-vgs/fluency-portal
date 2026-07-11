@@ -389,6 +389,7 @@
             background: transparent;
             border: none;
             cursor: pointer;
+            text-decoration: none;
             transition: background 0.25s ease, color 0.25s ease;
             -webkit-tap-highlight-color: transparent;
         }
@@ -412,8 +413,9 @@
             z-index: 0;
         }
 
+        /* Section backgrounds: solid/soft tones, short edge blends only (no banding) */
         .programs-section {
-            background: linear-gradient(180deg, #f3f4f6 0%, #eceef2 50%, #f0f2f5 100%);
+            background: #f0f2f5;
         }
 
         .commitment-section,
@@ -421,21 +423,57 @@
             background:
                 radial-gradient(ellipse 80% 60% at 15% 10%, rgba(0, 232, 208, 0.07) 0%, transparent 55%),
                 radial-gradient(ellipse 70% 50% at 90% 85%, rgba(59, 130, 246, 0.06) 0%, transparent 55%),
-                linear-gradient(180deg, #0a0d13 0%, #0c1018 50%, #0a0d13 100%);
+                #0a0d13;
         }
 
         .intensity-section {
             background:
-                radial-gradient(ellipse 90% 55% at 50% 0%, rgba(12, 137, 148, 0.14) 0%, transparent 60%),
-                linear-gradient(165deg, #0d253d 0%, #103050 45%, #0d253d 100%);
+                radial-gradient(ellipse 90% 55% at 50% 0%, rgba(12, 137, 148, 0.12) 0%, transparent 60%),
+                #0d253d;
         }
 
         .faq-section {
-            background: linear-gradient(180deg, #fcfcfd 0%, #f6f8fa 45%, #fafbfc 100%);
+            background: #f6f8fa;
         }
 
         .contact-section {
-            background: linear-gradient(160deg, #0a1628 0%, #0d4a5a 50%, #0a1628 100%);
+            background: linear-gradient(165deg, #0a1628 0%, #0d4a5a 55%, #0a1628 100%);
+        }
+
+        /* Short soft seams between sections — never over content */
+        .section-seam-top {
+            position: relative;
+        }
+
+        .section-seam-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2.5rem;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.55;
+        }
+
+        .programs-section.section-seam-top::before {
+            background: linear-gradient(180deg, rgba(5, 10, 21, 0.12) 0%, transparent 100%);
+        }
+
+        .commitment-section.section-seam-top::before {
+            background: linear-gradient(180deg, rgba(240, 242, 245, 0.2) 0%, transparent 100%);
+            height: 2rem;
+        }
+
+        .faq-section.section-seam-top::before {
+            background: linear-gradient(180deg, rgba(13, 37, 61, 0.1) 0%, transparent 100%);
+            height: 2rem;
+        }
+
+        .contact-section.section-seam-top::before {
+            background: linear-gradient(180deg, rgba(246, 248, 250, 0.18) 0%, transparent 100%);
+            height: 2rem;
         }
 
         .section-corner-logo {
@@ -658,8 +696,8 @@
             .intensity-section,
             .faq-section,
             .contact-section {
-                padding-top: 3rem;
-                padding-bottom: 3rem;
+                padding-top: 2.25rem;
+                padding-bottom: 2.25rem;
             }
 
             .programs-section-header {
@@ -676,12 +714,44 @@
                 font-size: 0.8rem;
             }
 
+            .programs-group-header {
+                gap: 0.5rem;
+                margin-bottom: 1.15rem;
+            }
+
+            .programs-group-banner {
+                min-height: 3.1rem;
+                padding: 0.75rem 0.85rem;
+            }
+
+            .programs-group-need {
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+            }
+
+            .programs-group-title {
+                font-size: 0.9rem;
+            }
+
+            .programs-group-title span {
+                font-size: 0.68em;
+            }
+
+            .programs-group-block {
+                margin-bottom: 2rem;
+            }
+
             .programs-section-heading {
-                font-size: 1.35rem;
+                font-size: 1.2rem;
+                line-height: 1.2;
             }
 
             .programs-section-tagline {
                 font-size: 1.1rem;
+            }
+
+            .programs-section-header {
+                margin-bottom: 1.5rem !important;
             }
 
             .program-card {
@@ -694,32 +764,37 @@
             }
 
             .program-card-content {
-                min-height: auto;
-                padding: 1.25rem 1rem 1rem;
+                min-height: auto !important;
+                padding: 1.1rem 0.9rem 0.95rem;
             }
 
             .program-card-title {
-                min-height: auto;
-                font-size: 1.2rem;
-                margin-top: 0.5rem;
+                min-height: auto !important;
+                font-size: 1.1rem;
+                margin-top: 0.35rem;
+                margin-bottom: 0.35rem;
             }
 
             .program-card-subtitle {
-                min-height: auto;
-                font-size: 0.85rem;
-                margin-bottom: 0.75rem;
+                min-height: auto !important;
+                font-size: 0.82rem;
+                margin-bottom: 0.6rem;
             }
 
             .program-card-tags {
-                min-height: auto;
-                margin-bottom: 0.75rem;
+                min-height: auto !important;
+                margin-bottom: 0.55rem;
             }
 
             .program-card-desc {
-                min-height: auto;
-                margin-bottom: 1rem;
-                font-size: 0.82rem;
+                min-height: auto !important;
+                margin-bottom: 0.85rem;
+                font-size: 0.8rem;
                 text-align: center;
+            }
+
+            .programs-cards-grid--corporate {
+                gap: 1rem;
             }
 
             .commitment-section-title {
@@ -731,20 +806,36 @@
             }
 
             .commitment-card {
-                padding: 1.35rem 1.15rem;
+                padding: 1.15rem 1rem 1.2rem;
+            }
+
+            .commitment-letter-wrap {
+                width: 4.5rem;
+                height: 4.5rem;
+                margin-bottom: 0.5rem;
             }
 
             .commitment-letter {
-                font-size: 3.25rem;
+                font-size: 2.85rem;
+            }
+
+            .commitment-card-icon {
+                width: 2.4rem;
+                height: 2.4rem;
+                margin-bottom: 0.65rem;
             }
 
             .commitment-card-title {
-                font-size: 1.05rem;
+                font-size: 0.98rem;
             }
 
             .commitment-card-text {
-                font-size: 0.82rem;
+                font-size: 0.8rem;
                 max-width: 100%;
+            }
+
+            .commitment-cards-grid {
+                gap: 0.85rem;
             }
 
             .adaptive-section .grid {
@@ -753,12 +844,24 @@
             }
 
             .adaptive-orbit-wrap {
-                width: min(300px, 86vw);
-                height: min(300px, 86vw);
+                width: min(260px, 78vw);
+                height: min(260px, 78vw);
             }
 
             .orbit-stage {
-                padding: 0.25rem 0 0;
+                padding: 0;
+            }
+
+            .adaptive-section .grid {
+                gap: 1rem !important;
+            }
+
+            .commitment-section .grid {
+                gap: 0.85rem;
+            }
+
+            .faq-section .text-center.mb-12 {
+                margin-bottom: 1.5rem !important;
             }
 
             .adaptive-node {
@@ -804,9 +907,9 @@
             }
 
             .intensity-duration-panel {
-                gap: 2rem;
-                padding: 1.25rem 1rem;
-                margin-bottom: 2rem;
+                gap: 1.25rem !important;
+                padding: 1rem 0.75rem !important;
+                margin-bottom: 1.35rem !important;
             }
 
             .intensity-duration-panel::before {
@@ -814,34 +917,51 @@
             }
 
             .intensity-num-btn {
-                min-width: 5rem;
-                min-height: 5rem;
-                font-size: 1.75rem;
+                min-width: 4.25rem;
+                min-height: 4.25rem;
+                font-size: 1.45rem;
             }
 
             .intensity-freq-panel {
-                padding: 1.25rem 0.75rem;
+                padding: 0.85rem 0.5rem;
+                margin-bottom: 0.5rem;
             }
 
             .intensity-freq-grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 1rem;
-                justify-items: center;
-                max-width: 14rem;
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                justify-content: center;
+                align-items: center;
+                gap: 0.45rem;
+                max-width: none;
                 margin: 0 auto;
+                width: 100%;
             }
 
             .intensity-freq {
-                font-size: 1.5rem !important;
-                min-width: 4.25rem;
-                min-height: 4.25rem;
-                width: 100%;
+                font-size: 1rem !important;
+                min-width: 3.1rem !important;
+                min-height: 3.1rem !important;
+                width: 3.1rem !important;
+                height: 3.1rem !important;
+                flex: 0 0 3.1rem;
                 animation: none;
             }
 
             .intensity-pick {
                 animation: none;
+            }
+
+            .intensity-group-title {
+                margin-bottom: 0.75rem !important;
+            }
+
+            .intensity-hint-red {
+                margin-bottom: 1rem !important;
+            }
+
+            .intensity-section-title {
+                font-size: 1.15rem !important;
             }
 
             .intensity-explainer-value {
@@ -903,10 +1023,26 @@
             }
 
             .cta-strip-btn {
-                padding: 0.95rem 1rem;
-                font-size: 0.68rem;
-                letter-spacing: 0.1em;
-                line-height: 1.45;
+                padding: 0.85rem 0.85rem;
+                font-size: 0.65rem;
+                letter-spacing: 0.08em;
+                line-height: 1.4;
+            }
+
+            /* Kill leftover fixed heights that create dead space on mobile */
+            .programs-cards-grid .program-card,
+            .programs-cards-grid .program-card-content {
+                height: auto;
+            }
+
+            .program-card-icon svg {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .program-card-icon {
+                top: 0.65rem;
+                right: 0.65rem;
             }
         }
         
@@ -1020,24 +1156,182 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: -0.02em;
-            line-height: 1.1;
-            font-size: clamp(1.65rem, 4vw, 2.75rem);
+            line-height: 1.15;
+            font-size: clamp(1.5rem, 3.8vw, 2.5rem);
             color: #0f172a;
+            text-align: center;
+            position: relative;
+            z-index: 3;
         }
 
         .programs-section-tagline {
             font-family: 'Inter', sans-serif;
             font-weight: 900;
-            font-style: italic;
+            font-style: normal;
             font-size: clamp(1.35rem, 3.2vw, 2.1rem);
             line-height: 1.15;
             color: #050a15;
             margin-top: 0.5rem;
+            text-align: center;
         }
+
+        .programs-group-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Visible above the bar */
+        .programs-group-need {
+            position: relative;
+            z-index: 2;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: clamp(0.95rem, 2.4vw, 1.25rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #0a1628;
+            text-align: center;
+            margin: 0;
+        }
+
+        /* Dark blue bar behind GENERAL / CORPORATE ENGLISH */
+        .programs-group-banner {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 3.5rem;
+            padding: 0.9rem 1.25rem;
+            border-radius: 0.75rem;
+            background: linear-gradient(90deg, #06101f 0%, #0a1a33 45%, #0c2240 100%);
+            border: 1px solid rgba(0, 200, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 8px 24px -12px rgba(5, 20, 45, 0.5);
+        }
+
+        .programs-group-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0,
+                transparent 36px,
+                rgba(0, 220, 255, 0.12) 36px,
+                rgba(0, 220, 255, 0.12) 37px
+            );
+            animation: neon-lines-right 4s linear infinite;
+        }
+
+        .programs-group-banner::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -40%;
+            width: 40%;
+            height: 2px;
+            pointer-events: none;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.85), transparent);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+            animation: neon-beam-right 2.6s ease-in-out infinite;
+        }
+
+        @keyframes neon-lines-right {
+            0% { transform: translateX(-12%); }
+            100% { transform: translateX(12%); }
+        }
+
+        @keyframes neon-beam-right {
+            0% { left: -40%; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .programs-group-title {
+            position: relative;
+            z-index: 1;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: clamp(1rem, 2.2vw, 1.35rem);
+            color: #f8fafc;
+            text-align: center;
+            margin: 0;
+            text-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+        }
+
+        .programs-group-title span {
+            display: block;
+            font-weight: 600;
+            font-size: 0.72em;
+            letter-spacing: 0.04em;
+            text-transform: none;
+            color: rgba(186, 230, 253, 0.82);
+            margin-top: 0.25rem;
+        }
+
+        .programs-group-block {
+            margin-bottom: 2.75rem;
+        }
+
+        .programs-group-block:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Corporate: same card width as top row, centered */
+        .programs-cards-grid--corporate {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .programs-cards-grid--corporate .program-card {
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .programs-cards-grid--corporate {
+                gap: 2rem;
+            }
+
+            .programs-cards-grid--corporate .program-card {
+                width: calc((100% - 4rem) / 3);
+                max-width: calc((100% - 4rem) / 3);
+                flex: 0 0 calc((100% - 4rem) / 3);
+            }
+        }
+
+        .skill-tag--gold {
+            border-color: rgba(201, 168, 76, 0.45);
+            color: #c9a84c;
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        .skill-tag--rose {
+            border-color: rgba(196, 120, 138, 0.45);
+            color: #d4788a;
+            background: rgba(196, 120, 138, 0.1);
+        }
+
+        .program-card-subtitle--gold { color: #c9a84c; }
+        .program-card-subtitle--rose { color: #d4788a; }
+
+        .card-ffc:hover { border-color: #c9a84c; box-shadow: 0 16px 48px -8px rgba(201, 168, 76, 0.28); }
+        .card-ftc:hover { border-color: #d4788a; box-shadow: 0 16px 48px -8px rgba(212, 120, 138, 0.28); }
 
         .program-card-title {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(1.35rem, 2vw, 1.75rem);
+            font-size: clamp(1.25rem, 2vw, 1.65rem);
             font-weight: 900;
             text-align: center;
             line-height: 1.15;
@@ -1212,69 +1506,184 @@
             line-height: 1.05;
         }
 
+        .commitment-cards-grid {
+            max-width: 58rem;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 1.15rem;
+        }
+
+        @media (min-width: 768px) {
+            .commitment-cards-grid {
+                gap: 1.25rem;
+            }
+        }
+
         .commitment-card {
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.97) 0%, rgba(232, 238, 242, 0.95) 100%);
-            border: 1px solid rgba(0, 232, 208, 0.2);
-            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: linear-gradient(
+                160deg,
+                rgba(28, 36, 58, 0.72) 0%,
+                rgba(18, 24, 40, 0.78) 55%,
+                rgba(22, 28, 48, 0.7) 100%
+            );
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 92, 246, 0.28);
+            box-shadow:
+                0 12px 32px -14px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
             transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 1.35rem 1.15rem 1.4rem;
+            border-radius: 0.9rem;
         }
 
         .commitment-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(0, 232, 208, 0.45);
-            box-shadow: 0 24px 50px -14px rgba(13, 74, 90, 0.35), 0 0 24px rgba(0, 232, 208, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-6px);
+            border-color: rgba(167, 139, 250, 0.55);
+            box-shadow:
+                0 20px 40px -14px rgba(0, 0, 0, 0.55),
+                0 0 28px rgba(139, 92, 246, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .commitment-card-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 0.85rem;
-            background: rgba(128, 0, 32, 0.08);
-            border: 1px solid rgba(128, 0, 32, 0.2);
-            color: #800020;
-            margin-bottom: 1rem;
+            width: 2.65rem;
+            height: 2.65rem;
+            border-radius: 0.75rem;
+            background: rgba(139, 92, 246, 0.14);
+            border: 1px solid rgba(167, 139, 250, 0.45);
+            color: #c4b5fd;
+            margin-bottom: 0.85rem;
+            box-shadow:
+                0 0 10px rgba(139, 92, 246, 0.45),
+                0 0 22px rgba(139, 92, 246, 0.22),
+                inset 0 0 12px rgba(167, 139, 250, 0.12);
+            animation: commitment-icon-neon 2.6s ease-in-out infinite;
+        }
+
+        .commitment-card-icon svg {
+            width: 1.35rem;
+            height: 1.35rem;
+            filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.85));
+        }
+
+        @keyframes commitment-icon-neon {
+            0%, 100% {
+                color: #c4b5fd;
+                border-color: rgba(167, 139, 250, 0.4);
+                box-shadow:
+                    0 0 8px rgba(139, 92, 246, 0.35),
+                    0 0 16px rgba(139, 92, 246, 0.15),
+                    inset 0 0 10px rgba(167, 139, 250, 0.08);
+            }
+            50% {
+                color: #e9d5ff;
+                border-color: rgba(196, 181, 253, 0.75);
+                box-shadow:
+                    0 0 16px rgba(167, 139, 250, 0.75),
+                    0 0 32px rgba(139, 92, 246, 0.4),
+                    0 0 48px rgba(124, 58, 237, 0.2),
+                    inset 0 0 14px rgba(196, 181, 253, 0.18);
+            }
+        }
+
+        .commitment-letter-wrap {
+            position: relative;
+            width: 5.25rem;
+            height: 5.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.65rem;
+        }
+
+        .commitment-orbit {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(167, 139, 250, 0.22);
+            pointer-events: none;
+            animation: commitment-orbit-spin 5.5s linear infinite;
+        }
+
+        .commitment-orbit::before {
+            content: '';
+            position: absolute;
+            top: -0.28rem;
+            left: 50%;
+            width: 0.55rem;
+            height: 0.55rem;
+            margin-left: -0.275rem;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #f5f3ff 0%, #c4b5fd 45%, #8b5cf6 100%);
+            box-shadow:
+                0 0 8px rgba(196, 181, 253, 0.95),
+                0 0 16px rgba(139, 92, 246, 0.7),
+                0 0 24px rgba(124, 58, 237, 0.35);
+        }
+
+        .commitment-orbit::after {
+            content: '';
+            position: absolute;
+            bottom: 0.15rem;
+            right: 0.55rem;
+            width: 0.28rem;
+            height: 0.28rem;
+            border-radius: 50%;
+            background: rgba(196, 181, 253, 0.7);
+            box-shadow: 0 0 8px rgba(167, 139, 250, 0.8);
+        }
+
+        @keyframes commitment-orbit-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .commitment-card:nth-child(2) .commitment-orbit {
+            animation-duration: 6.2s;
+            animation-direction: reverse;
+        }
+
+        .commitment-card:nth-child(3) .commitment-orbit {
+            animation-duration: 4.8s;
+            animation-delay: -1.5s;
         }
 
         .commitment-letter {
-            font-size: 5rem;
+            font-size: 3.6rem;
             font-weight: 900;
             line-height: 1;
             text-align: center;
-            color: #800020;
+            color: #a78bfa;
             position: relative;
             z-index: 1;
             text-shadow:
-                1px 1px 0 rgba(90, 0, 18, 0.35),
-                2px 2px 0 rgba(90, 0, 18, 0.3),
-                3px 3px 0 rgba(90, 0, 18, 0.25),
-                4px 4px 0 rgba(70, 0, 14, 0.2),
-                5px 5px 0 rgba(50, 0, 10, 0.15),
-                6px 8px 14px rgba(128, 0, 32, 0.45),
-                10px 16px 28px rgba(128, 0, 32, 0.3);
+                0 0 12px rgba(139, 92, 246, 0.55),
+                0 0 28px rgba(124, 58, 237, 0.35);
         }
 
         .commitment-card-title {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+            font-size: clamp(1.05rem, 2vw, 1.25rem);
             font-weight: 900;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: #800020;
-            margin-bottom: 1rem;
+            color: #ffffff;
+            margin-bottom: 0.65rem;
         }
 
         .commitment-card-text {
-            color: #0d4a5a;
-            font-size: 0.875rem;
-            line-height: 1.65;
-            max-width: 18rem;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            max-width: 16rem;
         }
 
         .adaptive-orbit-wrap {
@@ -2054,8 +2463,23 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            gap: 0.85rem;
+            flex-wrap: nowrap;
+        }
+
+        @media (max-width: 360px) {
+            .intensity-freq-grid {
+                gap: 0.35rem;
+            }
+
+            .intensity-freq {
+                min-width: 2.85rem !important;
+                min-height: 2.85rem !important;
+                width: 2.85rem !important;
+                height: 2.85rem !important;
+                flex-basis: 2.85rem;
+                font-size: 0.92rem !important;
+            }
         }
 
         @media (min-width: 768px) {
@@ -2833,7 +3257,7 @@
 
             <!-- Nav Actions -->
             <div class="header-actions grid grid-cols-2 gap-2 md:flex md:items-center md:gap-6 text-[10px] md:text-sm font-medium w-full md:w-auto">
-                <a href="https://thefluency.studio/portal.html?v=4" target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center justify-center gap-1 md:gap-2 px-3 py-2.5 md:px-5 md:py-2.5 rounded-md text-center leading-tight">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20acessar%20a%20%C3%A1rea%20do%20aluno." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center justify-center gap-1 md:gap-2 px-3 py-2.5 md:px-5 md:py-2.5 rounded-md text-center leading-tight">
                     <svg class="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <span>ÁREA DO ALUNO</span>
                 </a>
@@ -2877,10 +3301,10 @@
                         Um programa personalizado para desenvolver sua comunicação em inglês, respeitando seu ritmo e com progressão contínua.
                     </p>
                     <div class="hero-buttons flex flex-col gap-3 w-full">
-                        <button type="button" id="open-demo-modal-mobile" class="btn-touch w-full bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-3.5 px-6 rounded flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,168,157,0.4)] text-sm">
+                        <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa." target="_blank" rel="noopener noreferrer" id="open-demo-modal-mobile" class="btn-touch w-full bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-3.5 px-6 rounded flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,168,157,0.4)] text-sm">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             AGENDAR AULA DEMO
-                        </button>
+                        </a>
                         <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20conversar%20sobre%20os%20cursos%20da%20Fluency%20Studio." target="_blank" rel="noopener noreferrer" class="btn-touch w-full border border-slate-500 hover:border-white hover:bg-white/5 text-white font-semibold py-3.5 px-6 rounded flex items-center justify-center gap-2 text-sm">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                             CONVERSAR AGORA
@@ -2925,10 +3349,10 @@
                     Um programa personalizado para desenvolver sua comunicação em inglês, respeitando seu ritmo e com progressão contínua.
                 </p>
                 <div class="hero-buttons flex flex-row gap-4 mb-16 w-full">
-                    <button type="button" id="open-demo-modal" class="btn-touch bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-4 px-8 rounded flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,168,157,0.4)]">
+                    <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa." target="_blank" rel="noopener noreferrer" id="open-demo-modal" class="btn-touch bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-4 px-8 rounded flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,168,157,0.4)]">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         AGENDAR AULA DEMO
-                    </button>
+                    </a>
                     <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20conversar%20sobre%20os%20cursos%20da%20Fluency%20Studio." target="_blank" rel="noopener noreferrer" class="btn-touch border border-slate-500 hover:border-white hover:bg-white/5 text-white font-semibold py-4 px-8 rounded flex items-center justify-center gap-2">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                         CONVERSAR AGORA
@@ -2962,117 +3386,195 @@
     </section>
 
     <div class="cta-strip">
-        <button type="button" id="open-demo-modal-strip-top" class="cta-strip-btn btn-touch">
+        <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa." target="_blank" rel="noopener noreferrer" id="open-demo-modal-strip-top" class="cta-strip-btn btn-touch">
             Faça uma aula demonstrativa
-        </button>
+        </a>
     </div>
 
-    <section id="programas" class="programs-section py-24 md:py-28 text-brand-dark relative overflow-hidden" aria-labelledby="programas-heading">
+    <section id="programas" class="programs-section section-seam-top py-20 md:py-28 text-brand-dark relative overflow-hidden" aria-labelledby="programas-heading">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
         </div>
         <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-            <div class="programs-section-header flex flex-col md:flex-row justify-between items-start md:items-end mb-14 gap-6">
-                <div class="max-w-3xl">
-                    <h2 id="programas-heading" class="programs-section-heading">3 MÓDULOS DE AULA PARA OBJETIVOS DIFERENTES</h2>
-                    <p class="programs-section-tagline">QUAL COMBINA COM VOCÊ?</p>
+            <div class="programs-section-header flex flex-col items-center text-center mb-10 md:mb-14 gap-4">
+                <div class="max-w-4xl w-full">
+                    <h2 id="programas-heading" class="programs-section-heading">CURSOS QUE ATENDEM A NECESSIDADES DIFERENTES</h2>
                 </div>
-                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20programas%20da%20Fluency%20Studio." target="_blank" rel="noopener noreferrer" class="btn-touch text-brand-teal font-semibold flex items-center gap-2 hover:gap-3 transition-all whitespace-nowrap shrink-0">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20programas%20da%20Fluency%20Studio." target="_blank" rel="noopener noreferrer" class="btn-touch text-brand-teal font-semibold flex items-center gap-2 hover:gap-3 transition-all whitespace-nowrap">
                     VER TODOS OS PROGRAMAS <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 programs-cards-grid">
-                <!-- Card 1 -->
-                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-fluency" itemscope itemtype="https://schema.org/Course">
-                    <div class="program-card-bg">
-                        <img src="assets/card1.png" alt="Fluency Foundation — programa completo de inglês com fluência em 18 meses" title="Fluency Foundation" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
+            <!-- GENERAL ENGLISH -->
+            <div class="programs-group-block">
+                <div class="programs-group-header">
+                    <p class="programs-group-need">QUAL VOCÊ PRECISA HOJE?</p>
+                    <div class="programs-group-banner">
+                        <h3 class="programs-group-title">GENERAL ENGLISH</h3>
                     </div>
-                    <div class="program-card-overlay" aria-hidden="true"></div>
-                    <div class="program-card-icon absolute top-4 right-4">
-                        <svg class="w-14 h-14 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m0 0l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 21.45a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"></path></svg>
-                    </div>
-                    <div class="program-card-content">
-                        <h3 class="program-card-title mt-4" itemprop="name">FLUENCY FOUNDATION</h3>
-                        <p class="program-card-subtitle program-card-subtitle--teal">Fluência em 18 meses</p>
-
-                        <div class="program-card-tags">
-                            <span class="skill-tag">FALE</span>
-                            <span class="skill-tag">LEIA</span>
-                            <span class="skill-tag">ESCREVA</span>
-                            <span class="skill-tag">ESCUTE</span>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 programs-cards-grid">
+                    <!-- Card 1 -->
+                    <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-fluency" itemscope itemtype="https://schema.org/Course">
+                        <div class="program-card-bg">
+                            <img src="assets/card1.png" alt="Fluency Foundation — programa completo de inglês com fluência em 18 meses" title="Fluency Foundation" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
                         </div>
-
-                        <p class="program-card-desc" itemprop="description">
-                            Para profissionais que precisam de um inglês alto padrão e completo. Ideal para o mercado de trabalho, viagens, exames, etc.
-                        </p>
-
-                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Fluency%20Foundation." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                            <button type="button" id="open-demo-modal-card-1" class="btn-touch flex-1 bg-brand-teal hover:bg-brand-tealHover py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                        <div class="program-card-overlay" aria-hidden="true"></div>
+                        <div class="program-card-icon absolute top-4 right-4">
+                            <svg class="w-14 h-14 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m0 0l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 21.45a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"></path></svg>
                         </div>
-                    </div>
-                </article>
+                        <div class="program-card-content">
+                            <h4 class="program-card-title mt-4" itemprop="name">FLUENCY FOUNDATION</h4>
+                            <p class="program-card-subtitle program-card-subtitle--teal">Fluência em 18 meses</p>
 
-                <!-- Card 2 -->
-                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-flash" itemscope itemtype="https://schema.org/Course">
-                    <div class="program-card-bg">
-                        <img src="assets/card2.png" alt="Flash Talk — aulas de conversação em inglês de 30 minutos, até 4x por semana" title="Flash Talk" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
-                    </div>
-                    <div class="program-card-overlay" aria-hidden="true"></div>
-                    <div class="program-card-icon absolute top-4 right-4">
-                        <svg class="w-14 h-14 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <div class="program-card-content">
-                        <h3 class="program-card-title mt-4" itemprop="name">FLASH TALK</h3>
-                        <p class="program-card-subtitle program-card-subtitle--blue">Aulas de 30 minutos até quatro vezes por semana</p>
+                            <div class="program-card-tags">
+                                <span class="skill-tag">FALE</span>
+                                <span class="skill-tag">LEIA</span>
+                                <span class="skill-tag">ESCREVA</span>
+                                <span class="skill-tag">ESCUTE</span>
+                            </div>
 
-                        <div class="program-card-tags" aria-hidden="true"></div>
+                            <p class="program-card-desc" itemprop="description">
+                                Para profissionais que precisam de um inglês alto padrão e completo. Ideal para o mercado de trabalho, viagens, exames, etc.
+                            </p>
 
-                        <p class="program-card-desc" itemprop="description">
-                            Para aqueles que dizem:<br>
-                            "Teacher, eu só quero falar!"<br>
-                            Temas modernos do dia a dia e o aluno monta sua trilha.
-                        </p>
-
-                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                            <button type="button" id="open-demo-modal-card-2" class="btn-touch flex-1 bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded text-sm font-semibold">AGENDAR DEMO</button>
+                            <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                                <a href="fluency-foundation.html" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Fluency%20Foundation." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 bg-brand-teal hover:bg-brand-tealHover py-3 px-4 rounded text-sm font-semibold text-center">AGENDAR DEMO</a>
+                            </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
 
-                <!-- Card 3 -->
-                <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-corporate" itemscope itemtype="https://schema.org/Course">
-                    <div class="program-card-bg">
-                        <img src="assets/card3.png" alt="Corporate Speech — inglês corporativo e oratória profissional de alto padrão" title="Corporate Speech" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
-                    </div>
-                    <div class="program-card-overlay" aria-hidden="true"></div>
-                    <div class="program-card-icon absolute top-4 right-4">
-                        <svg class="w-14 h-14 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v1.5l-1.75 2.5h3.5L12 12.5V11"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6"></path></svg>
-                    </div>
-                    <div class="program-card-content">
-                        <h3 class="program-card-title mt-4" itemprop="name">CORPORATE SPEECH</h3>
-                        <p class="program-card-subtitle program-card-subtitle--purple">Se expressar e ser reconhecido no trabalho com inglês alto padrão</p>
-
-                        <div class="program-card-tags" aria-hidden="true"></div>
-
-                        <p class="program-card-desc" itemprop="description">
-                            Para profissionais que entendem que um domínio da oratória de alto nível resulta em prestígio e sucesso.
-                        </p>
-
-                        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
-                            <button type="button" id="open-demo-modal-card-3" class="btn-touch flex-1 bg-purple-700 hover:bg-purple-800 py-3 px-4 rounded text-sm font-semibold">AGENDAR DIAGNÓSTICO</button>
+                    <!-- Card 2 -->
+                    <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-flash" itemscope itemtype="https://schema.org/Course">
+                        <div class="program-card-bg">
+                            <img src="assets/card2.png" alt="Flash Talk — aulas de conversação em inglês de 30 minutos, até 4x por semana" title="Flash Talk" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
                         </div>
+                        <div class="program-card-overlay" aria-hidden="true"></div>
+                        <div class="program-card-icon absolute top-4 right-4">
+                            <svg class="w-14 h-14 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div class="program-card-content">
+                            <h4 class="program-card-title mt-4" itemprop="name">FLASH TALK</h4>
+                            <p class="program-card-subtitle program-card-subtitle--blue">Aulas de 30 minutos até quatro vezes por semana</p>
+
+                            <div class="program-card-tags" aria-hidden="true"></div>
+
+                            <p class="program-card-desc" itemprop="description">
+                                Para aqueles que dizem:<br>
+                                "Teacher, eu só quero falar!"<br>
+                                Temas modernos do dia a dia e o aluno monta sua trilha.
+                            </p>
+
+                            <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                                <a href="flash-talk.html" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded text-sm font-semibold text-center">AGENDAR DEMO</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Card 3 -->
+                    <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-corporate" itemscope itemtype="https://schema.org/Course">
+                        <div class="program-card-bg">
+                            <img src="assets/card3.png" alt="Corporate Speech — inglês corporativo e oratória profissional de alto padrão" title="Corporate Speech" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
+                        </div>
+                        <div class="program-card-overlay" aria-hidden="true"></div>
+                        <div class="program-card-icon absolute top-4 right-4">
+                            <svg class="w-14 h-14 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v1.5l-1.75 2.5h3.5L12 12.5V11"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6"></path></svg>
+                        </div>
+                        <div class="program-card-content">
+                            <h4 class="program-card-title mt-4" itemprop="name">CORPORATE SPEECH</h4>
+                            <p class="program-card-subtitle program-card-subtitle--purple">Se expressar e ser reconhecido no trabalho com inglês alto padrão</p>
+
+                            <div class="program-card-tags" aria-hidden="true"></div>
+
+                            <p class="program-card-desc" itemprop="description">
+                                Para profissionais que entendem que um domínio da oratória de alto nível resulta em prestígio e sucesso.
+                            </p>
+
+                            <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                                <a href="corporate-speech.html" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20diagn%C3%B3stico%20do%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 bg-purple-700 hover:bg-purple-800 py-3 px-4 rounded text-sm font-semibold text-center">AGENDAR DIAGNÓSTICO</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- CORPORATE ENGLISH -->
+            <div class="programs-group-block">
+                <div class="programs-group-header">
+                    <p class="programs-group-need">QUAL VOCÊ PRECISA HOJE?</p>
+                    <div class="programs-group-banner">
+                        <h3 class="programs-group-title">CORPORATE ENGLISH<span>aprendendo com foco no mercado de trabalho</span></h3>
                     </div>
-                </article>
+                </div>
+                <div class="programs-cards-grid programs-cards-grid--corporate">
+                    <!-- Fluency Foundation Corporate -->
+                    <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-ffc" itemscope itemtype="https://schema.org/Course">
+                        <div class="program-card-bg">
+                            <img src="assets/ffc.jpg" alt="Fluency Foundation Corporate — fluência executiva em inglês em 18 meses" title="Fluency Foundation Corporate" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
+                        </div>
+                        <div class="program-card-overlay" aria-hidden="true"></div>
+                        <div class="program-card-icon absolute top-4 right-4">
+                            <svg class="w-14 h-14 text-[#c9a84c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m0 0l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 21.45a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"></path></svg>
+                        </div>
+                        <div class="program-card-content">
+                            <p class="text-center text-[0.65rem] font-bold tracking-[0.25em] text-[#c9a84c] uppercase mb-1">Corporate</p>
+                            <h4 class="program-card-title mt-1" itemprop="name">FLUENCY FOUNDATION CORPORATE</h4>
+                            <p class="program-card-subtitle program-card-subtitle--gold">Fluência executiva em 18 meses</p>
+
+                            <div class="program-card-tags">
+                                <span class="skill-tag skill-tag--gold">VENDA</span>
+                                <span class="skill-tag skill-tag--gold">NEGOCIE</span>
+                                <span class="skill-tag skill-tag--gold">PLANEJE</span>
+                                <span class="skill-tag skill-tag--gold">LIDERE</span>
+                            </div>
+
+                            <p class="program-card-desc" itemprop="description">
+                                Para quem constrói carreira em inglês. Domínio completo do idioma aplicado à liderança, à negociação e à tomada de decisão no ambiente corporativo.
+                            </p>
+
+                            <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                                <a href="fluency-foundation-corporate.html" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Fluency%20Foundation%20Corporate." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 bg-[#c9a84c] hover:bg-[#b8973f] text-[#0f172a] py-3 px-4 rounded text-sm font-semibold text-center">AGENDAR DEMO</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Flash Talk Corporate -->
+                    <article class="program-card bg-[#0f172a] text-white rounded-xl flex flex-col relative overflow-hidden group border border-slate-800 card-ftc" itemscope itemtype="https://schema.org/Course">
+                        <div class="program-card-bg">
+                            <img src="assets/ftc.jpg" alt="Flash Talk Corporate — conversação em inglês corporativo em aulas de 30 minutos" title="Flash Talk Corporate" width="479" height="558" loading="lazy" decoding="async" itemprop="image">
+                        </div>
+                        <div class="program-card-overlay" aria-hidden="true"></div>
+                        <div class="program-card-icon absolute top-4 right-4">
+                            <svg class="w-14 h-14 text-[#d4788a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div class="program-card-content">
+                            <p class="text-center text-[0.65rem] font-bold tracking-[0.25em] text-[#d4788a] uppercase mb-1">Corporate</p>
+                            <h4 class="program-card-title mt-1" itemprop="name">FLASH TALK CORPORATE</h4>
+                            <p class="program-card-subtitle program-card-subtitle--rose">Aulas de 30 minutos até quatro vezes por semana</p>
+
+                            <div class="program-card-tags" aria-hidden="true"></div>
+
+                            <p class="program-card-desc" itemprop="description">
+                                Para quem precisa comunicar, interagir e participar em inglês no dia a dia da empresa. Situações reais do ambiente corporativo, e o aluno monta sua trilha.
+                            </p>
+
+                            <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+                                <a href="flash-talk-corporate.html" class="btn-touch flex-1 border border-slate-600 hover:bg-white/10 py-3 px-4 rounded text-sm font-semibold text-center">SABER MAIS</a>
+                                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Flash%20Talk%20Corporate." target="_blank" rel="noopener noreferrer" class="btn-touch flex-1 bg-[#c45c7a] hover:bg-[#b04f6c] py-3 px-4 rounded text-sm font-semibold text-center">AGENDAR DEMO</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="commitment-section py-24 md:py-28 relative overflow-hidden">
+    <section class="commitment-section section-seam-top py-20 md:py-28 relative overflow-hidden">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
@@ -3086,13 +3588,16 @@
                 <p class="commitment-section-title">MÉTODO EXCLUSIVO PEH 5.0</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 commitment-cards-grid">
                 <!-- Card 1 -->
-                <div class="commitment-card p-8 rounded-xl">
+                <div class="commitment-card">
                     <div class="commitment-card-icon" aria-hidden="true">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-                    <div class="commitment-letter mb-3">P</div>
+                    <div class="commitment-letter-wrap">
+                        <span class="commitment-orbit" aria-hidden="true"></span>
+                        <div class="commitment-letter">P</div>
+                    </div>
                     <h4 class="commitment-card-title">PERSONALIZADO</h4>
                     <p class="commitment-card-text">
                         Diagnóstico completo antes de qualquer aula — necessidades, interesses, tempo disponível. Sua abordagem é moldada para você, não para uma turma genérica.
@@ -3100,11 +3605,14 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="commitment-card p-8 rounded-xl">
+                <div class="commitment-card">
                     <div class="commitment-card-icon" aria-hidden="true">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
-                    <div class="commitment-letter mb-3">E</div>
+                    <div class="commitment-letter-wrap">
+                        <span class="commitment-orbit" aria-hidden="true"></span>
+                        <div class="commitment-letter">E</div>
+                    </div>
                     <h4 class="commitment-card-title">ESTRATÉGICO</h4>
                     <p class="commitment-card-text">
                         Detectamos seu estilo de aprender e sua inteligência dominante para montar um programa que realmente funciona — não para todos, para você especificamente.
@@ -3112,11 +3620,14 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="commitment-card p-8 rounded-xl">
+                <div class="commitment-card">
                     <div class="commitment-card-icon" aria-hidden="true">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </div>
-                    <div class="commitment-letter mb-3">H</div>
+                    <div class="commitment-letter-wrap">
+                        <span class="commitment-orbit" aria-hidden="true"></span>
+                        <div class="commitment-letter">H</div>
+                    </div>
                     <h4 class="commitment-card-title">HUMANIZADO</h4>
                     <p class="commitment-card-text">
                         Ambiente seguro para errar, perguntar e tentar. Segurança psicológica é condição para o aprendizado real de uma língua — não um diferencial de marketing.
@@ -3126,7 +3637,7 @@
         </div>
     </section>
 
-    <section id="metodo-adaptativo" class="adaptive-section py-24 md:py-28 relative overflow-hidden">
+    <section id="metodo-adaptativo" class="adaptive-section py-20 md:py-28 relative overflow-hidden">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
@@ -3283,7 +3794,7 @@
         </div>
     </section>
 
-    <section id="intensidade" class="intensity-section py-24 md:py-28 relative overflow-hidden">
+    <section id="intensidade" class="intensity-section py-20 md:py-28 relative overflow-hidden">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
@@ -3325,7 +3836,7 @@
         </div>
     </section>
 
-    <section id="faq" class="faq-section py-24 md:py-28 text-brand-dark relative overflow-hidden" aria-labelledby="faq-heading" itemscope itemtype="https://schema.org/FAQPage">
+    <section id="faq" class="faq-section section-seam-top py-20 md:py-28 text-brand-dark relative overflow-hidden" aria-labelledby="faq-heading" itemscope itemtype="https://schema.org/FAQPage">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
@@ -3447,12 +3958,12 @@
     </section>
 
     <div class="cta-strip">
-        <button type="button" id="open-demo-modal-strip-bottom" class="cta-strip-btn btn-touch">
+        <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa." target="_blank" rel="noopener noreferrer" id="open-demo-modal-strip-bottom" class="cta-strip-btn btn-touch">
             Venha viver e conhecer o método gratuitamente
-        </button>
+        </a>
     </div>
 
-    <section id="contato" class="contact-section py-20 md:py-28 relative overflow-hidden">
+    <section id="contato" class="contact-section section-seam-top py-20 md:py-28 relative overflow-hidden">
         <div class="section-corner-logo">
             <img src="assets/logo_portal_jul.png" alt="" class="corner-mark" aria-hidden="true">
             <img src="assets/logo_portal_jul2.png" alt="" class="corner-name" aria-hidden="true">
@@ -3472,7 +3983,7 @@
                     <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
                     FALAR NO WHATSAPP
                 </a>
-                <a href="https://instagram.com/teacher_victorgomes" target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-3 border border-white/25 hover:border-white/50 bg-white/10 hover:bg-white/15 text-white font-semibold py-4 px-8 rounded-xl text-sm md:text-base">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-3 border border-white/25 hover:border-white/50 bg-white/10 hover:bg-white/15 text-white font-semibold py-4 px-8 rounded-xl text-sm md:text-base">
                     <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"></path></svg>
                     @teacher_victorgomes
                 </a>
@@ -3498,14 +4009,14 @@
                     <li><a href="#intensidade" class="hover:text-brand-teal transition-colors">Horários</a></li>
                     <li><a href="#faq" class="hover:text-brand-teal transition-colors">Perguntas Frequentes</a></li>
                     <li><a href="#contato" class="hover:text-brand-teal transition-colors">Contato</a></li>
-                    <li><a href="https://thefluency.studio/portal.html?v=4" class="hover:text-brand-teal transition-colors">Área do Aluno</a></li>
+                    <li><a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20acessar%20a%20%C3%A1rea%20do%20aluno." target="_blank" rel="noopener noreferrer" class="hover:text-brand-teal transition-colors">Área do Aluno</a></li>
                 </ul>
             </nav>
             <div>
                 <p class="font-semibold text-white mb-3 uppercase tracking-wider text-xs">Contato</p>
                 <ul class="space-y-2">
                     <li><a href="https://wa.me/5511911999759" rel="noopener noreferrer" class="hover:text-brand-teal transition-colors">WhatsApp: (11) 91199-9759</a></li>
-                    <li><a href="https://instagram.com/teacher_victorgomes" rel="noopener noreferrer" class="hover:text-brand-teal transition-colors">Instagram @teacher_victorgomes</a></li>
+                    <li><a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" class="hover:text-brand-teal transition-colors">Instagram @teacher_victorgomes</a></li>
                     <li><a href="https://thefluency.studio/" class="hover:text-brand-teal transition-colors">thefluency.studio</a></li>
                 </ul>
             </div>
@@ -3656,7 +4167,7 @@
             <p class="text-slate-300 leading-relaxed mb-8">
                 Aqui você pode agendar sua aula diretamente na agenda do professor. Você agenda e o horário automaticamente fica reservado para você. Mas não se esqueça, são obrigatórios o preenchimento do email correto e telefone de contato para que a reserva seja efetivada.
             </p>
-            <a href="https://calendar.app.google/DXj2Q8tCCeGT9xYr6" target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-2 bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-3 px-6 rounded w-full sm:w-auto">
+            <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula." target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-2 bg-brand-teal hover:bg-brand-tealHover text-white font-semibold py-3 px-6 rounded w-full sm:w-auto">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 IR PARA O AGENDAMENTO
             </a>
@@ -3696,16 +4207,28 @@
             : { hide: () => {} };
 
         const demoModal = document.getElementById('demo-modal');
-        const demoControls = setupModal(
-            demoModal,
-            document.getElementById('open-demo-modal'),
-            document.getElementById('close-demo-modal')
-        );
-
-        ['open-demo-modal-mobile', 'open-demo-modal-card-1', 'open-demo-modal-card-2', 'open-demo-modal-card-3', 'open-demo-modal-strip-top', 'open-demo-modal-strip-bottom'].forEach((id) => {
-            const btn = document.getElementById(id);
-            if (btn) btn.addEventListener('click', demoControls.show);
-        });
+        const closeDemoBtn = document.getElementById('close-demo-modal');
+        /* Demo CTAs apontam para WhatsApp por enquanto; modal permanece disponível se reativado no futuro */
+        const demoControls = {
+            show() {
+                if (!demoModal) return;
+                demoModal.classList.remove('hidden');
+                demoModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            },
+            hide() {
+                if (!demoModal) return;
+                demoModal.classList.add('hidden');
+                demoModal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        };
+        if (closeDemoBtn) closeDemoBtn.addEventListener('click', demoControls.hide);
+        if (demoModal) {
+            demoModal.addEventListener('click', (e) => {
+                if (e.target === demoModal) demoControls.hide();
+            });
+        }
 
         let iviChatOpen = false;
 

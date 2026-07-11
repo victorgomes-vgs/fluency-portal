@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluency Foundation Corporate | Fluency Studio</title>
+    <meta name="description" content="Fluency Foundation Corporate — fluência executiva em 18 meses. Inglês completo para carreira, exames, entrevistas e liderança.">
+    <meta name="theme-color" content="#0c0b09">
+    <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        gold: { DEFAULT: '#c9a84c', soft: '#e8cfa0', deep: '#b8973f', mute: 'rgba(201,168,76,0.12)' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0c0b09;
+            color: #f5f2ec;
+        }
+        .glass-header {
+            background: rgba(12, 11, 9, 0.9);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+        }
+        .btn-touch {
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-touch:active { transform: scale(0.96); }
+        .btn-header-aluno {
+            background: #fff;
+            color: #0d253d;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(255,255,255,0.12);
+        }
+        .btn-header-aluno:hover { background: #f1f5f9; }
+        .btn-header-whatsapp {
+            background: #25D366;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(37,211,102,0.3);
+        }
+        .btn-header-whatsapp:hover { background: #1fb855; }
+        .btn-header-home {
+            background: transparent;
+            color: #e8cfa0;
+            border: 1px solid rgba(201, 168, 76, 0.45);
+            font-weight: 700;
+        }
+        .btn-header-home:hover {
+            background: rgba(201, 168, 76, 0.12);
+            border-color: #c9a84c;
+        }
+        .hero-ffc {
+            background:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(201, 168, 76, 0.14) 0%, transparent 55%),
+                linear-gradient(165deg, #1c1a16 0%, #14120f 50%, #0c0b09 100%);
+        }
+        .feature-card {
+            background: linear-gradient(160deg, rgba(28, 26, 22, 0.9) 0%, rgba(18, 16, 13, 0.95) 100%);
+            border: 1px solid rgba(201, 168, 76, 0.18);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(201, 168, 76, 0.45);
+            box-shadow: 0 16px 40px -16px rgba(201, 168, 76, 0.25);
+        }
+        .icon-orb {
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.35);
+            color: #e8cfa0;
+            box-shadow: 0 0 16px rgba(201, 168, 76, 0.15);
+        }
+        .tag-pill {
+            border: 1px solid rgba(201, 168, 76, 0.4);
+            background: rgba(201, 168, 76, 0.08);
+            color: #e8cfa0;
+            letter-spacing: 0.12em;
+        }
+        .cta-glow {
+            box-shadow: 0 0 28px rgba(201, 168, 76, 0.35), 0 12px 32px -12px rgba(0,0,0,0.5);
+        }
+        .cta-glow:hover {
+            box-shadow: 0 0 40px rgba(201, 168, 76, 0.5), 0 16px 40px -12px rgba(0,0,0,0.55);
+        }
+        .logo-mark { height: 32px; width: auto; }
+        .logo-name { height: 18px; width: auto; }
+        @media (min-width: 768px) {
+            .logo-mark { height: 42px; }
+            .logo-name { height: 26px; }
+        }
+        @media (max-width: 767px) {
+            .header-actions {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.4rem;
+                width: 100%;
+            }
+            .header-actions a {
+                font-size: 0.58rem;
+                padding: 0.5rem 0.25rem;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="fixed top-0 w-full z-50 glass-header" role="banner">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+            <a href="index.html" class="flex items-center gap-2 md:gap-3 shrink-0" aria-label="Fluency Studio — início">
+                <img src="assets/logo_portal_jul.png" alt="Logo Fluency Studio" class="logo-mark" width="905" height="895" decoding="async">
+                <img src="assets/logo_portal_jul2.png" alt="Fluency Studio By Victor Gomes" class="logo-name" width="1254" height="102" decoding="async">
+            </a>
+            <div class="header-actions flex items-center gap-2 md:gap-3 text-[10px] md:text-sm font-medium w-full md:w-auto">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20acessar%20a%20%C3%A1rea%20do%20aluno." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>ÁREA DO ALUNO</span>
+                </a>
+                <a href="https://wa.me/5511911999759?text=Hey%2C%20eu%20estava%20no%20site%20e%20gostaria%20de%20ter%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%2C%20valores%20e%20metodologias." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-whatsapp flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>WHATSAPP</span>
+                </a>
+                <a href="index.html" class="btn-touch btn-header-home flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg>
+                    <span>HOME</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero-ffc pt-28 md:pt-36 pb-14 md:pb-20 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-25 pointer-events-none">
+                <img src="assets/ffc.jpg" alt="" class="w-full h-full object-cover object-center" aria-hidden="true">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#0c0b09]/70 via-[#0c0b09]/85 to-[#0c0b09]"></div>
+            </div>
+            <div class="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
+                <p class="text-[11px] md:text-xs font-bold tracking-[0.28em] text-gold uppercase mb-4">Corporate · Fluency Foundation</p>
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full icon-orb mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7"></path></svg>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black leading-[1.12] tracking-tight text-white mb-5">
+                    Para quem entende que o inglês<br class="hidden sm:block">
+                    é a linguagem do prestígio<br class="hidden sm:block">
+                    e do poder de decisão.
+                </h1>
+                <p class="text-lg md:text-xl font-bold text-gold-soft max-w-xl mx-auto mb-8">
+                    Para quem busca mais do que “conversar razoavelmente bem”.
+                </p>
+                <div class="flex flex-wrap justify-center gap-2 mb-2">
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">VENDA</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">NEGOCIE</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">PLANEJE</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">LIDERE</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRO -->
+        <section class="py-14 md:py-16 border-t border-white/5">
+            <div class="max-w-3xl mx-auto px-4 md:px-6 text-center space-y-5">
+                <p class="text-base md:text-lg leading-relaxed text-[#c9c4ba]">
+                    Feito para quem se prepara para o momento em que o inglês vai definir se a vaga, a promoção ou o contrato ficam com você — ou com outra pessoa.
+                </p>
+                <p class="text-base md:text-lg leading-relaxed text-[#c9c4ba]">
+                    O <strong class="text-gold-soft font-semibold">Fluency Foundation Corporate</strong> é o curso completo para quem vai enfrentar as etapas mais exigentes do mercado internacional.
+                </p>
+            </div>
+        </section>
+
+        <!-- PREP CARDS -->
+        <section class="py-10 md:py-16">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-white mb-2">Preparação completa, para cada etapa</h2>
+                    <p class="text-sm text-[#8a857c]">Do exame à mesa de decisão — sem atalhos frágeis.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Exames de proficiência</h3>
+                            <p class="text-sm text-[#a8a39a] leading-relaxed">Preparação para os exames internacionais reconhecidos mundialmente.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h8M8 8h8M8 16h4"/><rect x="4" y="3" width="16" height="18" rx="1.5"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Entrevistas de múltiplas fases</h3>
+                            <p class="text-sm text-[#a8a39a] leading-relaxed">Entrevista, provas escritas e dinâmicas em grupo.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Discurso formal e autoridade</h3>
+                            <p class="text-sm text-[#a8a39a] leading-relaxed">O registro que separa quem fala inglês de quem se comunica com autoridade.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M15 4v5h5"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">As quatro habilidades</h3>
+                            <p class="text-sm text-[#a8a39a] leading-relaxed">Fala, escrita, leitura e escuta com a profundidade que uma carreira internacional exige.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS STRIP -->
+        <section class="py-10 md:py-14">
+            <div class="max-w-4xl mx-auto px-4 md:px-6">
+                <div class="feature-card rounded-2xl p-6 md:p-10 text-center">
+                    <h2 class="text-lg md:text-xl font-bold text-white mb-3">De qualquer ambiente, sem se sentir despreparado</h2>
+                    <p class="text-sm md:text-base text-[#c9c4ba] max-w-2xl mx-auto mb-7 leading-relaxed">
+                        Aprenda e treine a transitar por ambientes de alta pressão e autoridade, até ambientes informais de um happy hour.
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="rounded-xl border border-gold/25 bg-gold/5 py-4 px-2">
+                            <div class="text-2xl mb-1" aria-hidden="true">💼</div>
+                            <p class="text-[11px] font-bold tracking-wider text-gold-soft">VENDA</p>
+                        </div>
+                        <div class="rounded-xl border border-gold/25 bg-gold/5 py-4 px-2">
+                            <div class="text-2xl mb-1" aria-hidden="true">🤝</div>
+                            <p class="text-[11px] font-bold tracking-wider text-gold-soft">NEGOCIE</p>
+                        </div>
+                        <div class="rounded-xl border border-gold/25 bg-gold/5 py-4 px-2">
+                            <div class="text-2xl mb-1" aria-hidden="true">🧭</div>
+                            <p class="text-[11px] font-bold tracking-wider text-gold-soft">PLANEJE</p>
+                        </div>
+                        <div class="rounded-xl border border-gold/25 bg-gold/5 py-4 px-2">
+                            <div class="text-2xl mb-1" aria-hidden="true">👑</div>
+                            <p class="text-[11px] font-bold tracking-wider text-gold-soft">LIDERE</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXTRA VALUE -->
+        <section class="py-10 md:py-14 border-t border-white/5">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold text-white">Como o programa se estrutura</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">18 meses de trilha</h3>
+                        <p class="text-xs text-[#a8a39a] leading-relaxed">Progressão estruturada (ou menos, se você for nivelado em um módulo avançado).</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Personalização real</h3>
+                        <p class="text-xs text-[#a8a39a] leading-relaxed">Diagnóstico inicial e material organizado sob medida, sem surpresas de custo depois.</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Foco em falar</h3>
+                        <p class="text-xs text-[#a8a39a] leading-relaxed">Aulas ao vivo: você entra na conversa desde o primeiro dia.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLOSING + CTA -->
+        <section class="py-16 md:py-20">
+            <div class="max-w-2xl mx-auto px-4 md:px-6 text-center">
+                <p class="text-2xl md:text-3xl font-black text-gold-soft leading-snug mb-4">
+                    18 meses. Um caminho.<br>Nenhuma situação te pega despreparado.
+                </p>
+                <p class="text-sm text-[#8a857c] mb-8 max-w-md mx-auto">
+                    Agende uma aula demonstrativa gratuita e veja se o Fluency Foundation Corporate combina com o momento da sua carreira.
+                </p>
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Fluency%20Foundation%20Corporate." target="_blank" rel="noopener noreferrer" class="btn-touch cta-glow inline-flex items-center justify-center gap-2 bg-gold hover:bg-gold-deep text-[#0f172a] font-extrabold text-sm md:text-base tracking-wide uppercase py-4 px-8 rounded-xl w-full sm:w-auto">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Fazer aula demonstrativa
+                </a>
+                <p class="mt-6">
+                    <a href="index.html#programas" class="text-sm text-[#8a857c] hover:text-gold-soft transition-colors">← Voltar aos programas</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/5 py-8 px-4 text-center text-xs text-[#6b665e]">
+        <p>Fluency Studio · Fluency Foundation Corporate</p>
+        <p class="mt-1"><a href="index.html" class="hover:text-gold-soft transition-colors">thefluency.studio</a></p>
+    </footer>
+
+</body>
+</html>

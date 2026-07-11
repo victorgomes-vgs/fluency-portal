@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Talk | Fluency Studio</title>
+    <meta name="description" content="Flash Talk — aulas de conversação em inglês de 30 minutos, até 4x por semana. Temas do dia a dia e trilha montada por você. Sem material para comprar.">
+    <meta name="theme-color" content="#070d1a">
+    <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
+    <link rel="canonical" href="https://thefluency.studio/flash-talk.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        sky: { DEFAULT: '#3b82f6', soft: '#60a5fa', deep: '#2563eb', mute: 'rgba(59,130,246,0.12)' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #070d1a;
+            color: #eff6ff;
+        }
+        .glass-header {
+            background: rgba(7, 13, 26, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .btn-touch {
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-touch:active { transform: scale(0.96); }
+        .btn-header-aluno {
+            background: #fff;
+            color: #0d253d;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(255,255,255,0.12);
+        }
+        .btn-header-aluno:hover { background: #f1f5f9; }
+        .btn-header-whatsapp {
+            background: #25D366;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(37,211,102,0.3);
+        }
+        .btn-header-whatsapp:hover { background: #1fb855; }
+        .btn-header-home {
+            background: transparent;
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.45);
+            font-weight: 700;
+        }
+        .btn-header-home:hover {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: #3b82f6;
+        }
+        .hero-ft {
+            background:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(59, 130, 246, 0.18) 0%, transparent 55%),
+                linear-gradient(165deg, #0f1e3d 0%, #0a1528 50%, #070d1a 100%);
+        }
+        .feature-card {
+            background: linear-gradient(160deg, rgba(15, 30, 61, 0.9) 0%, rgba(10, 21, 40, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.55);
+            box-shadow: 0 16px 40px -16px rgba(59, 130, 246, 0.35);
+        }
+        .icon-orb {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+        }
+        .audience-card {
+            background: linear-gradient(145deg, rgba(20, 40, 80, 0.85) 0%, rgba(12, 24, 48, 0.92) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .audience-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        }
+        .cta-glow {
+            box-shadow: 0 0 28px rgba(59, 130, 246, 0.45), 0 12px 32px -12px rgba(0,0,0,0.5);
+        }
+        .cta-glow:hover {
+            box-shadow: 0 0 42px rgba(59, 130, 246, 0.6), 0 16px 40px -12px rgba(0,0,0,0.55);
+        }
+        .logo-mark { height: 32px; width: auto; }
+        .logo-name { height: 18px; width: auto; }
+        @media (min-width: 768px) {
+            .logo-mark { height: 42px; }
+            .logo-name { height: 26px; }
+        }
+        @media (max-width: 767px) {
+            .header-actions {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.4rem;
+                width: 100%;
+            }
+            .header-actions a {
+                font-size: 0.58rem;
+                padding: 0.5rem 0.25rem;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="fixed top-0 w-full z-50 glass-header" role="banner">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+            <a href="index.html" class="flex items-center gap-2 md:gap-3 shrink-0" aria-label="Fluency Studio — início">
+                <img src="assets/logo_portal_jul.png" alt="Logo Fluency Studio" class="logo-mark" width="905" height="895" decoding="async">
+                <img src="assets/logo_portal_jul2.png" alt="Fluency Studio By Victor Gomes" class="logo-name" width="1254" height="102" decoding="async">
+            </a>
+            <div class="header-actions flex items-center gap-2 md:gap-3 text-[10px] md:text-sm font-medium w-full md:w-auto">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20acessar%20a%20%C3%A1rea%20do%20aluno." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>ÁREA DO ALUNO</span>
+                </a>
+                <a href="https://wa.me/5511911999759?text=Hey%2C%20eu%20estava%20no%20site%20e%20gostaria%20de%20ter%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%2C%20valores%20e%20metodologias." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-whatsapp flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>WHATSAPP</span>
+                </a>
+                <a href="index.html" class="btn-touch btn-header-home flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg>
+                    <span>HOME</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero-ft pt-28 md:pt-36 pb-14 md:pb-20 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-18 pointer-events-none">
+                <img src="assets/card2.png" alt="" class="w-full h-full object-cover object-center" aria-hidden="true">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#070d1a]/65 via-[#070d1a]/88 to-[#070d1a]"></div>
+            </div>
+            <div class="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
+                <p class="text-[11px] md:text-xs font-bold tracking-[0.28em] text-sky-soft uppercase mb-4">General English · Flash Talk</p>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full icon-orb mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black leading-[1.12] tracking-tight text-white mb-5">
+                    “Teacher, eu só quero<br class="hidden sm:block"> falar!”
+                </h1>
+                <p class="text-lg md:text-xl font-bold text-sky-soft max-w-xl mx-auto">
+                    Aulas de 30 minutos até quatro vezes por semana.
+                </p>
+            </div>
+        </section>
+
+        <!-- PARA VOCÊ -->
+        <section class="py-12 md:py-16 border-t border-white/5">
+            <div class="max-w-4xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-9">
+                    <h2 class="text-xl md:text-2xl font-bold text-white mb-2">Para quem é o Flash Talk</h2>
+                    <p class="text-sm text-[#7a8fb5]">Direto ao ponto — conversação de verdade, sem peso extra.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <article class="audience-card rounded-2xl p-5 md:p-7 flex gap-4 md:gap-5 items-start">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-base font-black tracking-wide text-white uppercase leading-snug mb-2">
+                                Para quem tem pouco tempo, mas quer falar
+                            </h3>
+                            <p class="text-sm text-[#b0c0d8] leading-relaxed">
+                                Sessões de 30 minutos, até 4x por semana — cabem na agenda e mantêm você falando com frequência, sem blocos longos de estudo.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="audience-card rounded-2xl p-5 md:p-7 flex gap-4 md:gap-5 items-start">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-base font-black tracking-wide text-white uppercase leading-snug mb-2">
+                                Para quem diz: “eu só quero conversar”
+                            </h3>
+                            <p class="text-sm text-[#b0c0d8] leading-relaxed">
+                                Sem apostila pesada e sem foco em gramática genérica. O objetivo é fluidez oral — você entra na conversa e fica nela.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="audience-card rounded-2xl p-5 md:p-7 flex gap-4 md:gap-5 items-start">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm md:text-base font-black tracking-wide text-white uppercase leading-snug mb-2">
+                                Para quem quer montar a própria trilha
+                            </h3>
+                            <p class="text-sm text-[#b0c0d8] leading-relaxed">
+                                Temas modernos do dia a dia — viagens, série, trabalho, hobby. Você escolhe o que treinar; o material entra na aula, sem compra à parte.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- O QUE VOCÊ TREINA -->
+        <section class="py-10 md:py-16">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-white mb-2">Feito para o seu dia a dia</h2>
+                    <p class="text-sm text-[#7a8fb5]">Temas reais, conversa viva, ritmo da sua rotina.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Conversação natural</h3>
+                            <p class="text-sm text-[#9aafcc] leading-relaxed">Saia do “modo exercício” e entre no fluxo de uma conversa real.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Temas do seu mundo</h3>
+                            <p class="text-sm text-[#9aafcc] leading-relaxed">Viagem, cultura, trabalho leve, hobbies — o que você vive, você treina.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Alta frequência</h3>
+                            <p class="text-sm text-[#9aafcc] leading-relaxed">Até 4x por semana: o cérebro lembra o que pratica com constância.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Sem material para comprar</h3>
+                            <p class="text-sm text-[#9aafcc] leading-relaxed">Tudo é apresentado na aula. Zero surpresa de livro no meio do caminho.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMO FUNCIONA -->
+        <section class="py-10 md:py-14 border-t border-white/5">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold text-white">Como funciona na prática</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="font-black text-sky-soft">30'</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Aulas curtas</h3>
+                        <p class="text-xs text-[#9aafcc] leading-relaxed">Trinta minutos de conversação intensa — alto impacto, baixo atrito com a agenda.</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="font-black text-sky-soft text-sm">4x</span>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Até 4x por semana</h3>
+                        <p class="text-xs text-[#9aafcc] leading-relaxed">Frequência flexível conforme o seu objetivo e o ritmo que a rotina permite.</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Você monta a trilha</h3>
+                        <p class="text-xs text-[#9aafcc] leading-relaxed">Temas do seu interesse — fechamos quantidade de aulas e parcelamos no PIX ou cartão.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLOSING + CTA -->
+        <section class="py-16 md:py-20">
+            <div class="max-w-2xl mx-auto px-4 md:px-6 text-center">
+                <p class="text-2xl md:text-3xl font-black text-sky-soft leading-snug mb-4">
+                    30 minutos. Até quatro vezes por semana.<br>
+                    Você fala — e fica falando.
+                </p>
+                <p class="text-sm text-[#7a8fb5] mb-8 max-w-md mx-auto">
+                    Agende uma aula demonstrativa gratuita e teste o ritmo do Flash Talk no seu dia a dia.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20aula%20demonstrativa%20do%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch cta-glow inline-flex items-center justify-center gap-2 bg-sky hover:bg-sky-deep text-white font-extrabold text-sm md:text-base tracking-wide uppercase py-4 px-8 rounded-xl w-full sm:w-auto">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Fazer aula demonstrativa
+                    </a>
+                    <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Flash%20Talk." target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-2 border border-sky/40 hover:bg-sky/10 text-sky-soft font-bold text-sm md:text-base tracking-wide uppercase py-4 px-8 rounded-xl w-full sm:w-auto">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.554 4.12 1.523 5.853L.057 23.45a.5.5 0 00.607.606l5.72-1.5A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.95 9.95 0 01-5.09-1.39l-.364-.216-3.74.98.998-3.648-.237-.375A9.95 9.95 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                        Falar no WhatsApp
+                    </a>
+                </div>
+                <p class="mt-6">
+                    <a href="index.html#programas" class="text-sm text-[#7a8fb5] hover:text-sky-soft transition-colors">← Voltar aos programas</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/5 py-8 px-4 text-center text-xs text-[#4a5f80]">
+        <p>Fluency Studio · Flash Talk</p>
+        <p class="mt-1"><a href="index.html" class="hover:text-sky-soft transition-colors">thefluency.studio</a></p>
+    </footer>
+
+</body>
+</html>

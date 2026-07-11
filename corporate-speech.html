@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Speech | Fluency Studio</title>
+    <meta name="description" content="Corporate Speech — oratória e inglês de alto padrão para o ambiente de trabalho. Prestígio, clareza e reconhecimento. Nível mínimo B1. Módulos mensais.">
+    <meta name="theme-color" content="#0e0a18">
+    <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
+    <link rel="canonical" href="https://thefluency.studio/corporate-speech.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        violet: { DEFAULT: '#7c3aed', soft: '#a78bfa', deep: '#6d28d9', mute: 'rgba(124,58,237,0.12)' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0e0a18;
+            color: #f5f3ff;
+        }
+        .glass-header {
+            background: rgba(14, 10, 24, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.22);
+        }
+        .btn-touch {
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-touch:active { transform: scale(0.96); }
+        .btn-header-aluno {
+            background: #fff;
+            color: #0d253d;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(255,255,255,0.12);
+        }
+        .btn-header-aluno:hover { background: #f1f5f9; }
+        .btn-header-whatsapp {
+            background: #25D366;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(37,211,102,0.3);
+        }
+        .btn-header-whatsapp:hover { background: #1fb855; }
+        .btn-header-home {
+            background: transparent;
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            font-weight: 700;
+        }
+        .btn-header-home:hover {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: #8b5cf6;
+        }
+        .hero-cs {
+            background:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(139, 92, 246, 0.18) 0%, transparent 55%),
+                linear-gradient(165deg, #1a1230 0%, #140e22 50%, #0e0a18 100%);
+        }
+        .feature-card {
+            background: linear-gradient(160deg, rgba(30, 20, 52, 0.9) 0%, rgba(20, 14, 34, 0.95) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.22);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(167, 139, 250, 0.55);
+            box-shadow: 0 16px 40px -16px rgba(139, 92, 246, 0.35);
+        }
+        .icon-orb {
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #c4b5fd;
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+        }
+        .tag-pill {
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            background: rgba(139, 92, 246, 0.1);
+            color: #c4b5fd;
+            letter-spacing: 0.12em;
+        }
+        .cta-glow {
+            box-shadow: 0 0 28px rgba(124, 58, 237, 0.45), 0 12px 32px -12px rgba(0,0,0,0.5);
+        }
+        .cta-glow:hover {
+            box-shadow: 0 0 42px rgba(124, 58, 237, 0.6), 0 16px 40px -12px rgba(0,0,0,0.55);
+        }
+        .logo-mark { height: 32px; width: auto; }
+        .logo-name { height: 18px; width: auto; }
+        @media (min-width: 768px) {
+            .logo-mark { height: 42px; }
+            .logo-name { height: 26px; }
+        }
+        @media (max-width: 767px) {
+            .header-actions {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.4rem;
+                width: 100%;
+            }
+            .header-actions a {
+                font-size: 0.58rem;
+                padding: 0.5rem 0.25rem;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="fixed top-0 w-full z-50 glass-header" role="banner">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+            <a href="index.html" class="flex items-center gap-2 md:gap-3 shrink-0" aria-label="Fluency Studio — início">
+                <img src="assets/logo_portal_jul.png" alt="Logo Fluency Studio" class="logo-mark" width="905" height="895" decoding="async">
+                <img src="assets/logo_portal_jul2.png" alt="Fluency Studio By Victor Gomes" class="logo-name" width="1254" height="102" decoding="async">
+            </a>
+            <div class="header-actions flex items-center gap-2 md:gap-3 text-[10px] md:text-sm font-medium w-full md:w-auto">
+                <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20acessar%20a%20%C3%A1rea%20do%20aluno." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-aluno flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>ÁREA DO ALUNO</span>
+                </a>
+                <a href="https://wa.me/5511911999759?text=Hey%2C%20eu%20estava%20no%20site%20e%20gostaria%20de%20ter%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%2C%20valores%20e%20metodologias." target="_blank" rel="noopener noreferrer" class="btn-touch btn-header-whatsapp flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <span>WHATSAPP</span>
+                </a>
+                <a href="index.html" class="btn-touch btn-header-home flex items-center gap-1.5 px-3 py-2.5 md:px-4 rounded-md">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg>
+                    <span>HOME</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero-cs pt-28 md:pt-36 pb-14 md:pb-20 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-18 pointer-events-none">
+                <img src="assets/card3.png" alt="" class="w-full h-full object-cover object-center" aria-hidden="true">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#0e0a18]/65 via-[#0e0a18]/88 to-[#0e0a18]"></div>
+            </div>
+            <div class="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
+                <p class="text-[11px] md:text-xs font-bold tracking-[0.28em] text-violet-soft uppercase mb-4">General English · Corporate Speech</p>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full icon-orb mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v1.5l-1.75 2.5h3.5L12 12.5V11"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black leading-[1.12] tracking-tight text-white mb-5">
+                    Se expressar — e ser<br class="hidden sm:block">
+                    reconhecido no trabalho.
+                </h1>
+                <p class="text-lg md:text-xl font-bold text-violet-soft max-w-xl mx-auto mb-8">
+                    Oratória e inglês de alto padrão para quem entende que prestígio também se fala.
+                </p>
+                <div class="flex flex-wrap justify-center gap-2 mb-2">
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">ORATÓRIA</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">CLAREZA</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">AUTORIDADE</span>
+                    <span class="tag-pill text-[11px] font-bold px-4 py-2 rounded-full">PRESENÇA</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRO -->
+        <section class="py-14 md:py-16 border-t border-white/5">
+            <div class="max-w-3xl mx-auto px-4 md:px-6 text-center space-y-5">
+                <p class="text-base md:text-lg leading-relaxed text-[#c4b8e0]">
+                    O <strong class="text-violet-soft font-semibold">Corporate Speech</strong> é para profissionais que já têm base em inglês e querem elevar a capacidade discursiva no ambiente de trabalho — vocabulário avançado, estrutura e presença.
+                </p>
+                <p class="text-base md:text-lg leading-relaxed text-[#c4b8e0]">
+                    Não é um curso genérico de “inglês de negócios”. É treino de oratória de alto nível: como você se apresenta, argumenta e é lembrado.
+                </p>
+            </div>
+        </section>
+
+        <!-- REQUISITO -->
+        <section class="py-6 md:py-8">
+            <div class="max-w-3xl mx-auto px-4 md:px-6">
+                <div class="feature-card rounded-2xl p-5 md:p-6 flex gap-4 items-start border-violet/40">
+                    <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-sm md:text-base mb-1">Nível mínimo: B1</h3>
+                        <p class="text-sm text-[#a89bc8] leading-relaxed">
+                            Este programa eleva quem já consegue se comunicar. Se você ainda está construindo a base, o <a href="fluency-foundation.html" class="text-violet-soft underline underline-offset-2 hover:text-white transition-colors">Fluency Foundation</a> ou o <a href="flash-talk.html" class="text-violet-soft underline underline-offset-2 hover:text-white transition-colors">Flash Talk</a> podem ser o caminho certo — e na aula de diagnóstico a gente confirma juntos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARA QUEM -->
+        <section class="py-10 md:py-16">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-10">
+                    <h2 class="text-xl md:text-2xl font-bold text-white mb-2">Para quem é o Corporate Speech</h2>
+                    <p class="text-sm text-[#8b7aad]">Quando o inglês deixa de ser barreira e vira assinatura.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Apresentações e pitches</h3>
+                            <p class="text-sm text-[#a89bc8] leading-relaxed">Estruture o discurso, controle o tempo e mantenha a plateia — com vocabulário de impacto.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Reuniões de alto nível</h3>
+                            <p class="text-sm text-[#a89bc8] leading-relaxed">Intervir com clareza, discordar com elegância e fechar o raciocínio com autoridade.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Liderança e prestígio</h3>
+                            <p class="text-sm text-[#a89bc8] leading-relaxed">Quem domina a oratória se posiciona melhor — e é ouvido com mais peso na sala.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 md:p-6 flex gap-4">
+                        <div class="icon-orb w-11 h-11 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm md:text-base mb-1">Carreira em aceleração</h3>
+                            <p class="text-sm text-[#a89bc8] leading-relaxed">Promoções, projetos globais e exposição com stakeholders internacionais pedem esse nível.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- O QUE VOCÊ DESENVOLVE -->
+        <section class="py-10 md:py-14">
+            <div class="max-w-4xl mx-auto px-4 md:px-6">
+                <div class="feature-card rounded-2xl p-6 md:p-10 text-center">
+                    <h2 class="text-lg md:text-xl font-bold text-white mb-3">O que você desenvolve</h2>
+                    <p class="text-sm md:text-base text-[#c4b8e0] max-w-2xl mx-auto mb-7 leading-relaxed">
+                        Capacidade discursiva, vocabulário avançado e a confiança de quem sabe o que está dizendo.
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="rounded-xl border border-violet/25 bg-violet/5 py-4 px-2">
+                            <div class="icon-orb w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                            </div>
+                            <p class="text-[11px] font-bold tracking-wider text-violet-soft">ORATÓRIA</p>
+                        </div>
+                        <div class="rounded-xl border border-violet/25 bg-violet/5 py-4 px-2">
+                            <div class="icon-orb w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <p class="text-[11px] font-bold tracking-wider text-violet-soft">CLAREZA</p>
+                        </div>
+                        <div class="rounded-xl border border-violet/25 bg-violet/5 py-4 px-2">
+                            <div class="icon-orb w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                            </div>
+                            <p class="text-[11px] font-bold tracking-wider text-violet-soft">AUTORIDADE</p>
+                        </div>
+                        <div class="rounded-xl border border-violet/25 bg-violet/5 py-4 px-2">
+                            <div class="icon-orb w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </div>
+                            <p class="text-[11px] font-bold tracking-wider text-violet-soft">PRESENÇA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMO FUNCIONA -->
+        <section class="py-10 md:py-14 border-t border-white/5">
+            <div class="max-w-5xl mx-auto px-4 md:px-6">
+                <div class="text-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold text-white">Como funciona na prática</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Diagnóstico inicial</h3>
+                        <p class="text-xs text-[#a89bc8] leading-relaxed">Avaliamos nível, objetivos e o tipo de exposição que você enfrenta no trabalho.</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Módulos mensais</h3>
+                        <p class="text-xs text-[#a89bc8] leading-relaxed">Comprados avulso — você investe no ritmo da sua agenda e da sua meta profissional.</p>
+                    </article>
+                    <article class="feature-card rounded-xl p-5 text-center">
+                        <div class="icon-orb w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-white text-sm mb-1">Aulas ao vivo</h3>
+                        <p class="text-xs text-[#a89bc8] leading-relaxed">Foco em fala e performance. Você treina o discurso — não só “entende a teoria”.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLOSING + CTA -->
+        <section class="py-16 md:py-20">
+            <div class="max-w-2xl mx-auto px-4 md:px-6 text-center">
+                <p class="text-2xl md:text-3xl font-black text-violet-soft leading-snug mb-4">
+                    Oratória de alto nível.<br>
+                    Reconhecimento no trabalho.
+                </p>
+                <p class="text-sm text-[#8b7aad] mb-8 max-w-md mx-auto">
+                    Agende um diagnóstico e descubra se o Corporate Speech é o próximo passo da sua carreira em inglês.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20diagn%C3%B3stico%20do%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch cta-glow inline-flex items-center justify-center gap-2 bg-violet hover:bg-violet-deep text-white font-extrabold text-sm md:text-base tracking-wide uppercase py-4 px-8 rounded-xl w-full sm:w-auto">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        Agendar diagnóstico
+                    </a>
+                    <a href="https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20programa%20Corporate%20Speech." target="_blank" rel="noopener noreferrer" class="btn-touch inline-flex items-center justify-center gap-2 border border-violet/40 hover:bg-violet/10 text-violet-soft font-bold text-sm md:text-base tracking-wide uppercase py-4 px-8 rounded-xl w-full sm:w-auto">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.554 4.12 1.523 5.853L.057 23.45a.5.5 0 00.607.606l5.72-1.5A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.95 9.95 0 01-5.09-1.39l-.364-.216-3.74.98.998-3.648-.237-.375A9.95 9.95 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                        Falar no WhatsApp
+                    </a>
+                </div>
+                <p class="mt-6">
+                    <a href="index.html#programas" class="text-sm text-[#8b7aad] hover:text-violet-soft transition-colors">← Voltar aos programas</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/5 py-8 px-4 text-center text-xs text-[#5c4d7a]">
+        <p>Fluency Studio · Corporate Speech</p>
+        <p class="mt-1"><a href="index.html" class="hover:text-violet-soft transition-colors">thefluency.studio</a></p>
+    </footer>
+
+</body>
+</html>
