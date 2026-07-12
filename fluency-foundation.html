@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#061218">
     <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
     <link rel="canonical" href="https://thefluency.studio/fluency-foundation.html">
-    <link rel="preload" as="image" href="assets/ffpage.jpg?v=6" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/ffpage.jpg?v=7" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -75,11 +75,8 @@
         }
 
         /*
-         * Hero — mesma LÓGICA estrutural do index.html:
-         * dois blocos alternados por display (mobile / desktop),
-         * sem texto sobre a área principal da foto.
-         * Mobile: foto full-width no topo → texto abaixo.
-         * Desktop (md+): duas colunas lado a lado (texto | imagem 2:3).
+         * Hero .hero-ff — dual block (mobile / desktop), zero text-over-image.
+         * Image 2:3 portrait (ffpage.jpg): always shown INTEIRA via object-fit: contain.
          */
         .hero-ff {
             position: relative;
@@ -93,41 +90,25 @@
         .hero-mobile-only { display: block; width: 100%; }
         .hero-desktop-only { display: none; width: 100%; }
 
-        /* —— MOBILE: foto em cima, texto embaixo (nunca sobreposto) —— */
+        /* —— MOBILE ≤767: foto no topo (contain) → texto abaixo —— */
         .hero-ff-photo-wrap {
-            position: relative;
             width: 100%;
             margin: 0;
-            overflow: hidden;
             background: #061218;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .hero-ff-photo-mobile {
             display: block;
             width: 100%;
             height: auto;
-            max-height: min(58vh, 420px);
-            min-height: 240px;
-            object-fit: cover;
-            object-position: right center;
+            max-width: 100%;
+            aspect-ratio: 2 / 3;
+            object-fit: contain;
+            object-position: center center;
             transform: none;
-        }
-
-        /* Faixa de transição só no encontro foto → texto (como index) */
-        .hero-ff-photo-wrap::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 28%;
-            pointer-events: none;
-            background: linear-gradient(
-                180deg,
-                transparent 0%,
-                rgba(6, 18, 24, 0.45) 45%,
-                #061218 100%
-            );
         }
 
         .hero-mobile-footer {
@@ -135,9 +116,7 @@
             background: #061218;
         }
 
-        .hero-mobile-footer .hero-ff-eyebrow {
-            margin-bottom: 0.75rem;
-        }
+        .hero-mobile-footer .hero-ff-eyebrow { margin-bottom: 0.75rem; }
 
         .hero-mobile-footer h1 {
             font-size: 1.55rem !important;
@@ -179,7 +158,7 @@
         }
         .hero-mobile-footer .skill-sub-label { font-size: 0.55rem; }
 
-        /* —— DESKTOP / TABLET (md+): texto ESQUERDA | foto DIREITA — espaços separados, zero overlay —— */
+        /* —— DESKTOP ≥768: texto esquerda (~52%) | foto direita (~48%), contain —— */
         @media (min-width: 768px) {
             .hero-mobile-only { display: none !important; }
             .hero-desktop-only { display: block !important; }
@@ -200,7 +179,6 @@
                 padding-inline: clamp(1.25rem, 3vw, 2.5rem);
             }
 
-            /* Duas colunas: cada filho no próprio espaço (sem position absolute / sem z-index de overlay) */
             .hero-desktop-grid {
                 display: flex;
                 flex-direction: row;
@@ -212,74 +190,56 @@
             }
 
             .hero-ff-copy {
-                flex: 1 1 48%;
+                flex: 1 1 52%;
                 width: auto;
                 max-width: 40rem;
                 min-width: 0;
                 text-align: left;
                 align-self: center;
                 padding: 0.5rem 0;
-                position: relative;
-                z-index: auto;
-                background: #061218; /* coluna de texto sólida — nunca transparente sobre a foto */
-                text-shadow: none;
+                position: static;
+                background: #061218;
             }
 
             .hero-ff-media-desktop {
-                flex: 0 1 46%;
+                flex: 0 1 48%;
                 display: flex;
                 align-items: center;
-                justify-content: flex-end;
+                justify-content: center;
                 min-width: 0;
-                position: relative;
-                z-index: auto;
+                background: #061218;
+                position: static;
             }
 
             .hero-ff-media-desktop img {
                 display: block;
                 width: 100%;
-                max-width: min(100%, 28rem);
                 height: auto;
-                max-height: min(78vh, 40rem);
+                max-width: 100%;
+                max-height: min(82vh, 44rem);
                 aspect-ratio: 2 / 3;
-                object-fit: cover;
-                object-position: right center;
+                object-fit: contain;
+                object-position: center center;
                 transform: none;
-                border-radius: 0.5rem;
             }
         }
 
         @media (min-width: 992px) {
-            .hero-desktop-grid {
-                gap: clamp(1rem, 2.2vw, 2rem);
-            }
+            .hero-desktop-grid { gap: clamp(1rem, 2.2vw, 2rem); }
             .hero-ff-copy {
-                flex-basis: 50%;
+                flex: 1 1 53%;
                 max-width: 42rem;
             }
-            .hero-ff-media-desktop {
-                flex-basis: 44%;
-            }
-            .hero-ff-media-desktop img {
-                max-width: min(100%, 30rem);
-                max-height: min(80vh, 42rem);
-            }
+            .hero-ff-media-desktop { flex: 0 1 47%; }
         }
 
         @media (min-width: 1200px) {
-            .hero-desktop-grid {
-                gap: clamp(0.75rem, 1.5vw, 1.5rem);
-            }
+            .hero-desktop-grid { gap: clamp(0.75rem, 1.5vw, 1.5rem); }
             .hero-ff-copy {
-                flex-basis: 52%;
+                flex: 1 1 54%;
                 max-width: 44rem;
             }
-            .hero-ff-media-desktop {
-                flex-basis: 42%;
-            }
-            .hero-ff-media-desktop img {
-                max-width: min(100%, 32rem);
-            }
+            .hero-ff-media-desktop { flex: 0 1 46%; }
         }
 
         /* Below the hero: solid page */
@@ -617,11 +577,11 @@
             <div class="hero-mobile-only">
                 <div class="hero-ff-photo-wrap">
                     <img
-                        src="assets/ffpage.jpg?v=6"
+                        src="assets/ffpage.jpg?v=7"
                         alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
                         class="hero-ff-photo-mobile"
-                        width="1000"
-                        height="1500"
+                        width="2000"
+                        height="3000"
                         decoding="async"
                         fetchpriority="high"
                     >
@@ -741,10 +701,10 @@
                     <!-- COLUNA 2: só foto -->
                     <div class="hero-ff-media-desktop">
                         <img
-                            src="assets/ffpage.jpg?v=6"
+                            src="assets/ffpage.jpg?v=7"
                             alt=""
-                            width="1000"
-                            height="1500"
+                            width="2000"
+                            height="3000"
                             decoding="async"
                             fetchpriority="high"
                         >
