@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#061218">
     <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
     <link rel="canonical" href="https://thefluency.studio/fluency-foundation.html">
-    <link rel="preload" as="image" href="assets/ffpage.jpg?v=3" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/ffpage.jpg?v=4" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -75,197 +75,108 @@
         }
 
         /*
-         * Hero — ffpage.jpg is a full poster (giant “18” + person + MESES).
-         * Show the WHOLE composition: cover + center framing (not hard crop to right).
-         * Soft left fade only for text readability — never solid black over the art.
-         * Reference mock: desktop.png
+         * Hero — mobile-first, Grid/Flex, fluid spacing.
+         * Image 2:3, object-position: right center, full body, no forced zoom.
+         * Breakpoints: Mobile ≤767 | Tablet 768–991 | Notebook 992–1199 | Desktop ≥1200
+         * Layout only — colors, type, content, buttons, image file unchanged.
          */
         .hero-ff {
             position: relative;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            isolation: isolate;
             background-color: #061218;
             overflow: hidden;
-        }
-
-        .hero-ff-media {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .hero-ff-media img {
-            position: absolute;
-            inset: 0;
+            /* fluid height — no rigid 100vh lock that creates empty air */
+            min-height: min(100svh, 920px);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: 1fr;
+            align-items: stretch;
+            justify-items: stretch;
             width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-            /* Center the poster so “18” + person stay in frame together */
-            object-position: 52% 42%;
+            max-width: none;
+            /* header clearance + lift text block ~40–60px vs previous 6.5rem top */
+            padding:
+                clamp(4.25rem, 12vw, 5.25rem)
+                clamp(0.85rem, 3.5vw, 1.25rem)
+                clamp(1.25rem, 4vw, 2rem);
+            box-sizing: border-box;
         }
 
-        /* Soft left veil for copy — art still visible through it */
+        /* Soft veil — left side only for copy legibility */
         .hero-ff-fade {
-            position: absolute;
-            inset: 0;
+            grid-column: 1 / -1;
+            grid-row: 1;
             z-index: 1;
             pointer-events: none;
             background:
                 linear-gradient(
                     90deg,
                     #061218 0%,
-                    rgba(6, 18, 24, 0.94) 14%,
-                    rgba(6, 18, 24, 0.78) 28%,
-                    rgba(6, 18, 24, 0.45) 42%,
-                    rgba(6, 18, 24, 0.18) 58%,
-                    rgba(6, 18, 24, 0.05) 74%,
+                    rgba(6, 18, 24, 0.94) 20%,
+                    rgba(6, 18, 24, 0.72) 38%,
+                    rgba(6, 18, 24, 0.35) 55%,
+                    rgba(6, 18, 24, 0.1) 72%,
                     transparent 100%
                 ),
                 linear-gradient(
                     180deg,
-                    rgba(6, 18, 24, 0.45) 0%,
-                    transparent 16%,
+                    rgba(6, 18, 24, 0.4) 0%,
+                    transparent 14%,
                     transparent 78%,
-                    rgba(6, 18, 24, 0.5) 100%
+                    rgba(6, 18, 24, 0.45) 100%
                 );
         }
 
-        .hero-ff-inner {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 80rem;
-            margin: 0 auto;
-            padding: 7rem 1.25rem 3rem;
+        /* Image: full-bleed on mobile, right column from tablet up */
+        .hero-ff-media {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            z-index: 0;
             display: flex;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
+            align-items: stretch;
+            justify-content: flex-end;
+            pointer-events: none;
+            overflow: hidden;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .hero-ff-media img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            object-fit: cover;
+            object-position: right center; /* character anchored right, full body */
+            /* no transform/scale — never auto-zoom */
+            transform: none;
+            user-select: none;
         }
 
         .hero-ff-copy {
-            width: 100%;
-            max-width: 34rem;
-            text-align: left;
-            /* slight glass so type stays sharp over the photo */
-            text-shadow: 0 2px 24px rgba(6, 18, 24, 0.65);
-        }
-
-        /* Below the hero: solid page (photo only lives in the first screen) */
-        .page-body {
+            grid-column: 1;
+            grid-row: 1;
             position: relative;
             z-index: 2;
-            background: #061218;
+            width: 100%;
+            max-width: min(70%, 22.5rem);
+            justify-self: start;
+            text-align: left;
+            text-shadow: 0 2px 24px rgba(6, 18, 24, 0.65);
+            /* sit higher — reduce empty band under header */
+            align-self: end;
+            margin-bottom: clamp(0.25rem, 2vw, 0.75rem);
+            padding-right: clamp(0.25rem, 2vw, 0.75rem);
+            box-sizing: border-box;
         }
 
-        @media (min-width: 768px) {
-            .hero-ff-media img {
-                object-position: 55% 40%;
-            }
-            .hero-ff-fade {
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.92) 16%,
-                        rgba(6, 18, 24, 0.72) 30%,
-                        rgba(6, 18, 24, 0.38) 46%,
-                        rgba(6, 18, 24, 0.12) 64%,
-                        transparent 88%
-                    ),
-                    linear-gradient(
-                        180deg,
-                        rgba(6, 18, 24, 0.35) 0%,
-                        transparent 14%,
-                        transparent 82%,
-                        rgba(6, 18, 24, 0.4) 100%
-                    );
-            }
-            .hero-ff-inner {
-                padding: 8rem 2rem 4rem;
-            }
-            .hero-ff-copy {
-                max-width: 36rem;
-            }
+        /* inner wrapper kept for markup compatibility — becomes the grid shell */
+        .hero-ff-inner {
+            display: contents;
         }
 
-        @media (min-width: 1100px) {
-            .hero-ff-media img {
-                /* Slight right bias without cutting the “18” */
-                object-position: 58% 38%;
-            }
-            .hero-ff-fade {
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.9) 18%,
-                        rgba(6, 18, 24, 0.65) 32%,
-                        rgba(6, 18, 24, 0.32) 48%,
-                        rgba(6, 18, 24, 0.08) 66%,
-                        transparent 90%
-                    ),
-                    linear-gradient(
-                        180deg,
-                        rgba(6, 18, 24, 0.3) 0%,
-                        transparent 12%,
-                        transparent 84%,
-                        rgba(6, 18, 24, 0.35) 100%
-                    );
-            }
-            .hero-ff-copy {
-                max-width: 38rem;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .hero-ff-media img {
-                object-position: 60% 36%;
-            }
-        }
-
-        /* Mobile: keep poster composition readable; text on left over soft veil */
+        /* Mobile-only type scale (existing visual weight, layout-driven) */
         @media (max-width: 767px) {
-            .hero-ff {
-                min-height: 100svh;
-            }
-            .hero-ff-media img {
-                object-position: 48% 36%;
-                transform: none;
-            }
-            .hero-ff-fade {
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.95) 22%,
-                        rgba(6, 18, 24, 0.75) 40%,
-                        rgba(6, 18, 24, 0.4) 58%,
-                        rgba(6, 18, 24, 0.12) 78%,
-                        transparent 100%
-                    ),
-                    linear-gradient(
-                        180deg,
-                        rgba(6, 18, 24, 0.5) 0%,
-                        transparent 16%,
-                        transparent 70%,
-                        rgba(6, 18, 24, 0.65) 100%
-                    );
-            }
-            .hero-ff-inner {
-                min-height: 100svh;
-                padding: 6.5rem 1rem 2.25rem;
-                align-items: flex-end;
-            }
-            .hero-ff-copy {
-                max-width: 70%;
-                padding-bottom: 0.25rem;
-            }
             .hero-ff-copy h1 {
                 font-size: 1.55rem !important;
                 line-height: 1.15 !important;
@@ -304,6 +215,173 @@
             .skill-sub-label {
                 font-size: 0.55rem;
             }
+        }
+
+        /* —— Tablet 768–991 —— */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .hero-ff {
+                min-height: min(100svh, 860px);
+                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+                column-gap: clamp(0.75rem, 2vw, 1.25rem);
+                align-items: center;
+                padding:
+                    clamp(5rem, 8vw, 6rem)
+                    clamp(1.25rem, 3vw, 1.75rem)
+                    clamp(1.5rem, 3vw, 2.25rem);
+            }
+            .hero-ff-media {
+                grid-column: 2;
+                grid-row: 1;
+                min-height: clamp(22rem, 62vh, 34rem);
+                align-self: stretch;
+            }
+            .hero-ff-media img {
+                width: 100%;
+                height: 100%;
+                max-height: min(72vh, 36rem);
+                margin-inline: auto 0;
+                aspect-ratio: 2 / 3;
+                object-fit: cover;
+                object-position: right center;
+            }
+            .hero-ff-copy {
+                grid-column: 1;
+                grid-row: 1;
+                max-width: none;
+                width: 100%;
+                align-self: center;
+                /* lift toward model chest line */
+                transform: translateY(clamp(-1.5rem, -3vh, -0.75rem));
+                margin-bottom: 0;
+                padding-right: 0;
+            }
+            .hero-ff-fade {
+                grid-column: 1 / -1;
+                background:
+                    linear-gradient(
+                        90deg,
+                        #061218 0%,
+                        rgba(6, 18, 24, 0.92) 18%,
+                        rgba(6, 18, 24, 0.55) 42%,
+                        rgba(6, 18, 24, 0.15) 62%,
+                        transparent 82%
+                    );
+            }
+        }
+
+        /* —— Notebook 992–1199 —— */
+        @media (min-width: 992px) and (max-width: 1199px) {
+            .hero-ff {
+                min-height: min(100svh, 900px);
+                grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.98fr);
+                column-gap: clamp(0.5rem, 1.5vw, 1rem); /* tighter text↔image */
+                align-items: center;
+                padding:
+                    clamp(4.5rem, 7vw, 5.5rem)
+                    clamp(1.5rem, 2.5vw, 2rem)
+                    clamp(1.75rem, 3vw, 2.5rem);
+            }
+            .hero-ff-media {
+                grid-column: 2;
+                grid-row: 1;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                min-height: clamp(26rem, 70vh, 40rem);
+            }
+            .hero-ff-media img {
+                width: auto;
+                height: min(74vh, 38rem);
+                max-width: 100%;
+                aspect-ratio: 2 / 3;
+                object-fit: cover;
+                object-position: right center;
+            }
+            .hero-ff-copy {
+                grid-column: 1;
+                grid-row: 1;
+                max-width: none;
+                width: 100%;
+                align-self: center;
+                /* ~80–100px up vs old low placement */
+                transform: translateY(clamp(-5.5rem, -9vh, -4.5rem));
+                margin-bottom: 0;
+            }
+            .hero-ff-fade {
+                grid-column: 1 / -1;
+                background:
+                    linear-gradient(
+                        90deg,
+                        #061218 0%,
+                        rgba(6, 18, 24, 0.9) 16%,
+                        rgba(6, 18, 24, 0.5) 40%,
+                        rgba(6, 18, 24, 0.12) 58%,
+                        transparent 78%
+                    );
+            }
+        }
+
+        /* —— Desktop ≥1200 —— */
+        @media (min-width: 1200px) {
+            .hero-ff {
+                min-height: min(100svh, 960px);
+                /* text column +5–10% useful width, tighter gap to image */
+                grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr);
+                column-gap: clamp(0.35rem, 1.1vw, 0.85rem);
+                max-width: min(84rem, 100%);
+                margin-inline: auto;
+                align-items: center;
+                padding:
+                    clamp(4.25rem, 6vw, 5rem)
+                    clamp(1.75rem, 3vw, 2.5rem)
+                    clamp(2rem, 3vw, 2.75rem);
+            }
+            .hero-ff-media {
+                grid-column: 2;
+                grid-row: 1;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                min-height: clamp(28rem, 78vh, 44rem);
+            }
+            .hero-ff-media img {
+                width: auto;
+                height: min(80vh, 42rem);
+                max-width: 100%;
+                aspect-ratio: 2 / 3;
+                object-fit: cover;
+                object-position: right center;
+            }
+            .hero-ff-copy {
+                grid-column: 1;
+                grid-row: 1;
+                max-width: none;
+                width: 100%;
+                /* title band aligned with model’s chest (~90px lift) */
+                align-self: center;
+                transform: translateY(clamp(-6.25rem, -10vh, -5rem));
+                margin-bottom: 0;
+                padding-right: clamp(0.25rem, 1vw, 0.75rem);
+            }
+            .hero-ff-fade {
+                grid-column: 1 / -1;
+                background:
+                    linear-gradient(
+                        90deg,
+                        #061218 0%,
+                        rgba(6, 18, 24, 0.88) 14%,
+                        rgba(6, 18, 24, 0.48) 36%,
+                        rgba(6, 18, 24, 0.1) 54%,
+                        transparent 72%
+                    );
+            }
+        }
+
+        /* Below the hero: solid page (photo only lives in the first screen) */
+        .page-body {
+            position: relative;
+            z-index: 2;
+            background: #061218;
         }
 
         .feature-card {
@@ -627,20 +705,19 @@
     </header>
 
     <main>
-        <!-- HERO: full poster (18 + person + MESES) with soft left veil for copy -->
+        <!-- HERO: mobile-first grid — text left / image right (2:3, right center) -->
         <section class="hero-ff" aria-labelledby="ff-hero-heading">
+            <div class="hero-ff-fade" aria-hidden="true"></div>
             <div class="hero-ff-media" aria-hidden="true">
                 <img
-                    src="assets/ffpage.jpg?v=3"
+                    src="assets/ffpage.jpg?v=4"
                     alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
-                    width="1200"
+                    width="1000"
                     height="1500"
                     decoding="async"
                     fetchpriority="high"
                 >
             </div>
-            <div class="hero-ff-fade" aria-hidden="true"></div>
-
             <div class="hero-ff-inner">
                 <div class="hero-ff-copy">
                     <p class="text-[10px] md:text-xs font-bold tracking-[0.28em] text-teal-soft uppercase mb-4 md:mb-5">General English · Fluency Foundation</p>
