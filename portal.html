@@ -2097,12 +2097,18 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [despesas,setDespesas]=useState([]);
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
-  const studioRef=db.collection("studio").doc("financeiro");
+  const [showDespesaForm,setShowDespesaForm]=useState(false);
+  const [despesaForm,setDespesaForm]=useState({data:"",descricao:"",valor:""});
+  const [savingDespesa,setSavingDespesa]=useState(false);
+  const [despesaError,setDespesaError]=useState("");
 
-  useEffect(()=>studioRef.onSnapshot(doc=>{
-    const data=doc.exists?doc.data():{};
-    setDespesas((data.despesasPorMes||{})[monthKey]||[]);
-  }),[monthKey]);
+  useEffect(()=>{
+    const studioRef=db.collection("studio").doc("financeiro");
+    return studioRef.onSnapshot(doc=>{
+      const data=doc.exists?doc.data():{};
+      setDespesas((data.despesasPorMes||{})[monthKey]||[]);
+    },err=>console.error("Erro ao carregar despesas:",err));
+  },[monthKey]);
 
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
@@ -2112,22 +2118,65 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const isCurrentMonth=monthKey===getMonthKey(new Date());
 
   async function saveDespesas(next){
+    const studioRef=db.collection("studio").doc("financeiro");
     const doc=await studioRef.get();
     const data=doc.exists?doc.data():{};
     const porMes={...(data.despesasPorMes||{})};
     porMes[monthKey]=next;
     await studioRef.set({despesasPorMes:porMes},{merge:true});
   }
-  async function addDespesa(){
-    const nova={id:Date.now().toString(),descricao:"",valor:0,data:getTodayISO()};
-    await saveDespesas([...despesas,nova]);
+
+  function openDespesaForm(){
+    setDespesaForm({data:getTodayISO(),descricao:"",valor:""});
+    setDespesaError("");
+    setShowDespesaForm(true);
   }
-  async function updateDespesa(id,field,val){
-    await saveDespesas(despesas.map(d=>d.id===id?{...d,[field]:val}:d));
+
+  function closeDespesaForm(){
+    if(savingDespesa)return;
+    setShowDespesaForm(false);
+    setDespesaError("");
   }
+
+  async function handleSaveDespesa(e){
+    if(e&&e.preventDefault)e.preventDefault();
+    setDespesaError("");
+    const data=(despesaForm.data||"").trim();
+    const descricao=(despesaForm.descricao||"").trim();
+    const valorNum=parseFloat(String(despesaForm.valor).replace(",","."))||0;
+    if(!data){setDespesaError("Informe a data.");return;}
+    if(!descricao){setDespesaError("Informe a descrição.");return;}
+    if(valorNum<=0){setDespesaError("Informe um valor maior que zero.");return;}
+
+    const nova={id:Date.now().toString(),data,descricao,valor:valorNum};
+    const next=[...despesas,nova];
+    setSavingDespesa(true);
+    try{
+      setDespesas(next); // optimistic: atualiza card DESPESAS e métrica acima
+      await saveDespesas(next);
+      setShowDespesaForm(false);
+      setDespesaForm({data:"",descricao:"",valor:""});
+    }catch(err){
+      console.error("Erro ao salvar despesa:",err);
+      setDespesas(despesas);
+      setDespesaError("Não foi possível salvar. Verifique a conexão e tente de novo.");
+    }finally{
+      setSavingDespesa(false);
+    }
+  }
+
   async function deleteDespesa(id){
     if(!confirm("Remover esta despesa?"))return;
-    await saveDespesas(despesas.filter(d=>d.id!==id));
+    const prev=despesas;
+    const next=despesas.filter(d=>d.id!==id);
+    setDespesas(next);
+    try{
+      await saveDespesas(next);
+    }catch(err){
+      console.error("Erro ao remover despesa:",err);
+      setDespesas(prev);
+      alert("Não foi possível remover a despesa. Tente de novo.");
+    }
   }
 
   const alunosFiltrados=useMemo(()=>{
@@ -2136,6 +2185,10 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     const q=busca.toLowerCase();
     return list.filter(s=>(s.name||"").toLowerCase().includes(q)||(s.email||"").toLowerCase().includes(q));
   },[studentsByStatus,busca]);
+
+  const despesasOrdenadas=useMemo(()=>{
+    return[...despesas].sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.id||"").localeCompare(a.id||""));
+  },[despesas]);
 
   return(
     <div>
@@ -2198,25 +2251,70 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             <Icon name="credit-card" size={16} style={{color:"#f0909a"}}/>
             Despesas — {formatMonthYear(monthKey)}
           </h3>
-          <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={addDespesa}>
+          <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={openDespesaForm}>
             <Icon name="plus" size={14}/> Nova Despesa
           </button>
         </div>
-        {despesas.length===0?(
+        {despesasOrdenadas.length===0?(
           <div className="text-center py-6 muted text-sm">Nenhuma despesa neste mês.</div>
         ):(
-          despesas.map(d=>(
+          despesasOrdenadas.map(d=>(
             <div key={d.id} className="fin-despesa-row">
-              <div style={{flex:1,display:"grid",gridTemplateColumns:"1fr 120px 140px",gap:10,alignItems:"center"}}>
-                <input className="input-light" placeholder="Descrição" value={d.descricao||""} onChange={e=>updateDespesa(d.id,"descricao",e.target.value)}/>
-                <input type="number" step="0.01" min="0" className="input-light" placeholder="R$" value={d.valor||0} onChange={e=>updateDespesa(d.id,"valor",parseFloat(e.target.value)||0)}/>
-                <input type="date" className="input-light" value={d.data||""} onChange={e=>updateDespesa(d.id,"data",e.target.value)}/>
+              <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"110px 1fr 120px",gap:12,alignItems:"center"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{formatDateBR(d.data)}</div>
+                <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
+                <div style={{fontSize:14,fontWeight:800,color:"#f0909a",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
               </div>
-              <button className="btn btn-danger rounded-lg px-2 py-1.5" onClick={()=>deleteDespesa(d.id)}><Icon name="trash-2" size={12}/></button>
+              <button type="button" className="btn btn-danger rounded-lg px-2 py-1.5" onClick={()=>deleteDespesa(d.id)} title="Remover"><Icon name="trash-2" size={12}/></button>
             </div>
           ))
         )}
       </div>
+
+      {showDespesaForm&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)closeDespesaForm();}}>
+          <div className="modal-box" style={{maxWidth:440}} onClick={e=>e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <Icon name="credit-card" size={20}/>
+                <div>
+                  <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>DESPESAS · {formatMonthYear(monthKey).toUpperCase()}</div>
+                  <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>Nova Despesa</div>
+                </div>
+              </div>
+              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={closeDespesaForm} disabled={savingDespesa}>
+                <Icon name="x" size={18}/>
+              </button>
+            </div>
+            <form onSubmit={handleSaveDespesa}>
+              <div className="modal-body" style={{display:"flex",flexDirection:"column",gap:16}}>
+                <div>
+                  <label className="form-label" htmlFor="despesa-data">Data</label>
+                  <input id="despesa-data" type="date" className="input-light w-full" value={despesaForm.data} onChange={e=>setDespesaForm(f=>({...f,data:e.target.value}))} required/>
+                </div>
+                <div>
+                  <label className="form-label" htmlFor="despesa-desc">Descrição</label>
+                  <input id="despesa-desc" type="text" className="input-light w-full" placeholder="Ex: Aluguel, material, internet..." value={despesaForm.descricao} onChange={e=>setDespesaForm(f=>({...f,descricao:e.target.value}))} required autoFocus/>
+                </div>
+                <div>
+                  <label className="form-label" htmlFor="despesa-valor">Valor (R$)</label>
+                  <input id="despesa-valor" type="number" step="0.01" min="0.01" className="input-light w-full" placeholder="0,00" value={despesaForm.valor} onChange={e=>setDespesaForm(f=>({...f,valor:e.target.value}))} required/>
+                </div>
+                {despesaError&&(
+                  <div style={{fontSize:13,color:"#f0909a",fontWeight:600,padding:"10px 12px",borderRadius:10,background:"rgba(200,60,80,.12)",border:"1px solid rgba(200,60,80,.28)"}}>{despesaError}</div>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={closeDespesaForm} disabled={savingDespesa}>Cancelar</button>
+                <button type="submit" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={savingDespesa}>
+                  <Icon name="check" size={14}/>
+                  {savingDespesa?"Salvando…":"Salvar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="glass rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
