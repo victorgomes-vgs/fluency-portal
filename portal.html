@@ -2101,13 +2101,62 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [despesaForm,setDespesaForm]=useState({data:"",descricao:"",valor:""});
   const [savingDespesa,setSavingDespesa]=useState(false);
   const [despesaError,setDespesaError]=useState("");
+  const [porMesCache,setPorMesCache]=useState({});
+
+  // studio/financeiro é bloqueado pelas regras do Firestore.
+  // Salva em users/{ADMIN_UID} (admin logado) e faz fallback em localStorage.
+  const DESPESAS_LS_KEY="fluency_studio_despesasPorMes";
+  function readLocalPorMes(){
+    try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}
+  }
+  function writeLocalPorMes(porMes){
+    try{localStorage.setItem(DESPESAS_LS_KEY,JSON.stringify(porMes||{}));}catch(e){}
+  }
+  function getDespesasCloudRefs(){
+    return[
+      db.collection("users").doc(ADMIN_UID),
+      db.collection("config").doc("financeiro"),
+    ];
+  }
 
   useEffect(()=>{
-    const studioRef=db.collection("studio").doc("financeiro");
-    return studioRef.onSnapshot(doc=>{
-      const data=doc.exists?doc.data():{};
-      setDespesas((data.despesasPorMes||{})[monthKey]||[]);
-    },err=>console.error("Erro ao carregar despesas:",err));
+    let unsub=null;
+    let cancelled=false;
+    const local=readLocalPorMes();
+    setPorMesCache(local);
+    setDespesas(local[monthKey]||[]);
+
+    (async()=>{
+      for(const ref of getDespesasCloudRefs()){
+        try{
+          const snap=await ref.get();
+          if(cancelled)return;
+          const cloud=(snap.exists?snap.data():{}).despesasPorMes||{};
+          const merged={...local};
+          Object.keys(cloud).forEach(k=>{if(Array.isArray(cloud[k]))merged[k]=cloud[k];});
+          setPorMesCache(merged);
+          setDespesas(merged[monthKey]||[]);
+          writeLocalPorMes(merged);
+          unsub=ref.onSnapshot(doc=>{
+            const data=doc.exists?doc.data():{};
+            const pm=data.despesasPorMes||{};
+            setPorMesCache(prev=>{
+              const next={...prev};
+              Object.keys(pm).forEach(k=>{if(Array.isArray(pm[k]))next[k]=pm[k];});
+              writeLocalPorMes(next);
+              return next;
+            });
+            if(Array.isArray(pm[monthKey]))setDespesas(pm[monthKey]);
+          },err=>console.error("Erro ao escutar despesas:",err));
+          return;
+        }catch(err){
+          console.warn("Path despesas indisponível:",ref.path,err&&err.message);
+        }
+      }
+      console.warn("Despesas: usando somente armazenamento local deste navegador.");
+    })();
+
+    return()=>{cancelled=true;if(unsub)unsub();};
   },[monthKey]);
 
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
@@ -2118,12 +2167,21 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const isCurrentMonth=monthKey===getMonthKey(new Date());
 
   async function saveDespesas(next){
-    const studioRef=db.collection("studio").doc("financeiro");
-    const doc=await studioRef.get();
-    const data=doc.exists?doc.data():{};
-    const porMes={...(data.despesasPorMes||{})};
-    porMes[monthKey]=next;
-    await studioRef.set({despesasPorMes:porMes},{merge:true});
+    const porMes={...readLocalPorMes(),...porMesCache,[monthKey]:next};
+    setPorMesCache(porMes);
+    writeLocalPorMes(porMes);
+    let lastErr=null;
+    for(const ref of getDespesasCloudRefs()){
+      try{
+        await ref.set({despesasPorMes:porMes},{merge:true});
+        return;
+      }catch(err){
+        lastErr=err;
+        console.warn("Falha ao salvar despesas em",ref.path,err&&err.message);
+      }
+    }
+    // localStorage já gravou — não falha o formulário se a nuvem estiver bloqueada
+    if(lastErr)console.warn("Despesas salvas localmente; nuvem bloqueada:",lastErr.message||lastErr);
   }
 
   function openDespesaForm(){
@@ -2152,14 +2210,14 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     const next=[...despesas,nova];
     setSavingDespesa(true);
     try{
-      setDespesas(next); // optimistic: atualiza card DESPESAS e métrica acima
+      setDespesas(next);
       await saveDespesas(next);
       setShowDespesaForm(false);
       setDespesaForm({data:"",descricao:"",valor:""});
     }catch(err){
       console.error("Erro ao salvar despesa:",err);
       setDespesas(despesas);
-      setDespesaError("Não foi possível salvar. Verifique a conexão e tente de novo.");
+      setDespesaError("Não foi possível salvar. Tente de novo.");
     }finally{
       setSavingDespesa(false);
     }
@@ -2265,7 +2323,9 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                 <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
                 <div style={{fontSize:14,fontWeight:800,color:"#f0909a",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
               </div>
-              <button type="button" className="btn btn-danger rounded-lg px-2 py-1.5" onClick={()=>deleteDespesa(d.id)} title="Remover"><Icon name="trash-2" size={12}/></button>
+              <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesa(d.id)} title="Remover despesa" aria-label="Remover despesa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a",flexShrink:0}}>
+                <Icon name="x" size={16}/>
+              </button>
             </div>
           ))
         )}
