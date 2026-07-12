@@ -1,21 +1,21 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://thefluency.studio/</loc>
-    <lastmod>2026-07-11</lastmod>
+    <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://thefluency.studio/assets/capa_portal_jul.png</image:loc>
-      <image:title>Victor Gomes â€” Fluency Studio</image:title>
-      <image:caption>Professor de inglÃªs e fundador da Fluency Studio â€” curso de inglÃªs online personalizado</image:caption>
-      <image:geo_location>SÃ£o Paulo, Brazil</image:geo_location>
+      <image:title>Victor Gomes — Fluency Studio</image:title>
+      <image:caption>Professor de inglês e fundador da Fluency Studio — curso de inglês online personalizado</image:caption>
+      <image:geo_location>São Paulo, Brazil</image:geo_location>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/logo_portal_jul.png</image:loc>
       <image:title>Logo Fluency Studio</image:title>
-      <image:caption>Logotipo oficial da escola de inglÃªs Fluency Studio</image:caption>
+      <image:caption>Logotipo oficial da escola de inglês Fluency Studio</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/logo_portal_jul2.png</image:loc>
@@ -25,22 +25,22 @@
     <image:image>
       <image:loc>https://thefluency.studio/assets/card1.png</image:loc>
       <image:title>Fluency Foundation</image:title>
-      <image:caption>Programa Fluency Foundation â€” fluÃªncia em inglÃªs em 18 meses</image:caption>
+      <image:caption>Programa Fluency Foundation — fluência em inglês em 18 meses</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/card2.png</image:loc>
       <image:title>Flash Talk</image:title>
-      <image:caption>Aulas de conversaÃ§Ã£o em inglÃªs de 30 minutos</image:caption>
+      <image:caption>Aulas de conversação em inglês de 30 minutos</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/card3.png</image:loc>
       <image:title>Corporate Speech</image:title>
-      <image:caption>InglÃªs corporativo e oratÃ³ria profissional</image:caption>
+      <image:caption>Inglês corporativo e oratória profissional</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/ivi.png</image:loc>
-      <image:title>iVi â€” Assistente IA Fluency Studio</image:title>
-      <image:caption>Assistente virtual para dÃºvidas sobre cursos de inglÃªs</image:caption>
+      <image:title>iVi — Assistente IA Fluency Studio</image:title>
+      <image:caption>Assistente virtual para dúvidas sobre cursos de inglês</image:caption>
     </image:image>
   </url>
   <url>
@@ -51,47 +51,11 @@
     <image:image>
       <image:loc>https://thefluency.studio/logoentrada.png</image:loc>
       <image:title>Portal do Aluno Fluency Studio</image:title>
-      <image:caption>Ãrea do aluno â€” portal de estudos Fluency Studio</image:caption>
+      <image:caption>Área do aluno — portal de estudos Fluency Studio</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://thefluency.studio/assets/ivi.png</image:loc>
-      <image:title>iVi â€” Assistente do Portal</image:title>
+      <image:title>iVi — Assistente do Portal</image:title>
     </image:image>
-  </url>
-
-  <url>
-    <loc>https://thefluency.studio/fluency-foundation.html</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://thefluency.studio/assets/ffpage.jpg</image:loc>
-      <image:title>Fluency Foundation</image:title>
-      <image:caption>Programa Fluency Foundation — inglês alto padrão em 18 meses</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://thefluency.studio/flash-talk.html</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://thefluency.studio/corporate-speech.html</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://thefluency.studio/fluency-foundation-corporate.html</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://thefluency.studio/flash-talk-corporate.html</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>
