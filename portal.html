@@ -2099,6 +2099,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [monthKey,setMonthKey]=useState(()=>getMonthKey(new Date()));
   const [despesas,setDespesas]=useState([]); // variáveis do mês
   const [despesasFixas,setDespesasFixas]=useState([]); // repetem todo mês
+  const [fixasPagasPorMes,setFixasPagasPorMes]=useState({}); // { "2026-07": { id: true } }
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
   const [showDespesaForm,setShowDespesaForm]=useState(false); // false | "variavel" | "fixa"
@@ -2106,11 +2107,13 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [savingDespesa,setSavingDespesa]=useState(false);
   const [despesaError,setDespesaError]=useState("");
   const [porMesCache,setPorMesCache]=useState({});
+  const [togglingPagaId,setTogglingPagaId]=useState(null);
 
   // studio/financeiro é bloqueado pelas regras do Firestore.
   // Salva em users/{ADMIN_UID} (admin logado) e faz fallback em localStorage.
   const DESPESAS_LS_KEY="fluency_studio_despesasPorMes";
   const FIXAS_LS_KEY="fluency_studio_despesasFixas";
+  const FIXAS_PAGAS_LS_KEY="fluency_studio_despesasFixasPagas";
   function readLocalPorMes(){
     try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}
   }
@@ -2123,18 +2126,42 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   function writeLocalFixas(list){
     try{localStorage.setItem(FIXAS_LS_KEY,JSON.stringify(list||[]));}catch(e){}
   }
+  function normalizeFixasPagas(raw){
+    if(!raw||typeof raw!=="object")return{};
+    const out={};
+    Object.keys(raw).forEach(mk=>{
+      const v=raw[mk];
+      if(Array.isArray(v)){
+        const map={};
+        v.forEach(id=>{if(id)map[id]=true;});
+        out[mk]=map;
+      }else if(v&&typeof v==="object"){
+        out[mk]={...v};
+      }
+    });
+    return out;
+  }
+  function readLocalFixasPagas(){
+    try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}
+  }
+  function writeLocalFixasPagas(map){
+    try{localStorage.setItem(FIXAS_PAGAS_LS_KEY,JSON.stringify(map||{}));}catch(e){}
+  }
   function getDespesasCloudRefs(){
     return[
       db.collection("users").doc(ADMIN_UID),
       db.collection("config").doc("financeiro"),
     ];
   }
-  function applyFinanceData(porMes,fixas, mk){
+  function applyFinanceData(porMes,fixas, pagas, mk){
     setPorMesCache(porMes||{});
     setDespesas((porMes&&porMes[mk])||[]);
     setDespesasFixas(Array.isArray(fixas)?fixas:[]);
+    const np=normalizeFixasPagas(pagas||{});
+    setFixasPagasPorMes(np);
     writeLocalPorMes(porMes||{});
     writeLocalFixas(Array.isArray(fixas)?fixas:[]);
+    writeLocalFixasPagas(np);
   }
 
   useEffect(()=>{
@@ -2142,7 +2169,8 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     let cancelled=false;
     const localPm=readLocalPorMes();
     const localFx=readLocalFixas();
-    applyFinanceData(localPm,localFx,monthKey);
+    const localPg=readLocalFixasPagas();
+    applyFinanceData(localPm,localFx,localPg,monthKey);
 
     (async()=>{
       for(const ref of getDespesasCloudRefs()){
@@ -2152,13 +2180,15 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
           const data=snap.exists?snap.data():{};
           const cloudPm=data.despesasPorMes||{};
           const cloudFx=Array.isArray(data.despesasFixas)?data.despesasFixas:localFx;
+          const cloudPg=data.despesasFixasPagasPorMes!=null?normalizeFixasPagas(data.despesasFixasPagasPorMes):localPg;
           const merged={...localPm};
           Object.keys(cloudPm).forEach(k=>{if(Array.isArray(cloudPm[k]))merged[k]=cloudPm[k];});
-          applyFinanceData(merged,cloudFx,monthKey);
+          applyFinanceData(merged,cloudFx,cloudPg,monthKey);
           unsub=ref.onSnapshot(doc=>{
             const d=doc.exists?doc.data():{};
             const pm=d.despesasPorMes||{};
             const fx=Array.isArray(d.despesasFixas)?d.despesasFixas:null;
+            const pg=d.despesasFixasPagasPorMes!=null?normalizeFixasPagas(d.despesasFixasPagasPorMes):null;
             setPorMesCache(prev=>{
               const next={...prev};
               Object.keys(pm).forEach(k=>{if(Array.isArray(pm[k]))next[k]=pm[k];});
@@ -2167,6 +2197,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             });
             if(Array.isArray(pm[monthKey]))setDespesas(pm[monthKey]);
             if(fx){setDespesasFixas(fx);writeLocalFixas(fx);}
+            if(pg){setFixasPagasPorMes(pg);writeLocalFixasPagas(pg);}
           },err=>console.error("Erro ao escutar despesas:",err));
           return;
         }catch(err){
@@ -2182,23 +2213,33 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
   const {previsto,recebido}=useMemo(()=>computeStudioFinanceMonth(studentsByStatus,monthKey),[studentsByStatus,monthKey]);
-  const totalDespesasFixas=useMemo(()=>despesasFixas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesasFixas]);
+  const fixasPagasMes=fixasPagasPorMes[monthKey]||{};
+  const totalDespesasPrevistas=useMemo(()=>despesasFixas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesasFixas]);
+  const totalDespesasFixasPagas=useMemo(
+    ()=>despesasFixas.reduce((s,d)=>s+(fixasPagasMes[d.id]?parseFloat(d.valor)||0:0),0),
+    [despesasFixas,fixasPagasMes]
+  );
   const totalDespesasVariaveis=useMemo(()=>despesas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesas]);
-  const totalDespesas=totalDespesasVariaveis+totalDespesasFixas;
+  // Só entra em DESPESAS o que foi marcado como PAGA (fixas) + variáveis do mês
+  const totalDespesas=totalDespesasVariaveis+totalDespesasFixasPagas;
+  const qtdFixasPagas=useMemo(()=>despesasFixas.filter(d=>!!fixasPagasMes[d.id]).length,[despesasFixas,fixasPagasMes]);
   const saldo=recebido-totalDespesas;
   const isCurrentMonth=monthKey===getMonthKey(new Date());
 
-  async function persistFinance({porMes,fixas}){
+  async function persistFinance({porMes,fixas, pagas}){
     const nextPm=porMes!==undefined?porMes:{...readLocalPorMes(),...porMesCache};
     const nextFx=fixas!==undefined?fixas:(despesasFixas.length?despesasFixas:readLocalFixas());
+    const nextPg=pagas!==undefined?normalizeFixasPagas(pagas):normalizeFixasPagas({...readLocalFixasPagas(),...fixasPagasPorMes});
     setPorMesCache(nextPm);
     writeLocalPorMes(nextPm);
     setDespesasFixas(nextFx);
     writeLocalFixas(nextFx);
+    setFixasPagasPorMes(nextPg);
+    writeLocalFixasPagas(nextPg);
     let lastErr=null;
     for(const ref of getDespesasCloudRefs()){
       try{
-        await ref.set({despesasPorMes:nextPm,despesasFixas:nextFx},{merge:true});
+        await ref.set({despesasPorMes:nextPm,despesasFixas:nextFx,despesasFixasPagasPorMes:nextPg},{merge:true});
         return;
       }catch(err){
         lastErr=err;
@@ -2216,6 +2257,29 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
 
   async function saveDespesasFixas(next){
     await persistFinance({fixas:next});
+  }
+
+  async function toggleDespesaFixaPaga(id){
+    if(!id||togglingPagaId)return;
+    const prev={...fixasPagasPorMes};
+    const mesMap={...(prev[monthKey]||{})};
+    const willPay=!mesMap[id];
+    if(willPay)mesMap[id]=true;
+    else delete mesMap[id];
+    const next={...prev,[monthKey]:mesMap};
+    setTogglingPagaId(id);
+    setFixasPagasPorMes(next);
+    writeLocalFixasPagas(next);
+    try{
+      await persistFinance({pagas:next});
+    }catch(err){
+      console.error("Erro ao marcar despesa fixa como paga:",err);
+      setFixasPagasPorMes(prev);
+      writeLocalFixasPagas(prev);
+      alert("Não foi possível salvar o status PAGA. Tente de novo.");
+    }finally{
+      setTogglingPagaId(null);
+    }
   }
 
   function openDespesaForm(tipo){
@@ -2276,14 +2340,25 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
 
   async function deleteDespesaFixa(id){
     if(!confirm("Remover esta despesa fixa?\nEla deixa de se repetir em todos os meses."))return;
-    const prev=despesasFixas;
+    const prevFx=despesasFixas;
+    const prevPg=fixasPagasPorMes;
     const next=despesasFixas.filter(d=>d.id!==id);
+    const nextPg={...fixasPagasPorMes};
+    Object.keys(nextPg).forEach(mk=>{
+      if(nextPg[mk]&&nextPg[mk][id]){
+        const m={...nextPg[mk]};
+        delete m[id];
+        nextPg[mk]=m;
+      }
+    });
     setDespesasFixas(next);
+    setFixasPagasPorMes(nextPg);
     try{
-      await saveDespesasFixas(next);
+      await persistFinance({fixas:next,pagas:nextPg});
     }catch(err){
       console.error("Erro ao remover despesa fixa:",err);
-      setDespesasFixas(prev);
+      setDespesasFixas(prevFx);
+      setFixasPagasPorMes(prevPg);
       alert("Não foi possível remover a despesa fixa. Tente de novo.");
     }
   }
@@ -2347,21 +2422,21 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             <div className="fin-metric-card fin-metric-despesas-prev">
               <div className="fin-metric-icon"><Icon name="refresh-cw" size={20} style={{color:"#f0b060"}}/></div>
               <div className="fin-metric-label">Despesas Previstas</div>
-              <div className="fin-metric-value" style={{color:"#f0b060"}}>{formatCurrency(totalDespesasFixas)}</div>
+              <div className="fin-metric-value" style={{color:"#f0b060"}}>{formatCurrency(totalDespesasPrevistas)}</div>
               <div className="fin-metric-sub">{despesasFixas.length} fixa{despesasFixas.length!==1?"s":""} · todo mês</div>
             </div>
             <div className="fin-metric-card fin-metric-despesas">
               <div className="fin-metric-icon"><Icon name="credit-card" size={20} style={{color:"#f0909a"}}/></div>
               <div className="fin-metric-label">Despesas</div>
               <div className="fin-metric-value" style={{color:"#f0909a"}}>{formatCurrency(totalDespesas)}</div>
-              <div className="fin-metric-sub">Fixas + {despesas.length} variável{despesas.length!==1?"is":""} no mês</div>
+              <div className="fin-metric-sub">{qtdFixasPagas} fixa{qtdFixasPagas!==1?"s":""} paga{qtdFixasPagas!==1?"s":""} + {despesas.length} variável{despesas.length!==1?"is":""}</div>
             </div>
           </div>
 
           <div className="fin-saldo-bar">
             <div>
               <div style={{fontSize:11,fontWeight:700,opacity:.65,letterSpacing:".06em"}}>SALDO DO MÊS</div>
-              <div style={{fontSize:12,opacity:.55,marginTop:2}}>Recebido − Despesas (fixas + variáveis)</div>
+              <div style={{fontSize:12,opacity:.55,marginTop:2}}>Recebido − Despesas (fixas pagas + variáveis)</div>
             </div>
             <div className={"fin-saldo-val "+(saldo>=0?"fin-saldo-pos":"fin-saldo-neg")}>{formatCurrency(saldo)}</div>
           </div>
@@ -2387,19 +2462,41 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
         {despesasFixasOrdenadas.length>0&&(
           <div style={{marginBottom:16}}>
             <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"#f0b060",marginBottom:8,opacity:.9}}>Fixas (todo mês)</div>
-            {despesasFixasOrdenadas.map(d=>(
-              <div key={d.id} className="fin-despesa-row" style={{borderColor:"rgba(220,140,40,.28)"}}>
+            {despesasFixasOrdenadas.map(d=>{
+              const paga=!!fixasPagasMes[d.id];
+              const busy=togglingPagaId===d.id;
+              return(
+              <div key={d.id} className="fin-despesa-row" style={{borderColor:paga?"rgba(30,160,110,.35)":"rgba(220,140,40,.28)",opacity:paga?1:0.92}}>
                 <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"70px 110px 1fr 120px",gap:10,alignItems:"center"}}>
                   <span className="fin-badge-fixa">Fixa</span>
                   <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{d.data?formatDateBR(d.data):"—"}</div>
                   <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
-                  <div style={{fontSize:14,fontWeight:800,color:"#f0b060",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
+                  <div style={{fontSize:14,fontWeight:800,color:paga?"#60daa8":"#f0b060",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
                 </div>
-                <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesaFixa(d.id)} title="Remover despesa fixa" aria-label="Remover despesa fixa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a",flexShrink:0}}>
-                  <Icon name="x" size={16}/>
-                </button>
+                <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+                  <button
+                    type="button"
+                    className="btn rounded-lg"
+                    onClick={()=>toggleDespesaFixaPaga(d.id)}
+                    disabled={busy}
+                    title={paga?"Desmarcar como paga neste mês":"Marcar como paga neste mês (entra em Despesas)"}
+                    style={{
+                      height:32,padding:"0 10px",fontSize:11,fontWeight:800,letterSpacing:".06em",
+                      border:paga?"1px solid rgba(30,160,110,.45)":"1px solid rgba(96,218,168,.35)",
+                      background:paga?"linear-gradient(135deg,rgba(30,160,110,.28),rgba(13,90,72,.14))":"rgba(30,160,110,.10)",
+                      color:paga?"#60daa8":"#86d4b0",
+                      opacity:busy?0.6:1,
+                    }}
+                  >
+                    {busy?"…":(paga?"PAGA ✓":"PAGA")}
+                  </button>
+                  <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesaFixa(d.id)} title="Remover despesa fixa" aria-label="Remover despesa fixa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a"}}>
+                    <Icon name="x" size={16}/>
+                  </button>
+                </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
