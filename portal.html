@@ -46,9 +46,9 @@
       --tabbar: rgba(255,255,255,.08);
       --badge: rgba(255,255,255,.12);
       --btn: rgba(255,255,255,.10);
-      --done: rgba(30,160,110,.28);
-      --done-border: rgba(30,160,110,.55);
-      --done-text: #6ee7b7;
+      --done: rgba(6,78,59,.42);
+      --done-border: rgba(134,239,172,.55);
+      --done-text: #a7f3d0;
       --divider: rgba(255,255,255,.18);
       --input-bg: rgba(0,0,0,.30);
       --input-border: rgba(255,255,255,.24);
@@ -76,9 +76,9 @@
       --tabbar: rgba(202,222,252,.55);
       --badge: rgba(53,102,182,.08);
       --btn: rgba(255,255,255,.85);
-      --done: rgba(24,126,116,.14);
-      --done-border: rgba(0,102,91,.45);
-      --done-text: #00665B;
+      --done: rgba(4,70,50,.18);
+      --done-border: rgba(110,231,183,.65);
+      --done-text: #065f46;
       --divider: rgba(34,82,160,.20);
       --input-bg: rgba(255,255,255,.92);
       --input-border: rgba(53,102,182,.28);
@@ -199,17 +199,21 @@
     .lesson-card{background:var(--lesson);border-bottom:1px solid var(--divider);color:var(--font);transition:background 400ms ease,border-color 400ms ease;}
     .lesson-card:hover{filter:brightness(1.08);}
     .lesson-card:last-child{border-bottom:none;}
-    .lesson-card.done-card{background:var(--done)!important;border-left:3px solid var(--done-border)!important;color:var(--done-text)!important;transition:background 400ms ease,border-color 400ms ease;}
-    .review-card{background:rgba(30,130,155,.14);border-bottom:1px solid rgba(30,130,155,.20);color:var(--font);transition:background 400ms ease;}
-    .review-card:hover{background:rgba(30,130,155,.22);}
+    .lesson-card.done-card{background:var(--done)!important;border:1.5px solid var(--done-border)!important;border-left:3px solid var(--done-border)!important;color:var(--done-text)!important;transition:background 400ms ease,border-color 400ms ease;}
+    .lesson-card.done-card.done-output{background:rgba(185,28,28,.28)!important;border-color:#ff4d4f!important;border-left-color:#ff4d4f!important;color:#fecaca!important;}
+    .review-card{background:rgba(59,130,246,.14);border-bottom:1px solid rgba(59,130,246,.28);color:var(--font);transition:background 400ms ease;}
+    .review-card:hover{background:rgba(59,130,246,.22);}
     .review-card:last-child{border-bottom:none;}
-    .review-card.done-card{background:var(--done)!important;border-left:3px solid var(--done-border)!important;color:var(--done-text)!important;}
+    .review-card.done-card{background:rgba(37,99,235,.32)!important;border:1.5px solid rgba(147,197,253,.65)!important;border-left:3px solid #60a5fa!important;color:#dbeafe!important;}
+    [data-theme="light"] .lesson-card.done-card.done-output{background:rgba(220,38,38,.12)!important;border-color:#ef4444!important;color:#991b1b!important;}
+    [data-theme="light"] .review-card{background:rgba(59,130,246,.10);border-bottom-color:rgba(59,130,246,.22);}
+    [data-theme="light"] .review-card.done-card{background:rgba(37,99,235,.14)!important;border-color:rgba(59,130,246,.45)!important;color:#1e3a8a!important;}
     .lesson-detail{background:var(--detail);border-top:1px solid var(--divider);padding:14px 18px 16px;}
     .detail-label{font-size:11px;font-weight:700;color:#6ec8dc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
     [data-theme="light"] .detail-label{color:#0a5060;}
     .num-light{background:var(--badge);border:1px solid var(--input-border);color:var(--font);min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    .num-dark{background:rgba(30,143,168,.22);border:1px solid rgba(30,143,168,.42);color:#7de0f8;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
-    [data-theme="light"] .num-dark{background:rgba(30,143,168,.12);border-color:rgba(30,143,168,.35);color:#0d5260;}
+    .num-dark{background:rgba(59,130,246,.22);border:1px solid rgba(59,130,246,.45);color:#93c5fd;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
+    [data-theme="light"] .num-dark{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.35);color:#1d4ed8;}
     .tag-input{background:rgba(30,143,168,.18);color:#7de0f8;border:1px solid rgba(30,143,168,.38);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
     .tag-output{background:rgba(180,80,120,.16);color:#f0a0c0;border:1px solid rgba(180,80,120,.36);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
     [data-theme="light"] .tag-input{background:rgba(30,143,168,.12);color:#1a6070;}
@@ -518,7 +522,9 @@
     .tl-node{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#00d9c0,#00BFA5);border:2px solid rgba(255,255,255,.35);box-shadow:0 0 12px rgba(0,191,165,.55);flex-shrink:0;z-index:2;animation:tlPulse 2.5s ease-in-out infinite;}
     .tl-node-mod{width:16px;height:16px;}
     .tl-node-lesson{width:8px;height:8px;background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.15);box-shadow:none;animation:none;}
-    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#00BFA5,#00a88e);border-color:rgba(0,191,165,.5);box-shadow:0 0 8px rgba(0,191,165,.4);}
+    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#047857,#065f46);border-color:rgba(134,239,172,.7);box-shadow:0 0 8px rgba(16,185,129,.45);}
+    .tl-node-lesson.tl-node-done-output{background:linear-gradient(135deg,#dc2626,#b91c1c);border-color:#ff4d4f;box-shadow:0 0 10px rgba(239,68,68,.5);}
+    .tl-node-lesson.tl-node-done-review{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-color:#93c5fd;box-shadow:0 0 10px rgba(59,130,246,.5);}
     .tl-node-lesson.tl-node-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border-color:rgba(56,189,248,.6);box-shadow:0 0 10px rgba(56,189,248,.45);animation:tlPulse 2s ease-in-out infinite;}
     @keyframes tlPulse{0%,100%{box-shadow:0 0 8px rgba(0,191,165,.4);}50%{box-shadow:0 0 18px rgba(0,191,165,.75);}}
     .tl-segment{width:2px;flex:1;min-height:28px;position:relative;margin:4px 0;}
@@ -549,16 +555,23 @@
     .tl-lesson-body{flex:1;min-width:0;}
     .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:12px;border:1px solid transparent;cursor:pointer;text-align:left;font-family:inherit;transition:all .18s;position:relative;overflow:hidden;}
     .tl-lesson-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.12) 50%,transparent 60%);transform:translateX(-100%);transition:none;}
-    .tl-pill-done{background:linear-gradient(135deg,#00BFA5,#00a88e);border-color:rgba(0,191,165,.45);color:#fff;box-shadow:0 4px 16px rgba(0,191,165,.25);}
+    .tl-pill-done{background:linear-gradient(135deg,#065f46,#047857);border-color:rgba(134,239,172,.65);color:#ecfdf5;box-shadow:0 4px 16px rgba(6,95,70,.35);}
     .tl-pill-done:hover::after{animation:tlPillShine .6s ease;}
+    .tl-pill-done-output{background:linear-gradient(135deg,#b91c1c,#dc2626);border-color:#ff4d4f;color:#fff;box-shadow:0 4px 16px rgba(220,38,38,.35);}
+    .tl-pill-done-review{background:linear-gradient(135deg,#1d4ed8,#2563eb);border-color:#93c5fd;color:#fff;box-shadow:0 4px 16px rgba(37,99,235,.35);}
     .tl-pill-active{background:linear-gradient(135deg,rgba(56,189,248,.35),rgba(14,165,233,.2));border-color:rgba(56,189,248,.45);color:#fff;}
-    .tl-pill-pending{background:rgba(120,130,150,.18);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.38);}
-    .tl-pill-pending:hover{background:rgba(120,130,150,.26);color:rgba(255,255,255,.5);}
+    .tl-pill-pending{background:rgba(120,130,150,.18);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.72);}
+    .tl-pill-pending:hover{background:rgba(120,130,150,.26);color:rgba(255,255,255,.88);}
+    .tl-pill-pending-input{border-color:rgba(30,143,168,.40);color:rgba(180,230,245,.9);}
+    .tl-pill-pending-output{border-color:rgba(240,160,192,.40);color:rgba(250,200,220,.9);}
+    .tl-pill-pending-review{border-color:rgba(59,130,246,.45);color:rgba(191,219,254,.95);background:rgba(59,130,246,.12);}
     @keyframes tlPillShine{to{transform:translateX(100%);}}
     .tl-lesson-title{font-size:13px;font-weight:700;}
     .tl-lesson-meta{font-size:10px;opacity:.75;margin-top:2px;}
     .tl-previsao{font-size:9px;opacity:.65;letter-spacing:.02em;}
-    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#4CAF50;color:#fff;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 2px 8px rgba(76,175,80,.35);}
+    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#065f46;color:#ecfdf5;border:1px solid rgba(134,239,172,.55);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 2px 8px rgba(6,95,70,.35);}
+    .tl-badge-done-output{background:#b91c1c;border-color:#ff4d4f;color:#fff;box-shadow:0 2px 8px rgba(220,38,38,.4);}
+    .tl-badge-done-review{background:#1d4ed8;border-color:#93c5fd;color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.4);}
     .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(56,189,248,.35);color:#7dd3fc;border:1px solid rgba(56,189,248,.5);flex-shrink:0;}
     .tl-lesson-expand{margin-top:6px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(8,18,32,.6);animation:tlExpand .25s ease;}
     @keyframes tlExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
@@ -566,8 +579,8 @@
     .diario-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     .pending-page{text-align:center;padding:48px 24px;}
     .pending-page-icon{font-size:40px;margin-bottom:12px;opacity:.6;}
-    .tag-review{background:rgba(0,217,192,.16);color:#00d9c0;border:1px solid rgba(0,217,192,.36);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    [data-theme="light"] .tag-review{color:#0a6a5c;}
+    .tag-review{background:rgba(59,130,246,.18);color:#93c5fd;border:1px solid rgba(59,130,246,.42);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
+    [data-theme="light"] .tag-review{background:rgba(59,130,246,.12);color:#1d4ed8;border-color:rgba(59,130,246,.35);}
 
     /* ── RESPONSIVO MOBILE ── */
     @media (max-width:640px){
@@ -945,6 +958,43 @@ const FOUNDATION_BLOCK=["input","input","output","input","input","output","input
 const SPEECH_BLOCK=["input","output","input","output","input","output","review"];
 const BLOCK_PATTERN=FOUNDATION_BLOCK; // compat legado
 
+/** Temas e objetivos oficiais do Reflective Mind (W6 — lições 121–180 + R1–R10). */
+const REFLECTIVE_MIND_INPUT_META={
+  121:{tema:"Vida cotidiana, expectativas e experiências pessoais",objetivos:"Uso do passado do verbo to be em frases afirmativas, negativas e interrogativas; expressão de desejo com I wish; vocabulário de contexto social e profissional"},
+  123:{tema:"Alimentação, restaurantes e hábitos do passado",objetivos:"Estrutura used to para expressar hábitos e estados passados; vocabulário de ambiente gastronômico e opções de refeição"},
+  125:{tema:"Hospedagem e acomodações",objetivos:"Estrutura de ênfase com it was... who; vocabulário de hotelaria e serviços de hospedagem"},
+  127:{tema:"Viagens aéreas e forças militares",objetivos:"Estrutura was/were going to para expressar intenção ou plano passado; vocabulário de aeroporto, aviação e forças armadas"},
+  129:{tema:"Direções, mobilidade urbana e negociações",objetivos:"Estrutura be used to + gerúndio para hábitos presentes; estrutura be supposed to para obrigações e expectativas; vocabulário de orientação espacial e comércio"},
+  131:{tema:"Vestuário, moda e compras",objetivos:"Pronome relativo that em orações adjetivas restritivas; vocabulário de roupas, tecidos, padrões e ambiente de loja"},
+  133:{tema:"Calçados, personalidade e relações profissionais",objetivos:"Pronome relativo who em orações adjetivas e substantivas; vocabulário de calçados, caráter pessoal e contexto comercial"},
+  135:{tema:"Lavanderia, moedas americanas e possibilidade",objetivos:"Estruturas com can/could + there be para expressar possibilidade; vocabulário de lavanderia e sistema monetário americano"},
+  137:{tema:"Relações interpessoais, finanças pessoais e obrigação/dedução",objetivos:"Estruturas com should/must + there be para expressar obrigação e dedução lógica; vocabulário de relacionamentos, combustível e finanças"},
+  139:{tema:"Frutas, mercado e present perfect",objetivos:"Introdução ao present perfect (afirmativa, negativa, interrogativa e respostas curtas); vocabulário de frutas e ambiente de mercado"},
+  141:{tema:"Vegetais, culinária e present perfect com just",objetivos:"Present perfect com advérbio just para ações recentemente concluídas; vocabulário de vegetais e contexto editorial/culinário"},
+  143:{tema:"Comunicação telefônica e ambiente corporativo",objetivos:"Present perfect com ever para experiências de vida; vocabulário de telefonia, comunicação corporativa e recursos humanos"},
+  145:{tema:"Cuidados pessoais, beleza e cabelo",objetivos:"Present perfect com already para ações concluídas antes do esperado; vocabulário de salão de beleza e cuidados pessoais"},
+  147:{tema:"Viagens internacionais, turismo e present perfect",objetivos:"Present perfect com yet e never; vocabulário de agências de viagem, documentação consular e correspondência"},
+  149:{tema:"Moradia, saúde e present perfect com for e since",objetivos:"Present perfect com for e since para duração e ponto de início; vocabulário de imóveis, saúde e condições físicas"},
+  151:{tema:"Aparência física, personalidade e experiências de vida",objetivos:"Present perfect com been e gone; distinção entre have been e have gone; vocabulário de traços de personalidade e aparência"},
+  153:{tema:"Orientação geográfica, liderança e present perfect com been + adjetivo",objetivos:"Present perfect com have/has been + adjetivo para estados recentes; vocabulário de pontos cardeais, liderança e turismo"},
+  155:{tema:"Natureza, paisagem e present perfect com since em estrutura it's been",objetivos:"Estrutura it's been + tempo + since para indicar tempo decorrido; vocabulário de natureza, psicologia e associações"},
+  157:{tema:"Natureza, animais e present perfect passivo",objetivos:"Present perfect na voz passiva; vocabulário de animais domésticos e selvagens, ambiente lacustre e materiais"},
+  159:{tema:"Sociedade, direitos civis e uso progressivo de to be",objetivos:"Uso progressivo de to be (is/are being); vocabulário de direitos civis, igualdade e sociedade"},
+  161:{tema:"Sociedade, entretenimento e terceiro condicional",objetivos:"Terceiro condicional com would have + particípio; vocabulário de questões sociais, cinema e trabalho"},
+  163:{tema:"Turismo, conquistas pessoais e terceiro condicional com could",objetivos:"Terceiro condicional com could have + particípio para especular sobre possibilidades passadas; vocabulário de turismo, natureza e realizações"},
+  165:{tema:"Celebridades, fauna e terceiro condicional com should",objetivos:"Terceiro condicional com should have + particípio para expressar crítica ou arrependimento sobre ações passadas; vocabulário de política, animais e consumo"},
+  167:{tema:"Problemas de viagem e terceiro condicional com must",objetivos:"Must have + particípio para dedução sobre eventos passados; vocabulário de emergências, veículos e estados emocionais"},
+  169:{tema:"Comunicação, educação e especulação sobre o passado",objetivos:"May have + particípio para especulação sobre eventos passados; vocabulário de educação, conferências e comportamento social"},
+  171:{tema:"Comportamento social, literatura e especulação com might",objetivos:"Might have + particípio para especulação com menor grau de certeza; vocabulário de gêneros literários, comportamento urbano e relações interpessoais"},
+  173:{tema:"Música, saúde e present perfect contínuo",objetivos:"Present perfect continuous (have/has been + gerúndio) para ações em curso desde o passado; vocabulário de gêneros musicais, dor física e transporte urbano"},
+  175:{tema:"Formação acadêmica, finanças e past perfect",objetivos:"Past perfect (had + particípio) para sequenciar eventos no passado; vocabulário de educação, finanças empresariais e situações acidentais"},
+  177:{tema:"Aparência, política e primeiro condicional",objetivos:"Primeiro condicional (if + present simple, will + infinitive) para situações reais e prováveis; vocabulário de ideologias políticas, aparência e treinamento profissional"},
+  179:{tema:"Clima, sociedade e terceiro condicional completo",objetivos:"Terceiro condicional completo (if + past perfect, would have + particípio) para situações hipotéticas no passado; vocabulário de fenômenos climáticos, artes e sociologia"},
+};
+const REFLECTIVE_OUTPUT_OBJ="Aplicação, produção e prática da lição anterior";
+const REFLECTIVE_REVIEW_OBJ="Revisão e análise das 6 últimas lições anteriores";
+
+
 function makeFoundationModulos(names){
   return names.map((nome,i)=>({
     id:i+1,nome,
@@ -988,7 +1038,7 @@ const DEFAULT_COURSES=[
     grupo:"corporate",padraoVisual:"rose",
     modulos:makeFlashModulos(4,62)},
   {id:"speech_b",nome:"Reflective Mind",corBase:"#f59e0b",ativo:true,ordem:6,
-    grupo:"special",padraoVisual:"orange",
+    grupo:"special",padraoVisual:"orange",numeroInicio:121,
     modulos:makeSpeechModulos(["Módulo A","Módulo B"])},
 ];
 
@@ -1096,8 +1146,14 @@ async function ensureCoursesSeeded(forceBrandMeta){
         grupo:c.grupo||null,
         padraoVisual:c.padraoVisual||null,
       };
+      if(c.numeroInicio!=null)patch.numeroInicio=c.numeroInicio;
       if(forceBrandMeta||!byId[c.id].modulos||!byId[c.id].modulos.length){
         patch.modulos=payload.modulos;
+      }
+      // Reflective Mind: força estrutura oficial (60 lições + 10 reviews) e numeração 121+
+      if(c.id==="speech_b"&&forceBrandMeta){
+        patch.modulos=payload.modulos;
+        patch.numeroInicio=121;
       }
       // Força nomes/cores oficiais sempre que o seed rodar (admin), para bater com o landing
       try{await db.collection("courses").doc(c.id).set(patch,{merge:true});}catch(e){/* aluno sem write */}
@@ -1174,7 +1230,11 @@ const COURSE_TEMPLATES=[
   {id:"flash",label:"Flash Talk (4×62, sem blocos)",builder:()=>({
     modulos:makeFlashModulos(4,62),
   })},
-  {id:"speech",label:"Corporate Speech / Reflective Mind (2×35, blocos de 7)",builder:()=>({
+  {id:"speech",label:"Corporate Speech / Reflective Mind (2×35, blocos de 7 · I/O/R)",builder:()=>({
+    modulos:makeSpeechModulos(["Módulo A","Módulo B"]),
+  })},
+  {id:"reflective",label:"Reflective Mind (121–180 + R1–R10)",builder:()=>({
+    numeroInicio:121,
     modulos:makeSpeechModulos(["Módulo A","Módulo B"]),
   })},
   {id:"custom",label:"Personalizado",builder:null},
@@ -1364,30 +1424,68 @@ function getLessonTypeFromModule(mod,posInModule){
 function getBlockLessonType(posInModule){return FOUNDATION_BLOCK[(posInModule-1)%10];}
 
 function getLessonBorderColor(item){
+  const done=item.status==="concluida"||item.status==="realizada";
   if(item.status==="andamento")return "#e8a94c";
-  if(item.status!=="concluida"&&item.status!=="realizada")return "var(--font-muted)";
-  if(item.lessonType==="output")return "#e5636b";
-  if(item.lessonType==="review")return "#00d9c0";
+  if(item.lessonType==="review"||item.type==="review")return done?"#60a5fa":"#3b82f6";
+  if(item.lessonType==="output")return done?"#ff4d4f":"#e5636b";
+  // input (e default)
+  if(done)return "#86efac"; // borda verde clara quando concluída
   return "#5b9be8";
+}
+
+function getReflectiveMeta(lessonType, contentNum, reviewNum){
+  if(lessonType==="review"){
+    return{tema:"Revisão "+reviewNum,objetivos:REFLECTIVE_REVIEW_OBJ};
+  }
+  if(lessonType==="output"){
+    const prev=REFLECTIVE_MIND_INPUT_META[contentNum-1];
+    return{tema:prev?prev.tema:("Aplicação da lição "+(contentNum-1)),objetivos:REFLECTIVE_OUTPUT_OBJ};
+  }
+  const m=REFLECTIVE_MIND_INPUT_META[contentNum];
+  return m?{tema:m.tema,objetivos:m.objetivos}:{tema:"",objetivos:""};
 }
 
 /** Gera estrutura de livros/lições a partir do documento do curso (mesmos campos de antes). */
 function generateBooks(course){
   const c=course||DEFAULT_COURSES[0];
   const books=[];
-  let globalNum=0;
+  let globalIdx=0;
+  const isReflective=c.id==="speech_b"||c.numeroInicio===121||c.padraoVisual==="orange"&&c.grupo==="special";
+  const startNum=c.numeroInicio!=null?c.numeroInicio:(isReflective?121:1);
+  let contentNum=startNum-1;
+  let reviewNum=0;
   (c.modulos||[]).forEach((mod,mi)=>{
     const bi=mod.id!=null?mod.id:mi+1;
     const total=getModuleLessonCount(mod);
     const items=[];
     for(let li=1;li<=total;li++){
-      globalNum++;
+      globalIdx++;
       const lt=getLessonTypeFromModule(mod,li);
       const isReview=lt==="review";
+      let num, pos, title, tema="", objetivos="";
+      if(isReview){
+        reviewNum++;
+        num=reviewNum;
+        pos="R"+reviewNum;
+        title="Review "+reviewNum;
+        if(isReflective){
+          const meta=getReflectiveMeta("review",0,reviewNum);
+          tema=meta.tema;objetivos=meta.objetivos;
+        }
+      }else{
+        contentNum++;
+        num=contentNum;
+        pos=contentNum;
+        title=getLessonTitle(contentNum);
+        if(isReflective){
+          const meta=getReflectiveMeta(lt,contentNum,0);
+          tema=meta.tema;objetivos=meta.objetivos;
+        }
+      }
       items.push({
-        id:`b${bi}-l${globalNum}`,pos:globalNum,type:isReview?"review":"lesson",lessonType:lt,num:globalNum,
-        title:isReview?`Lesson ${globalNum} — Review`:getLessonTitle(globalNum),status:"pendente",
-        date:"",dataPrevista:"",objetivos:"",feedback:"",obs:"",link:"",
+        id:`b${bi}-l${globalIdx}`,pos:pos,type:isReview?"review":"lesson",lessonType:lt,num:num,
+        title:title,status:"pendente",
+        date:"",dataPrevista:"",tema:tema,objetivos:objetivos,feedback:"",obs:"",link:"",
         evalF:"",evalA:"",evalL:"",evalE:"",
         linkMaterial:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",tarefaFeita:false,
         materiaisModuloPdf:"",
@@ -1402,7 +1500,14 @@ function mergeBooks(trilhaData,course){
   const template=course?generateBooks(course):BOOKS_TEMPLATE;
   return template.map(b=>({
     ...b,
-    items:b.items.map(i=>({...i,...((trilhaData&&trilhaData[i.id])||{})}))
+    items:b.items.map(i=>{
+      const saved=(trilhaData&&trilhaData[i.id])||{};
+      const merged={...i,...saved};
+      // Preenche tema/objetivos oficiais se o aluno ainda não tiver valor salvo
+      if(!merged.tema&&i.tema)merged.tema=i.tema;
+      if(!merged.objetivos&&i.objetivos)merged.objetivos=i.objetivos;
+      return merged;
+    })
   }));
 }
 function getCurrentModule(books,modulosOcultos){
@@ -1784,6 +1889,7 @@ function AdminLessonPanel({item,updateField,setStatus}){
         </div>
       </div>
       <div><div className="detail-label mb-2">Links</div><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{LK.map(lk=><div key={lk.f}><div className="text-xs font-semibold mb-1" style={{color:"var(--font-muted)"}}>{lk.l}</div><input type="url" className="input-light" placeholder="https://" value={item[lk.f]||(lk.f==="linkMaterial"?item.link||"":"")} onChange={e=>updateField(lk.f,e.target.value)}/></div>)}</div></div>
+      <div><div className="detail-label">Tema</div><input className="input-light mt-1" placeholder="Tema da lição (sem parênteses)" value={item.tema||""} onChange={e=>updateField("tema",e.target.value)}/></div>
       <div><div className="detail-label">Objetivos da Aula</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="O que será aprendido nesta aula..." value={item.objetivos||""} onChange={e=>updateField("objetivos",e.target.value)}/></div>
       <div><div className="detail-label">Feedback para o Aluno</div><textarea className="input-light mt-1" rows={3} style={{resize:"vertical"}} placeholder="Retorno personalizado para o aluno..." value={item.feedback||""} onChange={e=>updateField("feedback",e.target.value)}/></div>
       <div><div className="detail-label">Observações Internas</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="Notas do professor (não visíveis ao aluno)..." value={item.obs||""} onChange={e=>updateField("obs",e.target.value)}/></div>
@@ -1802,10 +1908,16 @@ function StudentLessonView({item}){
   const showAoVivo=urlAoVivo&&!concluida;
   const hasEval=EVAL_SKILLS.some(sk=>item[sk.f]);
   const hasLinks=urlLicao||urlMaterial||urlTarefa||showAoVivo;
-  const hasAnyInfo=item.objetivos||(concluida&&item.feedback)||hasEval||hasLinks;
+  const hasAnyInfo=item.tema||item.objetivos||(concluida&&item.feedback)||hasEval||hasLinks;
   if(!hasAnyInfo)return <p className="text-xs muted">Nenhuma informação disponível ainda.</p>;
   return(
     <div className="space-y-4">
+      {item.tema&&(
+        <div>
+          <div className="detail-label">Tema</div>
+          <p className="text-sm mt-1" style={{color:"var(--font)",lineHeight:1.55}}>{item.tema}</p>
+        </div>
+      )}
       {item.objetivos&&(
         <div>
           <div className="detail-label">Objetivo</div>
@@ -1874,6 +1986,8 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
   const borderColor=getLessonBorderColor(item);
   const typeTag=isReview?"tag-review":item.lessonType==="output"?"tag-output":"tag-input";
   const typeLabel=isReview?"Review":item.lessonType==="output"?"Output":"Input";
+  const isDone=item.status==="concluida"||item.status==="realizada";
+  const doneTypeCls=isDone?(item.lessonType==="output"?" done-output":isReview?" done-review":""):"";
   if(embedMode)return(
     <div ref={rootRef} className="lesson-detail" style={{padding:"12px 14px"}}>
       <div className="flex items-center gap-2 flex-wrap mb-3 pb-3" style={{borderBottom:"1px solid rgba(255,255,255,.08)"}}>
@@ -1885,7 +1999,7 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
     </div>
   );
   return(
-    <div ref={rootRef} className={(isReview?"review-card":"lesson-card")+(item.status==="concluida"||item.status==="realizada"?" done-card":"")} style={{borderLeft:`3px solid ${borderColor}`}}>
+    <div ref={rootRef} className={(isReview?"review-card":"lesson-card")+(isDone?" done-card":"")+doneTypeCls} style={{borderLeft:`3px solid ${borderColor}`}}>
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={handleToggle}>
         <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
         <div className="flex-1 min-w-0">
@@ -1894,7 +2008,8 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
             <span className={typeTag}>{typeLabel}</span>
           </div>
           <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap muted">
-            <span>{`Lesson ${item.num}`}</span>
+            <span>{isReview?("R"+item.num):("Lesson "+item.num)}</span>
+            {item.tema&&<span style={{opacity:.9}}>{item.tema}</span>}
             {item.date&&<span className="flex items-center gap-1"><Icon name="calendar" size={10}/>{formatDateBR(item.date)}</span>}
           </div>
         </div>
@@ -1942,6 +2057,10 @@ function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
   const rootRef=useRef(null);
   const concluida=item.status==="concluida"||item.status==="realizada";
   const andamento=item.status==="andamento";
+  const isReview=item.type==="review"||item.lessonType==="review";
+  const isOutput=item.lessonType==="output";
+  const typeTag=isReview?"tag-review":isOutput?"tag-output":"tag-input";
+  const typeLabel=isReview?"Review":isOutput?"Output":"Input";
   useEffect(()=>{
     if(!defaultOpen)return;
     setOpen(true);
@@ -1950,9 +2069,19 @@ function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
     return()=>clearTimeout(t);
   },[defaultOpen]);
   function toggle(){if(!open)playLessonSound();setOpen(o=>!o);}
-  const pillCls=concluida?"tl-pill-done":andamento?"tl-pill-active":"tl-pill-pending";
-  const nodeCls="tl-node-lesson"+(concluida?" tl-node-done":andamento?" tl-node-active":"");
-  const tema=item.objetivos?item.objetivos.split(/[.!?\n]/)[0].slice(0,28)+(item.objetivos.length>28?"…":""):"(Tema)";
+  let pillCls;
+  if(concluida){
+    pillCls="tl-pill-done"+(isOutput?" tl-pill-done-output":isReview?" tl-pill-done-review":"");
+  }else if(andamento){
+    pillCls="tl-pill-active";
+  }else{
+    pillCls="tl-pill-pending tl-pill-pending-"+(isReview?"review":isOutput?"output":"input");
+  }
+  const nodeCls="tl-node-lesson"+(concluida?(" tl-node-done"+(isOutput?" tl-node-done-output":isReview?" tl-node-done-review":"")):andamento?" tl-node-active":"");
+  const temaRaw=item.tema||(item.objetivos?item.objetivos.split(/[.!?\n]/)[0]:"");
+  const tema=temaRaw?String(temaRaw).replace(/^\(|\)$/g,"").trim():"";
+  const temaShort=tema?(tema.length>36?tema.slice(0,36)+"…":tema):"";
+  const label=isReview?("R"+item.num):("Lesson "+item.num);
   return(
     <div ref={rootRef} className="tl-lesson-row">
       <div className="tl-lesson-rail">
@@ -1961,11 +2090,14 @@ function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
       </div>
       <div className="tl-lesson-body">
         <button type="button" className={"tl-lesson-pill "+pillCls} onClick={toggle}>
-          <div>
-            <div className="tl-lesson-title">Lesson {item.num} <span style={{fontWeight:500,opacity:.85}}>({tema})</span></div>
+          <div style={{minWidth:0,flex:1}}>
+            <div className="tl-lesson-title" style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <span>{label}{temaShort?<> <span style={{fontWeight:500,opacity:.9}}>{temaShort}</span></>:null}</span>
+              <span className={typeTag} style={{fontSize:9}}>{typeLabel}</span>
+            </div>
             {item.dataPrevista&&<div className="tl-lesson-meta"><span className="tl-previsao">previsão</span> · {formatDateBR(item.dataPrevista).slice(0,5)}</div>}
           </div>
-          {concluida&&<span className="tl-badge-done">concluída</span>}
+          {concluida&&<span className={"tl-badge-done"+(isOutput?" tl-badge-done-output":isReview?" tl-badge-done-review":"")}>concluída</span>}
           {andamento&&!concluida&&<span className="tl-badge-current">atual</span>}
           <Icon name="chevron-down" size={14} className={"tl-mod-chevron muted"+(open?" tl-mod-chevron-open":"")} style={{opacity:.6}}/>
         </button>
