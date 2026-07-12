@@ -2237,14 +2237,14 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     const data=(despesaForm.data||"").trim();
     const descricao=(despesaForm.descricao||"").trim();
     const valorNum=parseFloat(String(despesaForm.valor).replace(",","."))||0;
-    if(!isFixa&&!data){setDespesaError("Informe a data.");return;}
+    if(!data){setDespesaError("Informe a data.");return;}
     if(!descricao){setDespesaError("Informe a descrição.");return;}
     if(valorNum<=0){setDespesaError("Informe um valor maior que zero.");return;}
 
     setSavingDespesa(true);
     try{
       if(isFixa){
-        const nova={id:Date.now().toString(),descricao,valor:valorNum,fixa:true};
+        const nova={id:Date.now().toString(),data,descricao,valor:valorNum,fixa:true};
         await saveDespesasFixas([...despesasFixas,nova]);
       }else{
         const nova={id:Date.now().toString(),data,descricao,valor:valorNum};
@@ -2300,7 +2300,11 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   },[despesas]);
 
   const despesasFixasOrdenadas=useMemo(()=>{
-    return[...despesasFixas].sort((a,b)=>(a.descricao||"").localeCompare(b.descricao||""));
+    return[...despesasFixas].sort((a,b)=>{
+      const da=(a.data||"").slice(8,10); // dia
+      const db=(b.data||"").slice(8,10);
+      return da.localeCompare(db)||(a.descricao||"").localeCompare(b.descricao||"");
+    });
   },[despesasFixas]);
 
   return(
@@ -2385,8 +2389,9 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"#f0b060",marginBottom:8,opacity:.9}}>Fixas (todo mês)</div>
             {despesasFixasOrdenadas.map(d=>(
               <div key={d.id} className="fin-despesa-row" style={{borderColor:"rgba(220,140,40,.28)"}}>
-                <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"90px 1fr 120px",gap:12,alignItems:"center"}}>
+                <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"70px 110px 1fr 120px",gap:10,alignItems:"center"}}>
                   <span className="fin-badge-fixa">Fixa</span>
+                  <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{d.data?formatDateBR(d.data):"—"}</div>
                   <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
                   <div style={{fontSize:14,fontWeight:800,color:"#f0b060",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
                 </div>
@@ -2438,16 +2443,15 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             </div>
             <form onSubmit={handleSaveDespesa}>
               <div className="modal-body" style={{display:"flex",flexDirection:"column",gap:16}}>
-                {showDespesaForm==="fixa"?(
+                {showDespesaForm==="fixa"&&(
                   <div style={{fontSize:13,lineHeight:1.5,opacity:.85,padding:"10px 12px",borderRadius:10,background:"rgba(220,140,40,.12)",border:"1px solid rgba(220,140,40,.28)",color:"#f0b060"}}>
-                    Esta despesa se repete automaticamente em <strong>todos os meses</strong> e entra em Despesas Previstas.
-                  </div>
-                ):(
-                  <div>
-                    <label className="form-label" htmlFor="despesa-data">Data</label>
-                    <input id="despesa-data" type="date" className="input-light w-full" value={despesaForm.data} onChange={e=>setDespesaForm(f=>({...f,data:e.target.value}))} required/>
+                    Esta despesa se repete automaticamente em <strong>todos os meses</strong> e entra em Despesas Previstas. A data indica o dia de referência no mês.
                   </div>
                 )}
+                <div>
+                  <label className="form-label" htmlFor="despesa-data">Data</label>
+                  <input id="despesa-data" type="date" className="input-light w-full" value={despesaForm.data} onChange={e=>setDespesaForm(f=>({...f,data:e.target.value}))} required/>
+                </div>
                 <div>
                   <label className="form-label" htmlFor="despesa-desc">Descrição</label>
                   <input id="despesa-desc" type="text" className="input-light w-full" placeholder={showDespesaForm==="fixa"?"Ex: Aluguel, internet, plataforma...":"Ex: Material, taxa, compra..."} value={despesaForm.descricao} onChange={e=>setDespesaForm(f=>({...f,descricao:e.target.value}))} required autoFocus/>
