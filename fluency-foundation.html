@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#061218">
     <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
     <link rel="canonical" href="https://thefluency.studio/fluency-foundation.html">
-    <link rel="preload" as="image" href="assets/ffpage.jpg?v=5" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/ffpage.jpg?v=6" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -179,7 +179,7 @@
         }
         .hero-mobile-footer .skill-sub-label { font-size: 0.55rem; }
 
-        /* —— DESKTOP / TABLET (md+): 2 colunas lado a lado —— */
+        /* —— DESKTOP / TABLET (md+): texto ESQUERDA | foto DIREITA — espaços separados, zero overlay —— */
         @media (min-width: 768px) {
             .hero-mobile-only { display: none !important; }
             .hero-desktop-only { display: block !important; }
@@ -190,43 +190,57 @@
                 min-height: min(100svh, 900px);
                 display: flex;
                 align-items: center;
+                background: #061218;
             }
 
             .hero-desktop-only {
+                width: 100%;
                 max-width: min(84rem, 100%);
                 margin-inline: auto;
                 padding-inline: clamp(1.25rem, 3vw, 2.5rem);
             }
 
+            /* Duas colunas: cada filho no próprio espaço (sem position absolute / sem z-index de overlay) */
             .hero-desktop-grid {
-                display: grid;
-                grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.95fr);
-                column-gap: clamp(1rem, 2.5vw, 2rem);
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
                 align-items: center;
+                justify-content: space-between;
+                gap: clamp(1.25rem, 3vw, 2.5rem);
                 width: 100%;
             }
 
             .hero-ff-copy {
-                width: 100%;
-                max-width: 38rem;
+                flex: 1 1 48%;
+                width: auto;
+                max-width: 40rem;
+                min-width: 0;
                 text-align: left;
-                /* título alinhado à faixa do peito do modelo */
                 align-self: center;
-                padding-block: 0.5rem;
+                padding: 0.5rem 0;
+                position: relative;
+                z-index: auto;
+                background: #061218; /* coluna de texto sólida — nunca transparente sobre a foto */
+                text-shadow: none;
             }
 
             .hero-ff-media-desktop {
+                flex: 0 1 46%;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
                 min-width: 0;
+                position: relative;
+                z-index: auto;
             }
 
             .hero-ff-media-desktop img {
                 display: block;
-                width: auto;
-                height: min(78vh, 40rem);
-                max-width: 100%;
+                width: 100%;
+                max-width: min(100%, 28rem);
+                height: auto;
+                max-height: min(78vh, 40rem);
                 aspect-ratio: 2 / 3;
                 object-fit: cover;
                 object-position: right center;
@@ -237,21 +251,35 @@
 
         @media (min-width: 992px) {
             .hero-desktop-grid {
-                grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.92fr);
-                column-gap: clamp(0.75rem, 1.8vw, 1.5rem);
+                gap: clamp(1rem, 2.2vw, 2rem);
             }
-            .hero-ff-copy { max-width: 40rem; }
+            .hero-ff-copy {
+                flex-basis: 50%;
+                max-width: 42rem;
+            }
+            .hero-ff-media-desktop {
+                flex-basis: 44%;
+            }
             .hero-ff-media-desktop img {
-                height: min(80vh, 42rem);
+                max-width: min(100%, 30rem);
+                max-height: min(80vh, 42rem);
             }
         }
 
         @media (min-width: 1200px) {
             .hero-desktop-grid {
-                grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
-                column-gap: clamp(0.5rem, 1.2vw, 1.1rem);
+                gap: clamp(0.75rem, 1.5vw, 1.5rem);
             }
-            .hero-ff-copy { max-width: 42rem; }
+            .hero-ff-copy {
+                flex-basis: 52%;
+                max-width: 44rem;
+            }
+            .hero-ff-media-desktop {
+                flex-basis: 42%;
+            }
+            .hero-ff-media-desktop img {
+                max-width: min(100%, 32rem);
+            }
         }
 
         /* Below the hero: solid page */
@@ -589,7 +617,7 @@
             <div class="hero-mobile-only">
                 <div class="hero-ff-photo-wrap">
                     <img
-                        src="assets/ffpage.jpg?v=5"
+                        src="assets/ffpage.jpg?v=6"
                         alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
                         class="hero-ff-photo-mobile"
                         width="1000"
@@ -653,9 +681,10 @@
                 </div>
             </div>
 
-            <!-- DESKTOP: duas colunas (texto | imagem) — sem sobreposição -->
+            <!-- DESKTOP: texto à esquerda | foto à direita — cada um no próprio espaço, sem overlay -->
             <div class="hero-desktop-only">
                 <div class="hero-desktop-grid">
+                    <!-- COLUNA 1: só texto -->
                     <div class="hero-ff-copy">
                         <p class="text-xs font-bold tracking-[0.28em] text-teal-soft uppercase mb-5">General English · Fluency Foundation</p>
                         <h1 class="text-5xl font-black leading-[1.12] tracking-tight text-white mb-5 uppercase" aria-hidden="true">
@@ -709,9 +738,10 @@
                             </div>
                         </div>
                     </div>
+                    <!-- COLUNA 2: só foto -->
                     <div class="hero-ff-media-desktop">
                         <img
-                            src="assets/ffpage.jpg?v=5"
+                            src="assets/ffpage.jpg?v=6"
                             alt=""
                             width="1000"
                             height="1500"
