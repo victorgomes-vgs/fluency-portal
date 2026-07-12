@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#061218">
     <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
     <link rel="canonical" href="https://thefluency.studio/fluency-foundation.html">
-    <link rel="preload" as="image" href="assets/ffpage.jpg?v=4" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/ffpage.jpg?v=5" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -75,309 +75,186 @@
         }
 
         /*
-         * Hero — mobile-first, Grid/Flex, fluid spacing.
-         * Image 2:3, object-position: right center, full body, no forced zoom.
-         * Breakpoints: Mobile ≤767 | Tablet 768–991 | Notebook 992–1199 | Desktop ≥1200
-         * Layout only — colors, type, content, buttons, image file unchanged.
+         * Hero — mesma LÓGICA estrutural do index.html:
+         * dois blocos alternados por display (mobile / desktop),
+         * sem texto sobre a área principal da foto.
+         * Mobile: foto full-width no topo → texto abaixo.
+         * Desktop (md+): duas colunas lado a lado (texto | imagem 2:3).
          */
         .hero-ff {
             position: relative;
-            isolation: isolate;
             background-color: #061218;
-            overflow: hidden;
-            /* fluid height — no rigid 100vh lock that creates empty air */
-            min-height: min(100svh, 920px);
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: 1fr;
-            align-items: stretch;
-            justify-items: stretch;
+            overflow-x: hidden;
+            padding-top: 5.5rem;
+            padding-bottom: 1.5rem;
+            min-height: auto;
+        }
+
+        .hero-mobile-only { display: block; width: 100%; }
+        .hero-desktop-only { display: none; width: 100%; }
+
+        /* —— MOBILE: foto em cima, texto embaixo (nunca sobreposto) —— */
+        .hero-ff-photo-wrap {
+            position: relative;
             width: 100%;
-            max-width: none;
-            /* header clearance + lift text block ~40–60px vs previous 6.5rem top */
-            padding:
-                clamp(4.25rem, 12vw, 5.25rem)
-                clamp(0.85rem, 3.5vw, 1.25rem)
-                clamp(1.25rem, 4vw, 2rem);
-            box-sizing: border-box;
-        }
-
-        /* Soft veil — left side only for copy legibility */
-        .hero-ff-fade {
-            grid-column: 1 / -1;
-            grid-row: 1;
-            z-index: 1;
-            pointer-events: none;
-            background:
-                linear-gradient(
-                    90deg,
-                    #061218 0%,
-                    rgba(6, 18, 24, 0.94) 20%,
-                    rgba(6, 18, 24, 0.72) 38%,
-                    rgba(6, 18, 24, 0.35) 55%,
-                    rgba(6, 18, 24, 0.1) 72%,
-                    transparent 100%
-                ),
-                linear-gradient(
-                    180deg,
-                    rgba(6, 18, 24, 0.4) 0%,
-                    transparent 14%,
-                    transparent 78%,
-                    rgba(6, 18, 24, 0.45) 100%
-                );
-        }
-
-        /* Image: full-bleed on mobile, right column from tablet up */
-        .hero-ff-media {
-            grid-column: 1 / -1;
-            grid-row: 1;
-            z-index: 0;
-            display: flex;
-            align-items: stretch;
-            justify-content: flex-end;
-            pointer-events: none;
+            margin: 0;
             overflow: hidden;
-            min-width: 0;
-            min-height: 0;
+            background: #061218;
         }
 
-        .hero-ff-media img {
+        .hero-ff-photo-mobile {
             display: block;
             width: 100%;
-            height: 100%;
-            max-width: none;
+            height: auto;
+            max-height: min(58vh, 420px);
+            min-height: 240px;
             object-fit: cover;
-            object-position: right center; /* character anchored right, full body */
-            /* no transform/scale — never auto-zoom */
+            object-position: right center;
             transform: none;
-            user-select: none;
         }
 
-        .hero-ff-copy {
-            grid-column: 1;
-            grid-row: 1;
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: min(70%, 22.5rem);
-            justify-self: start;
-            text-align: left;
-            text-shadow: 0 2px 24px rgba(6, 18, 24, 0.65);
-            /* sit higher — reduce empty band under header */
-            align-self: end;
-            margin-bottom: clamp(0.25rem, 2vw, 0.75rem);
-            padding-right: clamp(0.25rem, 2vw, 0.75rem);
-            box-sizing: border-box;
+        /* Faixa de transição só no encontro foto → texto (como index) */
+        .hero-ff-photo-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 28%;
+            pointer-events: none;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(6, 18, 24, 0.45) 45%,
+                #061218 100%
+            );
         }
 
-        /* inner wrapper kept for markup compatibility — becomes the grid shell */
-        .hero-ff-inner {
-            display: contents;
+        .hero-mobile-footer {
+            padding: 0.75rem 1rem 1.25rem;
+            background: #061218;
         }
 
-        /* Mobile-only type scale (existing visual weight, layout-driven) */
-        @media (max-width: 767px) {
-            .hero-ff-copy h1 {
-                font-size: 1.55rem !important;
-                line-height: 1.15 !important;
-            }
-            .hero-ff-copy .hero-sub {
-                font-size: 0.85rem !important;
-            }
-            .skills-diagram {
-                width: 100% !important;
-                max-width: 220px;
-                margin-left: 0 !important;
-            }
-            .skill-fale-wrap .icon-orb {
-                width: 3.6rem;
-                height: 3.6rem;
-            }
-            .skill-fale-wrap .icon-orb svg {
-                width: 1.45rem;
-                height: 1.45rem;
-            }
-            .skill-fale-label {
-                font-size: 0.9rem;
-                letter-spacing: 0.2em;
-            }
-            .skills-connectors {
-                height: 2.4rem;
-            }
-            .skill-sub .icon-orb {
-                width: 2.5rem;
-                height: 2.5rem;
-            }
-            .skill-sub .icon-orb svg {
-                width: 0.95rem;
-                height: 0.95rem;
-            }
-            .skill-sub-label {
-                font-size: 0.55rem;
-            }
+        .hero-mobile-footer .hero-ff-eyebrow {
+            margin-bottom: 0.75rem;
         }
 
-        /* —— Tablet 768–991 —— */
-        @media (min-width: 768px) and (max-width: 991px) {
+        .hero-mobile-footer h1 {
+            font-size: 1.55rem !important;
+            line-height: 1.15 !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .hero-mobile-footer .hero-sub {
+            font-size: 0.9rem !important;
+            margin-bottom: 1.25rem !important;
+        }
+
+        .hero-mobile-footer .skills-diagram {
+            width: 100% !important;
+            max-width: 240px;
+            margin-left: 0 !important;
+        }
+
+        .hero-mobile-footer .skill-fale-wrap .icon-orb {
+            width: 3.6rem;
+            height: 3.6rem;
+        }
+        .hero-mobile-footer .skill-fale-wrap .icon-orb svg {
+            width: 1.45rem;
+            height: 1.45rem;
+        }
+        .hero-mobile-footer .skill-fale-label {
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+        }
+        .hero-mobile-footer .skills-connectors { height: 2.4rem; }
+        .hero-mobile-footer .skill-sub .icon-orb {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+        .hero-mobile-footer .skill-sub .icon-orb svg {
+            width: 0.95rem;
+            height: 0.95rem;
+        }
+        .hero-mobile-footer .skill-sub-label { font-size: 0.55rem; }
+
+        /* —— DESKTOP / TABLET (md+): 2 colunas lado a lado —— */
+        @media (min-width: 768px) {
+            .hero-mobile-only { display: none !important; }
+            .hero-desktop-only { display: block !important; }
+
             .hero-ff {
-                min-height: min(100svh, 860px);
-                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-                column-gap: clamp(0.75rem, 2vw, 1.25rem);
-                align-items: center;
-                padding:
-                    clamp(5rem, 8vw, 6rem)
-                    clamp(1.25rem, 3vw, 1.75rem)
-                    clamp(1.5rem, 3vw, 2.25rem);
-            }
-            .hero-ff-media {
-                grid-column: 2;
-                grid-row: 1;
-                min-height: clamp(22rem, 62vh, 34rem);
-                align-self: stretch;
-            }
-            .hero-ff-media img {
-                width: 100%;
-                height: 100%;
-                max-height: min(72vh, 36rem);
-                margin-inline: auto 0;
-                aspect-ratio: 2 / 3;
-                object-fit: cover;
-                object-position: right center;
-            }
-            .hero-ff-copy {
-                grid-column: 1;
-                grid-row: 1;
-                max-width: none;
-                width: 100%;
-                align-self: center;
-                /* lift toward model chest line */
-                transform: translateY(clamp(-1.5rem, -3vh, -0.75rem));
-                margin-bottom: 0;
-                padding-right: 0;
-            }
-            .hero-ff-fade {
-                grid-column: 1 / -1;
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.92) 18%,
-                        rgba(6, 18, 24, 0.55) 42%,
-                        rgba(6, 18, 24, 0.15) 62%,
-                        transparent 82%
-                    );
-            }
-        }
-
-        /* —— Notebook 992–1199 —— */
-        @media (min-width: 992px) and (max-width: 1199px) {
-            .hero-ff {
+                padding-top: 6.5rem;
+                padding-bottom: 2.5rem;
                 min-height: min(100svh, 900px);
-                grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.98fr);
-                column-gap: clamp(0.5rem, 1.5vw, 1rem); /* tighter text↔image */
-                align-items: center;
-                padding:
-                    clamp(4.5rem, 7vw, 5.5rem)
-                    clamp(1.5rem, 2.5vw, 2rem)
-                    clamp(1.75rem, 3vw, 2.5rem);
-            }
-            .hero-ff-media {
-                grid-column: 2;
-                grid-row: 1;
                 display: flex;
                 align-items: center;
-                justify-content: flex-end;
-                min-height: clamp(26rem, 70vh, 40rem);
             }
-            .hero-ff-media img {
-                width: auto;
-                height: min(74vh, 38rem);
-                max-width: 100%;
-                aspect-ratio: 2 / 3;
-                object-fit: cover;
-                object-position: right center;
-            }
-            .hero-ff-copy {
-                grid-column: 1;
-                grid-row: 1;
-                max-width: none;
-                width: 100%;
-                align-self: center;
-                /* ~80–100px up vs old low placement */
-                transform: translateY(clamp(-5.5rem, -9vh, -4.5rem));
-                margin-bottom: 0;
-            }
-            .hero-ff-fade {
-                grid-column: 1 / -1;
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.9) 16%,
-                        rgba(6, 18, 24, 0.5) 40%,
-                        rgba(6, 18, 24, 0.12) 58%,
-                        transparent 78%
-                    );
-            }
-        }
 
-        /* —— Desktop ≥1200 —— */
-        @media (min-width: 1200px) {
-            .hero-ff {
-                min-height: min(100svh, 960px);
-                /* text column +5–10% useful width, tighter gap to image */
-                grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr);
-                column-gap: clamp(0.35rem, 1.1vw, 0.85rem);
+            .hero-desktop-only {
                 max-width: min(84rem, 100%);
                 margin-inline: auto;
-                align-items: center;
-                padding:
-                    clamp(4.25rem, 6vw, 5rem)
-                    clamp(1.75rem, 3vw, 2.5rem)
-                    clamp(2rem, 3vw, 2.75rem);
+                padding-inline: clamp(1.25rem, 3vw, 2.5rem);
             }
-            .hero-ff-media {
-                grid-column: 2;
-                grid-row: 1;
+
+            .hero-desktop-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.95fr);
+                column-gap: clamp(1rem, 2.5vw, 2rem);
+                align-items: center;
+                width: 100%;
+            }
+
+            .hero-ff-copy {
+                width: 100%;
+                max-width: 38rem;
+                text-align: left;
+                /* título alinhado à faixa do peito do modelo */
+                align-self: center;
+                padding-block: 0.5rem;
+            }
+
+            .hero-ff-media-desktop {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
-                min-height: clamp(28rem, 78vh, 44rem);
+                min-width: 0;
             }
-            .hero-ff-media img {
+
+            .hero-ff-media-desktop img {
+                display: block;
                 width: auto;
-                height: min(80vh, 42rem);
+                height: min(78vh, 40rem);
                 max-width: 100%;
                 aspect-ratio: 2 / 3;
                 object-fit: cover;
                 object-position: right center;
-            }
-            .hero-ff-copy {
-                grid-column: 1;
-                grid-row: 1;
-                max-width: none;
-                width: 100%;
-                /* title band aligned with model’s chest (~90px lift) */
-                align-self: center;
-                transform: translateY(clamp(-6.25rem, -10vh, -5rem));
-                margin-bottom: 0;
-                padding-right: clamp(0.25rem, 1vw, 0.75rem);
-            }
-            .hero-ff-fade {
-                grid-column: 1 / -1;
-                background:
-                    linear-gradient(
-                        90deg,
-                        #061218 0%,
-                        rgba(6, 18, 24, 0.88) 14%,
-                        rgba(6, 18, 24, 0.48) 36%,
-                        rgba(6, 18, 24, 0.1) 54%,
-                        transparent 72%
-                    );
+                transform: none;
+                border-radius: 0.5rem;
             }
         }
 
-        /* Below the hero: solid page (photo only lives in the first screen) */
+        @media (min-width: 992px) {
+            .hero-desktop-grid {
+                grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.92fr);
+                column-gap: clamp(0.75rem, 1.8vw, 1.5rem);
+            }
+            .hero-ff-copy { max-width: 40rem; }
+            .hero-ff-media-desktop img {
+                height: min(80vh, 42rem);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .hero-desktop-grid {
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+                column-gap: clamp(0.5rem, 1.2vw, 1.1rem);
+            }
+            .hero-ff-copy { max-width: 42rem; }
+        }
+
+        /* Below the hero: solid page */
         .page-body {
             position: relative;
             z-index: 2;
@@ -705,33 +582,31 @@
     </header>
 
     <main>
-        <!-- HERO: mobile-first grid — text left / image right (2:3, right center) -->
+        <!-- HERO: mesma lógica do index — mobile-only vs desktop-only (2 colunas) -->
         <section class="hero-ff" aria-labelledby="ff-hero-heading">
-            <div class="hero-ff-fade" aria-hidden="true"></div>
-            <div class="hero-ff-media" aria-hidden="true">
-                <img
-                    src="assets/ffpage.jpg?v=4"
-                    alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
-                    width="1000"
-                    height="1500"
-                    decoding="async"
-                    fetchpriority="high"
-                >
-            </div>
-            <div class="hero-ff-inner">
-                <div class="hero-ff-copy">
-                    <p class="text-[10px] md:text-xs font-bold tracking-[0.28em] text-teal-soft uppercase mb-4 md:mb-5">General English · Fluency Foundation</p>
 
-                    <h1 id="ff-hero-heading" class="text-3xl md:text-5xl font-black leading-[1.12] tracking-tight text-white mb-4 md:mb-5 uppercase">
+            <!-- MOBILE: foto full-width no topo; texto ABAIXO (sem sobreposição) -->
+            <div class="hero-mobile-only">
+                <div class="hero-ff-photo-wrap">
+                    <img
+                        src="assets/ffpage.jpg?v=5"
+                        alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
+                        class="hero-ff-photo-mobile"
+                        width="1000"
+                        height="1500"
+                        decoding="async"
+                        fetchpriority="high"
+                    >
+                </div>
+                <div class="hero-mobile-footer">
+                    <p class="hero-ff-eyebrow text-[10px] font-bold tracking-[0.28em] text-teal-soft uppercase">General English · Fluency Foundation</p>
+                    <h1 id="ff-hero-heading" class="text-3xl font-black leading-[1.12] tracking-tight text-white uppercase">
                         Inglês alto padrão.<br>
                         Completo. Em 18 meses.
                     </h1>
-
-                    <p class="hero-sub text-base md:text-xl font-bold text-teal-soft mb-8 md:mb-10 normal-case leading-snug">
+                    <p class="hero-sub text-base font-bold text-teal-soft normal-case leading-snug">
                         Para profissionais que precisam de mais do que “se virar” no idioma.
                     </p>
-
-                    <!-- FALE / LEIA / ESCREVA / ESCUTE with dashed connectors -->
                     <div class="skills-diagram mb-2" aria-label="Quatro habilidades: fale, leia, escreva, escute">
                         <div class="skill-fale-wrap">
                             <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center">
@@ -741,7 +616,6 @@
                             </div>
                             <span class="skill-fale-label">FALE</span>
                         </div>
-
                         <div class="skills-connectors" aria-hidden="true">
                             <svg viewBox="0 0 340 52" preserveAspectRatio="none">
                                 <path class="dash-path" d="M170 0 C170 22, 56 22, 56 52"/>
@@ -749,7 +623,6 @@
                                 <path class="dash-path" d="M170 0 C170 22, 284 22, 284 52" style="animation-delay: 0.3s"/>
                             </svg>
                         </div>
-
                         <div class="skills-bottom">
                             <div class="skill-sub">
                                 <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center" style="animation-delay: 0.35s">
@@ -779,6 +652,76 @@
                     </div>
                 </div>
             </div>
+
+            <!-- DESKTOP: duas colunas (texto | imagem) — sem sobreposição -->
+            <div class="hero-desktop-only">
+                <div class="hero-desktop-grid">
+                    <div class="hero-ff-copy">
+                        <p class="text-xs font-bold tracking-[0.28em] text-teal-soft uppercase mb-5">General English · Fluency Foundation</p>
+                        <h1 class="text-5xl font-black leading-[1.12] tracking-tight text-white mb-5 uppercase" aria-hidden="true">
+                            Inglês alto padrão.<br>
+                            Completo. Em 18 meses.
+                        </h1>
+                        <p class="hero-sub text-xl font-bold text-teal-soft mb-10 normal-case leading-snug">
+                            Para profissionais que precisam de mais do que “se virar” no idioma.
+                        </p>
+                        <div class="skills-diagram mb-2" aria-label="Quatro habilidades: fale, leia, escreva, escute">
+                            <div class="skill-fale-wrap">
+                                <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                    </svg>
+                                </div>
+                                <span class="skill-fale-label">FALE</span>
+                            </div>
+                            <div class="skills-connectors" aria-hidden="true">
+                                <svg viewBox="0 0 340 52" preserveAspectRatio="none">
+                                    <path class="dash-path" d="M170 0 C170 22, 56 22, 56 52"/>
+                                    <path class="dash-path" d="M170 0 C170 22, 170 22, 170 52" style="animation-delay: 0.15s"/>
+                                    <path class="dash-path" d="M170 0 C170 22, 284 22, 284 52" style="animation-delay: 0.3s"/>
+                                </svg>
+                            </div>
+                            <div class="skills-bottom">
+                                <div class="skill-sub">
+                                    <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center" style="animation-delay: 0.35s">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                    </div>
+                                    <span class="skill-sub-label">LEIA</span>
+                                </div>
+                                <div class="skill-sub">
+                                    <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center" style="animation-delay: 0.7s">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="skill-sub-label">ESCREVA</span>
+                                </div>
+                                <div class="skill-sub">
+                                    <div class="icon-orb icon-shine skill-glow rounded-full flex items-center justify-center" style="animation-delay: 1.05s">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 10v4"/>
+                                        </svg>
+                                    </div>
+                                    <span class="skill-sub-label">ESCUTE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-ff-media-desktop">
+                        <img
+                            src="assets/ffpage.jpg?v=5"
+                            alt=""
+                            width="1000"
+                            height="1500"
+                            decoding="async"
+                            fetchpriority="high"
+                        >
+                    </div>
+                </div>
+            </div>
+
         </section>
 
         <div class="page-body">
