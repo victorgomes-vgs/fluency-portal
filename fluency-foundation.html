@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#061218">
     <link rel="icon" type="image/png" href="assets/logo_portal_jul.png" sizes="32x32">
     <link rel="canonical" href="https://thefluency.studio/fluency-foundation.html">
-    <link rel="preload" as="image" href="assets/ffpage.jpg" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/ffpage.jpg?v=3" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -75,10 +75,10 @@
         }
 
         /*
-         * Hero photo — same idea as the site capa (desktop.png / mobile.png):
-         * full-bleed cover, person on the RIGHT, text on the LEFT,
-         * soft fade into page bg on the left (no hard edge / “cut line”).
-         * Source is 2:3 portrait (1000×1500).
+         * Hero — ffpage.jpg is a full poster (giant “18” + person + MESES).
+         * Show the WHOLE composition: cover + center framing (not hard crop to right).
+         * Soft left fade only for text readability — never solid black over the art.
+         * Reference mock: desktop.png
          */
         .hero-ff {
             position: relative;
@@ -105,11 +105,11 @@
             height: 100%;
             display: block;
             object-fit: cover;
-            /* Keep subject on the right (2:3 → landscape viewport) */
-            object-position: 78% 12%;
+            /* Center the poster so “18” + person stay in frame together */
+            object-position: 52% 42%;
         }
 
-        /* Soft left → right fade (no hard line) — matches capa gradient logic */
+        /* Soft left veil for copy — art still visible through it */
         .hero-ff-fade {
             position: absolute;
             inset: 0;
@@ -119,12 +119,19 @@
                 linear-gradient(
                     90deg,
                     #061218 0%,
-                    #061218 22%,
-                    rgba(6, 18, 24, 0.97) 36%,
-                    rgba(6, 18, 24, 0.82) 48%,
-                    rgba(6, 18, 24, 0.48) 62%,
-                    rgba(6, 18, 24, 0.18) 78%,
-                    rgba(6, 18, 24, 0) 100%
+                    rgba(6, 18, 24, 0.94) 14%,
+                    rgba(6, 18, 24, 0.78) 28%,
+                    rgba(6, 18, 24, 0.45) 42%,
+                    rgba(6, 18, 24, 0.18) 58%,
+                    rgba(6, 18, 24, 0.05) 74%,
+                    transparent 100%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(6, 18, 24, 0.45) 0%,
+                    transparent 16%,
+                    transparent 78%,
+                    rgba(6, 18, 24, 0.5) 100%
                 );
         }
 
@@ -134,7 +141,7 @@
             width: 100%;
             max-width: 80rem;
             margin: 0 auto;
-            padding: 7rem 1rem 3rem;
+            padding: 7rem 1.25rem 3rem;
             display: flex;
             align-items: center;
             min-height: 100vh;
@@ -145,6 +152,8 @@
             width: 100%;
             max-width: 34rem;
             text-align: left;
+            /* slight glass so type stays sharp over the photo */
+            text-shadow: 0 2px 24px rgba(6, 18, 24, 0.65);
         }
 
         /* Below the hero: solid page (photo only lives in the first screen) */
@@ -156,90 +165,106 @@
 
         @media (min-width: 768px) {
             .hero-ff-media img {
-                object-position: 82% 8%;
+                object-position: 55% 40%;
             }
             .hero-ff-fade {
                 background:
                     linear-gradient(
                         90deg,
                         #061218 0%,
-                        #061218 28%,
-                        rgba(6, 18, 24, 0.96) 40%,
-                        rgba(6, 18, 24, 0.75) 52%,
-                        rgba(6, 18, 24, 0.4) 68%,
-                        rgba(6, 18, 24, 0.12) 84%,
-                        rgba(6, 18, 24, 0) 100%
+                        rgba(6, 18, 24, 0.92) 16%,
+                        rgba(6, 18, 24, 0.72) 30%,
+                        rgba(6, 18, 24, 0.38) 46%,
+                        rgba(6, 18, 24, 0.12) 64%,
+                        transparent 88%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        rgba(6, 18, 24, 0.35) 0%,
+                        transparent 14%,
+                        transparent 82%,
+                        rgba(6, 18, 24, 0.4) 100%
                     );
             }
             .hero-ff-inner {
                 padding: 8rem 2rem 4rem;
             }
             .hero-ff-copy {
-                max-width: 38rem;
+                max-width: 36rem;
             }
         }
 
-        @media (min-width: 1280px) {
+        @media (min-width: 1100px) {
             .hero-ff-media img {
-                object-position: 88% 5%;
+                /* Slight right bias without cutting the “18” */
+                object-position: 58% 38%;
             }
             .hero-ff-fade {
                 background:
                     linear-gradient(
                         90deg,
                         #061218 0%,
-                        #061218 32%,
-                        rgba(6, 18, 24, 0.95) 44%,
-                        rgba(6, 18, 24, 0.7) 55%,
-                        rgba(6, 18, 24, 0.3) 72%,
-                        rgba(6, 18, 24, 0) 100%
+                        rgba(6, 18, 24, 0.9) 18%,
+                        rgba(6, 18, 24, 0.65) 32%,
+                        rgba(6, 18, 24, 0.32) 48%,
+                        rgba(6, 18, 24, 0.08) 66%,
+                        transparent 90%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        rgba(6, 18, 24, 0.3) 0%,
+                        transparent 12%,
+                        transparent 84%,
+                        rgba(6, 18, 24, 0.35) 100%
                     );
             }
             .hero-ff-copy {
-                max-width: 42rem;
+                max-width: 38rem;
             }
         }
 
-        /* Mobile: still photo RIGHT + text LEFT (like mobile.png), not stacked */
+        @media (min-width: 1400px) {
+            .hero-ff-media img {
+                object-position: 60% 36%;
+            }
+        }
+
+        /* Mobile: keep poster composition readable; text on left over soft veil */
         @media (max-width: 767px) {
             .hero-ff {
                 min-height: 100svh;
             }
             .hero-ff-media img {
-                /* Bias crop to right so the figure stays visible */
-                object-position: 85% 10%;
-                /* Slight scale so the 2:3 portrait fills height without a box edge */
-                transform: scale(1.05);
-                transform-origin: right center;
+                object-position: 48% 36%;
+                transform: none;
             }
             .hero-ff-fade {
                 background:
                     linear-gradient(
                         90deg,
                         #061218 0%,
-                        #061218 18%,
-                        rgba(6, 18, 24, 0.96) 32%,
-                        rgba(6, 18, 24, 0.78) 48%,
-                        rgba(6, 18, 24, 0.4) 68%,
-                        rgba(6, 18, 24, 0.12) 85%,
-                        rgba(6, 18, 24, 0) 100%
+                        rgba(6, 18, 24, 0.95) 22%,
+                        rgba(6, 18, 24, 0.75) 40%,
+                        rgba(6, 18, 24, 0.4) 58%,
+                        rgba(6, 18, 24, 0.12) 78%,
+                        transparent 100%
                     ),
                     linear-gradient(
                         180deg,
-                        rgba(6, 18, 24, 0.35) 0%,
-                        transparent 18%,
-                        transparent 72%,
-                        rgba(6, 18, 24, 0.55) 100%
+                        rgba(6, 18, 24, 0.5) 0%,
+                        transparent 16%,
+                        transparent 70%,
+                        rgba(6, 18, 24, 0.65) 100%
                     );
             }
             .hero-ff-inner {
                 min-height: 100svh;
-                padding: 6.5rem 1rem 2.5rem;
+                padding: 6.5rem 1rem 2.25rem;
                 align-items: flex-end;
             }
             .hero-ff-copy {
-                max-width: 62%;
-                padding-bottom: 0.5rem;
+                max-width: 70%;
+                padding-bottom: 0.25rem;
             }
             .hero-ff-copy h1 {
                 font-size: 1.55rem !important;
@@ -602,13 +627,13 @@
     </header>
 
     <main>
-        <!-- HERO: full-bleed photo right + text left + soft left fade (like capa) -->
+        <!-- HERO: full poster (18 + person + MESES) with soft left veil for copy -->
         <section class="hero-ff" aria-labelledby="ff-hero-heading">
             <div class="hero-ff-media" aria-hidden="true">
                 <img
-                    src="assets/ffpage.jpg"
-                    alt=""
-                    width="1000"
+                    src="assets/ffpage.jpg?v=3"
+                    alt="Fluency Foundation — 18 meses. Professor da Fluency Studio ao lado do número 18."
+                    width="1200"
                     height="1500"
                     decoding="async"
                     fetchpriority="high"
