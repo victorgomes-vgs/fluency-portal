@@ -937,15 +937,253 @@ const LOGO_ENTRADA = "logoentrada.png";
 const IVI_PHOTO  = "assets/ivi.png";
 const WPP_SITE   = "https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos%20da%20Fluency%20Studio.";
 
-const BLOCK_PATTERN = ["input","input","output","input","input","output","input","input","output","review"];
+/* ══════════════════════════════════════════════════════════════
+   SISTEMA DE CURSOS (Firestore `courses`)
+   Admin tem controle total: adicionar, editar, ativar/desativar, excluir.
+   ══════════════════════════════════════════════════════════════ */
+const FOUNDATION_BLOCK=["input","input","output","input","input","output","input","input","output","review"];
+const SPEECH_BLOCK=["input","output","input","output","input","output","review"];
+const BLOCK_PATTERN=FOUNDATION_BLOCK; // compat legado
 
-const MODULES = [
-  {id:1,name:"IMMEDIATE CONVERSATION",bookClass:"book-m1",accent:"rgba(0,191,165,",teal:"#00BFA5"},
-  {id:2,name:"BUILDING CONFIDENCE",bookClass:"book-m2",accent:"rgba(91,155,232,",teal:"#5b9be8"},
-  {id:3,name:"ADVANCED FLUENCY",bookClass:"book-m3",accent:"rgba(26,154,122,",teal:"#1a9a7a"},
+function makeFoundationModulos(names){
+  return names.map((nome,i)=>({
+    id:i+1,nome,
+    blocos:Array.from({length:5},()=>({tamanho:10,padrao:[...FOUNDATION_BLOCK]})),
+  }));
+}
+function makeFlashModulos(count=4,totalLicoes=62){
+  return Array.from({length:count},(_,i)=>({id:i+1,nome:`Módulo ${i+1}`,totalLicoes,semBlocos:true}));
+}
+function makeSpeechModulos(names){
+  return names.map((nome,i)=>({
+    id:i+1,nome,
+    blocos:Array.from({length:5},()=>({tamanho:7,padrao:[...SPEECH_BLOCK]})),
+  }));
+}
+
+/**
+ * Cores oficiais = cards do landing (thefluency.studio / Portal landing index.html)
+ * e referência visual "cores dos cards.jpg":
+ *  1. Fluency Foundation ......... Teal     #00a89d  (card-fluency / brand-teal)
+ *  2. Flash Talk ................. Blue     #3b82f6  (card-flash)
+ *  3. Corporate Speech ........... Purple   #8b5cf6  (card-corporate)
+ *  4. Fluency Foundation Corporate Gold     #c9a84c  (card-ffc)
+ *  5. Flash Talk Corporate ....... Rose     #d4788a  (card-ftc)
+ *  6. Reflective Mind ............ Orange   #f59e0b  (portal-only)
+ */
+const DEFAULT_COURSES=[
+  {id:"foundation_general",nome:"Fluency Foundation",corBase:"#00a89d",ativo:true,ordem:1,
+    grupo:"general",padraoVisual:"teal",
+    modulos:makeFoundationModulos(["IMMEDIATE CONVERSATION","BUILDING CONFIDENCE","ADVANCED FLUENCY"])},
+  {id:"flash_general",nome:"Flash Talk",corBase:"#3b82f6",ativo:true,ordem:2,
+    grupo:"general",padraoVisual:"blue",
+    modulos:makeFlashModulos(4,62)},
+  {id:"speech_a",nome:"Corporate Speech (Business)",corBase:"#8b5cf6",ativo:true,ordem:3,
+    grupo:"general",padraoVisual:"purple",
+    modulos:makeSpeechModulos(["Módulo A","Módulo B"])},
+  {id:"foundation_corporate",nome:"Fluency Foundation Corporate",corBase:"#c9a84c",ativo:true,ordem:4,
+    grupo:"corporate",padraoVisual:"gold",
+    modulos:makeFoundationModulos(["IMMEDIATE CONVERSATION","BUILDING CONFIDENCE","ADVANCED FLUENCY"])},
+  {id:"flash_corporate",nome:"Flash Talk Corporate",corBase:"#d4788a",ativo:true,ordem:5,
+    grupo:"corporate",padraoVisual:"rose",
+    modulos:makeFlashModulos(4,62)},
+  {id:"speech_b",nome:"Reflective Mind",corBase:"#f59e0b",ativo:true,ordem:6,
+    grupo:"special",padraoVisual:"orange",
+    modulos:makeSpeechModulos(["Módulo A","Módulo B"])},
 ];
+
+/** Mapeia contratos antigos → novos IDs de curso (migração sem perda de trilha). */
+const CONTRATO_LEGACY_MAP={
+  fluency_foundation:"foundation_general",
+  flash:"flash_general",
+  speech:"speech_a",
+};
+
+function resolveContratoId(contrato){
+  if(!contrato)return"foundation_general";
+  return CONTRATO_LEGACY_MAP[contrato]||contrato;
+}
+
+function hexToRgb(hex){
+  const h=String(hex||"#00BFA5").replace("#","");
+  const full=h.length===3?h.split("").map(c=>c+c).join(""):h.padEnd(6,"0").slice(0,6);
+  const n=parseInt(full,16);if(isNaN(n))return{r:0,g:191,b:165};
+  return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function rgbToHex(r,g,b){
+  return"#"+[r,g,b].map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,"0")).join("");
+}
+
+function getModuleLessonCount(mod){
+  if(!mod)return 0;
+  if(mod.semBlocos||mod.totalLicoes)return parseInt(mod.totalLicoes,10)||0;
+  if(mod.blocos&&mod.blocos.length)return mod.blocos.reduce((s,b)=>s+(b.tamanho||(b.padrao&&b.padrao.length)||0),0);
+  return 50;
+}
+function getTotalLicoes(course){
+  if(!course||!course.modulos)return 150;
+  return course.modulos.reduce((s,m)=>s+getModuleLessonCount(m),0);
+}
+
+/** Gera meta visual dos módulos a partir da corBase do curso. */
+function buildModuleMeta(course){
+  const base=course&&course.corBase||"#00BFA5";
+  const rgb=hexToRgb(base);
+  const mods=(course&&course.modulos)||[];
+  return mods.map((m,i)=>{
+    const t=mods.length<=1?0:i/(mods.length-1);
+    const r=Math.max(0,Math.min(255,Math.round(rgb.r+(t*40-12))));
+    const g=Math.max(0,Math.min(255,Math.round(rgb.g+(t*28-18))));
+    const b=Math.max(0,Math.min(255,Math.round(rgb.b+(t*20-8))));
+    return{
+      id:m.id!=null?m.id:i+1,
+      name:m.nome||("Módulo "+(i+1)),
+      bookClass:"book-m"+((i%6)+1),
+      accent:`rgba(${r},${g},${b},`,
+      teal:rgbToHex(r,g,b),
+    };
+  });
+}
+
+/** Fallback estático (Foundation General) — usado antes do Firestore carregar. */
+const MODULES=buildModuleMeta(DEFAULT_COURSES[0]);
+
 function isModuleHidden(modulosOcultos,modId){return(modulosOcultos||[]).includes(modId);}
-function getVisibleModules(modulosOcultos,isAdmin){return isAdmin?MODULES:MODULES.filter(m=>!isModuleHidden(modulosOcultos,m.id));}
+function getVisibleModules(modulosOcultos,isAdmin,course){
+  const mods=course?buildModuleMeta(course):MODULES;
+  return isAdmin?mods:mods.filter(m=>!isModuleHidden(modulosOcultos,m.id));
+}
+
+/* Cache síncrono de cursos (atualizado pelo listener) */
+let _coursesCache=DEFAULT_COURSES.map(c=>({...c,modulos:c.modulos.map(m=>({...m}))}));
+function getCoursesSync(){return _coursesCache;}
+function getCourseById(id){
+  const resolved=resolveContratoId(id);
+  return _coursesCache.find(c=>c.id===resolved)||DEFAULT_COURSES.find(c=>c.id===resolved)||DEFAULT_COURSES[0];
+}
+function getActiveContratos(){
+  return[..._coursesCache].filter(c=>c.ativo!==false).sort((a,b)=>(a.ordem||0)-(b.ordem||0)).map(c=>({v:c.id,l:c.nome}));
+}
+function getCourseLabel(contratoId){
+  if(!contratoId)return"—";
+  const c=getCourseById(contratoId);
+  return(c&&c.nome)||contratoId;
+}
+
+/** Sincroniza nome/cor/ordem dos 6 cursos oficiais (landing) sem apagar estrutura editada. */
+async function ensureCoursesSeeded(forceBrandMeta){
+  try{
+    const snap=await db.collection("courses").get();
+    if(snap.empty){
+      const batch=db.batch();
+      DEFAULT_COURSES.forEach(c=>{batch.set(db.collection("courses").doc(c.id),JSON.parse(JSON.stringify(c)));});
+      await batch.commit();
+      return;
+    }
+    const byId={};
+    snap.docs.forEach(d=>{byId[d.id]=d.data();});
+    for(const c of DEFAULT_COURSES){
+      const payload=JSON.parse(JSON.stringify(c));
+      if(!byId[c.id]){
+        try{await db.collection("courses").doc(c.id).set(payload);}catch(e){/* aluno sem write */}
+        continue;
+      }
+      // Atualiza identidade visual/nome oficiais; preserva modulos se já existirem
+      const patch={
+        nome:c.nome,
+        corBase:c.corBase,
+        ordem:c.ordem,
+        grupo:c.grupo||null,
+        padraoVisual:c.padraoVisual||null,
+      };
+      if(forceBrandMeta||!byId[c.id].modulos||!byId[c.id].modulos.length){
+        patch.modulos=payload.modulos;
+      }
+      // Força nomes/cores oficiais sempre que o seed rodar (admin), para bater com o landing
+      try{await db.collection("courses").doc(c.id).set(patch,{merge:true});}catch(e){/* aluno sem write */}
+    }
+  }catch(e){
+    console.warn("ensureCoursesSeeded (ok se não-admin):",e.message||e);
+  }
+}
+
+/** Migra alunos com contrato legado (fluency_foundation etc.) sem alterar trilha. */
+async function migrateLegacyContratosIfNeeded(){
+  try{
+    const flagRef=db.collection("config").doc("migrations");
+    const flag=await flagRef.get();
+    if(flag.exists&&flag.data().contratosV2)return{skipped:true};
+    const snap=await db.collection("students").get();
+    let migrated=0;
+    const docs=snap.docs.filter(d=>{
+      const c=d.data().contrato;
+      return c&&CONTRATO_LEGACY_MAP[c];
+    });
+    for(let i=0;i<docs.length;i+=400){
+      const batch=db.batch();
+      docs.slice(i,i+400).forEach(d=>{
+        const old=d.data().contrato;
+        const newId=CONTRATO_LEGACY_MAP[old];
+        const course=DEFAULT_COURSES.find(c=>c.id===newId);
+        batch.update(d.ref,{
+          contrato:newId,
+          program:course?course.nome:(d.data().program||""),
+          contratoMigradoDe:old,
+        });
+        migrated++;
+      });
+      await batch.commit();
+    }
+    await flagRef.set({contratosV2:true,migrated,at:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    return{migrated};
+  }catch(e){
+    console.error("migrateLegacyContratos:",e);
+    return{error:e.message};
+  }
+}
+
+function useCourses(){
+  const[courses,setCourses]=useState(_coursesCache);
+  useEffect(()=>{
+    let unsub=()=>{};
+    let alive=true;
+    (async()=>{
+      try{await ensureCoursesSeeded();}catch(e){console.error("ensureCoursesSeeded",e);}
+      if(!alive)return;
+      unsub=db.collection("courses").onSnapshot(snap=>{
+        if(snap.empty){
+          _coursesCache=DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
+        }else{
+          _coursesCache=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+        }
+        if(alive)setCourses(_coursesCache);
+      },err=>{
+        console.error("courses listen",err);
+        if(alive)setCourses(DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c))));
+      });
+    })();
+    return()=>{alive=false;unsub();};
+  },[]);
+  return courses;
+}
+
+const COURSE_TEMPLATES=[
+  {id:"foundation",label:"Foundation (3×50, com blocos)",builder:()=>({
+    modulos:makeFoundationModulos(["Módulo 1","Módulo 2","Módulo 3"]),
+  })},
+  {id:"flash",label:"Flash Talk (4×62, sem blocos)",builder:()=>({
+    modulos:makeFlashModulos(4,62),
+  })},
+  {id:"speech",label:"Corporate Speech / Reflective Mind (2×35, blocos de 7)",builder:()=>({
+    modulos:makeSpeechModulos(["Módulo A","Módulo B"]),
+  })},
+  {id:"custom",label:"Personalizado",builder:null},
+];
+
+function slugifyCourseId(nome){
+  return String(nome||"curso").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,40)||("curso_"+Date.now());
+}
 
 const STUDENT_NAV = [
   {id:"trilha",      icon:"route",          label:"Trilha",      grad:"linear-gradient(145deg,rgba(0,217,192,.28),rgba(0,150,130,.12))",  color:"#00d9c0"},
@@ -1027,6 +1265,7 @@ const ICONS = {
   "clipboard-check":<><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></>,
   "info":          <><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>,
   "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
+  "settings":      <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
 };
 function Icon({name,size=18,className="",style={}}){
   const p=ICONS[name]; if(!p) return null;
@@ -1108,9 +1347,21 @@ function playLessonSound(){
     osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+.3);});}catch(e){}
 }
 
-function getBlockLessonType(posInModule){
-  return BLOCK_PATTERN[(posInModule-1)%10];
+function getLessonTypeFromModule(mod,posInModule){
+  if(!mod||mod.semBlocos)return"input";
+  if(!mod.blocos||!mod.blocos.length)return FOUNDATION_BLOCK[(posInModule-1)%10];
+  let remaining=posInModule;
+  for(const bloco of mod.blocos){
+    const size=bloco.tamanho||(bloco.padrao&&bloco.padrao.length)||10;
+    if(remaining<=size){
+      const padrao=bloco.padrao&&bloco.padrao.length?bloco.padrao:FOUNDATION_BLOCK;
+      return padrao[(remaining-1)%padrao.length]||"input";
+    }
+    remaining-=size;
+  }
+  return"input";
 }
+function getBlockLessonType(posInModule){return FOUNDATION_BLOCK[(posInModule-1)%10];}
 
 function getLessonBorderColor(item){
   if(item.status==="andamento")return "#e8a94c";
@@ -1120,17 +1371,22 @@ function getLessonBorderColor(item){
   return "#5b9be8";
 }
 
-function generateBooks(){
+/** Gera estrutura de livros/lições a partir do documento do curso (mesmos campos de antes). */
+function generateBooks(course){
+  const c=course||DEFAULT_COURSES[0];
   const books=[];
-  for(let bi=1;bi<=3;bi++){
+  let globalNum=0;
+  (c.modulos||[]).forEach((mod,mi)=>{
+    const bi=mod.id!=null?mod.id:mi+1;
+    const total=getModuleLessonCount(mod);
     const items=[];
-    for(let li=1;li<=50;li++){
-      const g=(bi-1)*50+li;
-      const lt=getBlockLessonType(li);
+    for(let li=1;li<=total;li++){
+      globalNum++;
+      const lt=getLessonTypeFromModule(mod,li);
       const isReview=lt==="review";
       items.push({
-        id:`b${bi}-l${g}`,pos:g,type:isReview?"review":"lesson",lessonType:lt,num:g,
-        title:isReview?`Lesson ${g} — Review`:getLessonTitle(g),status:"pendente",
+        id:`b${bi}-l${globalNum}`,pos:globalNum,type:isReview?"review":"lesson",lessonType:lt,num:globalNum,
+        title:isReview?`Lesson ${globalNum} — Review`:getLessonTitle(globalNum),status:"pendente",
         date:"",dataPrevista:"",objetivos:"",feedback:"",obs:"",link:"",
         evalF:"",evalA:"",evalL:"",evalE:"",
         linkMaterial:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",tarefaFeita:false,
@@ -1138,20 +1394,30 @@ function generateBooks(){
       });
     }
     books.push({bookIdx:bi,items});
-  }
+  });
   return books;
 }
-const BOOKS_TEMPLATE=generateBooks();
-function mergeBooks(trilhaData){
-  return BOOKS_TEMPLATE.map(b=>({
+const BOOKS_TEMPLATE=generateBooks(DEFAULT_COURSES[0]);
+function mergeBooks(trilhaData,course){
+  const template=course?generateBooks(course):BOOKS_TEMPLATE;
+  return template.map(b=>({
     ...b,
-    items:b.items.map(i=>({...i,...(trilhaData[i.id]||{})}))
+    items:b.items.map(i=>({...i,...((trilhaData&&trilhaData[i.id])||{})}))
   }));
 }
 function getCurrentModule(books,modulosOcultos){
   const visible=books.filter(b=>!isModuleHidden(modulosOcultos,b.bookIdx));
   for(let i=visible.length-1;i>=0;i--){if(visible[i].items.some(it=>it.status==="andamento"||it.status==="concluida"||it.status==="realizada"))return visible[i].bookIdx;}
   return visible[0]?.bookIdx||1;
+}
+function lessonIdFromNum(n,course){
+  const books=generateBooks(course||DEFAULT_COURSES[0]);
+  for(const b of books){
+    const item=b.items.find(i=>i.num===n);
+    if(item)return item.id;
+  }
+  const bi=Math.ceil(n/50)||1;
+  return`b${bi}-l${n}`;
 }
 
 const DIARIO_STATUS=[
@@ -1219,6 +1485,7 @@ function normalizeStudent(id,raw){
   const d=raw&&typeof raw==="object"?raw:{};
   const name=(d.name||d.nome||d.displayName||"").toString().trim()||"Aluno";
   const email=(d.email||"").toString().trim().toLowerCase();
+  const contrato=resolveContratoId(d.contrato||"foundation_general");
   return{
     ...d,
     uid:id,
@@ -1228,7 +1495,8 @@ function normalizeStudent(id,raw){
     phone:(d.phone||d.telefone||d.whatsapp||"").toString().trim(),
     status:normalizeStatus(d.status,d),
     level:d.level||"A1",
-    program:d.program||d.contrato||"Fluency Studio",
+    contrato,
+    program:d.program||getCourseLabel(contrato)||"Fluency Studio",
     coach:d.coach||"Victor Gomes",
     profession:d.profession||d.profissao||"",
     birthday:d.birthday||d.dataNasc||"",
@@ -1707,10 +1975,10 @@ function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
   );
 }
 
-function TrilhaTimelineModule({bookIdx,items,uid,isAdmin,hidden,onToggleHidden,focusLessonId,onLessonFocused,isLast,defaultOpen}){
+function TrilhaTimelineModule({bookIdx,modMeta,items,uid,isAdmin,hidden,onToggleHidden,focusLessonId,onLessonFocused,isLast,defaultOpen}){
   const hasFocus=focusLessonId&&items.some(i=>i.id===focusLessonId);
   const [open,setOpen]=useState(defaultOpen||hasFocus);
-  const mod=MODULES[bookIdx-1];
+  const mod=modMeta||{name:"Módulo "+bookIdx};
   useEffect(()=>{if(hasFocus)setOpen(true);},[hasFocus]);
   return(
     <div className="tl-module-block">
@@ -1737,17 +2005,21 @@ function TrilhaTimelineModule({bookIdx,items,uid,isAdmin,hidden,onToggleHidden,f
   );
 }
 
-function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused}){
+function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,contrato}){
+  const courses=useCourses();
   const [trilhaData,setTrilhaData]=useState(null);
   const [modulosOcultos,setModulosOcultos]=useState([]);
+  const [studentContrato,setStudentContrato]=useState(contrato||"");
   useEffect(()=>db.collection("students").doc(uid).onSnapshot(doc=>{
     if(!doc.exists){setTrilhaData({});setModulosOcultos([]);return;}
     const d=doc.data();
     setTrilhaData(d.trilha||{});
     setModulosOcultos(d.modulosOcultos||[]);
+    if(d.contrato)setStudentContrato(d.contrato);
   }),[uid]);
-  const books=useMemo(()=>trilhaData?mergeBooks(trilhaData):[],[trilhaData]);
-  const visibleModules=getVisibleModules(modulosOcultos,isAdmin);
+  const course=useMemo(()=>getCourseById(contrato||studentContrato),[courses,contrato,studentContrato]);
+  const books=useMemo(()=>trilhaData?mergeBooks(trilhaData,course):[],[trilhaData,course]);
+  const visibleModules=getVisibleModules(modulosOcultos,isAdmin,course);
   const {totalDone,totalItems}=useMemo(()=>{
     let done=0,total=0;
     books.filter(b=>isAdmin||!isModuleHidden(modulosOcultos,b.bookIdx)).forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida"||i.status==="realizada")done++;}));
@@ -1770,15 +2042,16 @@ function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused}){
         <h2 className="text-xl font-bold mb-1 flex items-center justify-center gap-2" style={{fontFamily:"'Sora',sans-serif"}}>
           <Icon name="route" size={18} style={{color:'rgba(44,122,142,1)'}}/>Trilha
         </h2>
+        <p className="text-xs muted mb-1" style={{color:course.corBase||"var(--font-muted)"}}>{course.nome||"Curso"} · {getTotalLicoes(course)} lições</p>
         <div className="max-w-sm mx-auto mt-3">
           <div className="flex justify-between text-xs muted mb-1"><span>Progresso</span><span className="font-semibold">{progress}%</span></div>
           <div className="h-2.5 rounded-full overflow-hidden" style={{background:"var(--badge)"}}><div className="h-full rounded-full progress-fill" style={{width:progress+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/></div>
         </div>
-        <p className="text-xs muted mt-3">Use o botão ao lado de cada módulo para ocultá-lo do aluno.</p>
+        <p className="text-xs muted mt-3">Use o botão ao lado de cada módulo para ocultá-lo do aluno. Edite títulos/links nos cards — a estrutura vem do curso em Configurações.</p>
       </div>}
       <div className="tl-wrap">
         <svg width="0" height="0" style={{position:"absolute"}}><defs><linearGradient id="tlGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="rgba(255,255,255,.15)"/><stop offset="50%" stopColor="#00d9c0"/><stop offset="100%" stopColor="rgba(255,255,255,.15)"/></linearGradient></defs></svg>
-        {visibleModules.map((mod,idx)=><TrilhaTimelineModule key={mod.id} bookIdx={mod.id} items={books.find(b=>b.bookIdx===mod.id)?.items||[]} uid={uid} isAdmin={isAdmin} hidden={isModuleHidden(modulosOcultos,mod.id)} onToggleHidden={()=>toggleModuleHidden(mod.id)} focusLessonId={focusLessonId} onLessonFocused={onLessonFocused} isLast={idx===visibleModules.length-1} defaultOpen={mod.id===1}/>)}
+        {visibleModules.map((mod,idx)=><TrilhaTimelineModule key={mod.id} bookIdx={mod.id} modMeta={mod} items={books.find(b=>b.bookIdx===mod.id)?.items||[]} uid={uid} isAdmin={isAdmin} hidden={isModuleHidden(modulosOcultos,mod.id)} onToggleHidden={()=>toggleModuleHidden(mod.id)} focusLessonId={focusLessonId} onLessonFocused={onLessonFocused} isLast={idx===visibleModules.length-1} defaultOpen={idx===0}/>)}
         {visibleModules.length===0&&<div className="text-center py-10" style={{color:"rgba(255,255,255,.45)"}}><Icon name="eye-off" size={28} className="mx-auto mb-2 opacity-40"/><p className="text-sm">Nenhum módulo visível para o aluno.</p></div>}
       </div>
     </div>
@@ -1818,9 +2091,17 @@ function RecursosSection({uid,isAdmin,links}){
   );
 }
 
-function DiarioSection({uid,isAdmin}){
+function DiarioSection({uid,isAdmin,contrato}){
+  const courses=useCourses();
   const [entries,setEntries]=useState(null);
+  const [studentContrato,setStudentContrato]=useState(contrato||"");
   useEffect(()=>db.collection("students").doc(uid).collection("diario").orderBy("num","asc").onSnapshot(snap=>setEntries(snap.docs.map(d=>({id:d.id,...d.data()})))),[uid]);
+  useEffect(()=>{
+    if(contrato){setStudentContrato(contrato);return;}
+    return db.collection("students").doc(uid).onSnapshot(doc=>{if(doc.exists&&doc.data().contrato)setStudentContrato(doc.data().contrato);});
+  },[uid,contrato]);
+  const course=useMemo(()=>getCourseById(studentContrato),[courses,studentContrato]);
+  const maxLicao=getTotalLicoes(course);
   async function addEntry(){const nextNum=entries&&entries.length>0?Math.max(...entries.map(e=>e.num))+1:1;await db.collection("students").doc(uid).collection("diario").add({num:nextNum,date:new Date().toISOString().slice(0,10),licaoNum:1,status:"andamento",obs:"",reposicaoTipo:"",reposicaoMotivo:"",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
   async function updateEntry(id,patch){
     const merged={...entries.find(e=>e.id===id),...patch};
@@ -1833,9 +2114,8 @@ function DiarioSection({uid,isAdmin}){
     await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);
     if((patch.status==="realizada"||patch.status==="rep_feita")&&merged.licaoNum){
       const licaoNum=parseInt(merged.licaoNum);
-      if(licaoNum>=1&&licaoNum<=150){
-        const modIdx=Math.ceil(licaoNum/50);
-        const trilhaItemId=`b${modIdx}-l${licaoNum}`;
+      if(licaoNum>=1&&licaoNum<=maxLicao){
+        const trilhaItemId=lessonIdFromNum(licaoNum,course);
         const trilhaPatch={};
         trilhaPatch[`trilha.${trilhaItemId}.status`]="concluida";
         if(merged.date)trilhaPatch[`trilha.${trilhaItemId}.date`]=merged.date;
@@ -1893,7 +2173,7 @@ function DiarioSection({uid,isAdmin}){
             <tr key={e.id} className="dtable-row align-top">
               <td className="py-3 pr-3"><div className="num-aula inline-flex flex-col items-center"><span className="text-xs opacity-70">Aula</span><span>{e.num}</span></div></td>
               <td className="py-3 pr-3"><input type="date" value={e.date||""} onChange={ev=>updateEntry(e.id,{date:ev.target.value})} style={{...iS,width:130}}/></td>
-              <td className="py-3 pr-3"><input type="number" min={1} max={150} value={e.licaoNum||1} onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})} style={{...iS,width:65,textAlign:"center"}}/></td>
+              <td className="py-3 pr-3"><input type="number" min={1} max={maxLicao} value={e.licaoNum||1} onChange={ev=>updateEntry(e.id,{licaoNum:parseInt(ev.target.value)||1})} style={{...iS,width:65,textAlign:"center"}}/></td>
               <td className="py-3 pr-3"><select className="ds-select" value={e.status==="a_repor"?"ausente":e.status} onChange={ev=>{const v=ev.target.value;updateEntry(e.id,v==="ausente"?{status:"ausente"}:{status:v,reposicaoTipo:"",reposicaoMotivo:""});}}>{DIARIO_STATUS.filter(s=>!["a_repor","rep_vencida"].includes(s.value)).map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select><div className="mt-1"><span className={"diario-badge "+ds.cls}>{ds.label}</span></div></td>
               <td className="py-3 pr-3" style={{minWidth:180}}>
                 {(e.status==="ausente"||e.status==="a_repor")&&<>
@@ -2722,7 +3002,9 @@ function StudentFinanceCard({financeiro,onGo}){
 }
 
 function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosOcultos}){
-  const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
+  const courses=useCourses();
+  const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
+  const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
   const currentMod=useMemo(()=>getCurrentModule(books,modulosOcultos),[books,modulosOcultos]);
   const currentBook=useMemo(()=>{
     if(isModuleHidden(modulosOcultos,currentMod))return books.find(b=>!isModuleHidden(modulosOcultos,b.bookIdx));
@@ -2735,7 +3017,7 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
   const tarefasFeitas=useMemo(()=>{
     let c=0;books.forEach(b=>b.items.forEach(i=>{if(i.tarefaFeita)c++;}));return c;
   },[books]);
-  const totalLicoes=150;
+  const totalLicoes=getTotalLicoes(course)||books.reduce((s,b)=>s+b.items.length,0)||1;
   const progressGeral=Math.round((licoesConcluidas/totalLicoes)*100);
 
   const [diarioStats,setDiarioStats]=useState({paraRepor:0});
@@ -2808,9 +3090,11 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
   );
 }
 
-function MateriaisSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos}){
-  const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
-  const visibleModules=getVisibleModules(modulosOcultos,isAdmin);
+function MateriaisSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos,contrato}){
+  const courses=useCourses();
+  const course=useMemo(()=>getCourseById(contrato),[courses,contrato]);
+  const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
+  const visibleModules=getVisibleModules(modulosOcultos,isAdmin,course);
   const [openMod,setOpenMod]=useState(visibleModules[0]?.id||1);
   const [openLesson,setOpenLesson]=useState(null);
 
@@ -2824,6 +3108,7 @@ function MateriaisSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos})
         const book=books.find(b=>b.bookIdx===mod.id);
         const pdfUrl=materiaisData?.[`mod${mod.id}`]?.pdfCompleto||"";
         const isOpen=openMod===mod.id;
+        const nLicoes=book?.items?.length||0;
         return(
           <div key={mod.id}>
             <button className={"w-full text-left px-4 py-3 rounded-2xl flex justify-between items-center "+mod.bookClass} onClick={()=>setOpenMod(isOpen?null:mod.id)}>
@@ -2835,7 +3120,7 @@ function MateriaisSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos})
                   ?<div className="glass rounded-xl p-3"><div className="detail-label">Material Completo — PDF (Impressão)</div><input type="url" className="input-light mt-1" placeholder="https://" value={pdfUrl} onChange={e=>updateModuloPdf(mod.id,e.target.value)}/></div>
                   :pdfUrl&&<a href={pdfUrl} target="_blank" rel="noreferrer" className="btn rounded-xl px-4 py-3 block font-semibold text-sm" style={{background:"rgba(0,217,192,.06)",borderColor:"rgba(0,217,192,.3)"}}>📕 Material Completo — PDF (Impressão)</a>
               )}
-              <div className="text-xs muted uppercase tracking-wide px-1">50 lições do módulo</div>
+              <div className="text-xs muted uppercase tracking-wide px-1">{nLicoes} lições do módulo</div>
               {book?.items.map(item=>{
                 const urlLicao=item.linkAula||"";
                 const urlTarefa=item.linkTarefa||"";
@@ -2907,7 +3192,9 @@ function StatCard({ icon, iconColor, label, value, onClick }) {
 
 // ── MODIFICAÇÃO 2: OverviewSection ─────────────────────────────────────────
 function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab }) {
-  const books = useMemo(() => mergeBooks(trilhaData), [trilhaData]);
+  const courses = useCourses();
+  const course = useMemo(() => getCourseById(profile?.contrato), [courses, profile?.contrato]);
+  const books = useMemo(() => mergeBooks(trilhaData, course), [trilhaData, course]);
 
   const licoesConcluidas = useMemo(() => {
     let count = 0;
@@ -2917,7 +3204,7 @@ function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab }) {
     return count;
   }, [books]);
 
-  const totalLicoes = 150;
+  const totalLicoes = getTotalLicoes(course) || books.reduce((s,b)=>s+b.items.length,0) || 1;
 
   const tarefasFeitas = useMemo(() => {
     let count = 0;
@@ -3253,6 +3540,7 @@ function IVi({mode="student"}){
 
 // ── StudentDetail com todas as modificações ────────────────────────────────
 function StudentDetail({uid,isAdmin,onBack,initialTab}){
+  const courses=useCourses();
   const [profile,setProfile]=useState(null);
   const [links,setLinks]=useState([]);
   const [trilhaData,setTrilhaData]=useState({});
@@ -3286,6 +3574,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         if(!doc.exists)ref.set({
           name:"Aluno",level:"A1",program:"Fluency Studio",coach:"Victor Gomes",
           profession:"",birthday:"",foto:"",email:"",phone:"",status:"lead",
+          contrato:"foundation_general",
           links:[],trilha:{},materiais:{},financeiro:FINANCEIRO_DEFAULT,modulosOcultos:[],
         });
       }).catch(()=>{});
@@ -3297,6 +3586,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         setProfile({
           uid:n.uid,name:n.name,level:n.level,program:n.program,coach:n.coach,
           profession:n.profession,birthday:n.birthday,foto:n.foto,email:n.email,phone:n.phone,status:n.status,
+          contrato:n.contrato||"",
         });
         setLinks(n.links);
         setTrilhaData(n.trilha);
@@ -3306,7 +3596,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         setStudentSchedule({
           dataInicio:n.dataInicio||"",diasAulas:n.diasAulas||[],horarioAulas:n.horarioAulas||"",
           calendarioCompleto:n.calendarioCompleto||[],calendarioResumo:n.calendarioResumo||null,
-          program:n.program||"",licaoInicio:n.licaoInicio||1,
+          program:n.program||"",licaoInicio:n.licaoInicio||1,contrato:n.contrato||"",
         });
         setProfileErr("");
       }else if(!isAdmin){
@@ -3319,8 +3609,11 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     return()=>{cancelled=true;clearTimeout(t);unsub();};
   },[uid,isAdmin]);
 
-  const books=useMemo(()=>mergeBooks(trilhaData),[trilhaData]);
+  const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
+  const modMeta=useMemo(()=>buildModuleMeta(course),[course]);
+  const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
   const currentMod=useMemo(()=>getCurrentModule(books,modulosOcultos),[books,modulosOcultos]);
+  const currentModMeta=modMeta.find(m=>m.id===currentMod)||modMeta[0];
   async function saveProfile(){
     setFotoBusy(true);
     try{
@@ -3389,9 +3682,9 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       <div>
         <button className="page-back" onClick={()=>{setStudentPage("dashboard");setFocusLessonId(null);}}><Icon name="arrow-left" size={16}/> Voltar</button>
         {studentPage!=="trilha"&&<h2 className="text-xl font-bold mb-4" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]}</h2>}
-        {studentPage==="trilha"&&<TrilhaSection uid={uid} isAdmin={false} focusLessonId={focusLessonId} onLessonFocused={()=>setFocusLessonId(null)}/>}
-        {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos}/>}
-        {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false}/>}
+        {studentPage==="trilha"&&<TrilhaSection uid={uid} isAdmin={false} focusLessonId={focusLessonId} onLessonFocused={()=>setFocusLessonId(null)} contrato={profile.contrato}/>}
+        {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
+        {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
         {studentPage==="calendario"&&<StudentCalendarView uid={uid} trilhaData={trilhaData} schedule={studentSchedule} studentName={profile.name}/>}
         {studentPage==="contato"&&(
@@ -3431,7 +3724,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                       {profile.profession&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{profile.profession}</span>}
                       {age!==null&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{age} anos</span>}
                       {profile.birthday&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">🎂 {formatDateBR(profile.birthday).slice(0,5)}</span>}
-                      <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:MODULES[currentMod-1]?.accent+".12)",border:"1px solid "+MODULES[currentMod-1]?.accent+".30)",color:"var(--font)"}}>Módulo {currentMod} · {MODULES[currentMod-1]?.name}</span>
+                      <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:(currentModMeta?.accent||"rgba(0,191,165,")+".12)",border:"1px solid "+(currentModMeta?.accent||"rgba(0,191,165,")+".30)",color:"var(--font)"}}>Módulo {currentMod} · {currentModMeta?.name||"—"}</span>
                     </div>}
                   </div>
                 </div>
@@ -3470,10 +3763,10 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             </div>
             {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTab}/>}
             {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={true} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
-            {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true}/>}
-            {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos}/>}
+            {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
+            {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
             {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={true} links={links}/>}
-            {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={true}/>}
+            {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
           </>
         ):renderStudentPage()}
       </main>
@@ -3502,7 +3795,7 @@ const BLANK_DADOS={
   nome:"",cpf:"",rg:"",email:"",telefone:"",telefone2:"",whatsapp:"",
   dataNasc:"",estadoCivil:"",profissao:"",nacionalidade:"",endereco:"",
   foto:"",dataCadastro:new Date().toISOString().slice(0,10),
-  contrato:"fluency_foundation",duracao:"",
+  contrato:"foundation_general",duracao:"",
   diasAulas:[],horarioAulas:"",
   valorCheio:"",descontos:"",valorFinal:"",diaVencimento:"",
   dataInicio:"",licaoInicio:"1",numParcelas:18,
@@ -3518,16 +3811,17 @@ const BLANK_TRIAGEM={
   expectativas:[],objetivo:"",horasSemana:"",prazo:"",observacoes:"",
 };
 const DIAS_SEMANA=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
-const CONTRATOS=[
-  {v:"fluency_foundation",l:"Fluency Foundation"},
-  {v:"flash",l:"Flash (Just Talk)"},
-  {v:"speech",l:"Speech (Business)"},
-];
+/** @deprecated use getActiveContratos() / useCourses() — mantido só como fallback síncrono */
+const CONTRATOS=getActiveContratos();
 const STATUS_OPTIONS=["lead","interessado","ativo","trancado","evadido"];
 
 function ModalCadastro({onClose,onSaved}){
+  const courses=useCourses();
+  const contratosAtivos=useMemo(()=>getActiveContratos(),[courses]);
   const [tab,setTab]=useState(0);
-  const [dados,setDados]=useState(BLANK_DADOS);
+  const [dados,setDados]=useState({...BLANK_DADOS,contrato:(getActiveContratos()[0]&&getActiveContratos()[0].v)||"foundation_general"});
+  const courseSel=useMemo(()=>getCourseById(dados.contrato),[courses,dados.contrato]);
+  const totalLicoesCurso=getTotalLicoes(courseSel)||150;
   const [triagem,setTriagem]=useState(BLANK_TRIAGEM);
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
@@ -3610,7 +3904,7 @@ function ModalCadastro({onClose,onSaved}){
       }
       const docRef=uid?db.collection("students").doc(uid):db.collection("students").doc();
       const studentUid=docRef.id;
-      const programName=dados.contrato==="fluency_foundation"?"Fluency Foundation":dados.contrato==="flash"?"Flash (Just Talk)":"Speech (Business)";
+      const programName=getCourseLabel(dados.contrato)||"Fluency Foundation General";
       await docRef.set({
         name:dados.nome.trim(),
         email,
@@ -3747,18 +4041,18 @@ function ModalCadastro({onClose,onSaved}){
                 </div>
               </div>
 
-              <div className="form-section-title" style={{marginTop:20}}>Contrato</div>
+              <div className="form-section-title" style={{marginTop:20}}>Contrato / Curso</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label className="form-label">Tipo de Contrato</label>
+                <div><label className="form-label">Tipo de Contrato (Curso)</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.contrato} onChange={e=>setD("contrato",e.target.value)}>
-                    {CONTRATOS.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
+                    {contratosAtivos.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
                   </select>
                 </div>
                 <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Ex: 18 meses" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
-                <div><label className="form-label">Lição de Início (1–150)</label>
+                <div><label className="form-label">Lição de Início (1–{totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
-                    {Array.from({length:150},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
+                    {Array.from({length:totalLicoesCurso},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
                   </select>
                 </div>
                 <div style={{gridColumn:"1/-1"}}>
@@ -3932,6 +4226,8 @@ function ModalCadastro({onClose,onSaved}){
 
 /* ── CADASTROS PENDENTES (form-self) ── */
 function ModalAutorizarLancar({pendente,onClose,onLaunched}){
+  const courses=useCourses();
+  const contratosAtivos=useMemo(()=>getActiveContratos(),[courses]);
   const raw=pendente||{};
   const studentUid=pendente?.uid;
   const isTerceirizado=!!(raw.alunoTerceirizado||raw.cadastroOrigem==="form-self-alunosfora");
@@ -3943,7 +4239,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
     dataNasc:raw.dataNasc||"",estadoCivil:raw.estadoCivil||"",
     profissao:raw.profissao||raw.profession||"",nacionalidade:raw.nacionalidade||"",
     endereco:raw.endereco||"",foto:raw.foto||"",
-    contrato:raw.contrato||"fluency_foundation",duracao:raw.duracao||"",
+    contrato:resolveContratoId(raw.contrato||"foundation_general"),duracao:raw.duracao||"",
     diasAulas:Array.isArray(raw.diasAulas)?raw.diasAulas:[],horarioAulas:raw.horarioAulas||"",
     valorCheio:raw.valorCheio??"",descontos:raw.descontos??"",
     valorFinal:raw.valorFinal??"",diaVencimento:raw.diaVencimento??"",
@@ -3955,6 +4251,8 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
   const [status,setStatus]=useState("ativo");
   const [saving,setSaving]=useState(false);
   const [err,setErr]=useState("");
+  const courseSel=useMemo(()=>getCourseById(dados.contrato),[courses,dados.contrato]);
+  const totalLicoesCurso=getTotalLicoes(courseSel)||150;
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function toggleDia(d){setDados(p=>({...p,diasAulas:(p.diasAulas||[]).includes(d)?p.diasAulas.filter(x=>x!==d):[...(p.diasAulas||[]),d]}));}
@@ -3981,7 +4279,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         ? (gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,nParcelas||18,[])||[])
         : [];
       const financeiro={...FINANCEIRO_DEFAULT,parcelas};
-      const programName=CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation";
+      const programName=getCourseLabel(dados.contrato)||"Fluency Foundation General";
 
       await db.collection("students").doc(studentUid).update({
         name:dados.nome.trim(),email,
@@ -4079,16 +4377,16 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                   :"Confira e complete o que faltar — especialmente financeiro e datas."}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label className="form-label">Tipo de Contrato</label>
+                <div><label className="form-label">Tipo de Contrato (Curso)</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.contrato} onChange={e=>setD("contrato",e.target.value)}>
-                    {CONTRATOS.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
+                    {contratosAtivos.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
                   </select>
                 </div>
                 <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
-                <div><label className="form-label">Lição de Início</label>
+                <div><label className="form-label">Lição de Início (1–{totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
-                    {Array.from({length:150},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
+                    {Array.from({length:totalLicoesCurso},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
                   </select>
                 </div>
                 <div style={{gridColumn:"1/-1"}}><label className="form-label">Dias das Aulas</label>
@@ -4142,7 +4440,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
               <div style={{marginTop:14,fontSize:13,color:"var(--font-muted)"}}>
                 <div>📧 {dados.email}</div>
                 <div>🔑 Senha definida pelo aluno no formulário</div>
-                <div>📋 Programa: {CONTRATOS.find(c=>c.v===dados.contrato)?.l||dados.contrato}</div>
+                <div>📋 Programa: {getCourseLabel(dados.contrato)}</div>
               </div>
             </div>
           )}
@@ -4247,7 +4545,7 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
                   <div style={{fontSize:12,color:"var(--font-muted)"}}>{p.email} · {sub}</div>
                   <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:4}}>
                     {isTerc&&<span className="status-pill status-pill-lead" style={{fontSize:10}}>Terceirizado</span>}
-                    {p.contrato&&<span style={{fontSize:11}}>{CONTRATOS.find(c=>c.v===p.contrato)?.l||p.contrato}</span>}
+                    {p.contrato&&<span style={{fontSize:11}}>{getCourseLabel(p.contrato)}</span>}
                   </div>
                 </div>
                 <span className={"status-pill "+stCls} style={{fontSize:10}}>{stLbl}</span>
@@ -4336,9 +4634,10 @@ const STUDIO_CLOSED_MAP=(()=>{
 })();
 function isStudioClosed(iso){return!!STUDIO_CLOSED_MAP[iso];}
 function getStudioDayInfo(iso){return STUDIO_CLOSED_MAP[iso]||null;}
-function lessonIdFromNum(n){const bi=Math.ceil(n/50);return`b${bi}-l${n}`;}
-function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas=""}){
+function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas="",course=null}){
   if(!dataInicio||!diasAulas?.length)return null;
+  const courseObj=course||DEFAULT_COURSES[0];
+  const total=totalLicoes||getTotalLicoes(courseObj)||150;
   const diasSet=new Set(diasAulas.map(d=>DIA_TO_JS[d]).filter(v=>v!==undefined));
   if(!diasSet.size)return null;
   let current=new Date(dataInicio+"T12:00:00");
@@ -4346,11 +4645,11 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
   const trilhaUpdates={};
   const calendario=[];
   const maxDate=new Date(dataInicio+"T12:00:00");maxDate.setFullYear(maxDate.getFullYear()+5);
-  while(lessonNum<=totalLicoes&&current<=maxDate){
+  while(lessonNum<=total&&current<=maxDate){
     const iso=current.toISOString().slice(0,10);
     if(isStudioClosed(iso)){current.setDate(current.getDate()+1);continue;}
     if(diasSet.has(current.getDay())){
-      const id=lessonIdFromNum(lessonNum);
+      const id=lessonIdFromNum(lessonNum,courseObj);
       trilhaUpdates[id]={...(trilhaExistente[id]||{}),dataPrevista:iso};
       calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:JS_TO_DIA[current.getDay()],horario:horarioAulas||""});
       lessonNum++;
@@ -4362,10 +4661,13 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
   return{trilhaUpdates,calendario,total:calendario.length,dataFim:ultima.date,dataInicio:calendario[0].date};
 }
 async function aplicarCalendarioAluno(uid,student,trilhaExistente){
+  const course=getCourseById(student.contrato);
   const result=gerarCalendarioCompleto({
     dataInicio:student.dataInicio,diasAulas:student.diasAulas||[],
     licaoInicio:student.licaoInicio||1,trilhaExistente:trilhaExistente||student.trilha||{},
     horarioAulas:student.horarioAulas||"",
+    totalLicoes:getTotalLicoes(course),
+    course,
   });
   if(!result)return null;
   const trilha={...(student.trilha||{})};
@@ -4547,7 +4849,7 @@ function eventsToAulasCards(events,students){
     let contrato="";
     if(e.type==="google")contrato="Google Calendar";
     else if(e.lessonNum)contrato=`Lição ${e.lessonNum}`;
-    else if(s)contrato=CONTRATOS.find(c=>c.v===s.contrato)?.l||"—";
+    else if(s)contrato=getCourseLabel(s.contrato);
     else contrato=e.source==="recorrente"?"Aula semanal":"—";
     return{
       uid:e.studentUid||e.id||("ev-"+i),name,horario:e.time||"—",contrato,
@@ -4708,7 +5010,7 @@ function findProximaAulaUnified(students,agendaExtra={}){
     buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
       if(e.type!=="aula"||!e.date||e.date<today)return;
       const stu=(students||[]).find(s=>s.uid===e.studentUid);
-      const lesson=e.lessonNum&&stu?(stu.trilha||{})[lessonIdFromNum(e.lessonNum)]:null;
+      const lesson=e.lessonNum&&stu?(stu.trilha||{})[lessonIdFromNum(e.lessonNum,getCourseById(stu.contrato))]:null;
       if(lesson?.status==="concluida"||lesson?.status==="realizada")return;
       if(!best||e.date<best.date||(e.date===best.date&&(e.time||"").localeCompare(best.time||"")<0)){
         best={
@@ -4723,6 +5025,8 @@ function findProximaAulaUnified(students,agendaExtra={}){
 }
 /* ── MODAL DE EDIÇÃO ── */
 function ModalEdicao({student,onClose,onSaved}){
+  const courses=useCourses();
+  const contratosAtivos=useMemo(()=>getActiveContratos(),[courses]);
   const [tab,setTab]=useState(0);
   const [dados,setDados]=useState({
     nome:student.name||student.nome||"",cpf:student.cpf||"",rg:student.rg||"",
@@ -4731,7 +5035,7 @@ function ModalEdicao({student,onClose,onSaved}){
     profissao:student.profissao||student.profession||"",nacionalidade:student.nacionalidade||"",
     endereco:student.endereco||"",foto:student.foto||"",
     dataCadastro:student.dataCadastro||new Date().toISOString().slice(0,10),
-    contrato:student.contrato||"fluency_foundation",duracao:student.duracao||"",
+    contrato:resolveContratoId(student.contrato||"foundation_general"),duracao:student.duracao||"",
     diasAulas:student.diasAulas||[],horarioAulas:student.horarioAulas||"",
     valorCheio:student.valorCheio||"",descontos:student.descontos||"",
     valorFinal:student.valorFinal||"",diaVencimento:student.diaVencimento||"",
@@ -4745,6 +5049,8 @@ function ModalEdicao({student,onClose,onSaved}){
   const [loginMsg,setLoginMsg]=useState("");
   const [fotoFile,setFotoFile]=useState(null);
   const [fotoPreview,setFotoPreview]=useState(student.foto||"");
+  const courseSel=useMemo(()=>getCourseById(dados.contrato),[courses,dados.contrato]);
+  const totalLicoesCurso=getTotalLicoes(courseSel)||150;
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function setT(k,v){setTriagem(p=>({...p,[k]:v}));}
@@ -4828,7 +5134,7 @@ function ModalEdicao({student,onClose,onSaved}){
         status:dados.status,
         dataInicio:dados.dataInicio,
         licaoInicio:parseInt(dados.licaoInicio)||1,
-        program:CONTRATOS.find(c=>c.v===dados.contrato)?.l||"Fluency Foundation",
+        program:getCourseLabel(dados.contrato)||"Fluency Foundation General",
         birthday:dados.dataNasc||"",
         profession:dados.profissao.trim(),
         triagem,
@@ -4911,18 +5217,19 @@ function ModalEdicao({student,onClose,onSaved}){
                 </div>
               </div>
               {loginMsg&&<div style={{fontSize:12,color:"#60daa8",marginBottom:10,padding:"8px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)"}}>{loginMsg}</div>}
-              <div className="form-section-title">Contrato</div>
+              <div className="form-section-title">Contrato / Curso</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label className="form-label">Tipo de Contrato</label>
+                <div><label className="form-label">Tipo de Contrato (Curso)</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.contrato} onChange={e=>setD("contrato",e.target.value)}>
-                    {CONTRATOS.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
+                    {contratosAtivos.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
+                    {!contratosAtivos.find(c=>c.v===dados.contrato)&&dados.contrato&&<option value={dados.contrato}>{getCourseLabel(dados.contrato)} (inativo)</option>}
                   </select>
                 </div>
                 <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
-                <div><label className="form-label">Lição de Início (1–150)</label>
+                <div><label className="form-label">Lição de Início (1–{totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
-                    {Array.from({length:150},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
+                    {Array.from({length:totalLicoesCurso},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
                   </select>
                 </div>
                 <div style={{gridColumn:"1/-1"}}>
@@ -4972,9 +5279,11 @@ function ModalEdicao({student,onClose,onSaved}){
                     {dados.dataInicio&&dados.diasAulas?.length>0&&(
                       <button
                         onClick={async()=>{
+                          const courseCal=getCourseById(dados.contrato);
                           const preview=gerarCalendarioCompleto({
                             dataInicio:dados.dataInicio,diasAulas:dados.diasAulas,licaoInicio:dados.licaoInicio||1,
                             trilhaExistente:student.trilha||{},horarioAulas:dados.horarioAulas||"",
+                            totalLicoes:getTotalLicoes(courseCal),course:courseCal,
                           });
                           if(!preview){alert("Preencha Data de Início e selecione os Dias das Aulas.");return;}
                           if(!confirm(`Gerar calendário completo com ${preview.total} aulas (${formatDateBR(preview.dataInicio)} → ${formatDateBR(preview.dataFim)}) para ${student.name}? As Data Prevista serão atualizadas na trilha.`))return;
@@ -5308,7 +5617,7 @@ function AdminAgendaDashboard({students,onBack}){
               ?<>
                 <div className="agenda-next-title">{proxima.student?.name||"Aluno"}</div>
                 <div style={{fontSize:13,color:"var(--font-muted)"}}>{formatDateBR(proxima.date)} · {proxima.time||"—"}</div>
-                <div style={{fontSize:12,marginTop:6}}>Lição {proxima.lessonNum||"—"} · {CONTRATOS.find(c=>c.v===proxima.student?.contrato)?.l||proxima.student?.program||"—"}</div>
+                <div style={{fontSize:12,marginTop:6}}>Lição {proxima.lessonNum||"—"} · {getCourseLabel(proxima.student?.contrato)||proxima.student?.program||"—"}</div>
               </>
               :<div style={{fontSize:13,color:"var(--font-muted)"}}>Nenhuma aula prevista. Gere o calendário dos alunos em Alunos → Editar.</div>}
           </div>
@@ -5421,6 +5730,302 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName}){
   );
 }
 
+/* ── CONFIGURAÇÕES → CURSOS (controle total do admin) ── */
+function AdminCursos({students}){
+  const courses=useCourses();
+  const [editId,setEditId]=useState(null);
+  const [draft,setDraft]=useState(null);
+  const [showNew,setShowNew]=useState(false);
+  const [newForm,setNewForm]=useState({nome:"",corBase:"#00BFA5",template:"foundation",ativo:true});
+  const [busy,setBusy]=useState(false);
+  const [msg,setMsg]=useState("");
+  const [err,setErr]=useState("");
+  const [migMsg,setMigMsg]=useState("");
+
+  const editing=editId?courses.find(c=>c.id===editId):null;
+
+  function openEdit(c){
+    setEditId(c.id);
+    setDraft({
+      nome:c.nome||"",
+      corBase:c.corBase||"#00BFA5",
+      ativo:c.ativo!==false,
+      ordem:c.ordem||1,
+      modulos:(c.modulos||[]).map(m=>({...m,nome:m.nome||""})),
+    });
+    setErr("");setMsg("");
+  }
+
+  function setModNome(idx,nome){
+    setDraft(p=>{
+      const modulos=[...(p.modulos||[])];
+      modulos[idx]={...modulos[idx],nome};
+      return{...p,modulos};
+    });
+  }
+
+  async function saveEdit(){
+    if(!editId||!draft)return;
+    if(!draft.nome.trim()){setErr("Nome do curso é obrigatório.");return;}
+    setBusy(true);setErr("");
+    try{
+      await db.collection("courses").doc(editId).set({
+        nome:draft.nome.trim(),
+        corBase:draft.corBase||"#00BFA5",
+        ativo:!!draft.ativo,
+        ordem:parseInt(draft.ordem,10)||1,
+        modulos:(draft.modulos||[]).map((m,i)=>({
+          ...m,
+          id:m.id!=null?m.id:i+1,
+          nome:(m.nome||"").trim()||("Módulo "+(i+1)),
+        })),
+      },{merge:true});
+      // Atualiza program nos alunos deste curso
+      const snap=await db.collection("students").where("contrato","==",editId).get();
+      for(let i=0;i<snap.docs.length;i+=400){
+        const batch=db.batch();
+        snap.docs.slice(i,i+400).forEach(d=>batch.update(d.ref,{program:draft.nome.trim()}));
+        await batch.commit();
+      }
+      setMsg("Curso salvo.");
+      setEditId(null);setDraft(null);
+    }catch(e){setErr(e.message||String(e));}
+    finally{setBusy(false);}
+  }
+
+  async function deleteCourse(c){
+    const linked=(students||[]).filter(s=>resolveContratoId(s.contrato)===c.id);
+    if(linked.length>0){
+      alert(`Não é possível excluir "${c.nome}": há ${linked.length} aluno(s) vinculado(s).\nDesative o curso ou migre os alunos antes.`);
+      return;
+    }
+    if(!confirm(`Excluir o curso "${c.nome}" permanentemente?\nIsso não remove dados de trilha de alunos (já bloqueado se houver vínculos).`))return;
+    setBusy(true);
+    try{
+      await db.collection("courses").doc(c.id).delete();
+      setMsg("Curso excluído.");
+      if(editId===c.id){setEditId(null);setDraft(null);}
+    }catch(e){alert("Erro: "+(e.message||e));}
+    finally{setBusy(false);}
+  }
+
+  async function createCourse(){
+    if(!newForm.nome.trim()){setErr("Informe o nome do novo curso.");return;}
+    setBusy(true);setErr("");
+    try{
+      let id=slugifyCourseId(newForm.nome);
+      const exists=await db.collection("courses").doc(id).get();
+      if(exists.exists)id=id+"_"+Date.now().toString(36).slice(-4);
+      const tpl=COURSE_TEMPLATES.find(t=>t.id===newForm.template);
+      const structure=tpl&&tpl.builder?tpl.builder():makeFoundationModulos(["Módulo 1","Módulo 2","Módulo 3"]);
+      const maxOrdem=courses.reduce((m,c)=>Math.max(m,c.ordem||0),0);
+      await db.collection("courses").doc(id).set({
+        id,nome:newForm.nome.trim(),corBase:newForm.corBase||"#00BFA5",
+        ativo:newForm.ativo!==false,ordem:maxOrdem+1,
+        modulos:structure.modulos,
+      });
+      setShowNew(false);
+      setNewForm({nome:"",corBase:"#00BFA5",template:"foundation",ativo:true});
+      setMsg("Curso criado. Edite os nomes dos módulos e preencha as lições na Trilha de cada aluno.");
+    }catch(e){setErr(e.message||String(e));}
+    finally{setBusy(false);}
+  }
+
+  async function runMigration(){
+    setBusy(true);setMigMsg("");
+    try{
+      await db.collection("config").doc("migrations").set({contratosV2:false},{merge:true});
+      const r=await migrateLegacyContratosIfNeeded();
+      if(r.skipped)setMigMsg("Migração já havia sido executada. Flag resetada e reexecutada — sem alunos legados pendentes.");
+      else if(r.error)setMigMsg("Erro: "+r.error);
+      else setMigMsg(`Migração concluída: ${r.migrated||0} aluno(s) atualizados para os novos IDs de curso.`);
+    }catch(e){setMigMsg("Erro: "+(e.message||e));}
+    finally{setBusy(false);}
+  }
+
+  async function reseedDefaults(){
+    if(!confirm("Sincronizar os 6 cursos oficiais com as cores/nomes do site (landing)?\n\n• Fluency Foundation → #00a89d (teal)\n• Flash Talk → #3b82f6 (blue)\n• Corporate Speech (Business) → #8b5cf6 (purple)\n• Fluency Foundation Corporate → #c9a84c (gold)\n• Flash Talk Corporate → #d4788a (rose)\n• Reflective Mind → #f59e0b (orange)\n\nNomes e cores serão atualizados. Estrutura de módulos existente é preservada."))return;
+    setBusy(true);
+    try{
+      await ensureCoursesSeeded(true);
+      setMsg("Cursos sincronizados com as cores e nomes oficiais do landing.");
+    }catch(e){setErr(e.message||String(e));}
+    finally{setBusy(false);}
+  }
+
+  const sorted=[...courses].sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+
+  return(
+    <div>
+      <div className="glass rounded-2xl p-5 mb-5">
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+          <div>
+            <h2 className="text-lg font-bold flex items-center gap-2" style={{fontFamily:"'Sora',sans-serif"}}>
+              <Icon name="book-open" size={18} style={{color:"#1e8fa8"}}/> Cursos
+            </h2>
+            <p className="text-xs muted mt-1" style={{maxWidth:480,lineHeight:1.5}}>
+              Controle total: renomear, cor, ativar/desativar, editar módulos, criar e excluir.
+              Cores e nomes iguais aos cards do site. Alunos veem só o curso do contrato; conteúdo das lições se preenche na Trilha.
+            </p>
+          </div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            <button className="btn rounded-xl px-3 py-2 text-xs font-semibold" onClick={reseedDefaults} disabled={busy}>Sincronizar cores do site</button>
+            <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>{setShowNew(true);setErr("");}} disabled={busy}>
+              <Icon name="plus" size={14}/> Novo curso
+            </button>
+          </div>
+        </div>
+        {msg&&<div style={{marginTop:12,padding:"10px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)",fontSize:13,color:"#60daa8"}}>{msg}</div>}
+        {err&&!showNew&&!editId&&<div className="err-box" style={{marginTop:12}}>{err}</div>}
+      </div>
+
+      <div className="space-y-3 mb-6">
+        {sorted.map(c=>{
+          const nMod=(c.modulos||[]).length;
+          const nLic=getTotalLicoes(c);
+          const linked=(students||[]).filter(s=>resolveContratoId(s.contrato)===c.id).length;
+          const cor=c.corBase||"#00a89d";
+          const grupoLbl=c.grupo==="corporate"?"CORPORATE ENGLISH":c.grupo==="general"?"GENERAL ENGLISH":c.grupo==="special"?"ESPECIAL":null;
+          return(
+            <div key={c.id} className="glass rounded-2xl overflow-hidden" style={{opacity:c.ativo===false?.65:1,borderLeft:"4px solid "+cor}}>
+              <div style={{display:"flex",alignItems:"center",gap:14,padding:"12px 16px"}}>
+                <div style={{
+                  width:48,height:48,borderRadius:12,flexShrink:0,
+                  background:"linear-gradient(145deg,"+cor+"33,"+cor+"18)",
+                  border:"1.5px solid "+cor+"66",
+                  boxShadow:"0 0 16px "+cor+"33",
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                }}>
+                  <div style={{width:16,height:16,borderRadius:4,background:cor}}/>
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  {grupoLbl&&<div style={{fontSize:9,fontWeight:800,letterSpacing:".14em",color:cor,marginBottom:2}}>{grupoLbl}</div>}
+                  <div style={{fontWeight:700,fontSize:14}}>{c.nome}</div>
+                  <div style={{fontSize:11,color:"var(--font-muted)",marginTop:2}}>
+                    <span style={{color:cor,fontFamily:"monospace",fontSize:10}}>{cor}</span>
+                    {" · "}{nMod} módulos · {nLic} lições · {linked} aluno{linked!==1?"s":""}
+                    {c.ativo===false&&<span style={{marginLeft:8,color:"#e8a94c"}}>· inativo</span>}
+                  </div>
+                </div>
+                <button className="btn rounded-lg px-3 py-2 text-xs inline-flex items-center gap-1.5" onClick={()=>openEdit(c)} title="Editar curso"
+                  style={{borderColor:cor+"55"}}>
+                  <Icon name="settings" size={14} style={{color:cor}}/> Editar
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {sorted.length===0&&<div className="glass rounded-2xl p-8 text-center muted">Nenhum curso. Clique em «Novo curso» ou «Sincronizar cores do site».</div>}
+      </div>
+
+      <div className="glass rounded-2xl p-4 mb-4">
+        <div style={{fontWeight:700,fontSize:13,marginBottom:8}}>Migração de contratos legados</div>
+        <p className="text-xs muted mb-3" style={{lineHeight:1.5}}>
+          Converte <code>fluency_foundation</code> → Foundation General (e flash/speech), preservando 100% da trilha.
+        </p>
+        <button className="btn rounded-xl px-4 py-2 text-sm font-semibold" onClick={runMigration} disabled={busy}>Executar migração</button>
+        {migMsg&&<p className="text-xs mt-2" style={{color:"#60daa8"}}>{migMsg}</p>}
+      </div>
+
+      {/* Painel de edição */}
+      {editId&&draft&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget){setEditId(null);setDraft(null);}}}>
+          <div className="modal-box" style={{maxWidth:560}}>
+            <div className="modal-header">
+              <div>
+                <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar curso</div>
+                <div style={{fontSize:11,opacity:.75}}>{editId}</div>
+              </div>
+              <button onClick={()=>{setEditId(null);setDraft(null);}} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+            </div>
+            <div className="modal-body">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div style={{gridColumn:"1/-1"}}>
+                  <label className="form-label">Nome do curso</label>
+                  <input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={draft.nome} onChange={e=>setDraft(p=>({...p,nome:e.target.value}))}/>
+                </div>
+                <div>
+                  <label className="form-label">Cor base</label>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <input type="color" value={draft.corBase||"#00BFA5"} onChange={e=>setDraft(p=>({...p,corBase:e.target.value}))} style={{width:44,height:36,border:"none",background:"transparent",cursor:"pointer"}}/>
+                    <input className="flex-1 input rounded-xl px-3 py-2 text-sm" value={draft.corBase} onChange={e=>setDraft(p=>({...p,corBase:e.target.value}))}/>
+                  </div>
+                </div>
+                <div>
+                  <label className="form-label">Ordem de exibição</label>
+                  <input type="number" min={1} className="w-full input rounded-xl px-3 py-2.5 text-sm" value={draft.ordem} onChange={e=>setDraft(p=>({...p,ordem:e.target.value}))}/>
+                </div>
+                <div style={{gridColumn:"1/-1",display:"flex",alignItems:"center",gap:10}}>
+                  <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13}}>
+                    <input type="checkbox" checked={!!draft.ativo} onChange={e=>setDraft(p=>({...p,ativo:e.target.checked}))}/>
+                    Curso ativo (aparece no campo Contrato do cadastro)
+                  </label>
+                </div>
+              </div>
+              <div className="form-section-title" style={{marginTop:16}}>Módulos</div>
+              <p className="text-xs muted mb-2">A estrutura (qtd. de lições/blocos) é fixa por template. Você edita os nomes aqui; o conteúdo de cada lição fica nos cards da Trilha.</p>
+              {(draft.modulos||[]).map((m,idx)=>(
+                <div key={idx} style={{marginBottom:8}}>
+                  <label className="form-label">Módulo {m.id||idx+1} · {getModuleLessonCount(m)} lições{m.semBlocos?" (sem blocos)":""}</label>
+                  <input className="w-full input rounded-xl px-3 py-2 text-sm" value={m.nome||""} onChange={e=>setModNome(idx,e.target.value)}/>
+                </div>
+              ))}
+              {err&&<div className="err-box" style={{marginTop:12}}>{err}</div>}
+            </div>
+            <div className="modal-footer" style={{flexWrap:"wrap",gap:8}}>
+              <button className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={()=>deleteCourse(editing||{id:editId,nome:draft.nome})} disabled={busy}>Excluir</button>
+              <div style={{flex:1}}/>
+              <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setEditId(null);setDraft(null);}}>Cancelar</button>
+              <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveEdit} disabled={busy}>{busy?"Salvando…":"Salvar"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Novo curso */}
+      {showNew&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowNew(false);}}>
+          <div className="modal-box" style={{maxWidth:480}}>
+            <div className="modal-header">
+              <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Novo curso</div>
+              <button onClick={()=>setShowNew(false)} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+            </div>
+            <div className="modal-body">
+              <label className="form-label">Nome</label>
+              <input className="w-full input rounded-xl px-3 py-2.5 text-sm mb-3" placeholder="Ex: Flash Talk Custom" value={newForm.nome} onChange={e=>setNewForm(p=>({...p,nome:e.target.value}))}/>
+              <label className="form-label">Cor base</label>
+              <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12}}>
+                <input type="color" value={newForm.corBase} onChange={e=>setNewForm(p=>({...p,corBase:e.target.value}))} style={{width:44,height:36,border:"none",background:"transparent",cursor:"pointer"}}/>
+                <input className="flex-1 input rounded-xl px-3 py-2 text-sm" value={newForm.corBase} onChange={e=>setNewForm(p=>({...p,corBase:e.target.value}))}/>
+              </div>
+              <label className="form-label">Estrutura (template)</label>
+              <select className="w-full input rounded-xl px-3 py-2.5 text-sm mb-3" value={newForm.template} onChange={e=>setNewForm(p=>({...p,template:e.target.value}))}>
+                {COURSE_TEMPLATES.filter(t=>t.builder).map(t=><option key={t.id} value={t.id}>{t.label}</option>)}
+              </select>
+              <label style={{display:"flex",alignItems:"center",gap:8,fontSize:13,cursor:"pointer"}}>
+                <input type="checkbox" checked={newForm.ativo} onChange={e=>setNewForm(p=>({...p,ativo:e.target.checked}))}/> Ativo no cadastro
+              </label>
+              {err&&<div className="err-box" style={{marginTop:12}}>{err}</div>}
+            </div>
+            <div className="modal-footer">
+              <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setShowNew(false)}>Cancelar</button>
+              <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={createCourse} disabled={busy}>{busy?"Criando…":"Criar curso"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AdminConfig({students}){
+  return(
+    <div>
+      <AdminCursos students={students}/>
+    </div>
+  );
+}
+
 /* ── DASHBOARD ── */
 function AdminDashboard({students,onNavigate,pendentesCount=0}){
   const hoje=new Date();
@@ -5440,7 +6045,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
     {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#60daa8", ativo:true},
     {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#f0cc60", ativo:true},
     {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#c0a0f8", ativo:false},
-    {id:"config",    icon:"settings",     label:"Config.",     cor:"#f09090", ativo:false},
+    {id:"config",    icon:"settings",     label:"Config.",     cor:"#f09090", ativo:true},
   ];
 
   return(
@@ -5473,7 +6078,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
               <div className="aula-hoje-hora">{s.horario||"—"}</div>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontWeight:700,fontSize:13}}>{s.name||"Aluno"}</div>
-                <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato||"—"}</div>
+                <div style={{fontSize:11,color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)}</div>
               </div>
             </div>
           ))
@@ -5615,7 +6220,7 @@ function AdminAlunos({students,onSelectUid}){
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {alunosFiltrados.map(s=>{
               try{
-                const merged=mergeBooks(s.trilha||{});let done=0,total=0;
+                const merged=mergeBooks(s.trilha||{},getCourseById(s.contrato));let done=0,total=0;
                 merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida"||i.status==="realizada")done++;}));
                 const pct=total?Math.round((done/total)*100):0;
                 const mod=getCurrentModule(merged,s.modulosOcultos);
@@ -5651,7 +6256,7 @@ function AdminAlunos({students,onSelectUid}){
                         <StatusBadge status={s.status||"lead"}/>
                         {s.hasPortalLogin||s.authUid?<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"rgba(30,160,110,.15)",border:"1px solid rgba(30,160,110,.35)",color:"#60daa8"}}>Login OK</span>:null}
                         {finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}
-                        {s.contrato&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"var(--badge)",border:"1px solid var(--divider)",color:"var(--font-muted)"}}>{CONTRATOS.find(c=>c.v===s.contrato)?.l||s.contrato}</span>}
+                        {s.contrato&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"var(--badge)",border:"1px solid var(--divider)",color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)}</span>}
                       </div>
                       <div className="flex items-center justify-between text-xs mb-1" style={{color:"var(--font-muted)"}}>
                         <span>Progresso</span><span className="font-semibold">{pct}%</span>
@@ -5689,6 +6294,16 @@ function AdminApp({user}){
   const [selectedInitialTab,setSelectedInitialTab]=useState(null);
   const [showModal,setShowModal]=useState(false);
   const [adminView,setAdminView]=useState("dashboard");
+  useCourses(); // mantém cache de cursos atualizado para todo o admin
+
+  useEffect(()=>{
+    (async()=>{
+      try{
+        await ensureCoursesSeeded();
+        await migrateLegacyContratosIfNeeded();
+      }catch(e){console.error("AdminApp courses init:",e);}
+    })();
+  },[]);
 
   useEffect(()=>{
     const unsub=db.collection("students").onSnapshot(snap=>{
@@ -5723,7 +6338,7 @@ function AdminApp({user}){
 
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
 
-  const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda"};
+  const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
   const showBack=adminView!=="dashboard";
 
   return(
@@ -5766,13 +6381,21 @@ function AdminApp({user}){
         {!students
           ?<LoadingScreen/>
           :adminView==="dashboard"
-          ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{if(id==="alunos")setAdminView("alunos");if(id==="cadastros")setAdminView("cadastros");if(id==="financeiro")setAdminView("financeiro");if(id==="agenda")setAdminView("agenda");}}/>
+          ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
+              if(id==="alunos")setAdminView("alunos");
+              if(id==="cadastros")setAdminView("cadastros");
+              if(id==="financeiro")setAdminView("financeiro");
+              if(id==="agenda")setAdminView("agenda");
+              if(id==="config")setAdminView("config");
+            }}/>
           :adminView==="cadastros"
           ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
           :adminView==="financeiro"
           ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
           :adminView==="agenda"
           ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
+          :adminView==="config"
+          ?<AdminConfig students={students}/>
           :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
         }
       </main>
