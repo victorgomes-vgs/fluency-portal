@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práticas de Revisão | The Fluency Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0B1F33;
+  --bordo: #5A1F2B;
+  --teal-dark: #0F3A45;
+  --teal-accent: #114B5F;
+  --teal-light: #2C7A8E;
+  --teal-soft: #E8F4F8;
+  --white: #FFFFFF;
+  --bg: #F4F7FA;
+  --gray-mid: #E2EAF0;
+  --gray-text: #5a6b7a;
+  --ok: #15803d;
+  --ok-bg: #f0fdf4;
+  --ok-border: #86efac;
+  --bad: #b91c1c;
+  --bad-bg: #fef2f2;
+  --bad-border: #fca5a5;
+  --shadow: 0 8px 30px rgba(11,31,51,0.08);
+  --radius: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--navy);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+button, select { font-family: inherit; }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray-mid);
+  padding: 0.75rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 0.65rem; }
+.brand-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--navy), var(--teal-accent));
+  display: grid; place-items: center; color: white; font-weight: 800; font-size: 0.75rem;
+}
+.brand h1 { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.02em; }
+.brand p { font-size: 0.7rem; color: var(--teal-light); font-weight: 500; }
+.top-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.btn-ghost, .btn-soft, .btn-primary, .btn-icon, .btn-tip, .btn-audio, .btn-check {
+  border: none; cursor: pointer; border-radius: 999px; font-weight: 600;
+  transition: transform .15s, box-shadow .2s, background .2s, opacity .2s;
+}
+.btn-ghost:hover, .btn-soft:hover, .btn-primary:hover, .btn-icon:hover,
+.btn-tip:hover, .btn-audio:hover, .btn-check:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: white; border: 1px solid var(--gray-mid); color: var(--navy);
+  padding: 0.45rem 0.9rem; font-size: 0.78rem;
+}
+.btn-soft {
+  background: var(--teal-soft); color: var(--teal-accent);
+  padding: 0.45rem 0.9rem; font-size: 0.78rem;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--navy), var(--teal-accent));
+  color: white; padding: 0.55rem 1.15rem; font-size: 0.82rem;
+  box-shadow: 0 4px 14px rgba(17,75,95,0.25);
+}
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.save-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-border);
+  font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 999px;
+}
+.save-pill.saving { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
+.progress-wrap { min-width: 140px; }
+.progress-label { font-size: 0.68rem; color: var(--gray-text); font-weight: 600; margin-bottom: 3px; }
+.progress-track { height: 7px; background: var(--gray-mid); border-radius: 999px; overflow: hidden; }
+.progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--teal-light), var(--teal-accent));
+  transition: width .35s ease;
+}
+
+/* ── LAYOUT ── */
+.wrap { max-width: 920px; margin: 0 auto; padding: 1.5rem 1rem 5rem; }
+.view { display: none; animation: fadeIn .35s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── HOME ── */
+.hero {
+  background: linear-gradient(145deg, var(--navy) 0%, var(--teal-dark) 55%, var(--teal-accent) 100%);
+  color: white; border-radius: 24px; padding: 2rem 1.75rem; margin-bottom: 1.5rem;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; right: -40px; top: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+.hero-badge {
+  display: inline-block; background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 0.3rem 0.75rem; margin-bottom: 0.85rem;
+}
+.hero h2 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; margin-bottom: 0.5rem; }
+.hero p { opacity: .85; font-size: 0.92rem; max-width: 36rem; }
+.home-grid { display: grid; gap: 1rem; }
+@media (min-width: 720px) { .home-grid { grid-template-columns: repeat(3, 1fr); } }
+.practice-card {
+  background: white; border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 1px solid var(--gray-mid); padding: 1.35rem; cursor: pointer;
+  transition: transform .2s, box-shadow .2s; text-align: left; width: 100%;
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.practice-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(11,31,51,0.12); }
+.practice-num {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center; font-weight: 800; color: white; font-size: 1.1rem;
+}
+.practice-card:nth-child(1) .practice-num { background: linear-gradient(135deg, var(--teal-accent), var(--teal-light)); }
+.practice-card:nth-child(2) .practice-num { background: linear-gradient(135deg, var(--navy), var(--teal-accent)); }
+.practice-card:nth-child(3) .practice-num { background: linear-gradient(135deg, var(--bordo), #8a3040); }
+.practice-card h3 { font-size: 1.05rem; font-weight: 800; }
+.practice-card p { font-size: 0.82rem; color: var(--gray-text); }
+.card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.5rem; }
+.card-score { font-size: 0.75rem; font-weight: 700; color: var(--teal-accent); }
+.card-go { font-size: 0.78rem; font-weight: 700; color: white;
+  background: var(--navy); padding: 0.35rem 0.8rem; border-radius: 999px; }
+
+/* ── PRACTICE HEADER ── */
+.practice-header {
+  background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 1.25rem 1.35rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+}
+.practice-header h2 { font-size: 1.25rem; font-weight: 800; }
+.practice-header .sub { font-size: 0.82rem; color: var(--gray-text); margin-top: 0.2rem; }
+.score-box {
+  background: var(--teal-soft); border-radius: 12px; padding: 0.65rem 1rem; text-align: center;
+}
+.score-box .label { font-size: 0.68rem; font-weight: 700; color: var(--teal-light); text-transform: uppercase; letter-spacing: .06em; }
+.score-box .value { font-size: 1.25rem; font-weight: 800; color: var(--navy); }
+
+/* ── EXERCISE BLOCK ── */
+.ex-block {
+  background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  margin-bottom: 1.25rem; overflow: hidden; box-shadow: var(--shadow);
+}
+.ex-head {
+  background: linear-gradient(90deg, #f7fbfd, #ffffff);
+  border-bottom: 1px solid var(--gray-mid);
+  padding: 1rem 1.2rem; display: flex; gap: 0.75rem; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap;
+}
+.ex-title { font-size: 1rem; font-weight: 800; color: var(--navy); }
+.ex-title span { color: var(--teal-light); margin-right: 0.35rem; }
+.ex-body { padding: 1rem 1.15rem 1.25rem; background: #ffffff; }
+.item {
+  border: 1px solid var(--gray-mid); border-radius: 14px; padding: 0.95rem 1rem;
+  margin-bottom: 0.85rem; background: #ffffff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.item:last-child { margin-bottom: 0; }
+.item.correct { border-color: var(--ok-border); background: var(--ok-bg); }
+.item.wrong { border-color: var(--bad-border); background: var(--bad-bg); }
+.item-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.75rem;
+}
+.prompt { font-size: 0.95rem; font-weight: 600; color: var(--navy); flex: 1; }
+.prompt .letter { color: var(--teal-light); font-weight: 800; margin-right: 0.25rem; }
+.item-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+.btn-audio {
+  background: linear-gradient(135deg, var(--teal-accent), var(--teal-light));
+  color: white; width: 34px; height: 34px; display: grid; place-items: center;
+  box-shadow: 0 2px 10px rgba(44,122,142,0.25); font-size: 0.85rem;
+}
+.btn-audio.playing { background: linear-gradient(135deg, var(--bordo), #8a3040); }
+.btn-tip {
+  background: #f1f5f9; color: var(--navy); width: 34px; height: 34px;
+  display: grid; place-items: center; border: 1px solid var(--gray-mid); font-size: 0.85rem;
+}
+.tip-box {
+  display: none; margin-bottom: 0.75rem; padding: 0.7rem 0.85rem;
+  background: #f8fafc; border-left: 3px solid var(--teal-light); border-radius: 0 10px 10px 0;
+  font-size: 0.82rem; color: var(--gray-text);
+}
+.tip-box.show { display: block; }
+.options { display: grid; gap: 0.45rem; }
+@media (min-width: 640px) { .options.two-col { grid-template-columns: 1fr 1fr; } }
+.opt {
+  display: flex; align-items: flex-start; gap: 0.55rem;
+  background: #fff; border: 1.5px solid var(--gray-mid); border-radius: 12px;
+  padding: 0.65rem 0.8rem; cursor: pointer; text-align: left; width: 100%;
+  font-size: 0.88rem; color: var(--navy); transition: all .15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--teal-light); background: #f8fcfd; }
+.opt.selected { border-color: var(--teal-accent); background: var(--teal-soft); box-shadow: 0 0 0 2px rgba(17,75,95,0.12); }
+.opt.opt-correct { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
+.opt.opt-wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); }
+.opt:disabled { cursor: default; }
+.opt-mark {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid #94a3b8;
+  flex-shrink: 0; margin-top: 1px; display: grid; place-items: center;
+  font-size: 0.65rem; font-weight: 800;
+}
+.opt.selected .opt-mark { border-color: var(--teal-accent); background: var(--teal-accent); color: white; }
+.opt.opt-correct .opt-mark { border-color: var(--ok); background: var(--ok); color: white; }
+.opt.opt-wrong .opt-mark { border-color: var(--bad); background: var(--bad); color: white; }
+.feedback {
+  margin-top: 0.65rem; font-size: 0.8rem; font-weight: 600; display: none;
+}
+.feedback.show { display: block; }
+.feedback.ok { color: var(--ok); }
+.feedback.bad { color: var(--bad); }
+
+/* Drag columns */
+.word-bank {
+  display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1rem;
+  padding: 0.85rem; background: #f1f5f9; border-radius: 12px;
+}
+.word-chip {
+  background: white; border: 1.5px solid var(--navy); color: var(--navy);
+  padding: 0.4rem 0.8rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600;
+  cursor: grab; user-select: none; transition: .15s;
+}
+.word-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(11,31,51,0.1); }
+.word-chip.used { opacity: .35; pointer-events: none; }
+.word-chip.dragging { opacity: .5; }
+.columns { display: grid; gap: 0.75rem; }
+@media (min-width: 700px) { .columns { grid-template-columns: repeat(3, 1fr); } }
+.col-box {
+  border: 2px dashed var(--gray-mid); border-radius: 14px; min-height: 140px;
+  background: #fafbfc; overflow: hidden;
+}
+.col-box.over { border-color: var(--teal-light); background: var(--teal-soft); }
+.col-title {
+  background: linear-gradient(135deg, var(--teal-accent), var(--teal-light));
+  color: white; text-align: center; font-weight: 800; font-size: 0.78rem;
+  letter-spacing: .06em; padding: 0.55rem;
+}
+.col-drop { padding: 0.65rem; min-height: 100px; display: flex; flex-wrap: wrap; gap: 0.35rem; align-content: flex-start; }
+.col-drop .word-chip { cursor: pointer; }
+
+/* Matching */
+.match-grid { display: grid; gap: 0.55rem; }
+.match-row {
+  display: grid; grid-template-columns: 1fr; gap: 0.4rem; align-items: center;
+  padding: 0.65rem; border: 1px solid var(--gray-mid); border-radius: 12px; background: #fff;
+}
+@media (min-width: 640px) {
+  .match-row { grid-template-columns: 1.1fr 1.4fr; }
+}
+.match-left { font-weight: 700; font-size: 0.9rem; color: var(--navy); display: flex; align-items: center; gap: 0.4rem; }
+.match-row select {
+  width: 100%; padding: 0.55rem 0.7rem; border-radius: 10px;
+  border: 1.5px solid var(--gray-mid); background: white; font-size: 0.86rem;
+  color: var(--navy); outline: none;
+}
+.match-row select:focus { border-color: var(--teal-accent); }
+.match-row.correct { border-color: var(--ok-border); background: var(--ok-bg); }
+.match-row.wrong { border-color: var(--bad-border); background: var(--bad-bg); }
+
+/* Cloze */
+.cloze-text {
+  background: #f8fafc; border: 1px solid var(--gray-mid); border-radius: 14px;
+  padding: 1.1rem 1.15rem; font-size: 0.95rem; line-height: 1.85; color: var(--navy);
+}
+.cloze-text select {
+  display: inline-block; margin: 0 0.15rem; padding: 0.2rem 0.4rem;
+  border: none; border-bottom: 2px solid var(--teal-accent);
+  background: rgba(17,75,95,0.06); border-radius: 6px 6px 0 0;
+  font-weight: 700; color: var(--teal-accent); font-size: 0.9rem; max-width: 9rem;
+  outline: none;
+}
+.cloze-text select.ok { background: var(--ok-bg); border-bottom-color: var(--ok); color: var(--ok); }
+.cloze-text select.bad { background: var(--bad-bg); border-bottom-color: var(--bad); color: var(--bad); }
+.word-list-hint {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem;
+}
+.word-list-hint span {
+  background: #eef2f6; color: var(--navy); font-size: 0.78rem; font-weight: 600;
+  padding: 0.3rem 0.65rem; border-radius: 999px;
+}
+
+.ex-footer {
+  padding: 0.9rem 1.15rem 1.15rem; display: flex; flex-wrap: wrap; gap: 0.55rem;
+  border-top: 1px solid var(--gray-mid); background: #fafbfc;
+}
+.btn-check {
+  background: linear-gradient(135deg, var(--navy), var(--teal-accent));
+  color: white; padding: 0.55rem 1.1rem; font-size: 0.82rem;
+  box-shadow: 0 3px 12px rgba(17,75,95,0.2);
+}
+.btn-reset {
+  background: white; border: 1px solid var(--gray-mid); color: var(--navy);
+  padding: 0.55rem 1rem; font-size: 0.82rem; border-radius: 999px; font-weight: 600; cursor: pointer;
+}
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(11,31,51,0.45); z-index: 200;
+  display: none; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: white; border-radius: 18px; max-width: 480px; width: 100%;
+  padding: 1.4rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.5rem; }
+.modal p { font-size: 0.88rem; color: var(--gray-text); margin-bottom: 0.85rem; }
+.modal textarea {
+  width: 100%; min-height: 120px; border: 1.5px solid var(--gray-mid); border-radius: 12px;
+  padding: 0.75rem; font-family: ui-monospace, monospace; font-size: 0.78rem;
+  resize: vertical; outline: none; margin-bottom: 0.85rem;
+}
+.modal textarea:focus { border-color: var(--teal-accent); }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap; }
+
+.toast {
+  position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--navy); color: white; padding: 0.7rem 1.2rem; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600; opacity: 0; pointer-events: none;
+  transition: .3s; z-index: 300; box-shadow: 0 8px 24px rgba(11,31,51,0.3);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.footer-note {
+  text-align: center; font-size: 0.75rem; color: var(--gray-text); margin-top: 2rem;
+}
+.name-field {
+  display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1.25rem;
+}
+.name-field label { font-size: 0.78rem; font-weight: 700; color: var(--gray-text); }
+.name-field input {
+  border: 1.5px solid var(--gray-mid); border-radius: 12px; padding: 0.7rem 0.9rem;
+  font-size: 0.95rem; outline: none; background: white;
+}
+.name-field input:focus { border-color: var(--teal-accent); }
+
+.pattern-box {
+  background: var(--teal-soft); border-radius: 12px; padding: 0.85rem 1rem;
+  margin-bottom: 1rem; font-size: 0.9rem;
+}
+.pattern-box .ex { color: var(--teal-accent); font-weight: 700; }
+.pattern-box .ans { color: var(--navy); font-style: italic; margin-top: 0.25rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">FS</div>
+    <div>
+      <h1>The Fluency Studio</h1>
+      <p>Práticas de Revisão · Input</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span class="save-pill" id="savePill">● Salvo</span>
+    <div class="progress-wrap">
+      <div class="progress-label">Progresso geral: <span id="progressPct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <button class="btn-soft" type="button" onclick="exportProgress()">Exportar</button>
+    <button class="btn-ghost" type="button" onclick="openImport()">Importar</button>
+    <button class="btn-ghost" type="button" id="btnHome" onclick="showView('home')" style="display:none">← Início</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- HOME -->
+  <section id="view-home" class="view active">
+    <div class="hero">
+      <div class="hero-badge">Revisão interativa</div>
+      <h2>Hora de praticar com autocorreção</h2>
+      <p>Três práticas com o conteúdo do material. Escolha, responda, ouça o áudio em inglês americano e continue de onde parou — tudo fica salvo neste navegador.</p>
+    </div>
+
+    <div class="name-field">
+      <label for="studentName">Seu nome (opcional)</label>
+      <input type="text" id="studentName" placeholder="Digite seu nome..." autocomplete="name">
+    </div>
+
+    <div class="home-grid">
+      <button class="practice-card" type="button" onclick="openPractice(1)">
+        <div class="practice-num">1</div>
+        <h3>Prática 1</h3>
+        <p>Bloco 10 · Hobbies, instrumentos e can / know how to</p>
+        <div class="card-meta">
+          <span class="card-score" id="scoreP1">0 / 0</span>
+          <span class="card-go">Começar →</span>
+        </div>
+      </button>
+      <button class="practice-card" type="button" onclick="openPractice(2)">
+        <div class="practice-num">2</div>
+        <h3>Prática 2</h3>
+        <p>Viagens · can, perguntas e preposições</p>
+        <div class="card-meta">
+          <span class="card-score" id="scoreP2">0 / 0</span>
+          <span class="card-go">Começar →</span>
+        </div>
+      </button>
+      <button class="practice-card" type="button" onclick="openPractice(3)">
+        <div class="practice-num">3</div>
+        <h3>Prática 3</h3>
+        <p>Hotel · there is / there are e vocabulário</p>
+        <div class="card-meta">
+          <span class="card-score" id="scoreP3">0 / 0</span>
+          <span class="card-go">Começar →</span>
+        </div>
+      </button>
+    </div>
+    <p class="footer-note">Áudio: inglês americano (en-US) · Progresso em localStorage · Use Exportar/Importar para trocar de dispositivo</p>
+  </section>
+
+  <!-- PRACTICES -->
+  <section id="view-p1" class="view"></section>
+  <section id="view-p2" class="view"></section>
+  <section id="view-p3" class="view"></section>
+</main>
+
+<div class="modal-bg" id="importModal">
+  <div class="modal">
+    <h3>Importar progresso</h3>
+    <p>Cole o código exportado de outro dispositivo para recuperar suas respostas.</p>
+    <textarea id="importArea" placeholder='{"v":1,...}'></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" type="button" onclick="closeImport()">Cancelar</button>
+      <button class="btn-primary" type="button" onclick="importProgress()">Importar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA — 100% fiel ao material (formato quiz)
+═══════════════════════════════════════════════ */
+const STORAGE_KEY = 'fs_praticas_revisao_v1';
+
+const DATA = {
+  1: {
+    title: 'Prática 1',
+    subtitle: 'Bloco 10 · Hobbies, instrumentos e habilidades',
+    exercises: [
+      {
+        id: 'p1e1',
+        title: 'Write the sentences in English.',
+        type: 'mcq',
+        tip: 'Lembre de know how to (saber fazer), do yoga, ride a bike e free time. Terças = on Tuesdays.',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'Eu não sei tocar violão muito bem, e você?',
+            audio: "I don't know how to play the guitar very well, and you?",
+            correct: "I don't know how to play the guitar very well, and you?",
+            options: [
+              "I don't know how to play the guitar very well, and you?",
+              "I can't know play the guitar very good, and you?",
+              "I don't know play violin very well, and you?",
+              "I'm not know how to play the guitar very well, you?"
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'Minha mãe não quer comprar um teclado para o meu irmão.',
+            audio: "My mother doesn't want to buy a keyboard for my brother.",
+            correct: "My mother doesn't want to buy a keyboard for my brother.",
+            options: [
+              "My mother doesn't want to buy a keyboard for my brother.",
+              "My mother don't want buy a keyboard to my brother.",
+              "My mom doesn't wants to buy a piano for my brother.",
+              "My mother no want to buy a keyboard for my brother."
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'Nós sabemos jogar vôlei muito bem.',
+            audio: 'We know how to play volleyball very well.',
+            correct: 'We know how to play volleyball very well.',
+            options: [
+              'We know how to play volleyball very well.',
+              'We know play volleyball very good.',
+              'We can know to play volleyball very well.',
+              'We know how play the volleyball very well.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'Eu faço yoga às terças feiras.',
+            audio: 'I do yoga on Tuesdays.',
+            correct: 'I do yoga on Tuesdays.',
+            options: [
+              'I do yoga on Tuesdays.',
+              'I make yoga at Tuesdays.',
+              'I do yoga in Tuesday.',
+              'I practice yoga to the Tuesdays.'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'Vamos andar de bicicleta. É bom para nossa saúde.',
+            audio: "Let's ride a bike. It's good for our health.",
+            correct: "Let's ride a bike. It's good for our health.",
+            options: [
+              "Let's ride a bike. It's good for our health.",
+              "Let's walk of bicycle. It's good for our health.",
+              "We go ride a bike. Is good for our healthy.",
+              "Let's drive a bike. It's good to our health."
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'Eu corro quarenta minutos na esteira.',
+            audio: 'I run forty minutes on the treadmill.',
+            correct: 'I run forty minutes on the treadmill.',
+            options: [
+              'I run forty minutes on the treadmill.',
+              'I run forty minutes in the treadmill.',
+              'I running forty minutes on the treadmill.',
+              'I run fourty minutes at the treadmill.'
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'Eu sempre nado nos finais de semana.',
+            audio: 'I always swim on the weekends.',
+            correct: 'I always swim on the weekends.',
+            options: [
+              'I always swim on the weekends.',
+              'I always swim in the weekends.',
+              'I always swimming on the weekend.',
+              'I always swim at weekends days.'
+            ]
+          },
+          {
+            letter: 'h',
+            prompt: 'O que você faz no seu tempo livre?',
+            audio: 'What do you do in your free time?',
+            correct: 'What do you do in your free time?',
+            options: [
+              'What do you do in your free time?',
+              'What you do in your free time?',
+              'What do you make on your free time?',
+              'What does you do in your free time?'
+            ]
+          },
+          {
+            letter: 'i',
+            prompt: 'Hoje é domingo. Vamos nos divertir.',
+            audio: "Today is Sunday. Let's have fun.",
+            correct: "Today is Sunday. Let's have fun.",
+            options: [
+              "Today is Sunday. Let's have fun.",
+              "Today is Sunday. Let's to have fun.",
+              "Today are Sunday. We go have fun.",
+              "Today is Sunday. Let's make fun."
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p1e2',
+        title: 'Follow the pattern.',
+        type: 'mcq',
+        tip: 'Troque know how to por can / can\'t. Ex.: I know how to play the guitar. (can) → I can play the guitar.',
+        pattern: {
+          ex: 'I know how to play the guitar. (can)',
+          ans: 'I can play the guitar.'
+        },
+        items: [
+          {
+            letter: 'a',
+            prompt: 'We know how to play volleyball. (can)',
+            audio: 'We can play volleyball.',
+            correct: 'We can play volleyball.',
+            options: [
+              'We can play volleyball.',
+              'We can know play volleyball.',
+              'We can to play volleyball.',
+              'We cans play volleyball.'
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: "They don't know how to ride a bike. (can't)",
+            audio: "They can't ride a bike.",
+            correct: "They can't ride a bike.",
+            options: [
+              "They can't ride a bike.",
+              "They can't to ride a bike.",
+              "They don't can ride a bike.",
+              "They can't riding a bike."
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'My son knows how to play the violin. (can)',
+            audio: 'My son can play the violin.',
+            correct: 'My son can play the violin.',
+            options: [
+              'My son can play the violin.',
+              'My son can plays the violin.',
+              'My son can to play the violin.',
+              'My son can play violin the.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'My grandparents know how to play the flute. (can)',
+            audio: 'My grandparents can play the flute.',
+            correct: 'My grandparents can play the flute.',
+            options: [
+              'My grandparents can play the flute.',
+              'My grandparents can plays the flute.',
+              'My grandparents can to play the flute.',
+              'My grandparents cans play the flute.'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: "I don't know how to play any instrument. (can't)",
+            audio: "I can't play any instrument.",
+            correct: "I can't play any instrument.",
+            options: [
+              "I can't play any instrument.",
+              "I can't to play any instrument.",
+              "I don't can play any instrument.",
+              "I can't play some instrument."
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'She knows how to play this game. (can)',
+            audio: 'She can play this game.',
+            correct: 'She can play this game.',
+            options: [
+              'She can play this game.',
+              'She can plays this game.',
+              'She can to play this game.',
+              'She cans play this game.'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p1e3',
+        title: 'Unscramble the letters and write words. Then write sentences.',
+        type: 'mcq',
+        tip: 'Organize as letras e forme a palavra. Depois escolha a frase correta com essa palavra.',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'n / s / t / n / e / i / t / m / r / u',
+            audio: 'instrument',
+            correct: 'instrument',
+            options: ['instrument', 'interments', 'minuternst', 'nutriments'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'I can play any instrument.',
+              correct: 'I can play any instrument.',
+              options: [
+                'I can play any instrument.',
+                'I can play any instrumentsing.',
+                'I can to play any instrument.',
+                'I cans play any instrument.'
+              ]
+            }
+          },
+          {
+            letter: 'b',
+            prompt: 'd / k / r / e / y / a / b / o',
+            audio: 'keyboard',
+            correct: 'keyboard',
+            options: ['keyboard', 'keybroad', 'boardkey', 'kebyoard'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'My mother wants to buy a keyboard.',
+              correct: 'My mother wants to buy a keyboard.',
+              options: [
+                'My mother wants to buy a keyboard.',
+                'My mother want buy a keyboard.',
+                'My mother wants buy keyboard a.',
+                'My mother wants to buys a keyboard.'
+              ]
+            }
+          },
+          {
+            letter: 'c',
+            prompt: 't / h / o / n / m / a / a / r',
+            audio: 'marathon',
+            correct: 'marathon',
+            options: ['marathon', 'matharon', 'haratmon', 'manathor'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'He wants to run a marathon.',
+              correct: 'He wants to run a marathon.',
+              options: [
+                'He wants to run a marathon.',
+                'He want run a marathon.',
+                'He wants to running a marathon.',
+                'He wants run marathon a.'
+              ]
+            }
+          },
+          {
+            letter: 'd',
+            prompt: 'o / c / s / c / r / e',
+            audio: 'soccer',
+            correct: 'soccer',
+            options: ['soccer', 'soccre', 'coscer', 'scocer'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'We play soccer on weekends.',
+              correct: 'We play soccer on weekends.',
+              options: [
+                'We play soccer on weekends.',
+                'We play the soccer in weekends.',
+                'We plays soccer on weekends.',
+                'We go soccer on weekends.'
+              ]
+            }
+          },
+          {
+            letter: 'e',
+            prompt: 'm / i / l / l / t / e / r / a / d',
+            audio: 'treadmill',
+            correct: 'treadmill',
+            options: ['treadmill', 'treadmil', 'treadmilll', 'tradmille'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'I run on the treadmill.',
+              correct: 'I run on the treadmill.',
+              options: [
+                'I run on the treadmill.',
+                'I run in the treadmill.',
+                'I run at treadmill.',
+                'I running on the treadmill.'
+              ]
+            }
+          },
+          {
+            letter: 'f',
+            prompt: 'y / o / b / b / h',
+            audio: 'hobby',
+            correct: 'hobby',
+            options: ['hobby', 'hobyy', 'hybob', 'bohby'],
+            sentence: {
+              prompt: 'Escolha a frase correta com a palavra:',
+              audio: 'What is your hobby?',
+              correct: 'What is your hobby?',
+              options: [
+                'What is your hobby?',
+                'What are your hobby?',
+                'What your hobby is?',
+                'What is you hobby?'
+              ]
+            }
+          }
+        ]
+      },
+      {
+        id: 'p1e4',
+        title: 'Put the words in the correct column.',
+        type: 'columns',
+        tip: 'WE PLAY + esporte/instrumento · WE GO + -ing / shopping · WE DO + yoga / the dishes.',
+        words: ['piano', 'running', 'yoga', 'volleyball', 'the shopping', 'swimming', 'the dishes', 'soccer', 'basketball'],
+        columns: {
+          'WE PLAY': ['piano', 'volleyball', 'soccer', 'basketball'],
+          'WE GO': ['running', 'the shopping', 'swimming'],
+          'WE DO': ['yoga', 'the dishes']
+        },
+        audioWords: {
+          piano: 'piano', running: 'running', yoga: 'yoga', volleyball: 'volleyball',
+          'the shopping': 'the shopping', swimming: 'swimming', 'the dishes': 'the dishes',
+          soccer: 'soccer', basketball: 'basketball'
+        }
+      }
+    ]
+  },
+  2: {
+    title: 'Prática 2',
+    subtitle: 'Viagens · can, interrogativas e preposições',
+    exercises: [
+      {
+        id: 'p2e1',
+        title: 'Write the sentences in English.',
+        type: 'mcq',
+        tip: 'travel on business, travel agent, resort, package, luggage, cruise. Preciso = I need to / I\'m tired = I am tired.',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'Preciso viajar a negócios por algumas semanas.',
+            audio: 'I need to travel on business for a few weeks.',
+            correct: 'I need to travel on business for a few weeks.',
+            options: [
+              'I need to travel on business for a few weeks.',
+              'I need travel to business for some weeks.',
+              'I need to travel a business for a few weeks.',
+              'I needs to travel on business for a few weeks.'
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'Posso falar com o agente de viagens?',
+            audio: 'Can I talk to the travel agent?',
+            correct: 'Can I talk to the travel agent?',
+            options: [
+              'Can I talk to the travel agent?',
+              'Can I talk with the travel agent?',
+              'I can talk to the travel agent?',
+              'Can I speak the travel agent?'
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'Os turistas podem visitar esta atração aos sábados.',
+            audio: 'Tourists can visit this attraction on Saturdays.',
+            correct: 'Tourists can visit this attraction on Saturdays.',
+            options: [
+              'Tourists can visit this attraction on Saturdays.',
+              'The tourists can visits this attraction on Saturdays.',
+              'Tourists can visit this attraction in Saturdays.',
+              'Tourists can to visit this attraction on Saturdays.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'Eu estou cansada. Preciso passar alguns dias em um resort.',
+            audio: "I'm tired. I need to spend a few days at a resort.",
+            correct: "I'm tired. I need to spend a few days at a resort.",
+            options: [
+              "I'm tired. I need to spend a few days at a resort.",
+              "I'm tired. I need pass some days in a resort.",
+              "I am tired. I need to spend a few days in resort.",
+              "I'm tired. I need to spend few days on a resort."
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'Posso abrir o pacote?',
+            audio: 'Can I open the package?',
+            correct: 'Can I open the package?',
+            options: [
+              'Can I open the package?',
+              'Can I to open the package?',
+              'I can open the package?',
+              'Can I opening the package?'
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'De onde você vem?',
+            audio: 'Where do you come from?',
+            correct: 'Where do you come from?',
+            options: [
+              'Where do you come from?',
+              'Where you come from?',
+              'From where do you comes?',
+              'Where does you come from?'
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'Quantos passageiros estão no avião?',
+            audio: 'How many passengers are on the plane?',
+            correct: 'How many passengers are on the plane?',
+            options: [
+              'How many passengers are on the plane?',
+              'How much passengers are on the plane?',
+              'How many passengers is on the plane?',
+              'How many passengers are in the plane?'
+            ]
+          },
+          {
+            letter: 'h',
+            prompt: 'Esta cidade não é segura. Ela é perigosa.',
+            audio: "This city isn't safe. It's dangerous.",
+            correct: "This city isn't safe. It's dangerous.",
+            options: [
+              "This city isn't safe. It's dangerous.",
+              "This city isn't security. It's dangerous.",
+              "This city not is safe. It is danger.",
+              "This city isn't safe. She's dangerous."
+            ]
+          },
+          {
+            letter: 'i',
+            prompt: 'Podemos fazer um cruzeiro no ano que vem?',
+            audio: 'Can we go on a cruise next year?',
+            correct: 'Can we go on a cruise next year?',
+            options: [
+              'Can we go on a cruise next year?',
+              'Can we make a cruise in the next year?',
+              'Can we go to a cruise next year?',
+              'Can we do a cruise on next year?'
+            ]
+          },
+          {
+            letter: 'j',
+            prompt: 'Onde está sua bagagem?',
+            audio: 'Where is your luggage?',
+            correct: 'Where is your luggage?',
+            options: [
+              'Where is your luggage?',
+              'Where are your luggage?',
+              'Where is your baggages?',
+              'Where your luggage is?'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p2e2',
+        title: 'Change into interrogative.',
+        type: 'mcq',
+        tip: 'Com can, a ordem vira: Can + sujeito + verbo…? Ex.: We can wait. → Can we wait?',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'We can put the tags on the luggage.',
+            audio: 'Can we put the tags on the luggage?',
+            correct: 'Can we put the tags on the luggage?',
+            options: [
+              'Can we put the tags on the luggage?',
+              'Can we puts the tags on the luggage?',
+              'We can put the tags on the luggage?',
+              'Can put we the tags on the luggage?'
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'We can travel to a different destination this month.',
+            audio: 'Can we travel to a different destination this month?',
+            correct: 'Can we travel to a different destination this month?',
+            options: [
+              'Can we travel to a different destination this month?',
+              'Can we to travel to a different destination this month?',
+              'We can travel to a different destination this month?',
+              'Can travel we to a different destination this month?'
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'She can go on a cruise on her vacation.',
+            audio: 'Can she go on a cruise on her vacation?',
+            correct: 'Can she go on a cruise on her vacation?',
+            options: [
+              'Can she go on a cruise on her vacation?',
+              'Can she goes on a cruise on her vacation?',
+              'She can go on a cruise on her vacation?',
+              'Can go she on a cruise on her vacation?'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'I can take a picture of you.',
+            audio: 'Can I take a picture of you?',
+            correct: 'Can I take a picture of you?',
+            options: [
+              'Can I take a picture of you?',
+              'Can I takes a picture of you?',
+              'I can take a picture of you?',
+              'Can take I a picture of you?'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'We can spend a lot of money on gifts.',
+            audio: 'Can we spend a lot of money on gifts?',
+            correct: 'Can we spend a lot of money on gifts?',
+            options: [
+              'Can we spend a lot of money on gifts?',
+              'Can we spends a lot of money on gifts?',
+              'We can spend a lot of money on gifts?',
+              'Can we spend a lot of money in gifts?'
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'You can close your luggage.',
+            audio: 'Can you close your luggage?',
+            correct: 'Can you close your luggage?',
+            options: [
+              'Can you close your luggage?',
+              'Can you closes your luggage?',
+              'You can close your luggage?',
+              'Can close you your luggage?'
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'You can open this package.',
+            audio: 'Can you open this package?',
+            correct: 'Can you open this package?',
+            options: [
+              'Can you open this package?',
+              'Can you opens this package?',
+              'You can open this package?',
+              'Can open you this package?'
+            ]
+          },
+          {
+            letter: 'h',
+            prompt: 'The passengers can wait here.',
+            audio: 'Can the passengers wait here?',
+            correct: 'Can the passengers wait here?',
+            options: [
+              'Can the passengers wait here?',
+              'Can the passengers waits here?',
+              'The passengers can wait here?',
+              'Can wait the passengers here?'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p2e3',
+        title: 'Link the columns to make sentences.',
+        type: 'match',
+        tip: 'Una o começo da pergunta com o final que faz sentido. Ex.: Can I see + your passport, please?',
+        left: [
+          { letter: 'a', text: 'Can I talk', audio: 'Can I talk to the doctor, please?' },
+          { letter: 'b', text: 'Can we take', audio: 'Can we take a picture with you?' },
+          { letter: 'c', text: 'Can I see', audio: 'Can I see your passport, please?' },
+          { letter: 'd', text: 'Can you play', audio: 'Can you play any instrument?' },
+          { letter: 'e', text: 'Can we go', audio: 'Can we go sightseeing this afternoon?' },
+          { letter: 'f', text: 'Can they sleep', audio: 'Can they sleep in this room?' },
+          { letter: 'g', text: 'Can we travel for', audio: 'Can we travel for leisure this time?' },
+          { letter: 'h', text: 'Can the passengers', audio: 'Can the passengers close their luggage?' }
+        ],
+        rights: [
+          'close their luggage?',
+          'a picture with you?',
+          'leisure this time?',
+          'sightseeing this afternoon?',
+          'any instrument?',
+          'in this room?',
+          'your passport, please?',
+          'to the doctor, please?'
+        ],
+        correct: {
+          a: 'to the doctor, please?',
+          b: 'a picture with you?',
+          c: 'your passport, please?',
+          d: 'any instrument?',
+          e: 'sightseeing this afternoon?',
+          f: 'in this room?',
+          g: 'leisure this time?',
+          h: 'close their luggage?'
+        }
+      },
+      {
+        id: 'p2e4',
+        title: 'Complete with to / in / on / for / until',
+        type: 'mcq',
+        tip: 'talk to · go on a cruise · travel on business · for our vacation / for three days · until the exam · in your suitcase · to the baggage claim.',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'Can we go to a resort ______ our vacation?',
+            audio: 'Can we go to a resort for our vacation?',
+            correct: 'for',
+            options: ['for', 'to', 'in', 'on']
+          },
+          {
+            letter: 'b',
+            prompt: 'Can I talk ______ the nurse?',
+            audio: 'Can I talk to the nurse?',
+            correct: 'to',
+            options: ['to', 'for', 'in', 'on']
+          },
+          {
+            letter: 'c',
+            prompt: 'Can we stay here ______ three days?',
+            audio: 'Can we stay here for three days?',
+            correct: 'for',
+            options: ['for', 'until', 'to', 'in']
+          },
+          {
+            letter: 'd',
+            prompt: 'Can we study together ______ the exam?',
+            audio: 'Can we study together until the exam?',
+            correct: 'until',
+            options: ['until', 'for', 'to', 'on']
+          },
+          {
+            letter: 'e',
+            prompt: 'I really want to go ______ a cruise.',
+            audio: 'I really want to go on a cruise.',
+            correct: 'on',
+            options: ['on', 'to', 'in', 'for']
+          },
+          {
+            letter: 'f',
+            prompt: 'I need to travel ______ business again.',
+            audio: 'I need to travel on business again.',
+            correct: 'on',
+            options: ['on', 'to', 'for', 'in']
+          },
+          {
+            letter: 'g',
+            prompt: 'Go ______ the baggage claim and talk to the agent.',
+            audio: 'Go to the baggage claim and talk to the agent.',
+            correct: 'to',
+            options: ['to', 'on', 'in', 'for']
+          },
+          {
+            letter: 'h',
+            prompt: 'What do you have ______ your suitcase?',
+            audio: 'What do you have in your suitcase?',
+            correct: 'in',
+            options: ['in', 'on', 'to', 'for']
+          }
+        ]
+      }
+    ]
+  },
+  3: {
+    title: 'Prática 3',
+    subtitle: 'Hotel · there is / there are e vocabulário',
+    exercises: [
+      {
+        id: 'p3e1',
+        title: 'Write the sentences in English.',
+        type: 'mcq',
+        tip: 'book a room, check in, hostel, room service, give me a ride, There is / There are.',
+        items: [
+          {
+            letter: 'a',
+            prompt: 'Eu preciso reservar um quarto para a próxima sexta-feira.',
+            audio: 'I need to book a room for next Friday.',
+            correct: 'I need to book a room for next Friday.',
+            options: [
+              'I need to book a room for next Friday.',
+              'I need reserve a room for the next Friday.',
+              'I need to book a room to next Friday.',
+              'I needs to book a room for next Friday.'
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'Que horas podemos fazer o check in?',
+            audio: 'What time can we check in?',
+            correct: 'What time can we check in?',
+            options: [
+              'What time can we check in?',
+              'What hours can we check in?',
+              'What time we can check in?',
+              'What time can we make the check in?'
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'Na verdade, eu preciso chegar ao hostel antes do meio dia.',
+            audio: 'Actually, I need to arrive at the hostel before noon.',
+            correct: 'Actually, I need to arrive at the hostel before noon.',
+            options: [
+              'Actually, I need to arrive at the hostel before noon.',
+              'Actually, I need arrive to the hostel before midday.',
+              'In truth, I need to arrive in the hostel before noon.',
+              'Actually, I need to arrive at hostel before the noon.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'Pegue um táxi e vá para o hotel.',
+            audio: 'Take a taxi and go to the hotel.',
+            correct: 'Take a taxi and go to the hotel.',
+            options: [
+              'Take a taxi and go to the hotel.',
+              'Get a taxi and go for the hotel.',
+              'Take a taxi and go at the hotel.',
+              'Catch taxi and go to hotel.'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'Há trinta carros no estacionamento.',
+            audio: 'There are thirty cars in the parking lot.',
+            correct: 'There are thirty cars in the parking lot.',
+            options: [
+              'There are thirty cars in the parking lot.',
+              'There is thirty cars in the parking lot.',
+              'There are thirty cars on the parking lot.',
+              'Have thirty cars in the parking lot.'
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'Há um bom serviço de quarto neste hotel.',
+            audio: 'There is a good room service at this hotel.',
+            correct: 'There is a good room service at this hotel.',
+            options: [
+              'There is a good room service at this hotel.',
+              'There are a good room service at this hotel.',
+              'There is a good room service in this hotel.',
+              'Have a good room service at this hotel.'
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'Que horas você precisa sair do hotel?',
+            audio: 'What time do you need to leave the hotel?',
+            correct: 'What time do you need to leave the hotel?',
+            options: [
+              'What time do you need to leave the hotel?',
+              'What time you need leave the hotel?',
+              'What time does you need to leave the hotel?',
+              'What time do you need leave of the hotel?'
+            ]
+          },
+          {
+            letter: 'h',
+            prompt: 'Você pode me dar uma carona?',
+            audio: 'Can you give me a ride?',
+            correct: 'Can you give me a ride?',
+            options: [
+              'Can you give me a ride?',
+              'Can you give me a carona?',
+              'Can you to give me a ride?',
+              'Can you give for me a ride?'
+            ]
+          },
+          {
+            letter: 'i',
+            prompt: 'Tem um bom restaurante italiano perto daqui.',
+            audio: 'There is a good Italian restaurant near here.',
+            correct: 'There is a good Italian restaurant near here.',
+            options: [
+              'There is a good Italian restaurant near here.',
+              'There are a good Italian restaurant near here.',
+              'Have a good Italian restaurant near here.',
+              'There is a good Italian restaurant near of here.'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p3e2',
+        title: 'Fluency',
+        type: 'mcq',
+        tip: 'Troque have por There is / There are. Singular/uncountable → There is. Plural → There are.',
+        pattern: {
+          ex: 'We have a good room service at our hotel. (There is)',
+          ans: 'There is a good room service at our hotel.'
+        },
+        items: [
+          {
+            letter: 'a',
+            prompt: 'They have two swimming pools at their house. (There are)',
+            audio: 'There are two swimming pools at their house.',
+            correct: 'There are two swimming pools at their house.',
+            options: [
+              'There are two swimming pools at their house.',
+              'There is two swimming pools at their house.',
+              'There are two swimming pools in their house.',
+              'There are two swimming pool at their house.'
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'I have cable TV in my bedroom. (There is)',
+            audio: 'There is cable TV in my bedroom.',
+            correct: 'There is cable TV in my bedroom.',
+            options: [
+              'There is cable TV in my bedroom.',
+              'There are cable TV in my bedroom.',
+              'There is cable TV on my bedroom.',
+              'There is a cable TV at my bedroom.'
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'They have rooms for twenty guests. (There are)',
+            audio: 'There are rooms for twenty guests.',
+            correct: 'There are rooms for twenty guests.',
+            options: [
+              'There are rooms for twenty guests.',
+              'There is rooms for twenty guests.',
+              'There are rooms to twenty guests.',
+              'There are room for twenty guests.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'We have some coffee in the kitchen. (There is)',
+            audio: 'There is some coffee in the kitchen.',
+            correct: 'There is some coffee in the kitchen.',
+            options: [
+              'There is some coffee in the kitchen.',
+              'There are some coffee in the kitchen.',
+              'There is some coffee on the kitchen.',
+              'There is any coffee in the kitchen.'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'They have a lot of food in the fridge. (There is)',
+            audio: 'There is a lot of food in the fridge.',
+            correct: 'There is a lot of food in the fridge.',
+            options: [
+              'There is a lot of food in the fridge.',
+              'There are a lot of food in the fridge.',
+              'There is a lot of food on the fridge.',
+              'There is lots foods in the fridge.'
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'She has a lot of money in her purse. (There is)',
+            audio: 'There is a lot of money in her purse.',
+            correct: 'There is a lot of money in her purse.',
+            options: [
+              'There is a lot of money in her purse.',
+              'There are a lot of money in her purse.',
+              'There is a lot of money on her purse.',
+              'There is many money in her purse.'
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'I have an English book in my backpack. (There is)',
+            audio: 'There is an English book in my backpack.',
+            correct: 'There is an English book in my backpack.',
+            options: [
+              'There is an English book in my backpack.',
+              'There are an English book in my backpack.',
+              'There is a English book in my backpack.',
+              'There is an English book on my backpack.'
+            ]
+          }
+        ]
+      },
+      {
+        id: 'p3e3',
+        title: 'Read and complete the text with the correct words.',
+        type: 'cloze',
+        tip: 'Use cada palavra do banco uma vez. check + in / check + out formam check-in e check-out no texto.',
+        bank: ['hotel', 'cozy', 'pool', 'parking', 'free', 'guests', 'fitness', 'check', 'out', 'trip'],
+        blanks: [
+          { id: 'c1', correct: 'hotel', audio: 'hotel' },
+          { id: 'c2', correct: 'cozy', audio: 'cozy' },
+          { id: 'c3', correct: 'pool', audio: 'pool' },
+          { id: 'c4', correct: 'parking', audio: 'parking' },
+          { id: 'c5', correct: 'free', audio: 'free' },
+          { id: 'c6', correct: 'guests', audio: 'guests' },
+          { id: 'c7', correct: 'fitness', audio: 'fitness' },
+          { id: 'c8', correct: 'check', audio: 'check' },
+          { id: 'c9', correct: 'out', audio: 'out' },
+          { id: 'c10', correct: 'trip', audio: 'trip' }
+        ],
+        // Template uses {{c1}} etc.
+        template: 'We really love that {{c1}}. It\'s small but clean, comfortable and {{c2}}. You can meet a lot of foreigners there. There are people from Canada, Mexico, Argentina, Japan and a lot of Brazilians, too. There is a nice swimming {{c3}} where we can swim, a big {{c4}} lot where we can leave our cars, {{c5}} internet for the {{c6}} and a great {{c7}} center. The {{c8}} in is always at 2 P.M., and the check {{c9}} is at noon. The breakfast is delicious and the guests can have lunch and dinner here, too. We have to pay for that, but it\'s not expensive. You can really think about it for your next {{c10}}.'
+      },
+      {
+        id: 'p3e4',
+        title: 'Answer the questions with your personal information.',
+        type: 'mcq',
+        tip: 'As perguntas são pessoais. Escolha a resposta que mais combina com você — em inglês correto.',
+        items: [
+          {
+            letter: 'a',
+            prompt: "What's your nationality?",
+            audio: "What's your nationality? I'm Brazilian.",
+            correct: "I'm Brazilian.",
+            options: [
+              "I'm Brazilian.",
+              "I am Brazil.",
+              "My nationality is Brazilian people.",
+              "I Brazilian."
+            ]
+          },
+          {
+            letter: 'b',
+            prompt: 'How often do you go on a trip?',
+            audio: 'How often do you go on a trip? I go on a trip once a year.',
+            correct: 'I go on a trip once a year.',
+            options: [
+              'I go on a trip once a year.',
+              'I go in a trip one time the year.',
+              'I goes on a trip once a year.',
+              'I go to trip once a year.'
+            ]
+          },
+          {
+            letter: 'c',
+            prompt: 'Do you prefer to stay at a hotel or at a hostel?',
+            audio: 'Do you prefer to stay at a hotel or at a hostel? I prefer to stay at a hotel.',
+            correct: 'I prefer to stay at a hotel.',
+            options: [
+              'I prefer to stay at a hotel.',
+              'I prefer stay in a hotel.',
+              'I prefers to stay at a hotel.',
+              'I prefer to stay on a hotel.'
+            ]
+          },
+          {
+            letter: 'd',
+            prompt: 'How do you like your room when you go to a hotel / hostel?',
+            audio: 'How do you like your room when you go to a hotel? I like a clean and comfortable room.',
+            correct: 'I like a clean and comfortable room.',
+            options: [
+              'I like a clean and comfortable room.',
+              'I like clean and comfort room.',
+              'I likes a clean and comfortable room.',
+              'I like the room clean and comfortables.'
+            ]
+          },
+          {
+            letter: 'e',
+            prompt: 'Do you sometimes travel on business?',
+            audio: 'Do you sometimes travel on business? No, I don\'t. I travel for leisure.',
+            correct: "No, I don't. I travel for leisure.",
+            options: [
+              "No, I don't. I travel for leisure.",
+              "No, I don't. I travel on leisure.",
+              "No, I no travel on business.",
+              "No, I doesn't. I travel for leisure."
+            ]
+          },
+          {
+            letter: 'f',
+            prompt: 'What time do you leave your house to go to work / school?',
+            audio: 'What time do you leave your house to go to work? I leave my house at seven o\'clock.',
+            correct: "I leave my house at seven o'clock.",
+            options: [
+              "I leave my house at seven o'clock.",
+              "I leave my house on seven o'clock.",
+              "I leaves my house at seven o'clock.",
+              "I leave of my house at seven o'clock."
+            ]
+          },
+          {
+            letter: 'g',
+            prompt: 'What time do you leave your school / work?',
+            audio: 'What time do you leave your school? I leave school at five o\'clock.',
+            correct: 'I leave school at five o\'clock.',
+            options: [
+              "I leave school at five o'clock.",
+              "I leave school on five o'clock.",
+              "I leaves school at five o'clock.",
+              "I leave the school at five hours."
+            ]
+          },
+          {
+            letter: 'h',
+            prompt: 'Do you know any foreigners?',
+            audio: 'Do you know any foreigners? Yes, I do. I know some people from other countries.',
+            correct: 'Yes, I do. I know some people from other countries.',
+            options: [
+              'Yes, I do. I know some people from other countries.',
+              'Yes, I know. I know some peoples of other countries.',
+              'Yes, I does. I know some people from other countries.',
+              'Yes, I do. I know some people of another countries.'
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let state = {
+  name: '',
+  answers: {},   // key -> value
+  checked: {},   // key -> boolean result (true/false) or object
+  columnPlacements: {} // p1e4
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    state.name = data.name || '';
+    state.answers = data.answers || {};
+    state.checked = data.checked || {};
+    state.columnPlacements = data.columnPlacements || {};
+  } catch (e) { console.warn(e); }
+}
+
+let saveTimer = null;
+function scheduleSave() {
+  const pill = document.getElementById('savePill');
+  pill.textContent = '● Salvando…';
+  pill.classList.add('saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        v: 1,
+        name: state.name,
+        answers: state.answers,
+        checked: state.checked,
+        columnPlacements: state.columnPlacements,
+        ts: Date.now()
+      }));
+      pill.textContent = '● Salvo';
+      pill.classList.remove('saving');
+      updateProgressUI();
+    } catch (e) {
+      pill.textContent = '● Erro ao salvar';
+    }
+  }, 250);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ═══════════════════════════════════════════════
+   AUDIO (en-US)
+═══════════════════════════════════════════════ */
+let voices = [];
+function loadVoices() {
+  voices = speechSynthesis.getVoices();
+}
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text, btn) {
+  if (!('speechSynthesis' in window)) {
+    toast('Áudio não suportado neste navegador');
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.92;
+  const preferred = voices.find(v =>
+    /en-US/i.test(v.lang) && /Google|Microsoft|Samantha| ent|Aria|Jenny|Guy/i.test(v.name)
+  ) || voices.find(v => /en-US/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang));
+  if (preferred) u.voice = preferred;
+  if (btn) {
+    document.querySelectorAll('.btn-audio.playing').forEach(b => b.classList.remove('playing'));
+    btn.classList.add('playing');
+    u.onend = () => btn.classList.remove('playing');
+    u.onerror = () => btn.classList.remove('playing');
+  }
+  speechSynthesis.speak(u);
+}
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Stable shuffle per key so options don't jump after reload
+function stableShuffle(arr, key) {
+  const saved = state.answers['__order__' + key];
+  if (saved && Array.isArray(saved) && saved.length === arr.length &&
+      saved.every(x => arr.includes(x))) {
+    return saved;
+  }
+  const s = shuffle(arr);
+  state.answers['__order__' + key] = s;
+  scheduleSave();
+  return s;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER PRACTICES
+═══════════════════════════════════════════════ */
+function openPractice(n) {
+  showView('p' + n);
+  renderPractice(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.getElementById('btnHome').style.display = id === 'home' ? 'none' : 'inline-flex';
+  if (id === 'home') updateHomeScores();
+}
+
+function renderPractice(n) {
+  const p = DATA[n];
+  const root = document.getElementById('view-p' + n);
+  let html = `
+    <div class="practice-header">
+      <div>
+        <h2>${esc(p.title)}</h2>
+        <div class="sub">${esc(p.subtitle)}</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Pontuação</div>
+        <div class="value" id="liveScore${n}">—</div>
+      </div>
+    </div>
+  `;
+
+  p.exercises.forEach((ex, idx) => {
+    html += `<div class="ex-block" id="ex-${ex.id}">`;
+    html += `<div class="ex-head"><div class="ex-title"><span>${idx + 1}.</span> ${esc(ex.title)}</div></div>`;
+    html += `<div class="ex-body">`;
+
+    if (ex.pattern) {
+      html += `<div class="pattern-box"><div class="ex">${esc(ex.pattern.ex)}</div><div class="ans">${esc(ex.pattern.ans)}</div></div>`;
+    }
+
+    if (ex.type === 'mcq') {
+      ex.items.forEach(item => {
+        html += renderMcqItem(ex.id, item);
+        if (item.sentence) {
+          html += renderMcqItem(ex.id + '_sent', {
+            letter: item.letter,
+            prompt: item.sentence.prompt + ' <em style="font-weight:500;color:var(--teal-light)">(palavra: ' + esc(item.correct) + ')</em>',
+            audio: item.sentence.audio,
+            correct: item.sentence.correct,
+            options: item.sentence.options,
+            rawPrompt: true
+          });
+        }
+      });
+    } else if (ex.type === 'columns') {
+      html += renderColumns(ex);
+    } else if (ex.type === 'match') {
+      html += renderMatch(ex);
+    } else if (ex.type === 'cloze') {
+      html += renderCloze(ex);
+    }
+
+    html += `</div>
+      <div class="ex-footer">
+        <button class="btn-check" type="button" onclick="checkExercise('${ex.id}', ${n})">✓ Corrigir este exercício</button>
+        <button class="btn-reset" type="button" onclick="resetExercise('${ex.id}', ${n})">Refazer</button>
+      </div>
+    </div>`;
+  });
+
+  html += `<div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem">
+    <button class="btn-primary" type="button" onclick="checkAllPractice(${n})">Corrigir toda a prática</button>
+    <button class="btn-ghost" type="button" onclick="showView('home')">Voltar ao início</button>
+  </div>`;
+
+  root.innerHTML = html;
+  // restore column chips if needed
+  if (state.columnPlacements['p1e4']) restoreColumns('p1e4');
+  updateLiveScore(n);
+}
+
+function renderMcqItem(exId, item) {
+  const key = `${exId}_${item.letter}`;
+  const orderKey = key;
+  const opts = stableShuffle(item.options, orderKey);
+  const selected = state.answers[key];
+  const checked = state.checked[key];
+  let cls = 'item';
+  if (checked === true) cls += ' correct';
+  if (checked === false) cls += ' wrong';
+
+  const promptHtml = item.rawPrompt
+    ? `<div class="prompt"><span class="letter">${esc(item.letter)}.</span> ${item.prompt}</div>`
+    : `<div class="prompt"><span class="letter">${esc(item.letter)}.</span> ${esc(item.prompt)}</div>`;
+
+  let html = `<div class="${cls}" id="item-${key}" data-key="${key}" data-correct="${esc(item.correct)}">
+    <div class="item-top">
+      ${promptHtml}
+      <div class="item-actions">
+        <button type="button" class="btn-tip" title="Dica" onclick="toggleTip('${key}')">💡</button>
+        <button type="button" class="btn-audio" title="Ouvir em inglês (EUA)" onclick="speak(${JSON.stringify(item.audio)}, this)">🔊</button>
+      </div>
+    </div>
+    <div class="tip-box" id="tip-${key}">${esc(DATA_TIP_FOR(exId, item) || 'Leia com calma e elimine as opções com erro de gramática.')}</div>
+    <div class="options ${opts[0] && opts[0].length < 40 ? 'two-col' : ''}">`;
+
+  opts.forEach((opt, i) => {
+    let ocls = 'opt';
+    if (selected === opt) ocls += ' selected';
+    if (checked !== undefined) {
+      if (opt === item.correct) ocls += ' opt-correct';
+      else if (selected === opt && opt !== item.correct) ocls += ' opt-wrong';
+    }
+    const disabled = checked !== undefined ? 'disabled' : '';
+    const mark = checked === undefined
+      ? (selected === opt ? '✓' : String.fromCharCode(65 + i))
+      : (opt === item.correct ? '✓' : (selected === opt ? '✕' : String.fromCharCode(65 + i)));
+    html += `<button type="button" class="${ocls}" ${disabled} data-opt="${esc(opt)}">
+      <span class="opt-mark">${mark}</span>
+      <span>${esc(opt)}</span>
+    </button>`;
+  });
+
+  html += `</div>`;
+  if (checked === true) html += `<div class="feedback show ok">✓ Correto!</div>`;
+  if (checked === false) html += `<div class="feedback show bad">✕ Resposta correta: <strong>${esc(item.correct)}</strong></div>`;
+  html += `</div>`;
+  return html;
+}
+
+function DATA_TIP_FOR(exId, item) {
+  // per-exercise tip is shown; item-level can reuse parent
+  for (const pn of [1, 2, 3]) {
+    for (const ex of DATA[pn].exercises) {
+      if (ex.id === exId || ex.id + '_sent' === exId) return ex.tip;
+    }
+  }
+  return '';
+}
+
+function selectOption(key, opt) {
+  if (state.checked[key] !== undefined) return;
+  state.answers[key] = opt;
+  scheduleSave();
+  // re-render only visual selection without full page rebuild
+  const item = document.getElementById('item-' + key);
+  if (!item) return;
+  item.querySelectorAll('.opt').forEach(btn => {
+    const isSel = btn.getAttribute('data-opt') === opt;
+    btn.classList.toggle('selected', isSel);
+    const mark = btn.querySelector('.opt-mark');
+    if (mark && !btn.disabled) mark.textContent = isSel ? '✓' : mark.textContent;
+  });
+  // fix marks letters
+  item.querySelectorAll('.opt').forEach((btn, i) => {
+    if (state.checked[key] !== undefined) return;
+    const mark = btn.querySelector('.opt-mark');
+    mark.textContent = btn.classList.contains('selected') ? '✓' : String.fromCharCode(65 + i);
+  });
+}
+
+function toggleTip(key) {
+  document.getElementById('tip-' + key)?.classList.toggle('show');
+}
+
+/* ── COLUMNS ── */
+function renderColumns(ex) {
+  if (!state.columnPlacements[ex.id]) {
+    state.columnPlacements[ex.id] = {
+      bank: [...ex.words],
+      cols: { 'WE PLAY': [], 'WE GO': [], 'WE DO': [] }
+    };
+  }
+  const placed = state.columnPlacements[ex.id];
+  // ensure structure
+  if (!placed.cols) placed.cols = { 'WE PLAY': [], 'WE GO': [], 'WE DO': [] };
+  if (!placed.bank) placed.bank = [];
+
+  const checked = state.checked[ex.id];
+  let feedbackHtml = '';
+  if (checked === true) {
+    feedbackHtml = `<div class="feedback show ok" style="margin-bottom:.75rem">✓ Todas as palavras estão nas colunas corretas!</div>`;
+  } else if (checked === false) {
+    const ans = Object.keys(ex.columns).map(c => `<strong>${esc(c)}</strong>: ${ex.columns[c].join(', ')}`).join(' · ');
+    feedbackHtml = `<div class="feedback show bad" style="margin-bottom:.75rem">✕ Confira as colunas. Resposta: ${ans}</div>`;
+  }
+
+  let html = `<div class="item-actions" style="margin-bottom:.75rem;display:flex;gap:.4rem;flex-wrap:wrap">
+    <button type="button" class="btn-tip" onclick="toggleTip('${ex.id}_cols')">💡 Dica</button>
+  </div>
+  <div class="tip-box" id="tip-${ex.id}_cols">${esc(ex.tip)}</div>
+  ${feedbackHtml}
+  <p style="font-size:.8rem;color:var(--gray-text);margin-bottom:.55rem">Arraste as palavras para as colunas. Clique duas vezes na palavra (dentro da coluna) para devolvê-la. Toque no chip para ouvir.</p>
+  <div class="word-bank" id="bank-${ex.id}" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDropBank(event,'${ex.id}')">`;
+  placed.bank.forEach(w => {
+    html += chipHtml(ex.id, w, ex.audioWords[w]);
+  });
+  html += `</div><div class="columns">`;
+  Object.keys(ex.columns).forEach(col => {
+    let boxExtra = '';
+    if (checked !== undefined) {
+      const expected = [...ex.columns[col]].sort().join('|');
+      const got = [...(placed.cols[col] || [])].sort().join('|');
+      boxExtra = expected === got ? ' style="border-color:var(--ok-border);background:var(--ok-bg)"' : ' style="border-color:var(--bad-border);background:var(--bad-bg)"';
+    }
+    html += `<div class="col-box" data-col="${esc(col)}"${boxExtra} ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${ex.id}','${col}')">
+      <div class="col-title">${esc(col)}</div>
+      <div class="col-drop" id="col-${ex.id}-${col.replace(/\s/g,'_')}">`;
+    (placed.cols[col] || []).forEach(w => {
+      html += chipHtml(ex.id, w, ex.audioWords[w], true);
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>
+  <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.35rem">
+    ${ex.words.map(w => `<button type="button" class="btn-audio" style="width:auto;padding:0 .7rem;border-radius:999px;font-size:.72rem" onclick="speak(${JSON.stringify(ex.audioWords[w])}, this)">🔊 ${esc(w)}</button>`).join('')}
+  </div>`;
+  return html;
+}
+
+function chipHtml(exId, word, audio, inCol) {
+  return `<span class="word-chip" draggable="true" data-word="${esc(word)}"
+    ondragstart="onDragStart(event,'${exId}')" ondragend="onDragEnd(event)"
+    onclick="if(event.detail) return; speak(${JSON.stringify(audio || word)})">${esc(word)}</span>`;
+}
+
+let dragWord = null, dragEx = null;
+function onDragStart(e, exId) {
+  dragWord = e.target.getAttribute('data-word');
+  dragEx = exId;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragEnd(e) { e.target.classList.remove('dragging'); }
+function onDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function onDragLeave(e) { e.currentTarget.classList.remove('over'); }
+function moveChip(exId, word, targetCol) {
+  const place = state.columnPlacements[exId];
+  if (!place) return;
+  place.bank = (place.bank || []).filter(w => w !== word);
+  Object.keys(place.cols).forEach(c => {
+    place.cols[c] = (place.cols[c] || []).filter(w => w !== word);
+  });
+  if (targetCol === null) {
+    if (!place.bank.includes(word)) place.bank.push(word);
+  } else {
+    if (!place.cols[targetCol]) place.cols[targetCol] = [];
+    place.cols[targetCol].push(word);
+  }
+  delete state.checked[exId];
+  scheduleSave();
+  renderPractice(1);
+}
+
+function onDrop(e, exId, col) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  if (!dragWord || dragEx !== exId) return;
+  moveChip(exId, dragWord, col);
+  dragWord = null;
+}
+
+function onDropBank(e, exId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  if (!dragWord || dragEx !== exId) return;
+  moveChip(exId, dragWord, null);
+  dragWord = null;
+}
+
+function restoreColumns() {}
+
+/* ── MATCH ── */
+function renderMatch(ex) {
+  let html = `<div class="item-actions" style="margin-bottom:.75rem">
+    <button type="button" class="btn-tip" onclick="toggleTip('${ex.id}_match')">💡 Dica</button>
+  </div>
+  <div class="tip-box" id="tip-${ex.id}_match">${esc(ex.tip)}</div>
+  <div class="match-grid">`;
+  ex.left.forEach(L => {
+    const key = `${ex.id}_${L.letter}`;
+    const val = state.answers[key] || '';
+    const checked = state.checked[key];
+    let rowCls = 'match-row';
+    if (checked === true) rowCls += ' correct';
+    if (checked === false) rowCls += ' wrong';
+    const rights = stableShuffle(ex.rights, ex.id + '_rights');
+    html += `<div class="${rowCls}" id="item-${key}">
+      <div class="match-left">
+        <span class="letter" style="color:var(--teal-light)">${esc(L.letter)}.</span> ${esc(L.text)}
+        <button type="button" class="btn-audio" style="width:30px;height:30px;font-size:.75rem" onclick="speak(${JSON.stringify(L.audio)}, this)">🔊</button>
+      </div>
+      <select ${checked !== undefined ? 'disabled' : ''} onchange="setAnswer('${key}', this.value)">
+        <option value="">— escolha o final —</option>
+        ${rights.map(r => `<option value="${esc(r)}" ${val === r ? 'selected' : ''}>${esc(r)}</option>`).join('')}
+      </select>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function setAnswer(key, val) {
+  state.answers[key] = val;
+  delete state.checked[key];
+  scheduleSave();
+}
+
+/* ── CLOZE ── */
+function renderCloze(ex) {
+  let html = `<div class="item-actions" style="margin-bottom:.75rem;display:flex;gap:.4rem;flex-wrap:wrap">
+    <button type="button" class="btn-tip" onclick="toggleTip('${ex.id}_cloze')">💡 Dica</button>
+    <button type="button" class="btn-audio" style="width:auto;padding:0 .85rem;border-radius:999px;font-size:.75rem"
+      onclick="speak('We really love that hotel. It\\'s small but clean, comfortable and cozy. You can meet a lot of foreigners there. There is a nice swimming pool where we can swim, a big parking lot where we can leave our cars, free internet for the guests and a great fitness center. The check in is always at 2 P.M., and the check out is at noon. You can really think about it for your next trip.', this)">🔊 Ouvir texto completo</button>
+  </div>
+  <div class="tip-box" id="tip-${ex.id}_cloze">${esc(ex.tip)}</div>
+  <div class="word-list-hint">${ex.bank.map(w => `<span>${esc(w)}</span>`).join('')}</div>
+  <div class="cloze-text">`;
+
+  let text = ex.template;
+  ex.blanks.forEach(b => {
+    const key = `${ex.id}_${b.id}`;
+    const val = state.answers[key] || '';
+    const checked = state.checked[key];
+    let cls = '';
+    if (checked === true) cls = 'ok';
+    if (checked === false) cls = 'bad';
+    const opts = stableShuffle(ex.bank, key + '_opts');
+    const sel = `<select class="${cls}" ${checked !== undefined ? 'disabled' : ''} onchange="setAnswer('${key}', this.value)" id="sel-${key}">
+      <option value="">…</option>
+      ${opts.map(o => `<option value="${esc(o)}" ${val === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+    </select>`;
+    text = text.replace('{{' + b.id + '}}', sel);
+  });
+  html += text + `</div>`;
+  return html;
+}
+
+/* ═══════════════════════════════════════════════
+   CHECK / SCORE
+═══════════════════════════════════════════════ */
+function checkExercise(exId, practiceNum) {
+  const p = DATA[practiceNum];
+  const ex = p.exercises.find(e => e.id === exId);
+  if (!ex) return;
+
+  if (ex.type === 'mcq') {
+    ex.items.forEach(item => {
+      const key = `${ex.id}_${item.letter}`;
+      const ans = state.answers[key];
+      state.checked[key] = ans === item.correct;
+      if (item.sentence) {
+        const sk = `${ex.id}_sent_${item.letter}`;
+        state.checked[sk] = state.answers[sk] === item.sentence.correct;
+      }
+    });
+  } else if (ex.type === 'columns') {
+    const place = state.columnPlacements[exId];
+    let allOk = true;
+    Object.keys(ex.columns).forEach(col => {
+      const expected = [...ex.columns[col]].sort().join('|');
+      const got = [...(place.cols[col] || [])].sort().join('|');
+      if (expected !== got) allOk = false;
+    });
+    // also check no leftover in bank
+    if ((place.bank || []).length) allOk = false;
+    state.checked[exId] = allOk;
+    // per-word feedback stored as whole
+  } else if (ex.type === 'match') {
+    ex.left.forEach(L => {
+      const key = `${ex.id}_${L.letter}`;
+      state.checked[key] = state.answers[key] === ex.correct[L.letter];
+    });
+  } else if (ex.type === 'cloze') {
+    ex.blanks.forEach(b => {
+      const key = `${ex.id}_${b.id}`;
+      state.checked[key] = state.answers[key] === b.correct;
+    });
+  }
+
+  scheduleSave();
+  renderPractice(practiceNum);
+  toast('Exercício corrigido!');
+}
+
+function resetExercise(exId, practiceNum) {
+  const p = DATA[practiceNum];
+  const ex = p.exercises.find(e => e.id === exId);
+  if (!ex) return;
+
+  if (ex.type === 'mcq') {
+    ex.items.forEach(item => {
+      const key = `${ex.id}_${item.letter}`;
+      delete state.answers[key];
+      delete state.checked[key];
+      delete state.answers['__order__' + key];
+      if (item.sentence) {
+        const sk = `${ex.id}_sent_${item.letter}`;
+        delete state.answers[sk];
+        delete state.checked[sk];
+        delete state.answers['__order__' + sk];
+      }
+    });
+  } else if (ex.type === 'columns') {
+    state.columnPlacements[exId] = {
+      bank: [...ex.words],
+      cols: { 'WE PLAY': [], 'WE GO': [], 'WE DO': [] }
+    };
+    delete state.checked[exId];
+  } else if (ex.type === 'match') {
+    ex.left.forEach(L => {
+      const key = `${ex.id}_${L.letter}`;
+      delete state.answers[key];
+      delete state.checked[key];
+    });
+    delete state.answers['__order__' + exId + '_rights'];
+  } else if (ex.type === 'cloze') {
+    ex.blanks.forEach(b => {
+      const key = `${ex.id}_${b.id}`;
+      delete state.answers[key];
+      delete state.checked[key];
+      delete state.answers['__order__' + key + '_opts'];
+    });
+  }
+  scheduleSave();
+  renderPractice(practiceNum);
+  toast('Exercício reiniciado');
+}
+
+function checkAllPractice(n) {
+  const p = DATA[n];
+  p.exercises.forEach(ex => {
+    // check without re-render each time
+    if (ex.type === 'mcq') {
+      ex.items.forEach(item => {
+        const key = `${ex.id}_${item.letter}`;
+        state.checked[key] = state.answers[key] === item.correct;
+        if (item.sentence) {
+          const sk = `${ex.id}_sent_${item.letter}`;
+          state.checked[sk] = state.answers[sk] === item.sentence.correct;
+        }
+      });
+    } else if (ex.type === 'columns') {
+      const place = state.columnPlacements[ex.id] || { bank: [], cols: {} };
+      let allOk = true;
+      Object.keys(ex.columns).forEach(col => {
+        const expected = [...ex.columns[col]].sort().join('|');
+        const got = [...(place.cols[col] || [])].sort().join('|');
+        if (expected !== got) allOk = false;
+      });
+      if ((place.bank || []).length) allOk = false;
+      state.checked[ex.id] = allOk;
+    } else if (ex.type === 'match') {
+      ex.left.forEach(L => {
+        const key = `${ex.id}_${L.letter}`;
+        state.checked[key] = state.answers[key] === ex.correct[L.letter];
+      });
+    } else if (ex.type === 'cloze') {
+      ex.blanks.forEach(b => {
+        const key = `${ex.id}_${b.id}`;
+        state.checked[key] = state.answers[key] === b.correct;
+      });
+    }
+  });
+  scheduleSave();
+  renderPractice(n);
+  toast('Prática inteira corrigida!');
+}
+
+function countPractice(n) {
+  let total = 0, correct = 0, answered = 0;
+  const p = DATA[n];
+  p.exercises.forEach(ex => {
+    if (ex.type === 'mcq') {
+      ex.items.forEach(item => {
+        total++;
+        const key = `${ex.id}_${item.letter}`;
+        if (state.answers[key] !== undefined) answered++;
+        if (state.checked[key] === true) correct++;
+        if (item.sentence) {
+          total++;
+          const sk = `${ex.id}_sent_${item.letter}`;
+          if (state.answers[sk] !== undefined) answered++;
+          if (state.checked[sk] === true) correct++;
+        }
+      });
+    } else if (ex.type === 'columns') {
+      total++;
+      const place = state.columnPlacements[ex.id];
+      if (place && (place.bank || []).length < ex.words.length) answered++;
+      if (state.checked[ex.id] === true) correct++;
+    } else if (ex.type === 'match') {
+      ex.left.forEach(L => {
+        total++;
+        const key = `${ex.id}_${L.letter}`;
+        if (state.answers[key]) answered++;
+        if (state.checked[key] === true) correct++;
+      });
+    } else if (ex.type === 'cloze') {
+      ex.blanks.forEach(b => {
+        total++;
+        const key = `${ex.id}_${b.id}`;
+        if (state.answers[key]) answered++;
+        if (state.checked[key] === true) correct++;
+      });
+    }
+  });
+  return { total, correct, answered };
+}
+
+function updateLiveScore(n) {
+  const el = document.getElementById('liveScore' + n);
+  if (!el) return;
+  const { total, correct } = countPractice(n);
+  const checkedCount = Object.keys(state.checked).filter(k => {
+    // rough: keys belonging to this practice
+    return k.startsWith('p' + n) || (n === 1 && k === 'p1e4');
+  }).length;
+  el.textContent = correct + ' / ' + total;
+}
+
+function updateHomeScores() {
+  for (let n = 1; n <= 3; n++) {
+    const { total, correct, answered } = countPractice(n);
+    const el = document.getElementById('scoreP' + n);
+    if (el) el.textContent = `${correct} acertos · ${answered}/${total} feitos`;
+  }
+  updateProgressUI();
+}
+
+function updateProgressUI() {
+  let t = 0, a = 0;
+  for (let n = 1; n <= 3; n++) {
+    const c = countPractice(n);
+    t += c.total;
+    a += c.answered;
+  }
+  const pct = t ? Math.round((a / t) * 100) : 0;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  for (let n = 1; n <= 3; n++) updateLiveScore(n);
+}
+
+/* ═══════════════════════════════════════════════
+   EXPORT / IMPORT
+═══════════════════════════════════════════════ */
+function exportProgress() {
+  const payload = {
+    v: 1,
+    name: state.name,
+    answers: state.answers,
+    checked: state.checked,
+    columnPlacements: state.columnPlacements,
+    ts: Date.now()
+  };
+  const text = JSON.stringify(payload);
+  // copy
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('Código copiado! Cole no outro dispositivo.')).catch(() => showExportModal(text));
+  } else {
+    showExportModal(text);
+  }
+  // also download file
+  const blob = new Blob([text], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fluency_progresso.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function showExportModal(text) {
+  document.getElementById('importArea').value = text;
+  document.getElementById('importModal').classList.add('open');
+  toast('Copie o código abaixo');
+}
+
+function openImport() {
+  document.getElementById('importArea').value = '';
+  document.getElementById('importModal').classList.add('open');
+}
+function closeImport() {
+  document.getElementById('importModal').classList.remove('open');
+}
+function importProgress() {
+  try {
+    const data = JSON.parse(document.getElementById('importArea').value.trim());
+    state.name = data.name || '';
+    state.answers = data.answers || {};
+    state.checked = data.checked || {};
+    state.columnPlacements = data.columnPlacements || {};
+    document.getElementById('studentName').value = state.name;
+    scheduleSave();
+    closeImport();
+    showView('home');
+    updateHomeScores();
+    toast('Progresso importado!');
+  } catch (e) {
+    toast('Código inválido');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+loadState();
+document.getElementById('studentName').value = state.name || '';
+document.getElementById('studentName').addEventListener('input', (e) => {
+  state.name = e.target.value;
+  scheduleSave();
+});
+updateHomeScores();
+
+// Fix selectOption with proper JSON in onclick — rebind after render using event delegation
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('.opt');
+  if (!opt || opt.disabled) return;
+  const item = opt.closest('.item');
+  if (!item) return;
+  const key = item.getAttribute('data-key');
+  if (!key || state.checked[key] !== undefined) return;
+  const value = opt.getAttribute('data-opt');
+  selectOption(key, value);
+});
+
+// Double-click chip to return to bank
+document.addEventListener('dblclick', (e) => {
+  const chip = e.target.closest('.word-chip');
+  if (!chip) return;
+  const colDrop = chip.closest('.col-drop');
+  if (!colDrop) return;
+  const word = chip.getAttribute('data-word');
+  moveChip('p1e4', word, null);
+});
+</script>
+</body>
+</html>
