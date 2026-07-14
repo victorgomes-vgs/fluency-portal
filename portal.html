@@ -199,66 +199,68 @@
     .lesson-card{background:var(--lesson);border-bottom:1px solid var(--divider);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
     .lesson-card:hover{filter:brightness(1.08);}
     .lesson-card:last-child{border-bottom:none;}
-    /* Pendente = cinza (card); tags INPUT/OUTPUT/REVIEW permanecem coloridas */
+    /* Pendente = capa cinza; tags coloridas; aluno bloqueado */
     .lesson-card.lesson-pending,.review-card.lesson-pending{
-      background:linear-gradient(135deg,rgba(148,163,184,.22),rgba(100,116,139,.12))!important;
-      border:1.5px solid rgba(148,163,184,.38)!important;
-      border-left:3px solid rgba(148,163,184,.55)!important;
-      color:rgba(226,232,240,.88)!important;
-      box-shadow:none;
+      background:linear-gradient(145deg,#3f4654 0%,#323844 50%,#2a303a 100%)!important;
+      border:1.5px solid rgba(160,170,185,.38)!important;
+      border-left:3px solid #94a3b8!important;
+      color:rgba(210,218,228,.85)!important;
+      box-shadow:none!important;
     }
+    .lesson-card.lesson-pending.lesson-locked,.review-card.lesson-pending.lesson-locked{cursor:not-allowed;opacity:.8;}
     .lesson-card.lesson-andamento,.review-card.lesson-andamento{
-      background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(14,165,233,.10))!important;
-      border:1.5px solid rgba(56,189,248,.40)!important;
-      border-left:3px solid #38bdf8!important;
+      background:linear-gradient(135deg,rgba(14,165,233,.45),rgba(56,189,248,.28))!important;
+      border:1.5px solid #38bdf8!important;
+      border-left:3px solid #7dd3fc!important;
       color:#e0f2fe!important;
+      box-shadow:0 0 16px rgba(56,189,248,.35)!important;
     }
-    /* INPUT concluída → azul médio (site) + borda neon azul */
+    /* INPUT concluída → azul forte + neon (landing #3b82f6) */
     .lesson-card.done-card,.lesson-card.done-card.done-input{
-      background:linear-gradient(145deg,rgba(53,102,182,.48),rgba(34,82,160,.28),rgba(30,64,140,.18))!important;
-      border:1.5px solid #5b9be8!important;
-      border-left:3px solid #60a5fa!important;
-      color:#dbeafe!important;
-      box-shadow:0 0 0 1px rgba(96,165,250,.35),0 0 18px rgba(59,130,246,.35),inset 0 1px 0 rgba(255,255,255,.10)!important;
+      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 35%,#2563eb 65%,#3b82f6 100%)!important;
+      border:1.5px solid #7dd3fc!important;
+      border-left:3px solid #93c5fd!important;
+      color:#fff!important;
+      box-shadow:0 0 0 1px rgba(125,211,252,.5),0 0 18px rgba(59,130,246,.65),0 0 32px rgba(56,189,248,.35)!important;
     }
-    /* OUTPUT concluída → verde profundo (site) + borda neon teal */
+    /* OUTPUT concluída → verde + neon teal */
     .lesson-card.done-card.done-output{
-      background:linear-gradient(145deg,rgba(0,102,91,.55),rgba(6,95,70,.35),rgba(4,70,50,.22))!important;
-      border:1.5px solid #2dd4bf!important;
-      border-left:3px solid #00d9c0!important;
-      color:#ccfbf1!important;
-      box-shadow:0 0 0 1px rgba(45,212,191,.40),0 0 18px rgba(0,191,165,.40),inset 0 1px 0 rgba(255,255,255,.10)!important;
+      background:linear-gradient(135deg,#064e3b 0%,#047857 40%,#00a89d 100%)!important;
+      border:1.5px solid #5eead4!important;
+      border-left:3px solid #2dd4bf!important;
+      color:#ecfdf5!important;
+      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.6)!important;
     }
-    /* REVIEW concluída → roxo + borda neon */
     .review-card{background:rgba(139,92,246,.12);border-bottom:1px solid rgba(139,92,246,.22);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
     .review-card:hover{background:rgba(139,92,246,.18);}
     .review-card:last-child{border-bottom:none;}
     .review-card.done-card,.lesson-card.done-card.done-review{
-      background:linear-gradient(145deg,rgba(139,92,246,.50),rgba(109,40,217,.32),rgba(76,29,149,.20))!important;
-      border:1.5px solid #c4b5fd!important;
-      border-left:3px solid #a78bfa!important;
-      color:#ede9fe!important;
-      box-shadow:0 0 0 1px rgba(196,181,253,.40),0 0 18px rgba(139,92,246,.40),inset 0 1px 0 rgba(255,255,255,.10)!important;
+      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 40%,#8b5cf6 100%)!important;
+      border:1.5px solid #d8b4fe!important;
+      border-left:3px solid #c4b5fd!important;
+      color:#f5f3ff!important;
+      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.6)!important;
     }
     [data-theme="light"] .lesson-card.lesson-pending,[data-theme="light"] .review-card.lesson-pending{
-      background:linear-gradient(135deg,rgba(53,102,182,.10),rgba(202,222,252,.55))!important;
-      border-color:rgba(53,102,182,.28)!important;border-left-color:rgba(53,102,182,.40)!important;color:#174082!important;
+      background:linear-gradient(145deg,#c5cad3,#d5dae2,#e2e6ec)!important;
+      border-color:#9aa3b2!important;border-left-color:#6b7280!important;color:#4b5563!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.done-card,[data-theme="light"] .lesson-card.done-card.done-input{
-      background:linear-gradient(145deg,rgba(53,102,182,.22),rgba(134,207,255,.18),rgba(224,236,255,.65))!important;
-      border-color:#3566B6!important;border-left-color:#2252A0!important;color:#174082!important;
-      box-shadow:0 0 0 1px rgba(53,102,182,.25),0 4px 16px rgba(34,82,160,.18)!important;
+      background:linear-gradient(135deg,#174082 0%,#2252A0 40%,#3566B6 75%,#5b9be8 100%)!important;
+      border-color:#86CFFF!important;border-left-color:#7dd3fc!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(134,207,255,.5),0 0 20px rgba(53,102,182,.4)!important;
     }
     [data-theme="light"] .lesson-card.done-card.done-output{
-      background:linear-gradient(145deg,rgba(0,102,91,.18),rgba(24,126,116,.12),rgba(212,247,242,.55))!important;
-      border-color:#00a89d!important;border-left-color:#00665B!important;color:#00665B!important;
-      box-shadow:0 0 0 1px rgba(0,168,157,.28),0 4px 16px rgba(0,102,91,.14)!important;
+      background:linear-gradient(135deg,#00665B,#187E74,#00a89d)!important;
+      border-color:#5eead4!important;border-left-color:#2dd4bf!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(94,234,212,.45),0 0 18px rgba(0,168,157,.35)!important;
     }
     [data-theme="light"] .review-card{background:rgba(139,92,246,.08);border-bottom-color:rgba(139,92,246,.20);}
     [data-theme="light"] .review-card.done-card,[data-theme="light"] .lesson-card.done-card.done-review{
-      background:linear-gradient(145deg,rgba(139,92,246,.18),rgba(196,181,253,.16),rgba(237,233,254,.70))!important;
-      border-color:#8b5cf6!important;border-left-color:#7c3aed!important;color:#4c1d95!important;
-      box-shadow:0 0 0 1px rgba(139,92,246,.25),0 4px 16px rgba(109,40,217,.14)!important;
+      background:linear-gradient(135deg,#5b21b6,#7c3aed,#8b5cf6)!important;
+      border-color:#d8b4fe!important;border-left-color:#c4b5fd!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(216,180,254,.45),0 0 18px rgba(139,92,246,.35)!important;
     }
     .lesson-detail{background:var(--detail);border-top:1px solid var(--divider);padding:14px 18px 16px;}
     .detail-label{font-size:11px;font-weight:700;color:#6ec8dc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
@@ -572,20 +574,20 @@
     .page-back{display:flex;align-items:center;gap:8px;padding:8px 0 16px;cursor:pointer;border:none;background:transparent;color:var(--font-muted);font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;}
     .page-back:hover{color:var(--font);}
 
-    /* ── TRILHA TIMELINE ── */
-    .tl-wrap{background:linear-gradient(165deg,#0c1a2e 0%,#0a1628 55%,#081220 100%);border:1.5px solid rgba(255,255,255,.09);border-radius:22px;padding:22px 14px 26px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);}
-    .tl-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,191,165,.12),transparent 60%);pointer-events:none;}
-    .tl-wrap::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);animation:tlShine 6s ease-in-out infinite;pointer-events:none;}
+    /* ── TRILHA TIMELINE (card sempre escuro + shine, inclusive no light mode) ── */
+    .tl-wrap{background:linear-gradient(165deg,#0c1a2e 0%,#0a1628 55%,#081220 100%)!important;border:1.5px solid rgba(255,255,255,.09)!important;border-radius:22px;padding:22px 14px 26px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)!important;color:#e8f0f8;}
+    .tl-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,191,165,.12),transparent 60%)!important;pointer-events:none;}
+    .tl-wrap::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:tlShine 6s ease-in-out infinite;pointer-events:none;z-index:1;}
     @keyframes tlShine{0%,100%{left:-100%;}50%{left:140%;}}
     .tl-module-block{display:flex;gap:0;position:relative;}
     .tl-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;}
     .tl-node{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#00d9c0,#00BFA5);border:2px solid rgba(255,255,255,.35);box-shadow:0 0 12px rgba(0,191,165,.55);flex-shrink:0;z-index:2;animation:tlPulse 2.5s ease-in-out infinite;}
     .tl-node-mod{width:16px;height:16px;}
-    .tl-node-lesson{width:8px;height:8px;background:rgba(148,163,184,.45);border-color:rgba(148,163,184,.35);box-shadow:none;animation:none;}
-    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#3566B6,#2252A0);border-color:#60a5fa;box-shadow:0 0 10px rgba(59,130,246,.55);}
-    .tl-node-lesson.tl-node-done-output{background:linear-gradient(135deg,#00a89d,#00665B);border-color:#2dd4bf;box-shadow:0 0 10px rgba(0,191,165,.55);}
-    .tl-node-lesson.tl-node-done-review{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-color:#c4b5fd;box-shadow:0 0 10px rgba(139,92,246,.55);}
-    .tl-node-lesson.tl-node-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border-color:rgba(56,189,248,.6);box-shadow:0 0 10px rgba(56,189,248,.45);animation:tlPulse 2s ease-in-out infinite;}
+    .tl-node-lesson{width:8px;height:8px;background:#6b7280;border-color:#9ca3af;box-shadow:none;animation:none;}
+    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#60a5fa,#2563eb);border-color:#7dd3fc;box-shadow:0 0 12px rgba(59,130,246,.85);}
+    .tl-node-lesson.tl-node-done-output{background:linear-gradient(135deg,#2dd4bf,#00a89d);border-color:#5eead4;box-shadow:0 0 12px rgba(0,168,157,.85);}
+    .tl-node-lesson.tl-node-done-review{background:linear-gradient(135deg,#c4b5fd,#8b5cf6);border-color:#d8b4fe;box-shadow:0 0 12px rgba(139,92,246,.85);}
+    .tl-node-lesson.tl-node-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border-color:#7dd3fc;box-shadow:0 0 12px rgba(56,189,248,.7);animation:tlPulse 2s ease-in-out infinite;}
     @keyframes tlPulse{0%,100%{box-shadow:0 0 8px rgba(0,191,165,.4);}50%{box-shadow:0 0 18px rgba(0,191,165,.75);}}
     .tl-segment{width:2px;flex:1;min-height:28px;position:relative;margin:4px 0;}
     .tl-segment-svg{width:2px;height:100%;display:block;overflow:visible;}
@@ -616,45 +618,147 @@
     .tl-lesson-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:14px;}
     .tl-segment-sm{min-height:20px;}
     .tl-lesson-body{flex:1;min-width:0;}
-    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:12px;border:1px solid transparent;cursor:pointer;text-align:left;font-family:inherit;transition:all .18s;position:relative;overflow:hidden;}
-    .tl-lesson-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.12) 50%,transparent 60%);transform:translateX(-100%);transition:none;}
-    /* INPUT done = azul médio neon; OUTPUT done = verde profundo + teal neon; REVIEW done = roxo neon */
-    .tl-pill-done{background:linear-gradient(145deg,rgba(53,102,182,.55),rgba(34,82,160,.32));border-color:#5b9be8;color:#dbeafe;box-shadow:0 0 0 1px rgba(96,165,250,.35),0 4px 16px rgba(59,130,246,.35);}
-    .tl-pill-done:hover::after{animation:tlPillShine .6s ease;}
-    .tl-pill-done-output{background:linear-gradient(145deg,rgba(0,102,91,.58),rgba(6,95,70,.32));border-color:#2dd4bf;color:#ccfbf1;box-shadow:0 0 0 1px rgba(45,212,191,.40),0 4px 16px rgba(0,191,165,.38);}
-    .tl-pill-done-review{background:linear-gradient(145deg,rgba(139,92,246,.55),rgba(109,40,217,.32));border-color:#c4b5fd;color:#ede9fe;box-shadow:0 0 0 1px rgba(196,181,253,.40),0 4px 16px rgba(139,92,246,.38);}
-    .tl-pill-active{background:linear-gradient(135deg,rgba(56,189,248,.35),rgba(14,165,233,.2));border-color:rgba(56,189,248,.45);color:#fff;}
-    .tl-pill-pending{background:linear-gradient(135deg,rgba(148,163,184,.22),rgba(100,116,139,.12));border-color:rgba(148,163,184,.40);color:rgba(226,232,240,.82);}
-    .tl-pill-pending:hover{background:linear-gradient(135deg,rgba(148,163,184,.30),rgba(100,116,139,.18));color:rgba(255,255,255,.92);}
-    /* Tags coloridas ficam nos pills pendentes; o card em si permanece cinza */
-    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{/* herda cinza do .tl-pill-pending */}
+    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:12px;border:1.5px solid transparent;cursor:pointer;text-align:left;font-family:inherit;transition:transform .18s,box-shadow .25s,border-color .25s,background .25s,filter .18s;position:relative;overflow:hidden;isolation:isolate;}
+    .tl-lesson-pill::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity .25s;}
+    .tl-lesson-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.14) 50%,transparent 60%);transform:translateX(-100%);transition:none;pointer-events:none;z-index:1;}
+    .tl-lesson-pill > *{position:relative;z-index:2;}
+    /* ── PENDENTE: capa cinza (aluno + adm). Tags coloridas ficam por cima. ── */
+    .tl-pill-pending{
+      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
+      border-color:rgba(160,170,185,.38)!important;
+      color:rgba(210,218,228,.82)!important;
+      box-shadow:none!important;
+      filter:saturate(.85);
+    }
+    .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
+    .tl-pill-pending .tl-lesson-title,.tl-pill-pending .tl-lesson-meta{color:inherit;}
+    .tl-pill-locked{cursor:not-allowed!important;opacity:.78;pointer-events:auto;}
+    .tl-pill-locked:hover{background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;filter:saturate(.85);transform:none!important;}
+    .tl-pill-locked::after{display:none;}
+    .tl-badge-locked{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(100,116,139,.35);color:#cbd5e1;border:1px solid rgba(148,163,184,.4);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
+    /* ── CONCLUÍDA INPUT: azul forte + neon (estilo Portal landing) ── */
+    .tl-pill-done{
+      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
+      border-color:#7dd3fc!important;
+      color:#fff!important;
+      box-shadow:
+        0 0 0 1px rgba(125,211,252,.55),
+        0 0 14px rgba(59,130,246,.75),
+        0 0 32px rgba(56,189,248,.45),
+        0 10px 28px -8px rgba(29,78,216,.55)!important;
+    }
+    .tl-pill-done::before{
+      opacity:1;
+      background:
+        radial-gradient(ellipse 80% 70% at 15% 20%,rgba(125,211,252,.28),transparent 55%),
+        radial-gradient(ellipse 60% 50% at 90% 80%,rgba(37,99,235,.25),transparent 55%);
+    }
+    .tl-pill-done:hover{transform:translateY(-1px);filter:brightness(1.06);}
+    .tl-pill-done:hover::after{animation:tlPillShine .65s ease;}
+    /* OUTPUT concluída: verde profundo + neon teal (card-fluency landing) */
+    .tl-pill-done-output{
+      background:linear-gradient(135deg,#064e3b 0%,#047857 35%,#059669 65%,#00a89d 100%)!important;
+      border-color:#5eead4!important;
+      color:#ecfdf5!important;
+      box-shadow:
+        0 0 0 1px rgba(94,234,212,.55),
+        0 0 14px rgba(0,168,157,.7),
+        0 0 30px rgba(45,212,191,.4),
+        0 10px 28px -8px rgba(0,102,91,.5)!important;
+    }
+    .tl-pill-done-output::before{
+      opacity:1;
+      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(94,234,212,.28),transparent 55%);
+    }
+    /* REVIEW concluída: roxo + neon (card-corporate landing) */
+    .tl-pill-done-review{
+      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 35%,#7c3aed 65%,#8b5cf6 100%)!important;
+      border-color:#d8b4fe!important;
+      color:#f5f3ff!important;
+      box-shadow:
+        0 0 0 1px rgba(216,180,254,.55),
+        0 0 14px rgba(139,92,246,.7),
+        0 0 30px rgba(167,139,250,.4),
+        0 10px 28px -8px rgba(109,40,217,.5)!important;
+    }
+    .tl-pill-done-review::before{
+      opacity:1;
+      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(216,180,254,.28),transparent 55%);
+    }
+    .tl-pill-active{
+      background:linear-gradient(135deg,rgba(14,165,233,.55),rgba(56,189,248,.35),rgba(37,99,235,.3))!important;
+      border-color:#38bdf8!important;
+      color:#fff!important;
+      box-shadow:0 0 0 1px rgba(56,189,248,.45),0 0 16px rgba(56,189,248,.4)!important;
+    }
+    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{/* capa cinza herdada */}
     @keyframes tlPillShine{to{transform:translateX(100%);}}
     .tl-lesson-title{font-size:13px;font-weight:700;}
     .tl-lesson-meta{font-size:10px;opacity:.75;margin-top:2px;}
     .tl-previsao{font-size:9px;opacity:.65;letter-spacing:.02em;}
-    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(34,82,160,.75);color:#dbeafe;border:1px solid #60a5fa;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 0 10px rgba(59,130,246,.40);}
-    .tl-badge-done-output{background:rgba(0,102,91,.80);border-color:#2dd4bf;color:#ccfbf1;box-shadow:0 0 10px rgba(0,191,165,.45);}
-    .tl-badge-done-review{background:rgba(109,40,217,.80);border-color:#c4b5fd;color:#ede9fe;box-shadow:0 0 10px rgba(139,92,246,.45);}
+    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(8,47,120,.75);color:#e0f2fe;border:1px solid #7dd3fc;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 0 12px rgba(59,130,246,.55);}
+    .tl-badge-done-output{background:rgba(4,70,50,.8);border-color:#5eead4;color:#ccfbf1;box-shadow:0 0 12px rgba(0,168,157,.55);}
+    .tl-badge-done-review{background:rgba(76,29,149,.8);border-color:#d8b4fe;color:#f5f3ff;box-shadow:0 0 12px rgba(139,92,246,.55);}
     .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(56,189,248,.35);color:#7dd3fc;border:1px solid rgba(56,189,248,.5);flex-shrink:0;}
-    .tl-lesson-expand{margin-top:6px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(8,18,32,.6);animation:tlExpand .25s ease;}
+    /* Painel expandido: legível pro admin (não herda o cinza da capa) */
+    .tl-lesson-expand{margin-top:6px;border-radius:14px;overflow:hidden;border:1px solid rgba(125,211,252,.18);background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));animation:tlExpand .25s ease;box-shadow:0 8px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);color:var(--font);}
+    .tl-lesson-expand .lesson-detail{background:transparent;border-top:none;color:var(--font);}
+    .tl-lesson-expand .detail-label{color:#7dd3fc;}
+    .tl-lesson-expand .input-light,.tl-lesson-expand .input{color:var(--font);}
     @keyframes tlExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
     .tl-mod-hidden-badge{font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(229,99,107,.2);color:#f87171;border:1px solid rgba(229,99,107,.35);margin-left:6px;}
-    [data-theme="light"] .tl-wrap{background:linear-gradient(165deg,#e8f1ff 0%,#f0f6ff 55%,#e8f8f6 100%);border-color:rgba(53,102,182,.20);box-shadow:0 12px 36px rgba(23,64,130,.10),inset 0 1px 0 rgba(255,255,255,.9);}
-    [data-theme="light"] .tl-wrap::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(53,102,182,.10),transparent 60%);}
-    [data-theme="light"] .tl-mod-header{background:linear-gradient(135deg,#2252A0,#174082);border-color:rgba(53,102,182,.35);color:#fff;}
-    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:#fff;}
-    [data-theme="light"] .tl-pill-pending{background:linear-gradient(135deg,rgba(53,102,182,.10),rgba(202,222,252,.45));border-color:rgba(53,102,182,.28);color:#174082;}
-    [data-theme="light"] .tl-pill-pending:hover{background:linear-gradient(135deg,rgba(53,102,182,.16),rgba(202,222,252,.65));color:#0f2d5c;}
-    [data-theme="light"] .tl-pill-done{background:linear-gradient(145deg,rgba(53,102,182,.28),rgba(134,207,255,.20));border-color:#3566B6;color:#174082;box-shadow:0 4px 14px rgba(34,82,160,.16);}
-    [data-theme="light"] .tl-pill-done-output{background:linear-gradient(145deg,rgba(0,102,91,.22),rgba(163,224,214,.28));border-color:#00a89d;color:#00665B;box-shadow:0 4px 14px rgba(0,102,91,.14);}
-    [data-theme="light"] .tl-pill-done-review{background:linear-gradient(145deg,rgba(139,92,246,.20),rgba(196,181,253,.24));border-color:#8b5cf6;color:#5b21b6;box-shadow:0 4px 14px rgba(109,40,217,.14);}
-    [data-theme="light"] .tl-lesson-expand{background:rgba(224,236,255,.75);border-color:rgba(53,102,182,.18);}
-    [data-theme="light"] .tl-badge-done{background:rgba(53,102,182,.15);color:#174082;border-color:#3566B6;}
-    [data-theme="light"] .tl-badge-done-output{background:rgba(0,102,91,.12);color:#00665B;border-color:#00a89d;}
-    [data-theme="light"] .tl-badge-done-review{background:rgba(139,92,246,.12);color:#5b21b6;border-color:#8b5cf6;}
-    [data-theme="light"] .tl-badge-current{background:rgba(53,102,182,.14);color:#174082;border-color:rgba(53,102,182,.40);}
-    [data-theme="light"] .tl-hide-btn{border-color:rgba(53,102,182,.28);background:rgba(202,222,252,.45);color:#174082;}
-    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{color:#3566B6;opacity:1;}
+    .tl-badge-pendente{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(148,163,184,.28);color:#e2e8f0;border:1px solid rgba(148,163,184,.45);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}
+    /* Light mode: o CARD da trilha (.tl-wrap) permanece escuro (igual dark) com shine.
+       Apenas o expand de lição aberta fica legível em light se necessário. */
+    [data-theme="light"] .tl-wrap,
+    [data-theme="light"] .tl-wrap::before{/* forçado pelo !important do dark card */}
+    [data-theme="light"] .tl-mod-header{background:linear-gradient(135deg,rgba(18,36,61,.95),rgba(12,26,46,.9))!important;border-color:rgba(255,255,255,.12)!important;color:#fff!important;}
+    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:#fff!important;}
+    [data-theme="light"] .tl-pill-pending,
+    [data-theme="light"] .tl-pill-locked:hover{
+      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
+      border-color:rgba(160,170,185,.38)!important;
+      color:rgba(210,218,228,.82)!important;
+      box-shadow:none!important;
+      filter:saturate(.85);
+    }
+    [data-theme="light"] .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
+    [data-theme="light"] .tl-badge-locked,[data-theme="light"] .tl-badge-pendente{background:rgba(100,116,139,.35);color:#cbd5e1;border-color:rgba(148,163,184,.4);}
+    [data-theme="light"] .tl-pill-done{
+      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
+      border-color:#7dd3fc!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(125,211,252,.55),0 0 14px rgba(59,130,246,.75),0 0 32px rgba(56,189,248,.45)!important;
+    }
+    [data-theme="light"] .tl-pill-done-output{
+      background:linear-gradient(135deg,#0f3d36 0%,#0d9488 40%,#14b8a6 100%)!important;
+      border-color:#5eead4!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.45)!important;
+    }
+    [data-theme="light"] .tl-pill-done-review{
+      background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 45%,#8b5cf6 100%)!important;
+      border-color:#d8b4fe!important;color:#fff!important;
+      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.45)!important;
+    }
+    [data-theme="light"] .tl-lesson-expand{background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));border-color:rgba(125,211,252,.18);box-shadow:0 8px 28px rgba(0,0,0,.35);color:#e8f0f8;}
+    [data-theme="light"] .tl-lesson-expand .detail-label{color:#7dd3fc;}
+    [data-theme="light"] .tl-badge-done{background:rgba(59,130,246,.25);color:#bfdbfe;border-color:#60a5fa;}
+    [data-theme="light"] .tl-badge-done-output{background:rgba(20,184,166,.25);color:#99f6e4;border-color:#5eead4;}
+    [data-theme="light"] .tl-badge-done-review{background:rgba(139,92,246,.25);color:#e9d5ff;border-color:#c4b5fd;}
+    [data-theme="light"] .tl-badge-current{background:rgba(56,189,248,.35);color:#7dd3fc;border-color:rgba(56,189,248,.5);}
+    [data-theme="light"] .tl-hide-btn{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);}
+    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:rgba(200,215,230,.8);}
+    [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:rgba(200,210,220,.75);}
+    [data-theme="light"] .tl-pill-done .tl-lesson-meta,[data-theme="light"] .tl-pill-done .tl-previsao{color:rgba(255,255,255,.85);}
+    [data-theme="light"] .tl-line-track{stroke:rgba(255,255,255,.12)!important;}
+    [data-theme="light"] .tl-arrow{fill:#00d9c0!important;}
+    [data-theme="light"] .tl-node-lesson{background:#6b7280!important;border-color:#9ca3af!important;}
+    /* student cards list */
+    .student-card{display:flex;flex-direction:column;gap:12px;}
+    .student-card-head{display:flex;align-items:flex-start;gap:12px;}
+    .student-card-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+    .student-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:11px;}
+    .student-card-meta .meta-label{color:var(--font-muted);font-weight:600;display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+    .student-card-meta .meta-val{font-weight:700;color:var(--font);line-height:1.25;}
     .diario-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     .pending-page{text-align:center;padding:48px 24px;}
     .pending-page-icon{font-size:40px;margin-bottom:12px;opacity:.6;}
@@ -856,12 +960,15 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.13.2");
+console.info("Fluency Portal v2026.07.13.4");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
 try{storage=firebase.storage();}catch(e){console.warn("Firebase Storage indisponível:",e);}
 const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
+/** Catálogo de cursos: doc especial em students (admin consegue gravar; coleção `courses` costuma estar bloqueada nas regras). */
+const COURSES_CATALOG_DOC = "__system_courses";
+const COURSES_LS_KEY = "fs_courses_catalog_v1";
 const FOTO_MAX_MB = 12;
 const FOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
@@ -1197,43 +1304,115 @@ function getCourseLabel(contratoId){
   return(c&&c.nome)||contratoId;
 }
 
+function coursesCatalogRef(){
+  return db.collection("students").doc(COURSES_CATALOG_DOC);
+}
+function persistCoursesLocal(list){
+  try{localStorage.setItem(COURSES_LS_KEY,JSON.stringify(list));}catch(e){}
+}
+function loadCoursesLocal(){
+  try{
+    const raw=localStorage.getItem(COURSES_LS_KEY);
+    if(!raw)return null;
+    const arr=JSON.parse(raw);
+    return Array.isArray(arr)&&arr.length?arr:null;
+  }catch(e){return null;}
+}
+function normalizeCoursesList(list){
+  if(!Array.isArray(list)||!list.length)return DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
+  return list.map(c=>({...c,id:c.id,modulos:Array.isArray(c.modulos)?c.modulos:[]}))
+    .sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+}
+/** Grava o catálogo onde o admin tem permissão (students/__system_courses) e tenta a coleção `courses`. */
+async function writeCoursesCatalog(list){
+  const clean=normalizeCoursesList(list).map(c=>JSON.parse(JSON.stringify(c)));
+  _coursesCache=clean;
+  persistCoursesLocal(clean);
+  let lastErr=null;
+  try{
+    await coursesCatalogRef().set({
+      type:"courses_catalog",
+      courses:clean,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    },{merge:true});
+  }catch(e){lastErr=e;}
+  // Espelho opcional na coleção `courses` (quando as regras permitirem)
+  try{
+    const batch=db.batch();
+    clean.forEach(c=>{batch.set(db.collection("courses").doc(c.id),c,{merge:true});});
+    await batch.commit();
+  }catch(e){/* coleção courses pode estar bloqueada */}
+  if(lastErr)throw lastErr;
+  return clean;
+}
+async function upsertCourseDoc(course){
+  const list=normalizeCoursesList(_coursesCache);
+  const idx=list.findIndex(c=>c.id===course.id);
+  const next={...course};
+  if(idx>=0)list[idx]={...list[idx],...next};
+  else list.push(next);
+  return writeCoursesCatalog(list);
+}
+async function deleteCourseDoc(courseId){
+  const list=normalizeCoursesList(_coursesCache).filter(c=>c.id!==courseId);
+  return writeCoursesCatalog(list);
+}
+
 /** Sincroniza nome/cor/ordem dos 6 cursos oficiais (landing) sem apagar estrutura editada. */
 async function ensureCoursesSeeded(forceBrandMeta){
   try{
-    const snap=await db.collection("courses").get();
-    if(snap.empty){
-      const batch=db.batch();
-      DEFAULT_COURSES.forEach(c=>{batch.set(db.collection("courses").doc(c.id),JSON.parse(JSON.stringify(c)));});
-      await batch.commit();
+    let existing=null;
+    try{
+      const doc=await coursesCatalogRef().get();
+      if(doc.exists&&Array.isArray(doc.data().courses)&&doc.data().courses.length){
+        existing=doc.data().courses;
+      }
+    }catch(e){/* sem permissão de leitura do catálogo */}
+    if(!existing){
+      try{
+        const snap=await db.collection("courses").get();
+        if(!snap.empty)existing=snap.docs.map(d=>({id:d.id,...d.data()}));
+      }catch(e){/* coleção courses bloqueada */}
+    }
+    if(!existing)existing=loadCoursesLocal();
+    if(!existing||!existing.length){
+      const seeded=DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
+      try{await writeCoursesCatalog(seeded);}catch(e){
+        _coursesCache=seeded;
+        persistCoursesLocal(seeded);
+        console.warn("ensureCoursesSeeded write:",e.message||e);
+      }
       return;
     }
     const byId={};
-    snap.docs.forEach(d=>{byId[d.id]=d.data();});
+    existing.forEach(c=>{if(c&&c.id)byId[c.id]=c;});
     for(const c of DEFAULT_COURSES){
       const payload=JSON.parse(JSON.stringify(c));
       if(!byId[c.id]){
-        try{await db.collection("courses").doc(c.id).set(payload);}catch(e){/* aluno sem write */}
+        byId[c.id]=payload;
         continue;
       }
-      // Atualiza identidade visual/nome oficiais; preserva modulos se já existirem
-      const patch={
-        nome:c.nome,
-        corBase:c.corBase,
-        ordem:c.ordem,
-        grupo:c.grupo||null,
-        padraoVisual:c.padraoVisual||null,
-      };
-      if(c.numeroInicio!=null)patch.numeroInicio=c.numeroInicio;
-      if(forceBrandMeta||!byId[c.id].modulos||!byId[c.id].modulos.length){
-        patch.modulos=payload.modulos;
+      const cur=byId[c.id];
+      cur.nome=c.nome;
+      cur.corBase=c.corBase;
+      cur.ordem=c.ordem;
+      if(c.grupo!=null)cur.grupo=c.grupo;
+      if(c.padraoVisual!=null)cur.padraoVisual=c.padraoVisual;
+      if(c.numeroInicio!=null)cur.numeroInicio=c.numeroInicio;
+      if(forceBrandMeta||!cur.modulos||!cur.modulos.length){
+        cur.modulos=payload.modulos;
       }
-      // Reflective Mind: força estrutura oficial (60 lições + 10 reviews) e numeração 121+
       if(c.id==="speech_b"&&forceBrandMeta){
-        patch.modulos=payload.modulos;
-        patch.numeroInicio=121;
+        cur.modulos=payload.modulos;
+        cur.numeroInicio=121;
       }
-      // Força nomes/cores oficiais sempre que o seed rodar (admin), para bater com o landing
-      try{await db.collection("courses").doc(c.id).set(patch,{merge:true});}catch(e){/* aluno sem write */}
+      byId[c.id]=cur;
+    }
+    const merged=Object.values(byId);
+    try{await writeCoursesCatalog(merged);}catch(e){
+      _coursesCache=normalizeCoursesList(merged);
+      persistCoursesLocal(_coursesCache);
+      console.warn("ensureCoursesSeeded (ok se não-admin):",e.message||e);
     }
   }catch(e){
     console.warn("ensureCoursesSeeded (ok se não-admin):",e.message||e);
@@ -1276,26 +1455,34 @@ async function migrateLegacyContratosIfNeeded(){
 }
 
 function useCourses(){
-  const[courses,setCourses]=useState(_coursesCache);
+  const[courses,setCourses]=useState(()=>{
+    const local=loadCoursesLocal();
+    return local?normalizeCoursesList(local):_coursesCache;
+  });
   useEffect(()=>{
     let unsub=()=>{};
     let alive=true;
     (async()=>{
       try{await ensureCoursesSeeded();}catch(e){console.error("ensureCoursesSeeded",e);}
       if(!alive)return;
-      unsub=db.collection("courses").onSnapshot(snap=>{
-        if(snap.empty){
-          _coursesCache=DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
+      // Fonte principal: students/__system_courses (admin consegue criar/editar)
+      unsub=coursesCatalogRef().onSnapshot(doc=>{
+        if(doc.exists&&Array.isArray(doc.data().courses)&&doc.data().courses.length){
+          _coursesCache=normalizeCoursesList(doc.data().courses);
+          persistCoursesLocal(_coursesCache);
         }else{
-          _coursesCache=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+          const local=loadCoursesLocal();
+          _coursesCache=local?normalizeCoursesList(local):DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
         }
         if(alive)setCourses(_coursesCache);
       },err=>{
-        console.error("courses listen",err);
-        if(alive)setCourses(DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c))));
+        console.warn("courses catalog listen:",err&&err.message||err);
+        const local=loadCoursesLocal();
+        _coursesCache=local?normalizeCoursesList(local):DEFAULT_COURSES.map(c=>JSON.parse(JSON.stringify(c)));
+        if(alive)setCourses(_coursesCache);
       });
     })();
-    return()=>{alive=false;unsub();};
+    return()=>{alive=false;if(typeof unsub==="function")unsub();};
   },[]);
   return courses;
 }
@@ -1406,6 +1593,7 @@ const ICONS = {
   "info":          <><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>,
   "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
   "settings":      <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
+  "lock":          <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
 };
 function Icon({name,size=18,className="",style={}}){
   const p=ICONS[name]; if(!p) return null;
@@ -2107,12 +2295,17 @@ function StudentLessonView({item}){
 
 // ── MODIFICAÇÃO 3: LessonItem com botão Tarefa Feita ───────────────────────
 function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=false}){
-  const [open,setOpen]=useState(embedMode||defaultOpen);
+  const [open,setOpen]=useState(embedMode||false);
   const rootRef=useRef(null);
   const isReview=item.type==="review"||item.lessonType==="review";
   const isOutput=item.lessonType==="output";
+  const isDone=item.status==="concluida"||item.status==="realizada";
+  const isAndamento=item.status==="andamento";
+  const isPending=!isDone&&!isAndamento;
+  const locked=isPending&&!isAdmin;
   useEffect(()=>{
     if(embedMode||!defaultOpen)return;
+    if(locked){onFocused?.();return;}
     setOpen(true);
     playLessonSound();
     const t=setTimeout(()=>{
@@ -2120,10 +2313,15 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
       onFocused?.();
     },120);
     return()=>clearTimeout(t);
-  },[defaultOpen,embedMode]);
-  function handleToggle(){if(!open)playLessonSound();setOpen(o=>!o);}
+  },[defaultOpen,embedMode,locked]);
+  function handleToggle(){
+    if(locked)return;
+    if(!open)playLessonSound();
+    setOpen(o=>!o);
+  }
   async function toggleTarefa(e){
     e.stopPropagation();
+    if(locked&&!isAdmin)return;
     const newVal=!item.tarefaFeita;
     const patch={};
     patch[`trilha.${item.id}.tarefaFeita`]=newVal;
@@ -2132,38 +2330,37 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
   const borderColor=getLessonBorderColor(item);
   const typeTag=isReview?"tag-review":isOutput?"tag-output":"tag-input";
   const typeLabel=isReview?"Review":isOutput?"Output":"Input";
-  const isDone=item.status==="concluida"||item.status==="realizada";
-  const isAndamento=item.status==="andamento";
-  const isPending=!isDone&&!isAndamento;
   const doneTypeCls=isDone?(isOutput?" done-output":isReview?" done-review":" done-input"):"";
   const statusCls=isPending?" lesson-pending":isAndamento?" lesson-andamento":"";
+  const lockCls=locked?" lesson-locked":"";
   if(embedMode)return(
     <div ref={rootRef} className="lesson-detail" style={{padding:"12px 14px"}}>
       <div className="flex items-center gap-2 flex-wrap mb-3 pb-3" style={{borderBottom:"1px solid var(--divider)"}}>
         <span className={typeTag} style={{fontSize:10}}>{typeLabel}</span>
         <LessonBadge status={item.status}/>
-        {!isReview&&<button type="button" title={item.tarefaFeita?"Tarefa entregue":"Marcar tarefa"} onClick={toggleTarefa} style={{width:28,height:28,borderRadius:8,border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",background:item.tarefaFeita?"rgba(34,197,94,.18)":"var(--badge)",color:item.tarefaFeita?"#22c55e":"var(--font-muted)",marginLeft:"auto"}}><Icon name={item.tarefaFeita?"check-square":"square"} size={14}/></button>}
+        {!isReview&&isAdmin&&<button type="button" title={item.tarefaFeita?"Tarefa entregue":"Marcar tarefa"} onClick={toggleTarefa} style={{width:28,height:28,borderRadius:8,border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",background:item.tarefaFeita?"rgba(34,197,94,.18)":"var(--badge)",color:item.tarefaFeita?"#22c55e":"var(--font-muted)",marginLeft:"auto"}}><Icon name={item.tarefaFeita?"check-square":"square"} size={14}/></button>}
       </div>
       {isAdmin?<AdminLessonPanel item={item} uid={uid}/>:<StudentLessonView item={item}/>}
     </div>
   );
   return(
-    <div ref={rootRef} className={(isReview?"review-card":"lesson-card")+(isDone?" done-card":"")+doneTypeCls+statusCls} style={{borderLeft:`3px solid ${borderColor}`}}>
-      <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={handleToggle}>
+    <div ref={rootRef} className={(isReview?"review-card":"lesson-card")+(isDone?" done-card":"")+doneTypeCls+statusCls+lockCls} style={{borderLeft:`3px solid ${borderColor}`}}>
+      <div className="flex items-center gap-3 px-4 py-3" style={{cursor:locked?"not-allowed":"pointer"}} onClick={handleToggle} title={locked?"Lição bloqueada":undefined}>
         <span className={isReview?"num-dark":"num-light"}>{item.pos}</span>
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
             {item.title}
             <span className={typeTag}>{typeLabel}</span>
           </div>
-          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap muted">
+          <div className="text-xs mt-0.5 flex items-center gap-2 flex-wrap" style={{opacity:.85}}>
             <span>{isReview?("R"+item.num):("Lesson "+item.num)}</span>
-            {item.tema&&<span style={{opacity:.9}}>{item.tema}</span>}
-            {item.date&&<span className="flex items-center gap-1"><Icon name="calendar" size={10}/>{formatDateBR(item.date)}</span>}
+            {item.tema&&!locked&&<span style={{opacity:.9}}>{item.tema}</span>}
+            {item.date&&!locked&&<span className="flex items-center gap-1"><Icon name="calendar" size={10}/>{formatDateBR(item.date)}</span>}
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {!isReview && (
+          {isPending&&<span className="tl-badge-pendente"><Icon name="lock" size={10}/> Pendente</span>}
+          {!isReview&&isAdmin&&(
             <button
               type="button"
               title={item.tarefaFeita ? "Tarefa entregue ✓" : "Marcar tarefa como entregue"}
@@ -2181,10 +2378,10 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
             </button>
           )}
           <LessonBadge status={item.status}/>
-          <Icon name="chevron-down" size={14} className={"chevron-icon muted"+(open?" chevron-open":"")}/>
+          {!locked&&<Icon name="chevron-down" size={14} className={"chevron-icon"+(open?" chevron-open":"")} style={{opacity:.75}}/>}
         </div>
       </div>
-      {open&&<div className="lesson-detail">{isAdmin?<AdminLessonPanel item={item} uid={uid}/>:<StudentLessonView item={item}/>}</div>}
+      {open&&!locked&&<div className="lesson-detail">{isAdmin?<AdminLessonPanel item={item} uid={uid}/>:<StudentLessonView item={item}/>}</div>}
     </div>
   );
 }
@@ -2203,29 +2400,37 @@ function TimelineSegment({height,variant}){
 }
 
 function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
-  const [open,setOpen]=useState(defaultOpen);
+  const [open,setOpen]=useState(false);
   const rootRef=useRef(null);
   const concluida=item.status==="concluida"||item.status==="realizada";
   const andamento=item.status==="andamento";
+  const isPending=!concluida&&!andamento;
+  // Aluno: lição pendente bloqueada (não abre). Admin: pode abrir sempre.
+  const locked=isPending&&!isAdmin;
   const isReview=item.type==="review"||item.lessonType==="review";
   const isOutput=item.lessonType==="output";
   const typeTag=isReview?"tag-review":isOutput?"tag-output":"tag-input";
   const typeLabel=isReview?"Review":isOutput?"Output":"Input";
   useEffect(()=>{
     if(!defaultOpen)return;
+    if(locked){onFocused?.();return;}
     setOpen(true);
     playLessonSound();
     const t=setTimeout(()=>{rootRef.current?.scrollIntoView({behavior:"smooth",block:"center"});onFocused?.();},120);
     return()=>clearTimeout(t);
-  },[defaultOpen]);
-  function toggle(){if(!open)playLessonSound();setOpen(o=>!o);}
+  },[defaultOpen,locked]);
+  function toggle(){
+    if(locked)return;
+    if(!open)playLessonSound();
+    setOpen(o=>!o);
+  }
   let pillCls;
   if(concluida){
     pillCls="tl-pill-done"+(isOutput?" tl-pill-done-output":isReview?" tl-pill-done-review":"");
   }else if(andamento){
     pillCls="tl-pill-active";
   }else{
-    pillCls="tl-pill-pending tl-pill-pending-"+(isReview?"review":isOutput?"output":"input");
+    pillCls="tl-pill-pending"+(locked?" tl-pill-locked":"");
   }
   const nodeCls="tl-node-lesson"+(concluida?(" tl-node-done"+(isOutput?" tl-node-done-output":isReview?" tl-node-done-review":"")):andamento?" tl-node-active":"");
   const temaRaw=item.tema||(item.objetivos?item.objetivos.split(/[.!?\n]/)[0]:"");
@@ -2239,19 +2444,24 @@ function TimelineLesson({item,uid,isAdmin,defaultOpen,onFocused,isLast}){
         {!isLast&&<div className="tl-segment-sm"><TimelineSegment height={20}/></div>}
       </div>
       <div className="tl-lesson-body">
-        <button type="button" className={"tl-lesson-pill "+pillCls} onClick={toggle}>
+        <button type="button" className={"tl-lesson-pill "+pillCls} onClick={toggle} aria-disabled={locked} title={locked?"Lição bloqueada — disponível quando for liberada":undefined}>
           <div style={{minWidth:0,flex:1}}>
             <div className="tl-lesson-title" style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
               <span>{label}{temaShort?<> <span style={{fontWeight:500,opacity:.9}}>{temaShort}</span></>:null}</span>
               <span className={typeTag} style={{fontSize:9}}>{typeLabel}</span>
             </div>
-            {item.dataPrevista&&<div className="tl-lesson-meta"><span className="tl-previsao">previsão</span> · {formatDateBR(item.dataPrevista).slice(0,5)}</div>}
+            {item.dataPrevista&&!locked&&<div className="tl-lesson-meta"><span className="tl-previsao">previsão</span> · {formatDateBR(item.dataPrevista).slice(0,5)}</div>}
           </div>
+          {isPending&&(
+            <span className="tl-badge-pendente" title={locked?"Lição pendente e bloqueada":"Pendente"}>
+              <Icon name="lock" size={10}/> Pendente
+            </span>
+          )}
           {concluida&&<span className={"tl-badge-done"+(isOutput?" tl-badge-done-output":isReview?" tl-badge-done-review":"")}>concluída</span>}
           {andamento&&!concluida&&<span className="tl-badge-current">atual</span>}
-          <Icon name="chevron-down" size={14} className={"tl-mod-chevron muted"+(open?" tl-mod-chevron-open":"")} style={{opacity:.6}}/>
+          {!locked&&<Icon name="chevron-down" size={14} className={"tl-mod-chevron"+(open?" tl-mod-chevron-open":"")} style={{opacity:.75,color:"inherit"}}/>}
         </button>
-        {open&&<div className="tl-lesson-expand"><LessonItem item={item} uid={uid} isAdmin={isAdmin} embedMode={true}/></div>}
+        {open&&!locked&&<div className="tl-lesson-expand"><LessonItem item={item} uid={uid} isAdmin={isAdmin} embedMode={true}/></div>}
       </div>
     </div>
   );
@@ -3483,7 +3693,7 @@ function StatCard({ icon, iconColor, label, value, onClick }) {
 }
 
 // ── MODIFICAÇÃO 2: OverviewSection ─────────────────────────────────────────
-function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab }) {
+function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab, hideGreeting=false }) {
   const courses = useCourses();
   const course = useMemo(() => getCourseById(profile?.contrato), [courses, profile?.contrato]);
   const books = useMemo(() => mergeBooks(trilhaData, course), [trilhaData, course]);
@@ -3527,14 +3737,16 @@ function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab }) {
 
   return (
     <div className="space-y-4">
-      {/* Cabeçalho de saudação */}
-      <div className="glass rounded-2xl p-5">
-        <p className="muted text-sm">{saudacao} 👋</p>
-        <h2 className="text-2xl font-extrabold mt-1" style={{fontFamily:"'Sora',sans-serif"}}>
-          {profile?.name?.split(" ")[0] || "Aluno"}
-        </h2>
-        <p className="muted text-xs mt-1">{hojeDisplay}</p>
-      </div>
+      {/* Saudação só para o aluno (admin não vê) */}
+      {!hideGreeting&&(
+        <div className="glass rounded-2xl p-5">
+          <p className="muted text-sm">{saudacao} 👋</p>
+          <h2 className="text-2xl font-extrabold mt-1" style={{fontFamily:"'Sora',sans-serif"}}>
+            {profile?.name?.split(" ")[0] || "Aluno"}
+          </h2>
+          <p className="muted text-xs mt-1">{hojeDisplay}</p>
+        </div>
+      )}
 
       {/* Ring charts de progresso */}
       <div className="grid grid-cols-2 gap-3">
@@ -3847,12 +4059,9 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     setStudentPage(page);
     setFocusLessonId(lessonId||null);
   }
-  const [editProfile,setEditProfile]=useState(false);
-  const [editFields,setEditFields]=useState({});
+  const [showFullProfile,setShowFullProfile]=useState(false);
   const [profileErr,setProfileErr]=useState("");
-  const [fotoFile,setFotoFile]=useState(null);
-  const [fotoPreview,setFotoPreview]=useState("");
-  const [fotoBusy,setFotoBusy]=useState(false);
+  const [fullStudent,setFullStudent]=useState(null);
 
   useEffect(()=>{
     if(!uid){setProfileErr("ID do aluno inválido.");return;}
@@ -3875,6 +4084,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       if(cancelled)return;
       if(doc.exists){
         const n=normalizeStudent(uid,doc.data());
+        setFullStudent(n);
         setProfile({
           uid:n.uid,name:n.name,level:n.level,program:n.program,coach:n.coach,
           profession:n.profession,birthday:n.birthday,foto:n.foto,email:n.email,phone:n.phone,status:n.status,
@@ -3891,60 +4101,28 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
           program:n.program||"",licaoInicio:n.licaoInicio||1,contrato:n.contrato||"",
         });
         setProfileErr("");
-      }else if(!isAdmin){
-        setProfileErr("Seu perfil ainda não foi encontrado. Se você já é aluno, fale com o Victor no WhatsApp para vincular sua conta.");
+      }else{
+        if(isAdmin){
+          setProfile(null);
+          setFullStudent(null);
+          setProfileErr("Cadastro removido ou não encontrado.");
+          if(onBack)setTimeout(()=>onBack(),400);
+        }else{
+          setProfileErr("Seu perfil ainda não foi encontrado. Se você já é aluno, fale com o Victor no WhatsApp para vincular sua conta.");
+        }
       }
     },err=>{
       console.error("StudentDetail snapshot:",err);
       if(!cancelled)setProfileErr("Erro ao carregar perfil. Recarregue a página ou fale com o professor.");
     });
     return()=>{cancelled=true;clearTimeout(t);unsub();};
-  },[uid,isAdmin]);
+  },[uid,isAdmin,onBack]);
 
   const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
   const modMeta=useMemo(()=>buildModuleMeta(course),[course]);
   const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
   const currentMod=useMemo(()=>getCurrentModule(books,modulosOcultos),[books,modulosOcultos]);
   const currentModMeta=modMeta.find(m=>m.id===currentMod)||modMeta[0];
-  async function saveProfile(){
-    setFotoBusy(true);
-    try{
-      const fields={...editFields};
-      if(fotoFile){
-        fields.foto=await uploadStudentFoto(fotoFile,uid);
-        setEditFields(p=>({...p,foto:fields.foto}));
-        setFotoPreview(fields.foto);
-      }
-      await db.collection("students").doc(uid).update(fields);
-      if(fotoPreview&&String(fotoPreview).indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
-      setFotoFile(null);
-      setFotoPreview(fields.foto||"");
-      setEditProfile(false);
-    }catch(e){
-      console.error("saveProfile:",e);
-      alert("Erro ao salvar perfil: "+(e.message||e.code||"desconhecido"));
-    }finally{
-      setFotoBusy(false);
-    }
-  }
-  function startEditProfile(){
-    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
-    setFotoFile(null);
-    setFotoPreview(profile.foto||"");
-    setEditFields({name:profile.name,level:profile.level,profession:profile.profession,birthday:profile.birthday,email:profile.email||"",phone:profile.phone||"",foto:profile.foto||""});
-    setEditProfile(true);
-  }
-  function handleProfileFotoSelect(file){
-    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
-    setFotoFile(file);
-    setFotoPreview(URL.createObjectURL(file));
-  }
-  function handleProfileFotoClear(){
-    if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
-    setFotoFile(null);
-    setFotoPreview("");
-    setEditFields(p=>({...p,foto:""}));
-  }
   function calcAge(bday){if(!bday)return null;const[y,m,d]=bday.split("-").map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m||(today.getMonth()+1===m&&today.getDate()<d))age--;return age;}
   if(profileErr&&!profile)return(
     <div className="min-h-screen flex items-center justify-center p-6">
@@ -3956,6 +4134,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   );
   if(!profile)return <LoadingScreen/>;
   const age=calcAge(profile.birthday);
+  const courseName=getCourseLabel(profile.contrato);
 
   const adminTabs=[
     {id:"overview",   label:"Início",     icon:"home"},
@@ -3998,51 +4177,36 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   return(
     <div className="min-h-screen pb-20">
       <LogoBar onBack={isAdmin&&onBack?onBack:null} isAdmin={isAdmin} showLogout={true}/>
+      {isAdmin&&showFullProfile&&fullStudent&&(
+        <ModalEdicao
+          student={fullStudent}
+          onClose={()=>setShowFullProfile(false)}
+          onSaved={()=>setShowFullProfile(false)}
+        />
+      )}
 
       <main className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")}>
         {isAdmin?(
           <>
             <div className="glass rounded-2xl p-5 mb-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-3 flex-1 min-w-0">
-                  {!editProfile&&(
-                    profile.foto
-                      ?<img src={profile.foto} alt="" style={{width:56,height:56,borderRadius:"50%",objectFit:"cover",border:"2.5px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
-                      :<div style={{width:56,height:56,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"2px solid var(--divider)"}}><Icon name="user" size={24}/></div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif"}}>{profile.name}</h1>
-                    {!editProfile&&<div className="flex flex-wrap gap-2 mt-2">
-                      {profile.profession&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{profile.profession}</span>}
-                      {age!==null&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">{age} anos</span>}
-                      {profile.birthday&&<span className="chip rounded-full px-3 py-1 text-xs font-medium">🎂 {formatDateBR(profile.birthday).slice(0,5)}</span>}
-                      <span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:(currentModMeta?.accent||"rgba(0,191,165,")+".12)",border:"1px solid "+(currentModMeta?.accent||"rgba(0,191,165,")+".30)",color:"var(--font)"}}>Módulo {currentMod} · {currentModMeta?.name||"—"}</span>
-                    </div>}
+              <div className="flex items-start gap-4 flex-wrap">
+                {profile.foto
+                  ?<img src={profile.foto} alt="" style={{width:64,height:64,borderRadius:"50%",objectFit:"cover",border:"2.5px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                  :<div style={{width:64,height:64,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"2px solid var(--divider)"}}><Icon name="user" size={28}/></div>
+                }
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",wordBreak:"break-word"}}>{profile.name}</h1>
+                  <div className="student-card-meta" style={{marginTop:12}}>
+                    <div><span className="meta-label">Curso</span><span className="meta-val">{courseName||"—"}</span></div>
+                    <div><span className="meta-label">Módulo</span><span className="meta-val">{currentMod} · {currentModMeta?.name||"—"}</span></div>
+                    <div><span className="meta-label">Aniversário</span><span className="meta-val">{profile.birthday?formatDateBR(profile.birthday)+(age!=null?" · "+age+" anos":""):"—"}</span></div>
+                    <div><span className="meta-label">Status</span><span className="meta-val" style={{display:"inline-flex",marginTop:2}}><StatusBadge status={profile.status||"lead"}/></span></div>
                   </div>
                 </div>
-                {!editProfile&&<button className="btn rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5 shrink-0" onClick={startEditProfile}><Icon name="pencil" size={12}/> Perfil</button>}
+                <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold inline-flex items-center gap-2 shrink-0" onClick={()=>setShowFullProfile(true)}>
+                  <Icon name="user" size={14}/> Perfil completo
+                </button>
               </div>
-              {editProfile&&<div className="mt-4 space-y-3">
-                <FotoUploadField
-                  previewUrl={fotoPreview||editFields.foto||""}
-                  onSelectFile={handleProfileFotoSelect}
-                  onClear={handleProfileFotoClear}
-                  disabled={fotoBusy}
-                  busy={fotoBusy}
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div><div className="detail-label">Nome</div><input className="input-light mt-1" value={editFields.name||""} onChange={e=>setEditFields(p=>({...p,name:e.target.value}))}/></div>
-                  <div><div className="detail-label">Nível (CEFR)</div><select className="input-light mt-1" value={editFields.level||"A1"} onChange={e=>setEditFields(p=>({...p,level:e.target.value}))}>{["A1","A2","B1","B2","C1","C2"].map(l=><option key={l}>{l}</option>)}</select></div>
-                  <div><div className="detail-label">Email</div><input type="email" className="input-light mt-1" value={editFields.email||""} onChange={e=>setEditFields(p=>({...p,email:e.target.value}))}/></div>
-                  <div><div className="detail-label">Telefone</div><input className="input-light mt-1" value={editFields.phone||""} onChange={e=>setEditFields(p=>({...p,phone:e.target.value}))}/></div>
-                  <div><div className="detail-label">Profissão</div><input className="input-light mt-1" value={editFields.profession||""} onChange={e=>setEditFields(p=>({...p,profession:e.target.value}))}/></div>
-                  <div><div className="detail-label">Data de Nascimento</div><input type="date" className="input-light mt-1" value={editFields.birthday||""} onChange={e=>setEditFields(p=>({...p,birthday:e.target.value}))}/></div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveProfile} disabled={fotoBusy}>{fotoBusy?"Salvando…":"Salvar"}</button>
-                  <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){} setFotoFile(null);setFotoPreview("");setEditProfile(false);}} disabled={fotoBusy}>Cancelar</button>
-                </div>
-              </div>}
             </div>
             <div className="tab-bar mb-5">
               {adminTabs.map(t=>(
@@ -4053,7 +4217,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                 </button>
               ))}
             </div>
-            {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTab}/>}
+            {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTab} hideGreeting/>}
             {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={true} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
             {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
             {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
@@ -5442,14 +5606,29 @@ function ModalEdicao({student,onClose,onSaved}){
     }
   }
 
+  async function handleDelete(){
+    if(!student?.uid)return;
+    if(!confirm("Excluir permanentemente o cadastro de \""+(student.name||student.nome||"aluno")+"\"?\n\nIsso remove o documento do Firestore (trilha, financeiro e dados). O login Auth, se existir, permanece no Firebase Authentication."))return;
+    if(!confirm("Confirma a exclusão? Esta ação não pode ser desfeita."))return;
+    setSaving(true);setErr("");
+    try{
+      await db.collection("students").doc(student.uid).delete();
+      onSaved();onClose();
+    }catch(e){
+      setErr("Erro ao excluir: "+(e.message||e.code||"desconhecido"));
+    }finally{
+      setSaving(false);
+    }
+  }
+
   return(
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
       <div className="modal-box">
         <div className="modal-header">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Icon name="pencil" size={18}/>
-            <div><div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar Aluno</div>
-            <div style={{fontSize:11,opacity:.75}}>{student.name}</div></div>
+            <div><div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Perfil completo</div>
+            <div style={{fontSize:11,opacity:.75}}>{student.name||student.nome}</div></div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
         </div>
@@ -5634,13 +5813,17 @@ function ModalEdicao({student,onClose,onSaved}){
           )}
         </div>
         {err&&<div className="err-box" style={{margin:"0 20px 12px"}}>{err}</div>}
-        <div className="modal-footer">
+        <div className="modal-footer" style={{flexWrap:"wrap",gap:8}}>
+          <button type="button" className="btn btn-danger rounded-xl px-4 py-2 text-sm inline-flex items-center gap-1.5" onClick={handleDelete} disabled={saving}>
+            <Icon name="trash-2" size={14}/> Excluir
+          </button>
+          <div style={{flex:1}}/>
           {tab===1&&<button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
           {tab===0&&<button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil →</button>}
           <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
           <button className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
             {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="check-circle" size={15}/>}
-            {saving?"Salvando...":"Salvar Alterações"}
+            {saving?"Salvando...":"Salvar"}
           </button>
         </div>
       </div>
@@ -6061,7 +6244,10 @@ function AdminCursos({students}){
     if(!draft.nome.trim()){setErr("Nome do curso é obrigatório.");return;}
     setBusy(true);setErr("");
     try{
-      await db.collection("courses").doc(editId).set({
+      const prev=(courses||[]).find(c=>c.id===editId)||{};
+      await upsertCourseDoc({
+        ...prev,
+        id:editId,
         nome:draft.nome.trim(),
         corBase:draft.corBase||"#00BFA5",
         ativo:!!draft.ativo,
@@ -6071,14 +6257,19 @@ function AdminCursos({students}){
           id:m.id!=null?m.id:i+1,
           nome:(m.nome||"").trim()||("Módulo "+(i+1)),
         })),
-      },{merge:true});
+      });
       // Atualiza program nos alunos deste curso
-      const snap=await db.collection("students").where("contrato","==",editId).get();
-      for(let i=0;i<snap.docs.length;i+=400){
-        const batch=db.batch();
-        snap.docs.slice(i,i+400).forEach(d=>batch.update(d.ref,{program:draft.nome.trim()}));
-        await batch.commit();
-      }
+      try{
+        const snap=await db.collection("students").where("contrato","==",editId).get();
+        for(let i=0;i<snap.docs.length;i+=400){
+          const batch=db.batch();
+          snap.docs.slice(i,i+400).forEach(d=>{
+            if(d.id===COURSES_CATALOG_DOC)return;
+            batch.update(d.ref,{program:draft.nome.trim()});
+          });
+          await batch.commit();
+        }
+      }catch(e){/* opcional */}
       setMsg("Curso salvo.");
       setEditId(null);setDraft(null);
     }catch(e){setErr(e.message||String(e));}
@@ -6094,7 +6285,8 @@ function AdminCursos({students}){
     if(!confirm(`Excluir o curso "${c.nome}" permanentemente?\nIsso não remove dados de trilha de alunos (já bloqueado se houver vínculos).`))return;
     setBusy(true);
     try{
-      await db.collection("courses").doc(c.id).delete();
+      await deleteCourseDoc(c.id);
+      try{await db.collection("courses").doc(c.id).delete();}catch(e){}
       setMsg("Curso excluído.");
       if(editId===c.id){setEditId(null);setDraft(null);}
     }catch(e){alert("Erro: "+(e.message||e));}
@@ -6106,13 +6298,9 @@ function AdminCursos({students}){
     setBusy(true);setErr("");
     try{
       let id=slugifyCourseId(newForm.nome);
-      // Garante ID válido para Firestore (sem barras / vazio)
       if(!id||id.indexOf("/")>=0)id="curso_"+Date.now().toString(36);
-      const exists=await db.collection("courses").doc(id).get();
-      if(exists.exists)id=id+"_"+Date.now().toString(36).slice(-4);
+      if((courses||[]).some(c=>c.id===id)||id===COURSES_CATALOG_DOC)id=id+"_"+Date.now().toString(36).slice(-4);
       const tpl=COURSE_TEMPLATES.find(t=>t.id===newForm.template);
-      // builder SEMPRE deve devolver { modulos:[...] } (e opcionalmente numeroInicio).
-      // Fallback antigo devolvia o array cru → structure.modulos === undefined → Firestore rejeita o write.
       let built=null;
       if(tpl&&typeof tpl.builder==="function"){
         built=tpl.builder();
@@ -6132,7 +6320,6 @@ function AdminCursos({students}){
       const maxOrdem=(courses||[]).reduce((m,c)=>Math.max(m,Number(c.ordem)||0),0);
       const corRaw=String(newForm.corBase||"#00BFA5").trim();
       const corBase=/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(corRaw)?corRaw:"#00BFA5";
-      // Sanitiza (remove undefined) — mesmo padrão do seed — evita "Unsupported field value: undefined"
       const payload=JSON.parse(JSON.stringify({
         id,
         nome:newForm.nome.trim(),
@@ -6146,7 +6333,7 @@ function AdminCursos({students}){
       if(!payload.modulos||!payload.modulos.length){
         throw new Error("Falha ao montar a estrutura do curso (módulos vazios). Tente outro template.");
       }
-      await db.collection("courses").doc(id).set(payload);
+      await upsertCourseDoc(payload);
       setShowNew(false);
       setNewForm({nome:"",corBase:"#00BFA5",template:"foundation",ativo:true});
       setMsg("Curso criado. Edite os nomes dos módulos e preencha as lições na Trilha de cada aluno.");
@@ -6155,7 +6342,7 @@ function AdminCursos({students}){
       const raw=e&&e.message?String(e.message):String(e);
       let msg=raw;
       if(code==="permission-denied"||/insufficient permissions|permission/i.test(raw)){
-        msg="Sem permissão para criar cursos no Firestore. Confirme que você está logado como admin e que as regras de `courses` permitem create/write.";
+        msg="Sem permissão no Firestore. O portal grava cursos em students/__system_courses — confirme que o admin pode escrever na coleção students.";
       }else if(/unsupported field value|undefined/i.test(raw)){
         msg="Dados inválidos ao salvar o curso (campo vazio/undefined). Tente novamente; se persistir, use o template Foundation.";
       }
@@ -6370,8 +6557,6 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO]);
 
-  const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
-
   const navBtns=[
     {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#1e8fa8", ativo:true},
     {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#f0a060", ativo:true},
@@ -6383,12 +6568,11 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
   return(
     <div>
-      {/* STATS */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+      {/* STATS — 3 cards (sem Total Alunos; ativos bastam) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e8fa8"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#60daa8",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#f0cc60"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#c0a0f8"}}>{(students||[]).length}</div><div className="dash-stat-label">Total Alunos</div></div>
       </div>
 
       {/* AULAS DO DIA */}
@@ -6418,28 +6602,6 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
         }
       </div>
 
-      {/* DISTRIBUIÇÃO */}
-      <div className="glass rounded-2xl p-5 mb-5">
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-          <Icon name="users" size={16} style={{color:"#1e8fa8"}}/>
-          <span style={{fontWeight:700,fontSize:14}}>Distribuição por Status</span>
-        </div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-          {[
-            {v:"todos",l:"Total",cls:"status-pill-all",n:contadores.todos},
-            {v:"ativo",l:"Ativos",cls:"status-pill-ativo",n:contadores.ativo},
-            {v:"lead",l:"Lead",cls:"status-pill-lead",n:contadores.lead},
-            {v:"interessado",l:"Interessados",cls:"status-pill-interesse",n:contadores.interessado},
-            {v:"trancado",l:"Trancados",cls:"status-pill-trancado",n:contadores.trancado},
-            {v:"evadido",l:"Evadidos",cls:"status-pill-evadido",n:contadores.evadido},
-          ].map(f=>(
-            <div key={f.v} className={"status-pill "+f.cls} style={{cursor:"default",fontSize:12}}>
-              {f.l}<span style={{marginLeft:5,background:"rgba(255,255,255,.18)",borderRadius:99,padding:"1px 7px",fontSize:11}}>{f.n}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* NAVEGAÇÃO */}
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
         {navBtns.map(b=>(
@@ -6457,7 +6619,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
 /* ── LISTA DE ALUNOS ── */
 function AdminAlunos({students,onSelectUid}){
-  const [filtroStatus,setFiltroStatus]=useState("todos");
+  const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
   const [editStudent,setEditStudent]=useState(null);
   const [repairTarget,setRepairTarget]=useState(null);
@@ -6553,51 +6715,53 @@ function AdminAlunos({students,onSelectUid}){
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {alunosFiltrados.map(s=>{
               try{
-                const merged=mergeBooks(s.trilha||{},getCourseById(s.contrato));let done=0,total=0;
+                const course=getCourseById(s.contrato);
+                const merged=mergeBooks(s.trilha||{},course);let done=0,total=0;
                 merged.forEach(b=>b.items.forEach(i=>{total++;if(i.status==="concluida"||i.status==="realizada")done++;}));
                 const pct=total?Math.round((done/total)*100):0;
-                const mod=getCurrentModule(merged,s.modulosOcultos);
+                const modNum=getCurrentModule(merged,s.modulosOcultos);
+                const modMeta=(buildModuleMeta(course)||[]).find(m=>m.id===modNum);
+                const modName=modMeta?.name||("Módulo "+modNum);
+                const courseName=getCourseLabel(s.contrato);
                 const finVencida=resolveFinanceSnapshot(s.financeiro?.parcelas||[]).isLate;
                 return(
-                  <div key={s.uid} className="student-card" style={{position:"relative"}}>
-                    <div style={{position:"absolute",top:10,right:10,display:"flex",gap:6,zIndex:2}}>
-                      {!(s.hasPortalLogin||s.authUid)&&(
-                        <button onClick={e=>{e.stopPropagation();setRepairTarget(s);setRepairPass("");setRepairMsg("");setRepairErr("");}}
-                          style={{background:"rgba(232,169,76,.18)",border:"1px solid rgba(232,169,76,.45)",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#c8860a"}}
-                          title="Criar/vincular login do portal">
-                          <Icon name="log-in" size={11}/>Acesso
-                        </button>
-                      )}
-                      <button onClick={e=>{e.stopPropagation();setEditStudent(s);}}
-                        style={{background:"var(--badge)",border:"1px solid var(--divider)",borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"var(--font-muted)"}}>
-                        <Icon name="pencil" size={11}/>Editar
-                      </button>
-                    </div>
-                    <div onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer"}}>
-                      <div className="flex items-center gap-3 mb-3">
+                  <div key={s.uid} className="student-card">
+                    <div className="student-card-head">
+                      <div onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer",display:"flex",alignItems:"center",gap:12,flex:1,minWidth:0}}>
                         {s.foto
-                          ?<img src={s.foto} alt={s.name} style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
-                          :<div className="w-10 h-10 rounded-full chip flex items-center justify-center shrink-0"><Icon name="user" size={18}/></div>
+                          ?<img src={s.foto} alt={s.name} style={{width:48,height:48,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                          :<div style={{width:48,height:48,borderRadius:"50%",background:"var(--badge)",border:"1px solid var(--divider)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={20}/></div>
                         }
-                        <div className="flex-1 min-w-0" style={{paddingRight:56}}>
-                          <div className="font-bold truncate">{s.name||"Aluno"}</div>
-                          <div style={{fontSize:11,color:"var(--font-muted)"}}>Módulo {mod} · Nível {s.level||"—"}</div>
-                          {s.email&&<div style={{fontSize:10,color:"var(--font-muted)",opacity:.8,marginTop:2}} className="truncate">{s.email}</div>}
+                        <div style={{minWidth:0,flex:1}}>
+                          <div className="font-bold" style={{fontSize:14,lineHeight:1.3,wordBreak:"break-word"}}>{s.name||"Aluno"}</div>
+                          <div style={{marginTop:6}}><StatusBadge status={s.status||"lead"}/></div>
                         </div>
                       </div>
-                      <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:8}}>
-                        <StatusBadge status={s.status||"lead"}/>
-                        {s.hasPortalLogin||s.authUid?<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"rgba(30,160,110,.15)",border:"1px solid rgba(30,160,110,.35)",color:"#60daa8"}}>Login OK</span>:null}
-                        {finVencida&&<span className="fin-badge fin-vencida" style={{fontSize:10}}>Atrasado</span>}
-                        {s.contrato&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:"var(--badge)",border:"1px solid var(--divider)",color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)}</span>}
+                      <div className="student-card-actions">
+                        {!(s.hasPortalLogin||s.authUid)&&(
+                          <button type="button" onClick={e=>{e.stopPropagation();setRepairTarget(s);setRepairPass("");setRepairMsg("");setRepairErr("");}}
+                            style={{background:"rgba(232,169,76,.18)",border:"1px solid rgba(232,169,76,.45)",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#c8860a",whiteSpace:"nowrap"}}
+                            title="Criar/vincular login do portal">
+                            <Icon name="log-in" size={11}/>Acesso
+                          </button>
+                        )}
+                        <button type="button" onClick={e=>{e.stopPropagation();setEditStudent(s);}}
+                          style={{background:"var(--badge)",border:"1px solid var(--divider)",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"var(--font-muted)",whiteSpace:"nowrap"}}>
+                          <Icon name="pencil" size={11}/>Editar
+                        </button>
                       </div>
-                      <div className="flex items-center justify-between text-xs mb-1" style={{color:"var(--font-muted)"}}>
-                        <span>Progresso</span><span className="font-semibold">{pct}%</span>
+                    </div>
+                    <div onClick={()=>onSelectUid(s.uid)} style={{cursor:"pointer"}}>
+                      <div className="student-card-meta" style={{marginBottom:10}}>
+                        <div><span className="meta-label">Curso</span><span className="meta-val">{courseName}</span></div>
+                        <div><span className="meta-label">Módulo</span><span className="meta-val">{modNum} · {modName}</span></div>
+                        <div><span className="meta-label">Status</span><span className="meta-val" style={{display:"inline-flex",marginTop:2}}><StatusBadge status={s.status||"lead"}/></span></div>
+                        <div><span className="meta-label">Progresso</span><span className="meta-val">{pct}% · {done}/{total}</span></div>
                       </div>
+                      {finVencida&&<div style={{marginBottom:8}}><span className="fin-badge fin-vencida" style={{fontSize:10}}>Financeiro atrasado</span></div>}
                       <div className="h-1.5 rounded-full overflow-hidden" style={{background:"var(--badge)"}}>
                         <div className="h-full rounded-full progress-fill" style={{width:pct+"%",background:"linear-gradient(90deg,rgba(44,122,142,.9),rgba(17,75,95,.8))"}}/>
                       </div>
-                      <div style={{fontSize:11,color:"var(--font-muted)",marginTop:6}}>{done} de {total} lições concluídas</div>
                     </div>
                   </div>
                 );
@@ -6641,12 +6805,15 @@ function AdminApp({user}){
   useEffect(()=>{
     const unsub=db.collection("students").onSnapshot(snap=>{
       try{
-        const list=snap.docs.map(d=>normalizeStudent(d.id,d.data()));
+        const list=snap.docs
+          .filter(d=>d.id!==COURSES_CATALOG_DOC&&d.data()?.type!=="courses_catalog")
+          .map(d=>normalizeStudent(d.id,d.data()));
         list.sort((a,b)=>(a.name||"").localeCompare(b.name||"","pt-BR"));
         setStudents(list);
         setStudentsErr("");
         // Heal silencioso: email em minúsculas (evita falha de lookup case-sensitive)
         snap.docs.forEach(d=>{
+          if(d.id===COURSES_CATALOG_DOC)return;
           const raw=d.data().email;
           if(typeof raw==="string"&&raw.trim()){
             const norm=raw.trim().toLowerCase();
@@ -6657,7 +6824,7 @@ function AdminApp({user}){
         });
       }catch(e){
         console.error("AdminApp normalize:",e);
-        setStudents(snap.docs.map(d=>({uid:d.id,...d.data(),name:d.data().name||d.data().nome||"Aluno"})));
+        setStudents(snap.docs.filter(d=>d.id!==COURSES_CATALOG_DOC).map(d=>({uid:d.id,...d.data(),name:d.data().name||d.data().nome||"Aluno"})));
         setStudentsErr("");
       }
     },err=>{
