@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluency Studio · Lessons 11 & 12</title>
+<style>
+  :root{
+    --navy: #0B1F3A;
+    --navy-2: #12294D;
+    --teal: #00C2B2;
+    --teal-dark: #009688;
+    --paper: #FFFFFF;
+    --ink: #1B2430;
+    --ink-soft: #5C6B7A;
+    --line: #E3E8EE;
+    --wrong: #D8455A;
+    --right: #12A876;
+    --amber: #F2A93C;
+    --radius: 14px;
+    --shadow: 0 8px 24px rgba(11,31,58,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height:1.5;
+    padding-bottom: 80px;
+  }
+
+  .topbar{
+    background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 55%, #0E3A52 100%);
+    color: #fff;
+    padding: 22px 20px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px;
+    width:220px; height:220px; border-radius:50%;
+    background: radial-gradient(circle, rgba(0,194,178,0.35), transparent 70%);
+  }
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .topbar h1{
+    margin:0;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .topbar p{
+    margin: 6px 0 0;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    max-width: 560px;
+  }
+
+  .wa-bar{
+    display:flex; align-items:center; gap:10px;
+    margin-top: 16px; flex-wrap: wrap;
+  }
+  .wa-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: #fff;
+    color: var(--navy);
+    border:none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor:pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    transition: transform .15s ease;
+  }
+  .wa-btn:hover{ transform: translateY(-1px); }
+  .wa-btn svg{ width:16px; height:16px; }
+
+  .save-pill{
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    display:flex; align-items:center; gap:6px;
+  }
+  .save-dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 0 rgba(0,194,178,0.6);
+    animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(0,194,178,0.55); }
+    70%{ box-shadow: 0 0 0 8px rgba(0,194,178,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(0,194,178,0); }
+  }
+
+  .wrap{ max-width: 780px; margin: 0 auto; padding: 28px 20px 10px; }
+
+  .section{
+    margin-bottom: 40px;
+  }
+  .section-head{
+    display:flex; align-items:baseline; gap:10px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 10px;
+  }
+  .section-num{
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--teal-dark);
+    background: rgba(0,194,178,0.1);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .section-title{
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .section-sub{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: -10px 0 18px;
+  }
+
+  .item{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    transition: border-color .2s ease;
+  }
+  .item.correct{ border-color: var(--right); background: #F4FBF8; }
+  .item.incorrect{ border-color: var(--wrong); background: #FCF4F5; }
+
+  .q-row{
+    display:flex; align-items:flex-start; gap:8px;
+    margin-bottom: 10px;
+  }
+  .q-letter{
+    font-weight: 800;
+    color: var(--teal-dark);
+    min-width: 18px;
+  }
+  .q-text{
+    flex:1;
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .icon-btn{
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 30px; height: 30px;
+    min-width: 30px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color: var(--navy);
+    transition: background .15s ease, transform .1s ease;
+  }
+  .icon-btn:hover{ background: rgba(0,194,178,0.1); transform: scale(1.05); }
+  .icon-btn svg{ width:16px; height:16px; }
+  .icon-btn.hint svg{ color: var(--amber); }
+
+  input[type="text"]{
+    width:100%;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #FCFDFE;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="text"]:focus{
+    outline:none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,194,178,0.15);
+  }
+
+  .hint-box{
+    display:none;
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--navy-2);
+    background: #FFF7E8;
+    border: 1px dashed var(--amber);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .hint-box.show{ display:block; }
+
+  .feedback{
+    font-size: 12.5px;
+    margin-top: 8px;
+    font-weight: 700;
+    display:none;
+  }
+  .feedback.show{ display:flex; align-items:center; gap:6px; }
+  .feedback.ok{ color: var(--right); }
+  .feedback.no{ color: var(--wrong); }
+
+  .options{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  @media (max-width:520px){ .options{ grid-template-columns: 1fr; } }
+
+  .opt{
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    cursor:pointer;
+    background:#FCFDFE;
+    transition: all .15s ease;
+    user-select:none;
+  }
+  .opt:hover{ border-color: var(--teal); }
+  .opt.selected{ border-color: var(--teal-dark); background: rgba(0,194,178,0.08); font-weight:600; }
+  .opt.opt-correct{ border-color: var(--right); background: #E8F8F1; font-weight:700; color: var(--right); }
+  .opt.opt-wrong{ border-color: var(--wrong); background: #FBEBEC; color: var(--wrong); }
+  .opt.disabled{ pointer-events:none; }
+
+  select.blank{
+    border: 1.5px solid var(--teal);
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--navy);
+    background: #FCFDFE;
+    font-weight: 700;
+  }
+  select.blank.correct{ border-color: var(--right); color: var(--right); background:#E8F8F1; }
+  select.blank.incorrect{ border-color: var(--wrong); color: var(--wrong); background:#FBEBEC; }
+
+  .link-row{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .link-left{
+    flex: 1 1 260px;
+    font-weight:600;
+    font-size: 14.5px;
+  }
+  select.match{
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: #FCFDFE;
+    min-width: 210px;
+    flex: 1 1 220px;
+  }
+  select.match.correct{ border-color: var(--right); background:#E8F8F1; }
+  select.match.incorrect{ border-color: var(--wrong); background:#FBEBEC; }
+
+  .check-bar{
+    display:flex; justify-content: flex-end; margin-top: 6px;
+  }
+  .check-btn{
+    background: var(--navy);
+    color:#fff;
+    border:none;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-weight:700;
+    font-size: 13px;
+    cursor:pointer;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .check-btn:hover{ background: var(--teal-dark); transform: translateY(-1px); }
+
+  .score-banner{
+    background: linear-gradient(100deg, var(--navy), var(--navy-2));
+    color:#fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align:center;
+    margin: 30px 0;
+    box-shadow: var(--shadow);
+  }
+  .score-banner .big{
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--teal);
+  }
+  .score-banner p{ margin: 4px 0 0; color: rgba(255,255,255,0.8); font-size: 13px; }
+
+  .bottom-bar{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    display:flex; justify-content:center;
+  }
+
+  .confetti{
+    position: fixed; inset:0; pointer-events:none; z-index: 999;
+  }
+
+  footer.brand{
+    text-align:center; font-size: 11px; color: var(--ink-soft);
+    padding: 10px 20px 30px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .save-dot{ animation: none; }
+    .wa-btn:hover, .icon-btn:hover{ transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="eyebrow">The Fluency Studio · Homework</div>
+  <h1>Lessons 11 & 12 — Extra Activities</h1>
+  <p>Complete the four exercises below. Your answers are corrected automatically and saved as you go.</p>
+  <div class="wa-bar">
+    <button class="wa-btn" onclick="sendToWhatsApp()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 1 1 15.19-4.34 8.19 8.19 0 0 1-8.22 8.19zm4.48-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.42.06-.64.31-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+      Send my answers
+    </button>
+    <span class="save-pill"><span class="save-dot"></span> Autosave on</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- EXERCISE 1 -->
+  <section class="section" id="ex1">
+    <div class="section-head">
+      <span class="section-num">1</span>
+      <span class="section-title">Fluency — answer about "they"</span>
+    </div>
+    <p class="section-sub">Example: <em>Do you want to go to France? (they)</em> → <em>Do they want to go to France?</em> Now answer each question about "they" in your own words.</p>
+    <div id="ex1-items"></div>
+    <div class="check-bar"><button class="check-btn" onclick="checkExercise(1)">Check answers</button></div>
+  </section>
+
+  <!-- EXERCISE 2 -->
+  <section class="section" id="ex2">
+    <div class="section-head">
+      <span class="section-num">2</span>
+      <span class="section-title">Choose the correct translation</span>
+    </div>
+    <p class="section-sub">Read the sentence in Portuguese and select the correct English version.</p>
+    <div id="ex2-items"></div>
+    <div class="check-bar"><button class="check-btn" onclick="checkExercise(2)">Check answers</button></div>
+  </section>
+
+  <!-- EXERCISE 3 -->
+  <section class="section" id="ex3">
+    <div class="section-head">
+      <span class="section-num">3</span>
+      <span class="section-title">Complete the sentences</span>
+    </div>
+    <p class="section-sub">Choose the correct word from the list to complete each sentence.</p>
+    <div id="ex3-items"></div>
+    <div class="check-bar"><button class="check-btn" onclick="checkExercise(3)">Check answers</button></div>
+  </section>
+
+  <!-- EXERCISE 4 -->
+  <section class="section" id="ex4">
+    <div class="section-head">
+      <span class="section-num">4</span>
+      <span class="section-title">Link the sentences</span>
+    </div>
+    <p class="section-sub">Match each question or statement on the left with its correct pair on the right.</p>
+    <div id="ex4-items"></div>
+    <div class="check-bar"><button class="check-btn" onclick="checkExercise(4)">Check answers</button></div>
+  </section>
+
+  <div class="score-banner" id="scoreBanner" style="display:none;">
+    <div class="big" id="scoreBig">0%</div>
+    <p id="scoreText">Keep going — check every exercise to see your full result.</p>
+  </div>
+
+</div>
+
+<div class="bottom-bar">
+  <button class="wa-btn" style="background:var(--navy); color:#fff;" onclick="sendToWhatsApp()">
+    <svg viewBox="0 0 24 24" fill="currentColor" style="color:#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 1 1 15.19-4.34 8.19 8.19 0 0 1-8.22 8.19zm4.48-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.42.06-.64.31-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+    Send my answers and corrections
+  </button>
+</div>
+
+<footer class="brand">The Fluency Studio · thefluency.studio</footer>
+
+<script>
+/* ============ DATA ============ */
+
+const ex1Data = [
+  { q: "Where do you live? (they)", answer: "where do they live" },
+  { q: "What do you study? (they)", answer: "what do they study" },
+  { q: "Do you speak German and English? (they)", answer: "do they speak german and english" },
+  { q: "Where do you go in the mornings? (they)", answer: "where do they go in the mornings" },
+  { q: "Do you live in the U.K.? (they)", answer: "do they live in the uk" },
+  { q: "Do you understand Italian? (they)", answer: "do they understand italian" },
+  { q: "Do you like to study at home? (they)", answer: "do they like to study at home" },
+  { q: "What languages do you speak? (they)", answer: "what languages do they speak" }
+];
+
+const ex2Data = [
+  {
+    pt: "O que você quer ver na Alemanha?",
+    options: ["What you want to see in Germany?", "What do you want to see in Germany?", "What do you want see in Germany?", "What do you wants to see in Germany?"],
+    correct: 1
+  },
+  {
+    pt: "Onde eles gostam de ir à noite?",
+    options: ["Where they like to go at night?", "Where do they like going at night?", "Where do they like to go at night?", "Where do they liked to go at night?"],
+    correct: 2
+  },
+  {
+    pt: "Eu quero ir aos Estados Unidos com a minha família.",
+    options: ["I want go to the United States with my family.", "I want to go to United States with my family.", "I want to go the United States with my family.", "I want to go to the United States with my family."],
+    correct: 3
+  },
+  {
+    pt: "Eu estudo espanhol com o meu vizinho.",
+    options: ["I study Spanish with my neighbor.", "I studies Spanish with my neighbor.", "I study Spanish with my co-worker.", "I am studying Spanish with my neighbor since."],
+    correct: 0
+  },
+  {
+    pt: "Eu não entendo o meu chefe.",
+    options: ["I no understand my boss.", "I don't understand my boss.", "I not understand my boss.", "I doesn't understand my boss."],
+    correct: 1
+  },
+  {
+    pt: "Eu moro com meu irmão e com minha irmã.",
+    options: ["I live with my brother and with my sister.", "I live with my brother and sister.", "I lives with my brother and my sister.", "I living with my brother and my sister."],
+    correct: 1
+  },
+  {
+    pt: "Eles preferem estudar em casa?",
+    options: ["Do they prefer to study at home?", "They prefer to study at home?", "Do they prefer study at home?", "Does they prefer to study at home?"],
+    correct: 0
+  },
+  {
+    pt: "Que idiomas eles falam?",
+    options: ["What language they speak?", "What languages they do speak?", "What languages do they speak?", "What languages does they speak?"],
+    correct: 2
+  },
+  {
+    pt: "Eles gostam de morar no Brasil?",
+    options: ["Do they like living in Brazil?", "Do they like to living in Brazil?", "They like to live in Brazil?", "Does they like to live in Brazil?"],
+    correct: 0
+  },
+  {
+    pt: "Você quer ver seus filhos?",
+    options: ["You want to see your children?", "Do you want see your children?", "Do you want to see your children?", "Do you wants to see your children?"],
+    correct: 2
+  }
+];
+
+const ex3Words = ["husband", "class", "co-worker", "home", "France"];
+const ex3Data = [
+  { before: "I don't understand my", after: ". I don't speak French.", answer: "husband" },
+  { before: "I love to study at", after: ".", answer: "home" },
+  { before: "I don't like my Italian", after: ".", answer: "co-worker" },
+  { before: "I want to go to", after: "with my family.", answer: "France" },
+  { before: "I don't understand your", after: "and your family. Do they speak Portuguese?", answer: "class" }
+];
+
+const ex4Left = [
+  "Where do you live?",
+  "What do they study?",
+  "What languages do they speak?",
+  "Where do you want to go?",
+  "What do you want to see in Italy?",
+  "Do you understand German?",
+  "What do you prefer to eat?",
+  "Where do you want to live?"
+];
+const ex4Right = [
+  "I live in this city.",
+  "They study Italian.",
+  "They speak Portuguese and English.",
+  "I want to go to school.",
+  "I want to see the Coliseum.",
+  "I don't understand German, I understand Spanish.",
+  "I prefer to eat bacon and sausage.",
+  "I want to live in Brazil."
+];
+// index in ex4Right that matches each ex4Left item
+const ex4Correct = [0, 1, 2, 3, 4, 5, 6, 7];
+
+/* ============ ICONS ============ */
+const soundIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+const bulbIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg>`;
+
+/* ============ STORAGE ============ */
+const STORAGE_KEY = "fluencystudio_bloco_11_12_v1";
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function saveState(patch){
+  const state = loadState();
+  Object.assign(state, patch);
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+let state = loadState();
+
+/* ============ TTS ============ */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const usVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+  if(usVoice) u.voice = usVoice;
+  u.lang = 'en-US';
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
+}
+window.speechSynthesis && window.speechSynthesis.getVoices();
+
+function toggleHint(id){
+  const box = document.getElementById(id);
+  box.classList.toggle('show');
+}
+
+/* ============ NORMALIZE (flexible matching for Ex.1) ============ */
+function normalize(str){
+  return str
+    .toLowerCase()
+    .replace(/u\.k\.?/g, "uk")
+    .replace(/don['’]t/g, "do not")
+    .replace(/doesn['’]t/g, "does not")
+    .replace(/[.?!,]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function flexibleMatch(userText, answerKey){
+  const u = normalize(userText).replace(/do not/g, "dont").replace(/does not/g,"doesnt");
+  const a = normalize(answerKey).replace(/do not/g, "dont").replace(/does not/g,"doesnt");
+  return u === a;
+}
+
+/* ============ RENDER EXERCISE 1 ============ */
+const ex1Container = document.getElementById('ex1-items');
+ex1Data.forEach((item, i) => {
+  const letter = String.fromCharCode(97 + i);
+  const savedVal = (state.ex1 && state.ex1[i]) || "";
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.id = `ex1-item-${i}`;
+  div.innerHTML = `
+    <div class="q-row">
+      <span class="q-letter">${letter}.</span>
+      <span class="q-text">${item.q}</span>
+      <button class="icon-btn sound" title="Listen" onclick="speak('${item.q.replace(/'/g,"\\'")}')">${soundIcon}</button>
+      <button class="icon-btn hint" title="Hint" onclick="toggleHint('ex1-hint-${i}')">${bulbIcon}</button>
+    </div>
+    <input type="text" id="ex1-input-${i}" placeholder="Type your answer in English..." value="${savedVal.replace(/"/g,'&quot;')}" oninput="handleEx1Input(${i})">
+    <div class="hint-box" id="ex1-hint-${i}">Tip: replace "you" with "they" and keep the same question structure.</div>
+    <div class="feedback" id="ex1-fb-${i}"></div>
+  `;
+  ex1Container.appendChild(div);
+});
+
+function handleEx1Input(i){
+  const val = document.getElementById(`ex1-input-${i}`).value;
+  const s = loadState();
+  if(!s.ex1) s.ex1 = {};
+  s.ex1[i] = val;
+  saveState({ ex1: s.ex1 });
+}
+
+/* ============ RENDER EXERCISE 2 ============ */
+const ex2Container = document.getElementById('ex2-items');
+ex2Data.forEach((item, i) => {
+  const letter = String.fromCharCode(97 + i);
+  const savedChoice = state.ex2 && state.ex2[i] !== undefined ? state.ex2[i] : null;
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.id = `ex2-item-${i}`;
+  let optsHtml = '';
+  item.options.forEach((opt, oi) => {
+    const sel = savedChoice === oi ? 'selected' : '';
+    optsHtml += `<div class="opt ${sel}" id="ex2-opt-${i}-${oi}" onclick="selectEx2(${i}, ${oi})">${opt}</div>`;
+  });
+  div.innerHTML = `
+    <div class="q-row">
+      <span class="q-letter">${letter}.</span>
+      <span class="q-text">${item.pt}</span>
+      <button class="icon-btn sound" title="Listen (Portuguese)" onclick="speakPt('${item.pt.replace(/'/g,"\\'")}')">${soundIcon}</button>
+      <button class="icon-btn hint" title="Hint" onclick="toggleHint('ex2-hint-${i}')">${bulbIcon}</button>
+    </div>
+    <div class="options">${optsHtml}</div>
+    <div class="hint-box" id="ex2-hint-${i}">Tip: check the verb tense and the correct auxiliary (do/does) before choosing.</div>
+    <div class="feedback" id="ex2-fb-${i}"></div>
+  `;
+  ex2Container.appendChild(div);
+});
+
+function speakPt(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang && v.lang.startsWith('pt'));
+  if(ptVoice) u.voice = ptVoice;
+  u.lang = 'pt-BR';
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
+}
+
+function selectEx2(i, oi){
+  document.querySelectorAll(`#ex2-item-${i} .opt`).forEach(el => el.classList.remove('selected'));
+  document.getElementById(`ex2-opt-${i}-${oi}`).classList.add('selected');
+  const s = loadState();
+  if(!s.ex2) s.ex2 = {};
+  s.ex2[i] = oi;
+  saveState({ ex2: s.ex2 });
+}
+
+/* ============ RENDER EXERCISE 3 ============ */
+const ex3Container = document.getElementById('ex3-items');
+ex3Data.forEach((item, i) => {
+  const letter = String.fromCharCode(97 + i);
+  const savedVal = (state.ex3 && state.ex3[i]) || "";
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.id = `ex3-item-${i}`;
+  let selectHtml = `<select class="blank" id="ex3-select-${i}" onchange="handleEx3Select(${i})"><option value="">choose...</option>`;
+  ex3Words.forEach(w => {
+    const sel = savedVal === w ? 'selected' : '';
+    selectHtml += `<option value="${w}" ${sel}>${w}</option>`;
+  });
+  selectHtml += `</select>`;
+  div.innerHTML = `
+    <div class="q-row">
+      <span class="q-letter">${letter}.</span>
+      <span class="q-text">${item.before} ${selectHtml} ${item.after}</span>
+    </div>
+    <div class="feedback" id="ex3-fb-${i}"></div>
+  `;
+  ex3Container.appendChild(div);
+});
+
+function handleEx3Select(i){
+  const val = document.getElementById(`ex3-select-${i}`).value;
+  const s = loadState();
+  if(!s.ex3) s.ex3 = {};
+  s.ex3[i] = val;
+  saveState({ ex3: s.ex3 });
+}
+
+/* ============ RENDER EXERCISE 4 ============ */
+const ex4Container = document.getElementById('ex4-items');
+ex4Left.forEach((left, i) => {
+  const letter = String.fromCharCode(97 + i);
+  const savedVal = state.ex4 && state.ex4[i] !== undefined ? state.ex4[i] : "";
+  const div = document.createElement('div');
+  div.className = 'link-row item';
+  div.id = `ex4-item-${i}`;
+  let selectHtml = `<select class="match" id="ex4-select-${i}" onchange="handleEx4Select(${i})"><option value="">-- link to --</option>`;
+  ex4Right.forEach((right, ri) => {
+    const sel = String(savedVal) === String(ri) ? 'selected' : '';
+    selectHtml += `<option value="${ri}" ${sel}>${right}</option>`;
+  });
+  selectHtml += `</select>`;
+  div.innerHTML = `
+    <span class="q-letter">${letter}.</span>
+    <span class="link-left">${left}</span>
+    ${selectHtml}
+  `;
+  ex4Container.appendChild(div);
+});
+
+function handleEx4Select(i){
+  const val = document.getElementById(`ex4-select-${i}`).value;
+  const s = loadState();
+  if(!s.ex4) s.ex4 = {};
+  s.ex4[i] = val;
+  saveState({ ex4: s.ex4 });
+}
+
+/* ============ CHECK LOGIC ============ */
+let results = { ex1: null, ex2: null, ex3: null, ex4: null };
+
+function checkExercise(num){
+  if(num === 1){
+    let correct = 0;
+    ex1Data.forEach((item, i) => {
+      const val = document.getElementById(`ex1-input-${i}`).value;
+      const itemDiv = document.getElementById(`ex1-item-${i}`);
+      const fb = document.getElementById(`ex1-fb-${i}`);
+      itemDiv.classList.remove('correct','incorrect');
+      fb.classList.remove('show','ok','no');
+      if(val.trim() === ""){ return; }
+      const isCorrect = flexibleMatch(val, item.answer);
+      if(isCorrect){
+        correct++;
+        itemDiv.classList.add('correct');
+        fb.classList.add('show','ok');
+        fb.textContent = "✓ Correct!";
+      } else {
+        itemDiv.classList.add('incorrect');
+        fb.classList.add('show','no');
+        fb.textContent = `✗ Suggested answer: "${capitalize(item.answer)}?"`;
+      }
+    });
+    results.ex1 = { correct, total: ex1Data.length };
+  }
+
+  if(num === 2){
+    let correct = 0;
+    ex2Data.forEach((item, i) => {
+      const s = loadState();
+      const chosen = s.ex2 ? s.ex2[i] : undefined;
+      const itemDiv = document.getElementById(`ex2-item-${i}`);
+      const fb = document.getElementById(`ex2-fb-${i}`);
+      document.querySelectorAll(`#ex2-item-${i} .opt`).forEach(el => el.classList.add('disabled'));
+      itemDiv.classList.remove('correct','incorrect');
+      fb.classList.remove('show','ok','no');
+      if(chosen === undefined || chosen === null){ 
+        document.querySelectorAll(`#ex2-item-${i} .opt`).forEach(el => el.classList.remove('disabled'));
+        return; 
+      }
+      const correctIdx = item.correct;
+      document.getElementById(`ex2-opt-${i}-${correctIdx}`).classList.add('opt-correct');
+      if(chosen === correctIdx){
+        correct++;
+        itemDiv.classList.add('correct');
+        fb.classList.add('show','ok'); fb.textContent = "✓ Correct!";
+      } else {
+        document.getElementById(`ex2-opt-${i}-${chosen}`).classList.add('opt-wrong');
+        itemDiv.classList.add('incorrect');
+        fb.classList.add('show','no'); fb.textContent = "✗ Check the correct option highlighted above.";
+      }
+    });
+    results.ex2 = { correct, total: ex2Data.length };
+  }
+
+  if(num === 3){
+    let correct = 0;
+    ex3Data.forEach((item, i) => {
+      const sel = document.getElementById(`ex3-select-${i}`);
+      const fb = document.getElementById(`ex3-fb-${i}`);
+      sel.classList.remove('correct','incorrect');
+      fb.classList.remove('show','ok','no');
+      if(sel.value === ""){ return; }
+      if(sel.value === item.answer){
+        correct++;
+        sel.classList.add('correct');
+        fb.classList.add('show','ok'); fb.textContent = "✓ Correct!";
+      } else {
+        sel.classList.add('incorrect');
+        fb.classList.add('show','no'); fb.textContent = `✗ Correct word: "${item.answer}"`;
+      }
+    });
+    results.ex3 = { correct, total: ex3Data.length };
+  }
+
+  if(num === 4){
+    let correct = 0;
+    ex4Left.forEach((left, i) => {
+      const sel = document.getElementById(`ex4-select-${i}`);
+      sel.classList.remove('correct','incorrect');
+      if(sel.value === ""){ return; }
+      if(parseInt(sel.value) === ex4Correct[i]){
+        correct++;
+        sel.classList.add('correct');
+      } else {
+        sel.classList.add('incorrect');
+      }
+    });
+    results.ex4 = { correct, total: ex4Left.length };
+  }
+
+  updateScoreBanner();
+}
+
+function capitalize(s){
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function updateScoreBanner(){
+  const done = Object.values(results).filter(r => r !== null);
+  if(done.length === 0) return;
+  const totalCorrect = done.reduce((sum, r) => sum + r.correct, 0);
+  const totalItems = done.reduce((sum, r) => sum + r.total, 0);
+  const pct = totalItems > 0 ? Math.round((totalCorrect/totalItems)*100) : 0;
+  const banner = document.getElementById('scoreBanner');
+  const big = document.getElementById('scoreBig');
+  const text = document.getElementById('scoreText');
+  banner.style.display = 'block';
+  big.textContent = pct + '%';
+  text.textContent = `${totalCorrect} of ${totalItems} correct across ${done.length} of 4 exercises checked.`;
+  if(done.length === 4 && pct >= 80){
+    launchConfetti();
+  }
+}
+
+/* ============ CONFETTI (light celebration) ============ */
+function launchConfetti(){
+  const colors = ['#00C2B2', '#0B1F3A', '#F2A93C', '#12A876'];
+  const container = document.createElement('div');
+  container.className = 'confetti';
+  document.body.appendChild(container);
+  for(let i=0; i<40; i++){
+    const piece = document.createElement('div');
+    const size = Math.random()*8+6;
+    piece.style.position='absolute';
+    piece.style.width= size+'px';
+    piece.style.height= size+'px';
+    piece.style.background= colors[Math.floor(Math.random()*colors.length)];
+    piece.style.left= Math.random()*100+'vw';
+    piece.style.top= '-20px';
+    piece.style.borderRadius= Math.random()>0.5 ? '50%' : '2px';
+    piece.style.opacity = '0.9';
+    piece.style.transition = `transform ${2+Math.random()*1.5}s ease-in, opacity 3s ease-out`;
+    container.appendChild(piece);
+    requestAnimationFrame(()=>{
+      piece.style.transform = `translateY(${window.innerHeight+40}px) rotate(${Math.random()*360}deg)`;
+      piece.style.opacity = '0';
+    });
+  }
+  setTimeout(()=> container.remove(), 3600);
+}
+
+/* ============ WHATSAPP EXPORT ============ */
+function buildReport(){
+  let lines = [];
+  lines.push("*Fluency Studio — Lessons 11 & 12*");
+  lines.push("");
+
+  lines.push("*Exercise 1 — Answers:*");
+  ex1Data.forEach((item, i) => {
+    const s = loadState();
+    const val = (s.ex1 && s.ex1[i]) || "(no answer)";
+    lines.push(`${String.fromCharCode(97+i)}. ${val}`);
+  });
+  if(results.ex1) lines.push(`Score: ${results.ex1.correct}/${results.ex1.total}`);
+  lines.push("");
+
+  lines.push("*Exercise 2 — Answers:*");
+  ex2Data.forEach((item, i) => {
+    const s = loadState();
+    const idx = s.ex2 ? s.ex2[i] : undefined;
+    const val = (idx !== undefined && idx !== null) ? item.options[idx] : "(no answer)";
+    lines.push(`${String.fromCharCode(97+i)}. ${val}`);
+  });
+  if(results.ex2) lines.push(`Score: ${results.ex2.correct}/${results.ex2.total}`);
+  lines.push("");
+
+  lines.push("*Exercise 3 — Answers:*");
+  ex3Data.forEach((item, i) => {
+    const s = loadState();
+    const val = (s.ex3 && s.ex3[i]) || "(no answer)";
+    lines.push(`${String.fromCharCode(97+i)}. ${val}`);
+  });
+  if(results.ex3) lines.push(`Score: ${results.ex3.correct}/${results.ex3.total}`);
+  lines.push("");
+
+  lines.push("*Exercise 4 — Answers:*");
+  ex4Left.forEach((left, i) => {
+    const s = loadState();
+    const idx = s.ex4 ? s.ex4[i] : undefined;
+    const val = (idx !== undefined && idx !== "" && idx !== null) ? ex4Right[idx] : "(no answer)";
+    lines.push(`${String.fromCharCode(97+i)}. ${val}`);
+  });
+  if(results.ex4) lines.push(`Score: ${results.ex4.correct}/${results.ex4.total}`);
+  lines.push("");
+
+  const done = Object.values(results).filter(r => r !== null);
+  if(done.length > 0){
+    const totalCorrect = done.reduce((sum, r) => sum + r.correct, 0);
+    const totalItems = done.reduce((sum, r) => sum + r.total, 0);
+    const pct = totalItems > 0 ? Math.round((totalCorrect/totalItems)*100) : 0;
+    lines.push(`*Overall: ${totalCorrect}/${totalItems} (${pct}%)*`);
+  }
+
+  return lines.join("\n");
+}
+
+function sendToWhatsApp(){
+  const report = buildReport();
+  const phone = "5511911999759";
+  const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(report);
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
