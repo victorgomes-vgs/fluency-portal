@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluency Studio · Aula 3 — Look up to, Take in, Call out</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy: #0B1F3A;
+    --navy-2: #12294D;
+    --teal: #00C2B2;
+    --teal-dark: #009688;
+    --paper: #FFFFFF;
+    --ink: #1B2430;
+    --ink-soft: #5C6B7A;
+    --line: #E3E8EE;
+    --amber: #F2A93C;
+    --radius: 14px;
+    --shadow: 0 8px 24px rgba(11,31,58,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height:1.6;
+    padding-bottom: 60px;
+  }
+
+  .topbar{
+    background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 55%, #0E3A52 100%);
+    color: #fff;
+    padding: 26px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px;
+    width:220px; height:220px; border-radius:50%;
+    background: radial-gradient(circle, rgba(0,194,178,0.35), transparent 70%);
+  }
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .topbar h1{
+    margin:0;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .topbar p{
+    margin: 8px 0 0;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    max-width: 600px;
+  }
+
+  .wrap{ max-width: 780px; margin: 0 auto; padding: 30px 20px 10px; }
+
+  .card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .card h2{
+    margin: 0 0 14px;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .card h3{
+    margin: 22px 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .phrase-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin: 10px 0;
+  }
+  .phrase-text{
+    flex:1;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .phrase-text.definition{ font-size: 15px; }
+  .phrase-text em{ color: var(--ink-soft); }
+  .phrase-text.example-main{
+    font-weight: 700;
+  }
+  .phrase-text.example-sub{
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .sound-btn{
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 30px; height: 30px;
+    min-width: 30px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color: var(--navy);
+    transition: background .15s ease, transform .1s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .sound-btn:hover{ background: rgba(0,194,178,0.1); transform: scale(1.05); }
+  .sound-btn.playing{ background: var(--teal); color:#fff; border-color: var(--teal); }
+  .sound-btn svg{ width:15px; height:15px; }
+
+  ul.bullet-list{
+    margin: 6px 0 6px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  ul.bullet-list li{
+    margin: 6px 0;
+  }
+  ul.bullet-list li .phrase-row{ margin: 4px 0; }
+  ul.bullet-list li::marker{ content:""; }
+
+  .bullet-dot{
+    color: var(--teal-dark);
+    font-weight: 900;
+    margin-right: 4px;
+  }
+
+  .synonym-box{
+    background: #F4FBFA;
+    border: 1px solid rgba(0,194,178,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 14px 0;
+  }
+  .synonym-label{
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13px;
+  }
+  .synonym-label em{ color: var(--teal-dark); font-style: normal; font-weight: 800; }
+
+  .example-block{
+    border-left: 3px solid var(--teal);
+    padding-left: 14px;
+    margin: 12px 0;
+  }
+
+  .practice-list, .reflect-list{
+    margin: 6px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .practice-list li, .reflect-list li{
+    margin: 14px 0;
+  }
+
+  .hero-img{
+    width: 100%;
+    border-radius: 12px;
+    margin: 16px 0;
+    display:block;
+  }
+
+  footer.brand{
+    text-align:center; font-size: 11px; color: var(--ink-soft);
+    padding: 10px 20px 30px;
+  }
+
+  /* ===== Action bar (PDF / WhatsApp) ===== */
+  .action-bar{
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-top: 18px;
+  }
+  .action-bar.bottom{
+    max-width: 780px; margin: 20px auto 0; padding: 0 20px;
+  }
+  .action-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    border:none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor:pointer;
+    transition: transform .15s ease;
+  }
+  .action-btn:hover{ transform: translateY(-1px); }
+  .action-btn svg{ width:16px; height:16px; }
+  .action-btn.pdf{ background:#fff; color: var(--navy); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+  .action-btn.wa{ background: var(--teal); color:#fff; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+
+  .save-pill{
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    display:flex; align-items:center; gap:6px;
+    margin-top: 12px;
+  }
+  .save-dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--teal);
+    animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(0,194,178,0.55); }
+    70%{ box-shadow: 0 0 0 8px rgba(0,194,178,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(0,194,178,0); }
+  }
+
+  /* ===== Homework answer fields ===== */
+  textarea.answer-field{
+    width:100%;
+    min-height: 90px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #FCFDFE;
+    resize: vertical;
+    margin-top: 8px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea.answer-field:focus{
+    outline:none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,194,178,0.15);
+  }
+
+  .hw-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 22px; height:22px;
+    background: var(--teal-dark);
+    color:#fff;
+    border-radius:50%;
+    font-size: 12px;
+    font-weight:800;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+
+  /* ===== Exercise 4 ===== */
+  .q4-list{
+    list-style:none; padding:0; margin: 10px 0 0;
+  }
+  .q4-list li{
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14.5px;
+  }
+  .q4-list li:last-child{ border-bottom: none; }
+  .q4-list b{ color: var(--navy); }
+
+  .copy-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--navy);
+    color:#fff;
+    border:none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight:700;
+    font-size: 13px;
+    cursor:pointer;
+    margin-top: 16px;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .copy-btn:hover{ background: var(--teal-dark); transform: translateY(-1px); }
+  .copy-btn svg{ width:15px; height:15px; }
+  .copy-confirm{
+    font-size: 12.5px;
+    color: var(--teal-dark);
+    font-weight:700;
+    margin-left: 10px;
+    display:none;
+  }
+  .copy-confirm.show{ display:inline; }
+
+  .section-divider{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 34px 0 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar" id="pdf-header">
+  <div class="eyebrow">The Fluency Studio · Aula 3</div>
+  <h1>Look up to, Take in, Call out</h1>
+  <p>By the end of this class, you will be able to understand and use the phrasal verbs "Look up to, Take in and Call out" in sentences and conversations.</p>
+  <div class="action-bar" data-html2canvas-ignore="true">
+    <button class="action-btn pdf" onclick="saveAsPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      Save as PDF
+    </button>
+    <button class="action-btn wa" onclick="sendToWhatsApp()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 1 1 15.19-4.34 8.19 8.19 0 0 1-8.22 8.19zm4.48-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.42.06-.64.31-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+      Send to WhatsApp
+    </button>
+  </div>
+  <div class="save-pill" data-html2canvas-ignore="true"><span class="save-dot"></span> Autosave on</div>
+</div>
+
+<div class="wrap">
+
+  <!-- HOMEWORK -->
+  <div class="card" id="homework-card">
+    <h2>Homework</h2>
+    <p style="font-style:italic; color:var(--ink-soft); margin-top:-6px;">Choose one of the activities below and send an audio to your teacher:</p>
+
+    <div class="phrase-row" style="margin-top:18px;">
+      <span class="hw-num">1</span>
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Imagine you are hosting a podcast about successful people. Choose a person, a famous scientist, a family member, or a local teacher, and talk about them. Explain why people in the community look up to this person and mention a moment when this person had to take in a huge challenge or a lot of responsibility.')"></button>
+      <span class="phrase-text">Imagine you are hosting a podcast about successful people. Choose a person (a famous scientist, a family member, or a local teacher) and talk about them. Explain why people in the community look up to this person and mention a moment when this person had to take in a huge challenge or a lot of responsibility.</span>
+    </div>
+    <textarea class="answer-field" id="hw-1" placeholder="Write your notes or script here..." oninput="saveHomework(1)"></textarea>
+
+    <div class="phrase-row" style="margin-top:22px;">
+      <span class="hw-num">2</span>
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Find three photos online that represent each phrasal verb. Send the pictures along with an audio describing why you chose them.')"></button>
+      <span class="phrase-text">Find three photos online that represent each phrasal verb. Send the pictures along with an audio describing why you chose them.</span>
+    </div>
+    <textarea class="answer-field" id="hw-2" placeholder="Describe the photos you chose and why..." oninput="saveHomework(2)"></textarea>
+
+    <div class="phrase-row" style="margin-top:22px;">
+      <span class="hw-num">3</span>
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Create a Code of Conduct for your ideal university classroom or workplace. Create three rules using the phrasal verbs. Who should the students or employees look up to and why? How will the group help new members take in the rules and the culture? What will happen if someone sees a mistake? Is everyone allowed to call it out?')"></button>
+      <span class="phrase-text">Create a "Code of Conduct" for your ideal university classroom or workplace. Create three rules using the phrasal verbs. Who should the students/employees look up to and why?/ How will the group help new members take in the rules and the culture?/ What will happen if someone sees a mistake? Is everyone allowed to call it out?</span>
+    </div>
+    <textarea class="answer-field" id="hw-3" placeholder="Write your three rules here..." oninput="saveHomework(3)"></textarea>
+
+    <div class="phrase-row" style="margin-top:22px;">
+      <span class="hw-num">4</span>
+      <span class="phrase-text">Cole as seguintes frases na IA que utiliza e peça para ela fazer as perguntas, uma por vez, pra você, fazer as correções necessárias e gerar um relatório para o professor no final.</span>
+    </div>
+
+    <ul class="q4-list" id="q4-list">
+      <li><b>Look up to:</b> Who is the person you look up to the most in your family?</li>
+      <li><b>Admire:</b> What specific qualities do you admire in a good leader?</li>
+      <li><b>Take in:</b> Do you find it difficult to take in so much information at once?</li>
+      <li><b>Manage:</b> How do you manage your time when working on multiple projects?</li>
+      <li><b>Handle:</b> Can you handle this client's request on your own?</li>
+      <li><b>Absorb:</b> What is the most effective way for you to absorb a new language?</li>
+      <li><b>Workload:</b> Is your current workload realistic for this week?</li>
+      <li><b>Overwhelmed:</b> Do you ever feel overwhelmed by your daily responsibilities?</li>
+      <li><b>Knowledge:</b> How do you plan to expand your technical knowledge this year?</li>
+      <li><b>Noisy:</b> Why is the cafeteria always so noisy at this time of day?</li>
+      <li><b>Noise:</b> Does the background noise distract you while you are studying?</li>
+      <li><b>Call out:</b> When is it appropriate to call out a colleague for unprofessional behavior?</li>
+      <li><b>Criticize:</b> Why do some people criticize new ideas instead of helping to improve them?</li>
+      <li><b>Confront:</b> How would you gently confront a friend who broke a promise?</li>
+      <li><b>Mean:</b> Why was the manager being so mean to the new intern?</li>
+      <li><b>Improvements:</b> What improvements would you make to our current workflow?</li>
+    </ul>
+
+    <div data-html2canvas-ignore="true">
+      <button class="copy-btn" onclick="copyQ4()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copy all questions
+      </button>
+      <span class="copy-confirm" id="copy-confirm">Copied!</span>
+    </div>
+  </div>
+
+  <div class="section-divider">Class Content</div>
+
+  <!-- LOOK UP TO -->
+  <div class="card">
+    <h2>Look up to</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, '\"Look up to\" means to admire or respect someone because you think they are a good example, or because you want to be like them.')">${'' /* placeholder replaced below */}</button>
+      <span class="phrase-text definition">"Look up to" means to admire or respect someone because you think they are a good example, or because you want to be like them.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In the sentence, Her younger siblings look up to her, it means:')"></button>
+      <span class="phrase-text">In the sentence <em>"Her younger siblings look up to her"</em>, it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'The younger siblings respect and admire her.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>The younger siblings respect and admire her.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'They may want to be like her or follow her example.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>They may want to be like her or follow her example.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Admire')"></button>
+        <span class="synonym-label">Synonym: <em>Admire</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: I admire my teacher because she is very kind and smart.')"></button>
+        <span class="phrase-text">Example: <em>I admire my teacher because she is very kind and smart.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'I look up to my older brother because he works very hard.')"></button>
+        <span class="phrase-text example-main">I look up to my older brother because he works very hard.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'You admire your older brother and respect him because of his hard work.')"></button>
+        <span class="phrase-text example-sub">(You admire your older brother and respect him because of his hard work.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'She looks up to famous scientists because she wants to become one.')"></button>
+        <span class="phrase-text example-main">She looks up to famous scientists because she wants to become one.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'She admires famous scientists and respects them because she wants to follow their example.')"></button>
+        <span class="phrase-text example-sub">(She admires famous scientists and respects them because she wants to follow their example.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAKE IN -->
+  <div class="card">
+    <h2>Take in</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Take in means to accept or handle something, like tasks or information.')"></button>
+      <span class="phrase-text definition">"Take in" means to accept or handle something, like tasks or information.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In her work, she was able to take in tasks at her own pace, it means:')"></button>
+      <span class="phrase-text">In <em>"In her work, she was able to take in tasks at her own pace,"</em> it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She could accept or handle the tasks without rushing.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She could accept or handle the tasks without rushing.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She controlled how many tasks she did at a time.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She controlled how many tasks she did at a time.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Manage')"></button>
+        <span class="synonym-label">Synonym: <em>Manage</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: He manages his workload well by organizing his day.')"></button>
+        <span class="phrase-text">Example: <em>He manages his workload well by organizing his day.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'It was hard to take in all the information during the meeting.')"></button>
+        <span class="phrase-text example-main">It was hard to take in all the information during the meeting.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'It was difficult to understand or absorb all the information shared in the meeting.')"></button>
+        <span class="phrase-text example-sub">(It was difficult to understand or absorb all the information shared in the meeting.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He took in the instructions carefully before starting the project.')"></button>
+        <span class="phrase-text example-main">He took in the instructions carefully before starting the project.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He listened and understood the instructions carefully before beginning the project.')"></button>
+        <span class="phrase-text example-sub">(He listened and understood the instructions carefully before beginning the project.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALL OUT -->
+  <div class="card">
+    <h2>Call Out</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Call Out means to publicly criticize or point out someone\\'s mistake or bad behavior openly.')"></button>
+      <span class="phrase-text definition">"Call Out" means to publicly criticize or point out someone's mistake or bad behavior openly.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In the sentence, She called out the company for bad service on social media, it means:')"></button>
+      <span class="phrase-text">In the sentence <em>"She called out the company for bad service on social media,"</em> it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She publicly criticized the company.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She publicly criticized the company.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She made others aware of the company\\'s poor service.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She made others aware of the company's poor service.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'This happened on social media, where many people could see it.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>This happened on social media, where many people could see it.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Expose')"></button>
+        <span class="synonym-label">Synonym: <em>Expose</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: The journalist exposed the corruption in the government.')"></button>
+        <span class="phrase-text">Example: <em>The journalist exposed the corruption in the government.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Activists call out unfair laws to demand change.')"></button>
+        <span class="phrase-text example-main">Activists call out unfair laws to demand change.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Activists publicly criticize unfair laws to push for improvements or reforms.')"></button>
+        <span class="phrase-text example-sub">(Activists publicly criticize unfair laws to push for improvements or reforms.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He called out his friend for lying to him.')"></button>
+        <span class="phrase-text example-main">He called out his friend for lying to him.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He confronted or challenged his friend directly because of the lie.')"></button>
+        <span class="phrase-text example-sub">(He confronted or challenged his friend directly because of the lie.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LET'S PRACTICE -->
+  <div class="card">
+    <h2>Let's Practice</h2>
+    <ul class="practice-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Is it possible to look up to someone you don\\'t personally like? Why or why not?')"></button>
+          <span class="phrase-text">Is it possible to look up to someone you don't personally like? Why or why not?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Tell me about a time when you had to take in a lot of tasks or responsibilities. How did you manage?')"></button>
+          <span class="phrase-text">Tell me about a time when you had to take in a lot of tasks or responsibilities. How did you manage?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Have you ever tried to be like someone you look up to? Describe your experience.')"></button>
+          <span class="phrase-text">Have you ever tried to be like someone you look up to? Describe your experience.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'In your opinion, is it harder to take in academic information from books or emotional information like a friend\\'s problems? Why?')"></button>
+          <span class="phrase-text">In your opinion, is it harder to take in academic information (from books) or emotional information (like a friend's problems)? Why?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Describe a situation where calling out a problem helped to solve it.')"></button>
+          <span class="phrase-text">Describe a situation where calling out a problem helped to solve it.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SELF-REFLECTION -->
+  <div class="card">
+    <h2>Self-reflection</h2>
+    <ul class="reflect-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Explain in your own words the phrasal verbs meaning learned today.')"></button>
+          <span class="phrase-text">Explain in your own words the phrasal verbs meaning learned today.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Create 3 sentences, using each one of the phrasal verbs.')"></button>
+          <span class="phrase-text">Create 3 sentences, using each one of the phrasal verbs.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="action-bar bottom" data-html2canvas-ignore="true">
+  <button class="action-btn pdf" style="background:var(--navy); color:#fff; box-shadow:var(--shadow);" onclick="saveAsPDF()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+    Save as PDF
+  </button>
+  <button class="action-btn wa" onclick="sendToWhatsApp()">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 1 1 15.19-4.34 8.19 8.19 0 0 1-8.22 8.19zm4.48-6.13c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.42.06-.64.31-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+    Send to WhatsApp
+  </button>
+</div>
+
+<footer class="brand">The Fluency Studio · thefluency.studio</footer>
+
+<script>
+const soundIconIdle = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+const soundIconPlaying = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+
+// Populate all sound buttons with the idle icon
+document.querySelectorAll('.sound-btn').forEach(btn => {
+  btn.innerHTML = soundIconIdle;
+});
+
+let currentBtn = null;
+
+function toggleSpeak(btn, text){
+  if(!('speechSynthesis' in window)) return;
+
+  // If clicking the same button that's already playing, stop it
+  if(currentBtn === btn && window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();
+    resetButton(btn);
+    currentBtn = null;
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  if(currentBtn) resetButton(currentBtn);
+
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const usVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+  if(usVoice) u.voice = usVoice;
+  u.lang = 'en-US';
+  u.rate = 0.95;
+
+  u.onstart = () => {
+    btn.classList.add('playing');
+    btn.innerHTML = soundIconPlaying;
+    currentBtn = btn;
+  };
+  u.onend = () => {
+    resetButton(btn);
+    currentBtn = null;
+  };
+  u.onerror = () => {
+    resetButton(btn);
+    currentBtn = null;
+  };
+
+  window.speechSynthesis.speak(u);
+}
+
+function resetButton(btn){
+  btn.classList.remove('playing');
+  btn.innerHTML = soundIconIdle;
+}
+
+window.speechSynthesis && window.speechSynthesis.getVoices();
+
+/* ============ HOMEWORK AUTOSAVE ============ */
+const HW_STORAGE_KEY = "fluencystudio_aula3_homework_v1";
+
+function loadHwState(){
+  try{
+    const raw = localStorage.getItem(HW_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function saveHwState(patch){
+  const s = loadHwState();
+  Object.assign(s, patch);
+  try{ localStorage.setItem(HW_STORAGE_KEY, JSON.stringify(s)); }catch(e){}
+}
+
+function saveHomework(n){
+  const val = document.getElementById(`hw-${n}`).value;
+  saveHwState({ [`hw${n}`]: val });
+}
+
+// restore saved homework answers on load
+(function restoreHomework(){
+  const s = loadHwState();
+  [1,2,3].forEach(n => {
+    if(s[`hw${n}`]){
+      const el = document.getElementById(`hw-${n}`);
+      if(el) el.value = s[`hw${n}`];
+    }
+  });
+})();
+
+/* ============ COPY EXERCISE 4 QUESTIONS ============ */
+function copyQ4(){
+  const items = document.querySelectorAll('#q4-list li');
+  const lines = Array.from(items).map(li => li.textContent.trim());
+  const text = lines.join('\n');
+
+  const finish = () => {
+    const confirmEl = document.getElementById('copy-confirm');
+    confirmEl.classList.add('show');
+    setTimeout(() => confirmEl.classList.remove('show'), 2200);
+  };
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(finish).catch(() => fallbackCopy(text, finish));
+  } else {
+    fallbackCopy(text, finish);
+  }
+}
+function fallbackCopy(text, cb){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  cb();
+}
+
+/* ============ PDF EXPORT ============ */
+async function saveAsPDF(){
+  const { jsPDF } = window.jspdf;
+  const source = document.body;
+  const canvas = await html2canvas(source, { scale: 2, backgroundColor: '#ffffff', useCORS: true, ignoreElements: (el) => el.hasAttribute('data-html2canvas-ignore') });
+  const imgData = canvas.toDataURL('image/png');
+
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while(heightLeft > 0){
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save('Aula-3-Look-up-to-Take-in-Call-out.pdf');
+}
+
+/* ============ WHATSAPP EXPORT ============ */
+function buildHwReport(){
+  const s = loadHwState();
+  let lines = [];
+  lines.push("*The Fluency Studio — Aula 3 Homework*");
+  lines.push("");
+  lines.push("*1. Podcast activity:*");
+  lines.push(s.hw1 && s.hw1.trim() ? s.hw1.trim() : "(not answered)");
+  lines.push("");
+  lines.push("*2. Photos activity:*");
+  lines.push(s.hw2 && s.hw2.trim() ? s.hw2.trim() : "(not answered)");
+  lines.push("");
+  lines.push("*3. Code of Conduct:*");
+  lines.push(s.hw3 && s.hw3.trim() ? s.hw3.trim() : "(not answered)");
+  lines.push("");
+  lines.push("*4. AI-guided questions:* completed via external AI tool (see student's report).");
+  return lines.join("\n");
+}
+
+function sendToWhatsApp(){
+  const report = buildHwReport();
+  const phone = "5511911999759";
+  const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(report);
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
