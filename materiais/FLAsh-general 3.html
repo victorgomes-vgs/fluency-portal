@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluency Studio · Aula 3 — Look up to, Take in, Call out</title>
+<style>
+  :root{
+    --navy: #0B1F3A;
+    --navy-2: #12294D;
+    --teal: #00C2B2;
+    --teal-dark: #009688;
+    --paper: #FFFFFF;
+    --ink: #1B2430;
+    --ink-soft: #5C6B7A;
+    --line: #E3E8EE;
+    --amber: #F2A93C;
+    --radius: 14px;
+    --shadow: 0 8px 24px rgba(11,31,58,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height:1.6;
+    padding-bottom: 60px;
+  }
+
+  .topbar{
+    background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 55%, #0E3A52 100%);
+    color: #fff;
+    padding: 26px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px;
+    width:220px; height:220px; border-radius:50%;
+    background: radial-gradient(circle, rgba(0,194,178,0.35), transparent 70%);
+  }
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .topbar h1{
+    margin:0;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .topbar p{
+    margin: 8px 0 0;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    max-width: 600px;
+  }
+
+  .wrap{ max-width: 780px; margin: 0 auto; padding: 30px 20px 10px; }
+
+  .card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .card h2{
+    margin: 0 0 14px;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .card h3{
+    margin: 22px 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .phrase-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin: 10px 0;
+  }
+  .phrase-text{
+    flex:1;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .phrase-text.definition{ font-size: 15px; }
+  .phrase-text em{ color: var(--ink-soft); }
+  .phrase-text.example-main{
+    font-weight: 700;
+  }
+  .phrase-text.example-sub{
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .sound-btn{
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 30px; height: 30px;
+    min-width: 30px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color: var(--navy);
+    transition: background .15s ease, transform .1s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .sound-btn:hover{ background: rgba(0,194,178,0.1); transform: scale(1.05); }
+  .sound-btn.playing{ background: var(--teal); color:#fff; border-color: var(--teal); }
+  .sound-btn svg{ width:15px; height:15px; }
+
+  ul.bullet-list{
+    margin: 6px 0 6px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  ul.bullet-list li{
+    margin: 6px 0;
+  }
+  ul.bullet-list li .phrase-row{ margin: 4px 0; }
+  ul.bullet-list li::marker{ content:""; }
+
+  .bullet-dot{
+    color: var(--teal-dark);
+    font-weight: 900;
+    margin-right: 4px;
+  }
+
+  .synonym-box{
+    background: #F4FBFA;
+    border: 1px solid rgba(0,194,178,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 14px 0;
+  }
+  .synonym-label{
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13px;
+  }
+  .synonym-label em{ color: var(--teal-dark); font-style: normal; font-weight: 800; }
+
+  .example-block{
+    border-left: 3px solid var(--teal);
+    padding-left: 14px;
+    margin: 12px 0;
+  }
+
+  .practice-list, .reflect-list{
+    margin: 6px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .practice-list li, .reflect-list li{
+    margin: 14px 0;
+  }
+
+  .hero-img{
+    width: 100%;
+    border-radius: 12px;
+    margin: 16px 0;
+    display:block;
+  }
+
+  footer.brand{
+    text-align:center; font-size: 11px; color: var(--ink-soft);
+    padding: 10px 20px 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="eyebrow">The Fluency Studio · Aula 3</div>
+  <h1>Look up to, Take in, Call out</h1>
+  <p>By the end of this class, you will be able to understand and use the phrasal verbs "Look up to, Take in and Call out" in sentences and conversations.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- LOOK UP TO -->
+  <div class="card">
+    <h2>Look up to</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, '\"Look up to\" means to admire or respect someone because you think they are a good example, or because you want to be like them.')">${'' /* placeholder replaced below */}</button>
+      <span class="phrase-text definition">"Look up to" means to admire or respect someone because you think they are a good example, or because you want to be like them.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In the sentence, Her younger siblings look up to her, it means:')"></button>
+      <span class="phrase-text">In the sentence <em>"Her younger siblings look up to her"</em>, it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'The younger siblings respect and admire her.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>The younger siblings respect and admire her.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'They may want to be like her or follow her example.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>They may want to be like her or follow her example.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Admire')"></button>
+        <span class="synonym-label">Synonym: <em>Admire</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: I admire my teacher because she is very kind and smart.')"></button>
+        <span class="phrase-text">Example: <em>I admire my teacher because she is very kind and smart.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'I look up to my older brother because he works very hard.')"></button>
+        <span class="phrase-text example-main">I look up to my older brother because he works very hard.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'You admire your older brother and respect him because of his hard work.')"></button>
+        <span class="phrase-text example-sub">(You admire your older brother and respect him because of his hard work.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'She looks up to famous scientists because she wants to become one.')"></button>
+        <span class="phrase-text example-main">She looks up to famous scientists because she wants to become one.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'She admires famous scientists and respects them because she wants to follow their example.')"></button>
+        <span class="phrase-text example-sub">(She admires famous scientists and respects them because she wants to follow their example.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAKE IN -->
+  <div class="card">
+    <h2>Take in</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Take in means to accept or handle something, like tasks or information.')"></button>
+      <span class="phrase-text definition">"Take in" means to accept or handle something, like tasks or information.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In her work, she was able to take in tasks at her own pace, it means:')"></button>
+      <span class="phrase-text">In <em>"In her work, she was able to take in tasks at her own pace,"</em> it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She could accept or handle the tasks without rushing.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She could accept or handle the tasks without rushing.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She controlled how many tasks she did at a time.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She controlled how many tasks she did at a time.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Manage')"></button>
+        <span class="synonym-label">Synonym: <em>Manage</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: He manages his workload well by organizing his day.')"></button>
+        <span class="phrase-text">Example: <em>He manages his workload well by organizing his day.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'It was hard to take in all the information during the meeting.')"></button>
+        <span class="phrase-text example-main">It was hard to take in all the information during the meeting.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'It was difficult to understand or absorb all the information shared in the meeting.')"></button>
+        <span class="phrase-text example-sub">(It was difficult to understand or absorb all the information shared in the meeting.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He took in the instructions carefully before starting the project.')"></button>
+        <span class="phrase-text example-main">He took in the instructions carefully before starting the project.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He listened and understood the instructions carefully before beginning the project.')"></button>
+        <span class="phrase-text example-sub">(He listened and understood the instructions carefully before beginning the project.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALL OUT -->
+  <div class="card">
+    <h2>Call Out</h2>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'Call Out means to publicly criticize or point out someone\\'s mistake or bad behavior openly.')"></button>
+      <span class="phrase-text definition">"Call Out" means to publicly criticize or point out someone's mistake or bad behavior openly.</span>
+    </div>
+
+    <div class="phrase-row">
+      <button class="sound-btn" onclick="toggleSpeak(this, 'In the sentence, She called out the company for bad service on social media, it means:')"></button>
+      <span class="phrase-text">In the sentence <em>"She called out the company for bad service on social media,"</em> it means:</span>
+    </div>
+
+    <ul class="bullet-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She publicly criticized the company.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She publicly criticized the company.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'She made others aware of the company\\'s poor service.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>She made others aware of the company's poor service.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'This happened on social media, where many people could see it.')"></button>
+          <span class="phrase-text"><span class="bullet-dot">•</span>This happened on social media, where many people could see it.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="synonym-box">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Synonym: Expose')"></button>
+        <span class="synonym-label">Synonym: <em>Expose</em></span>
+      </div>
+      <div class="phrase-row" style="margin-top:6px;">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Example: The journalist exposed the corruption in the government.')"></button>
+        <span class="phrase-text">Example: <em>The journalist exposed the corruption in the government.</em></span>
+      </div>
+    </div>
+
+    <h3>More Examples</h3>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Activists call out unfair laws to demand change.')"></button>
+        <span class="phrase-text example-main">Activists call out unfair laws to demand change.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'Activists publicly criticize unfair laws to push for improvements or reforms.')"></button>
+        <span class="phrase-text example-sub">(Activists publicly criticize unfair laws to push for improvements or reforms.)</span>
+      </div>
+    </div>
+
+    <div class="example-block">
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He called out his friend for lying to him.')"></button>
+        <span class="phrase-text example-main">He called out his friend for lying to him.</span>
+      </div>
+      <div class="phrase-row">
+        <button class="sound-btn" onclick="toggleSpeak(this, 'He confronted or challenged his friend directly because of the lie.')"></button>
+        <span class="phrase-text example-sub">(He confronted or challenged his friend directly because of the lie.)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LET'S PRACTICE -->
+  <div class="card">
+    <h2>Let's Practice</h2>
+    <ul class="practice-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Is it possible to look up to someone you don\\'t personally like? Why or why not?')"></button>
+          <span class="phrase-text">Is it possible to look up to someone you don't personally like? Why or why not?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Tell me about a time when you had to take in a lot of tasks or responsibilities. How did you manage?')"></button>
+          <span class="phrase-text">Tell me about a time when you had to take in a lot of tasks or responsibilities. How did you manage?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Have you ever tried to be like someone you look up to? Describe your experience.')"></button>
+          <span class="phrase-text">Have you ever tried to be like someone you look up to? Describe your experience.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'In your opinion, is it harder to take in academic information from books or emotional information like a friend\\'s problems? Why?')"></button>
+          <span class="phrase-text">In your opinion, is it harder to take in academic information (from books) or emotional information (like a friend's problems)? Why?</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Describe a situation where calling out a problem helped to solve it.')"></button>
+          <span class="phrase-text">Describe a situation where calling out a problem helped to solve it.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SELF-REFLECTION -->
+  <div class="card">
+    <h2>Self-reflection</h2>
+    <ul class="reflect-list">
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Explain in your own words the phrasal verbs meaning learned today.')"></button>
+          <span class="phrase-text">Explain in your own words the phrasal verbs meaning learned today.</span>
+        </div>
+      </li>
+      <li>
+        <div class="phrase-row">
+          <button class="sound-btn" onclick="toggleSpeak(this, 'Create 3 sentences, using each one of the phrasal verbs.')"></button>
+          <span class="phrase-text">Create 3 sentences, using each one of the phrasal verbs.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<footer class="brand">The Fluency Studio · thefluency.studio</footer>
+
+<script>
+const soundIconIdle = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+const soundIconPlaying = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+
+// Populate all sound buttons with the idle icon
+document.querySelectorAll('.sound-btn').forEach(btn => {
+  btn.innerHTML = soundIconIdle;
+});
+
+let currentBtn = null;
+
+function toggleSpeak(btn, text){
+  if(!('speechSynthesis' in window)) return;
+
+  // If clicking the same button that's already playing, stop it
+  if(currentBtn === btn && window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();
+    resetButton(btn);
+    currentBtn = null;
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  if(currentBtn) resetButton(currentBtn);
+
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const usVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+  if(usVoice) u.voice = usVoice;
+  u.lang = 'en-US';
+  u.rate = 0.95;
+
+  u.onstart = () => {
+    btn.classList.add('playing');
+    btn.innerHTML = soundIconPlaying;
+    currentBtn = btn;
+  };
+  u.onend = () => {
+    resetButton(btn);
+    currentBtn = null;
+  };
+  u.onerror = () => {
+    resetButton(btn);
+    currentBtn = null;
+  };
+
+  window.speechSynthesis.speak(u);
+}
+
+function resetButton(btn){
+  btn.classList.remove('playing');
+  btn.innerHTML = soundIconIdle;
+}
+
+window.speechSynthesis && window.speechSynthesis.getVoices();
+</script>
+
+</body>
+</html>
