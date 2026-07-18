@@ -1,0 +1,106 @@
+========================================================
+  Corporate Speech — Student Digital (protegido)
+  The Fluency Studio
+========================================================
+
+O que é isto?
+-------------
+Pasta pronta para colocar no SEU site, com:
+
+  1. Tela de senha (como o FlipHTML5 privado)
+  2. Leitura página a página com animação de virar
+  3. Barra de navegação, tela cheia, teclado e toque
+
+Conteúdo do livro: o mesmo HTML grande (book.html)
+convertido do PDF (52 páginas).
+
+
+ALTERAR A SENHA
+---------------
+1. Abra o arquivo:  config.js
+2. Localize a linha:
+
+     password: 'fluency2026',
+
+3. Troque fluency2026 pela senha desejada, por exemplo:
+
+     password: 'Aluno@2026',
+
+4. Salve o arquivo.
+
+
+COLOCAR NO SEU SITE
+-------------------
+Envie a pasta INTEIRA por FTP / cPanel / Netlify / etc.:
+
+  Corporate-Speech-Protected/
+    index.html      ← página que o aluno abre
+    config.js       ← senha e título
+    app.js
+    style.css
+    book.html       ← o livro (~89 MB — demora no upload)
+    COMO-USAR.txt
+
+URL do aluno (exemplo):
+  https://seudominio.com/corporate-speech/
+
+Ele vê a senha primeiro; só depois o livro.
+
+
+TESTAR NO COMPUTADOR
+--------------------
+NÃO abra o index.html clicando duas vezes (file://).
+O navegador bloqueia o iframe do livro.
+
+Use um servidor local. No PowerShell, dentro desta pasta:
+
+  python -m http.server 8080
+
+Depois abra no navegador:
+
+  http://localhost:8080
+
+
+ATALHOS NO LEITOR
+-----------------
+  ← / →         páginas
+  Home / End    primeira / última
+  F             tela cheia
+  Espaço        próxima página
+  Arrastar      swipe no celular
+
+
+SENHA PADRÃO (altere antes de publicar!)
+----------------------------------------
+  fluency2026
+
+
+SOBRE SEGURANÇA
+---------------
+A senha impede alunos comuns de abrir o material sem
+autorização (igual à proteção básica do FlipHTML5).
+
+Como o site é HTML estático, alguém técnico ainda pode
+inspecionar o código e achar a senha. Para conteúdo
+muito sensível ou pago, use login de verdade no servidor
+(WordPress membership, Firebase, etc.).
+
+
+DIFERENÇA EM RELAÇÃO AO FLIPHTML5
+---------------------------------
+Visual e fluxo: tela de senha + 1 página por vez +
+navegação + animação de virar.
+
+O FlipHTML5 online usa motor próprio na nuvem deles.
+Aqui o livro roda no SEU domínio, sem mensalidade deles,
+e você controla a senha no config.js.
+
+
+SUPORTE RÁPIDO
+--------------
+- Livro não abre após a senha: hospede via HTTP e confira
+  se book.html está na mesma pasta do index.html.
+- Upload lento: book.html tem ~89 MB — é normal.
+- Esqueceu a senha: abra config.js e veja o valor de password.
+
+========================================================

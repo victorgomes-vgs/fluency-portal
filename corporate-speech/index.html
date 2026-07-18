@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#1a1d23">
+  <title>Corporate Speech — Student Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="locked">
+  <!-- Tela de senha (estilo FlipHTML5 private book) -->
+  <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+      <div class="gate-logo" aria-hidden="true">FS</div>
+      <p class="gate-brand" id="gate-brand">The Fluency Studio</p>
+      <h1 class="gate-title" id="gate-title">Corporate Speech</h1>
+      <p class="gate-sub" id="gate-subtitle">Student Digital Edition</p>
+
+      <form class="gate-form" id="gate-form" autocomplete="off">
+        <label class="gate-label" for="password">Senha de acesso</label>
+        <div class="gate-input-wrap">
+          <input
+            class="gate-input"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Digite a senha"
+            required
+            autofocus
+            autocomplete="current-password"
+          >
+          <button type="button" class="gate-toggle" id="toggle-password" tabindex="-1">Mostrar</button>
+        </div>
+        <p class="gate-error" id="gate-error" role="alert"></p>
+        <button type="submit" class="gate-btn">Abrir livro</button>
+      </form>
+
+      <p class="gate-hint">
+        Material exclusivo para alunos autorizados.<br>
+        Use a senha enviada pela Fluency Studio.
+      </p>
+    </div>
+  </div>
+
+  <!-- Leitor do flipbook -->
+  <div id="app" class="app" aria-hidden="false">
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="header-mark" aria-hidden="true">FS</div>
+        <div class="header-titles">
+          <h1 class="header-title" id="book-title">Corporate Speech</h1>
+          <p class="header-sub" id="book-subtitle">Student Digital Edition</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="btn-fullscreen" title="Tela cheia (F)" aria-label="Tela cheia">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-stage" id="stage">
+      <div class="loader" id="loader">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="loader-text">Abrindo o livro… (pode levar alguns segundos)</p>
+      </div>
+
+      <button type="button" class="flip-zone flip-zone--prev" id="zone-prev" aria-label="Página anterior">
+        <span>‹</span>
+      </button>
+      <button type="button" class="flip-zone flip-zone--next" id="zone-next" aria-label="Próxima página">
+        <span>›</span>
+      </button>
+
+      <iframe
+        id="book-frame"
+        title="Corporate Speech book pages"
+        src="about:blank"
+        allowfullscreen
+      ></iframe>
+    </main>
+
+    <footer class="app-footer">
+      <button type="button" class="nav-btn" id="btn-prev" aria-label="Página anterior">
+        <span aria-hidden="true">‹</span>
+        <span class="nav-label">Anterior</span>
+      </button>
+
+      <div class="page-indicator">
+        <input type="number" id="page-current" min="1" value="1" aria-label="Página atual">
+        <span class="page-total">/ <span id="page-total">—</span></span>
+      </div>
+
+      <button type="button" class="nav-btn" id="btn-next" aria-label="Próxima página">
+        <span class="nav-label">Próxima</span>
+        <span aria-hidden="true">›</span>
+      </button>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
