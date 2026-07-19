@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Fluency Studio | Material de Aula</title>
+<style>
+  :root{
+    --navy:#0B1E33;
+    --teal:#00B4A6;
+    --teal-dark:#008C82;
+    --ink:#1B2733;
+    --paper:#FBFAF7;
+    --line:#E3E0D8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Georgia', 'Times New Roman', serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:40px 48px;
+  }
+  header h1{
+    margin:0;
+    font-size:28px;
+    letter-spacing:0.5px;
+    font-weight:400;
+  }
+  header p{
+    margin:8px 0 0;
+    color:var(--teal);
+    font-size:14px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  main{
+    max-width:1000px;
+    margin:0 auto;
+    padding:48px;
+  }
+  section{
+    margin-bottom:56px;
+  }
+  h2{
+    font-size:22px;
+    color:var(--navy);
+    border-bottom:2px solid var(--teal);
+    padding-bottom:10px;
+    margin-bottom:24px;
+    font-weight:400;
+  }
+  /* VERBS */
+  .verb-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:18px;
+  }
+  .verb-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .verb-img{
+    width:100%;
+    height:120px;
+    object-fit:cover;
+    background:#eee;
+    display:block;
+  }
+  .verb-text{
+    padding:12px 14px;
+  }
+  .verb-en{
+    font-weight:bold;
+    color:var(--navy);
+    font-size:15px;
+  }
+  .verb-pt{
+    color:var(--teal-dark);
+    font-size:14px;
+    font-style:italic;
+  }
+  /* VOCAB TABLE */
+  .vocab-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:0;
+    border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+  }
+  .vocab-item{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 14px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    font-size:14.5px;
+  }
+  .vocab-en{
+    color:var(--ink);
+  }
+  .vocab-pt{
+    color:var(--teal-dark);
+    font-style:italic;
+    margin-left:12px;
+    white-space:nowrap;
+  }
+  /* GRAMMAR */
+  .grammar-intro{
+    background:#fff;
+    border-left:4px solid var(--teal);
+    padding:16px 20px;
+    margin-bottom:24px;
+    font-size:14.5px;
+  }
+  table.conjugation{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:28px;
+    font-size:14.5px;
+  }
+  table.conjugation th, table.conjugation td{
+    border:1px solid var(--line);
+    padding:8px 12px;
+    text-align:left;
+  }
+  table.conjugation th{
+    background:var(--navy);
+    color:#fff;
+    font-weight:400;
+  }
+  ol.sentences{
+    padding-left:22px;
+  }
+  ol.sentences li{
+    margin-bottom:10px;
+    font-size:15px;
+  }
+  .subject-tag{
+    display:inline-block;
+    font-size:11px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    background:var(--teal);
+    color:#fff;
+    padding:1px 7px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  footer{
+    text-align:center;
+    padding:24px;
+    font-size:12px;
+    color:#8a8a8a;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FLUENCY STUDIO <span style="font-size:16px; font-weight:400; color:var(--teal);">by Victor Gomes</span></h1>
+  <p>Material de Aula — Verbs, Vocabulary &amp; Grammar</p>
+  <p style="margin-top:4px; text-transform:none; letter-spacing:normal; color:#fff; font-size:13px;">thefluency.studio</p>
+</header>
+
+<main>
+
+  <!-- ===================== VERBS ===================== -->
+  <section>
+    <h2>1. Verbs</h2>
+    <div class="verb-list">
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400" alt="to drink">
+        <div class="verb-text"><div class="verb-en">to drink</div><div class="verb-pt">beber</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="to eat">
+        <div class="verb-text"><div class="verb-en">to eat</div><div class="verb-pt">comer</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400" alt="to speak">
+        <div class="verb-text"><div class="verb-en">to speak</div><div class="verb-pt">falar</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400" alt="to study">
+        <div class="verb-text"><div class="verb-en">to study</div><div class="verb-pt">estudar</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400" alt="to need">
+        <div class="verb-text"><div class="verb-en">to need</div><div class="verb-pt">precisar</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1517960413843-0aee8e2b3285?w=400" alt="to like">
+        <div class="verb-text"><div class="verb-en">to like</div><div class="verb-pt">gostar</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?w=400" alt="to sleep">
+        <div class="verb-text"><div class="verb-en">to sleep</div><div class="verb-pt">dormir</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1494059980473-813e73ee784b?w=400" alt="to want">
+        <div class="verb-text"><div class="verb-en">to want</div><div class="verb-pt">querer</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1476480862126-209bfaa8edac?w=400" alt="to go">
+        <div class="verb-text"><div class="verb-en">to go</div><div class="verb-pt">ir</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" alt="to have">
+        <div class="verb-text"><div class="verb-en">to have</div><div class="verb-pt">ter</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=400" alt="to understand">
+        <div class="verb-text"><div class="verb-en">to understand</div><div class="verb-pt">entender</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400" alt="to live">
+        <div class="verb-text"><div class="verb-en">to live</div><div class="verb-pt">morar, viver</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400" alt="to work">
+        <div class="verb-text"><div class="verb-en">to work</div><div class="verb-pt">trabalhar</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1558002038-1055907df827?w=400" alt="to open">
+        <div class="verb-text"><div class="verb-en">to open</div><div class="verb-pt">abrir</div></div>
+      </div>
+
+      <div class="verb-card">
+        <img class="verb-img" src="https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=400" alt="to close">
+        <div class="verb-text"><div class="verb-en">to close</div><div class="verb-pt">fechar</div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== VOCABULARY ===================== -->
+  <section>
+    <h2>2. Vocabulary</h2>
+    <div class="vocab-grid">
+      <div class="vocab-item"><span class="vocab-en">water</span><span class="vocab-pt">água</span></div>
+      <div class="vocab-item"><span class="vocab-en">coffee</span><span class="vocab-pt">café</span></div>
+      <div class="vocab-item"><span class="vocab-en">tea</span><span class="vocab-pt">chá</span></div>
+      <div class="vocab-item"><span class="vocab-en">milk</span><span class="vocab-pt">leite</span></div>
+      <div class="vocab-item"><span class="vocab-en">juice</span><span class="vocab-pt">suco</span></div>
+      <div class="vocab-item"><span class="vocab-en">bread</span><span class="vocab-pt">pão</span></div>
+      <div class="vocab-item"><span class="vocab-en">meat</span><span class="vocab-pt">carne</span></div>
+      <div class="vocab-item"><span class="vocab-en">and</span><span class="vocab-pt">e</span></div>
+      <div class="vocab-item"><span class="vocab-en">I</span><span class="vocab-pt">eu</span></div>
+      <div class="vocab-item"><span class="vocab-en">you</span><span class="vocab-pt">você</span></div>
+      <div class="vocab-item"><span class="vocab-en">hi</span><span class="vocab-pt">oi</span></div>
+      <div class="vocab-item"><span class="vocab-en">hello</span><span class="vocab-pt">olá</span></div>
+      <div class="vocab-item"><span class="vocab-en">please</span><span class="vocab-pt">por favor</span></div>
+      <div class="vocab-item"><span class="vocab-en">thank you</span><span class="vocab-pt">obrigado</span></div>
+      <div class="vocab-item"><span class="vocab-en">goodbye</span><span class="vocab-pt">tchau</span></div>
+      <div class="vocab-item"><span class="vocab-en">father</span><span class="vocab-pt">pai</span></div>
+      <div class="vocab-item"><span class="vocab-en">mother</span><span class="vocab-pt">mãe</span></div>
+      <div class="vocab-item"><span class="vocab-en">brother</span><span class="vocab-pt">irmão</span></div>
+      <div class="vocab-item"><span class="vocab-en">sister</span><span class="vocab-pt">irmã</span></div>
+      <div class="vocab-item"><span class="vocab-en">children</span><span class="vocab-pt">crianças, filhos</span></div>
+      <div class="vocab-item"><span class="vocab-en">friend</span><span class="vocab-pt">amigo</span></div>
+      <div class="vocab-item"><span class="vocab-en">my</span><span class="vocab-pt">meu, minha</span></div>
+      <div class="vocab-item"><span class="vocab-en">your</span><span class="vocab-pt">seu, sua</span></div>
+      <div class="vocab-item"><span class="vocab-en">with</span><span class="vocab-pt">com</span></div>
+      <div class="vocab-item"><span class="vocab-en">a / an</span><span class="vocab-pt">um, uma</span></div>
+      <div class="vocab-item"><span class="vocab-en">cup</span><span class="vocab-pt">xícara</span></div>
+      <div class="vocab-item"><span class="vocab-en">glass</span><span class="vocab-pt">copo</span></div>
+      <div class="vocab-item"><span class="vocab-en">good morning</span><span class="vocab-pt">bom dia</span></div>
+      <div class="vocab-item"><span class="vocab-en">good afternoon</span><span class="vocab-pt">boa tarde</span></div>
+      <div class="vocab-item"><span class="vocab-en">good night</span><span class="vocab-pt">boa noite</span></div>
+      <div class="vocab-item"><span class="vocab-en">cell phone</span><span class="vocab-pt">celular</span></div>
+      <div class="vocab-item"><span class="vocab-en">computer</span><span class="vocab-pt">computador</span></div>
+      <div class="vocab-item"><span class="vocab-en">house</span><span class="vocab-pt">casa</span></div>
+      <div class="vocab-item"><span class="vocab-en">car</span><span class="vocab-pt">carro</span></div>
+      <div class="vocab-item"><span class="vocab-en">clothes</span><span class="vocab-pt">roupas</span></div>
+      <div class="vocab-item"><span class="vocab-en">shoes</span><span class="vocab-pt">sapatos</span></div>
+      <div class="vocab-item"><span class="vocab-en">new</span><span class="vocab-pt">novo</span></div>
+      <div class="vocab-item"><span class="vocab-en">old</span><span class="vocab-pt">velho</span></div>
+      <div class="vocab-item"><span class="vocab-en">big</span><span class="vocab-pt">grande</span></div>
+      <div class="vocab-item"><span class="vocab-en">small</span><span class="vocab-pt">pequeno</span></div>
+      <div class="vocab-item"><span class="vocab-en">today</span><span class="vocab-pt">hoje</span></div>
+      <div class="vocab-item"><span class="vocab-en">numbers 1-10</span><span class="vocab-pt">números de 1 a 10</span></div>
+      <div class="vocab-item"><span class="vocab-en">very well</span><span class="vocab-pt">muito bem</span></div>
+      <div class="vocab-item"><span class="vocab-en">breakfast</span><span class="vocab-pt">café da manhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">lunch</span><span class="vocab-pt">almoço</span></div>
+      <div class="vocab-item"><span class="vocab-en">dinner</span><span class="vocab-pt">jantar</span></div>
+      <div class="vocab-item"><span class="vocab-en">apple</span><span class="vocab-pt">maçã</span></div>
+      <div class="vocab-item"><span class="vocab-en">orange</span><span class="vocab-pt">laranja</span></div>
+      <div class="vocab-item"><span class="vocab-en">this</span><span class="vocab-pt">este, esta, isso</span></div>
+      <div class="vocab-item"><span class="vocab-en">yes</span><span class="vocab-pt">sim</span></div>
+      <div class="vocab-item"><span class="vocab-en">no</span><span class="vocab-pt">não</span></div>
+      <div class="vocab-item"><span class="vocab-en">or</span><span class="vocab-pt">ou</span></div>
+      <div class="vocab-item"><span class="vocab-en">for</span><span class="vocab-pt">para, por</span></div>
+      <div class="vocab-item"><span class="vocab-en">every</span><span class="vocab-pt">todo, cada</span></div>
+      <div class="vocab-item"><span class="vocab-en">for breakfast</span><span class="vocab-pt">no café da manhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">for lunch</span><span class="vocab-pt">no almoço</span></div>
+      <div class="vocab-item"><span class="vocab-en">for dinner</span><span class="vocab-pt">no jantar</span></div>
+      <div class="vocab-item"><span class="vocab-en">every day</span><span class="vocab-pt">todos os dias</span></div>
+      <div class="vocab-item"><span class="vocab-en">with me</span><span class="vocab-pt">comigo</span></div>
+      <div class="vocab-item"><span class="vocab-en">office</span><span class="vocab-pt">escritório</span></div>
+      <div class="vocab-item"><span class="vocab-en">school</span><span class="vocab-pt">escola</span></div>
+      <div class="vocab-item"><span class="vocab-en">work</span><span class="vocab-pt">trabalho</span></div>
+      <div class="vocab-item"><span class="vocab-en">home</span><span class="vocab-pt">lar, casa</span></div>
+      <div class="vocab-item"><span class="vocab-en">downtown</span><span class="vocab-pt">centro da cidade</span></div>
+      <div class="vocab-item"><span class="vocab-en">park</span><span class="vocab-pt">parque</span></div>
+      <div class="vocab-item"><span class="vocab-en">boss</span><span class="vocab-pt">chefe</span></div>
+      <div class="vocab-item"><span class="vocab-en">manager</span><span class="vocab-pt">gerente</span></div>
+      <div class="vocab-item"><span class="vocab-en">tomorrow</span><span class="vocab-pt">amanhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">to</span><span class="vocab-pt">para, a</span></div>
+      <div class="vocab-item"><span class="vocab-en">in</span><span class="vocab-pt">em, dentro</span></div>
+      <div class="vocab-item"><span class="vocab-en">what</span><span class="vocab-pt">o que, qual</span></div>
+      <div class="vocab-item"><span class="vocab-en">how</span><span class="vocab-pt">como</span></div>
+      <div class="vocab-item"><span class="vocab-en">How do you spell...?</span><span class="vocab-pt">Como se escreve/soletra...?</span></div>
+      <div class="vocab-item"><span class="vocab-en">let's go</span><span class="vocab-pt">vamos</span></div>
+      <div class="vocab-item"><span class="vocab-en">time</span><span class="vocab-pt">tempo, hora</span></div>
+      <div class="vocab-item"><span class="vocab-en">week</span><span class="vocab-pt">semana</span></div>
+      <div class="vocab-item"><span class="vocab-en">weekend</span><span class="vocab-pt">fim de semana</span></div>
+      <div class="vocab-item"><span class="vocab-en">some</span><span class="vocab-pt">algum, alguns, um pouco</span></div>
+      <div class="vocab-item"><span class="vocab-en">also / too</span><span class="vocab-pt">também</span></div>
+      <div class="vocab-item"><span class="vocab-en">where</span><span class="vocab-pt">onde</span></div>
+      <div class="vocab-item"><span class="vocab-en">meeting</span><span class="vocab-pt">reunião</span></div>
+      <div class="vocab-item"><span class="vocab-en">task</span><span class="vocab-pt">tarefa</span></div>
+      <div class="vocab-item"><span class="vocab-en">on weekends</span><span class="vocab-pt">nos fins de semana</span></div>
+      <div class="vocab-item"><span class="vocab-en">see you later</span><span class="vocab-pt">até logo</span></div>
+      <div class="vocab-item"><span class="vocab-en">see you tomorrow</span><span class="vocab-pt">até amanhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">he</span><span class="vocab-pt">ele</span></div>
+      <div class="vocab-item"><span class="vocab-en">she</span><span class="vocab-pt">ela</span></div>
+      <div class="vocab-item"><span class="vocab-en">it</span><span class="vocab-pt">ele/ela (coisas e animais)</span></div>
+      <div class="vocab-item"><span class="vocab-en">morning</span><span class="vocab-pt">manhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">afternoon</span><span class="vocab-pt">tarde</span></div>
+      <div class="vocab-item"><span class="vocab-en">night</span><span class="vocab-pt">noite</span></div>
+      <div class="vocab-item"><span class="vocab-en">always</span><span class="vocab-pt">sempre</span></div>
+      <div class="vocab-item"><span class="vocab-en">never</span><span class="vocab-pt">nunca</span></div>
+      <div class="vocab-item"><span class="vocab-en">sometimes</span><span class="vocab-pt">às vezes</span></div>
+      <div class="vocab-item"><span class="vocab-en">early</span><span class="vocab-pt">cedo</span></div>
+      <div class="vocab-item"><span class="vocab-en">late</span><span class="vocab-pt">tarde</span></div>
+      <div class="vocab-item"><span class="vocab-en">in the morning</span><span class="vocab-pt">de manhã</span></div>
+      <div class="vocab-item"><span class="vocab-en">at night</span><span class="vocab-pt">à noite</span></div>
+      <div class="vocab-item"><span class="vocab-en">how are you?</span><span class="vocab-pt">como vai você?</span></div>
+      <div class="vocab-item"><span class="vocab-en">I'm fine</span><span class="vocab-pt">eu estou bem</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== GRAMMAR ===================== -->
+  <section>
+    <h2>3. Grammar — Simple Present, 3ª Pessoa do Singular</h2>
+    <div class="grammar-intro">
+      Na terceira pessoa do singular (<strong>he / she / it</strong>), o verbo principal recebe a terminação
+      <strong>-s</strong> (ou <strong>-es</strong>) na forma afirmativa. As formas negativa e interrogativa
+      utilizam o auxiliar <strong>does</strong>, e o verbo principal retorna à forma base (sem -s).
+    </div>
+
+    <table class="conjugation">
+      <tr><th>Forma</th><th>Estrutura</th><th>Exemplo</th></tr>
+      <tr><td>Afirmativa</td><td>Sujeito + verbo(-s/-es) + complemento</td><td>She works at the office.</td></tr>
+      <tr><td>Negativa</td><td>Sujeito + does not (doesn't) + verbo (base) + complemento</td><td>She doesn't work on weekends.</td></tr>
+      <tr><td>Interrogativa</td><td>Does + sujeito + verbo (base) + complemento?</td><td>Does she work every day?</td></tr>
+    </table>
+
+    <h2 style="border:none;font-size:18px;margin-bottom:14px;">10 Frases — He / She / It</h2>
+    <ol class="sentences">
+      <li><span class="subject-tag">He — afirmativa</span> He drinks coffee every morning.</li>
+      <li><span class="subject-tag">She — negativa</span> She doesn't eat meat for dinner.</li>
+      <li><span class="subject-tag">It — interrogativa</span> Does it need water every day?</li>
+      <li><span class="subject-tag">He — negativa</span> He doesn't speak with his boss on weekends.</li>
+      <li><span class="subject-tag">She — afirmativa</span> She studies English at school in the morning.</li>
+      <li><span class="subject-tag">It — afirmativa</span> It opens early and closes late.</li>
+      <li><span class="subject-tag">He — interrogativa</span> Does he understand the task for tomorrow?</li>
+      <li><span class="subject-tag">She — interrogativa</span> Does she like tea or coffee for breakfast?</li>
+      <li><span class="subject-tag">It — negativa</span> It doesn't close in the afternoon.</li>
+      <li><span class="subject-tag">He — afirmativa</span> He lives downtown and works with his friend every day.</li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>Fluency Studio — Material de Aula</footer>
+
+</body>
+</html>
