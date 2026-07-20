@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Lesson Material</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Page Configuration for Print/PDF */
+        .page {
+            width: 210mm; /* A4 Width */
+            min-height: 297mm; /* A4 Height */
+            background: white;
+            margin: 20mm auto;
+            padding: 25mm;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        @media print {
+            body {
+                background: none;
+                margin: 0;
+                display: block;
+            }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        /* Typography & Colors */
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .accent-color {
+            color: #16a085; /* Teal */
+        }
+
+        /* --- PAGE 1 STYLES --- */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #16a085;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .overview-box {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .overview-box h2 {
+            color: #ecf0f1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #7f8c8d;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .overview-item h4 {
+            margin: 0 0 5px 0;
+            color: #1abc9c;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .overview-item p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .warm-up-section {
+            background-color: #f9f9f9;
+            border-left: 5px solid #16a085;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+        }
+
+        .question-label {
+            display: inline-block;
+            background-color: #16a085;
+            color: white;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            line-height: 25px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .word-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .word-card {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #34495e;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        /* --- PAGE 2 STYLES --- */
+        .exercise-container {
+            margin-top: 20px;
+        }
+
+        .matching-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .matching-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px dashed #bdc3c7;
+            background-color: #fdfdfd;
+        }
+
+        .matching-item:nth-child(even) {
+            background-color: #f4f7f6;
+        }
+
+        .term {
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 0 0 30%;
+        }
+
+        .definition {
+            flex: 1;
+            color: #555;
+            padding-left: 20px;
+        }
+
+        .answer-box {
+            display: inline-block;
+            width: 30px;
+            height: 25px;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            margin-right: 15px;
+            background-color: white;
+        }
+
+        .icon-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .icon-header svg {
+            width: 30px;
+            height: 30px;
+            fill: #16a085;
+        }
+
+        /* --- PAGE 3 STYLES --- */
+        .video-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .fill-in-text {
+            line-height: 1.8;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .blank {
+            display: inline-block;
+            border-bottom: 1px solid #333;
+            width: 120px;
+            margin: 0 5px;
+            font-size: 0.8em;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .transcript-box {
+            background-color: #fdfdfd;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        /* --- INTERACTIVITY & ANIMATION STYLES --- */
+        
+        /* Fade-in Animation */
+        .page {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Selectable Word Cards */
+        .word-card {
+            cursor: pointer;
+            user-select: none;
+            border: 2px solid transparent;
+        }
+        .word-card:hover {
+            border-color: #1abc9c;
+        }
+        .word-card.selected {
+            background-color: #16a085;
+            color: white;
+            border-color: #16a085;
+            transform: scale(1.05);
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(22, 160, 133, 0.3);
+        }
+
+        /* Drag and Drop Exercise */
+        .draggable-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            border: 2px dashed #bdc3c7;
+            min-height: 60px;
+            align-items: center;
+        }
+        .drag-item {
+            background: #2c3e50;
+            color: white;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: grab;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(0.9);
+        }
+        
+        /* Overwriting original answer-box for D&D */
+        .answer-box {
+            display: inline-flex;
+            width: 45px;
+            height: 45px;
+            border: 2px dashed #7f8c8d;
+            border-radius: 6px;
+            margin-right: 15px;
+            background-color: #f9f9f9;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .answer-box.drag-over {
+            background-color: #d1f2eb;
+            border-color: #16a085;
+            transform: scale(1.1);
+        }
+        .answer-box .drag-item {
+            margin: 0;
+            box-shadow: none;
+        }
+
+        /* Video & Fill in the Blanks */
+        .custom-video {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            background-color: #000;
+        }
+        
+        .blank-input {
+            border: none;
+            border-bottom: 2px solid #7f8c8d;
+            width: 140px;
+            font-size: 1em;
+            text-align: center;
+            color: #2c3e50;
+            background: transparent;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin: 0 5px;
+            padding: 2px 5px;
+        }
+        .blank-input:focus {
+            border-bottom-color: #16a085;
+            background-color: rgba(22, 160, 133, 0.05);
+        }
+        .blank-input.correct {
+            border-bottom-color: #27ae60;
+            color: #27ae60;
+            background-color: #eafaf1;
+            font-weight: bold;
+        }
+        .blank-input.incorrect {
+            border-bottom-color: #e74c3c;
+            color: #e74c3c;
+            background-color: #fdedec;
+        }
+        
+        .check-btn {
+            display: block;
+            margin: 30px auto;
+            background-color: #16a085;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .check-btn:hover {
+            background-color: #1abc9c;
+            transform: translateY(-2px);
+        }
+        .check-btn:active {
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- PAGE 1: Overview & Warm-up -->
+    <div class="page">
+        <div class="header-section">
+            <h1>Business English <span class="accent-color">Module</span></h1>
+            <span>Fluency Studio</span>
+        </div>
+
+        <div class="overview-box">
+            <h2>Overview</h2>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <h4>Vocabulary</h4>
+                    <p>Economic terms</p>
+                </div>
+                <div class="overview-item">
+                    <h4>Listening</h4>
+                    <p>New business</p>
+                </div>
+                <div class="overview-item">
+                    <h4>Reading</h4>
+                    <p>New business ideas</p>
+                </div>
+                <div class="overview-item">
+                    <h4>Language Review</h4>
+                    <p>Time clauses</p>
+                </div>
+                <div class="overview-item">
+                    <h4>Skills</h4>
+                    <p>Dealing with numbers</p>
+                </div>
+                <div class="overview-item">
+                    <h4>Case Study</h4>
+                    <p>Taka Shimizu Cycles</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="warm-up-section">
+            <h3 class="accent-color">Warm Up</h3>
+            
+            <div class="question-block">
+                <p><span class="question-label">A</span> Discuss these questions.</p>
+                <ol>
+                    <li>Would you like to start your own business? Why? / Why not?</li>
+                    <li>What conditions are important for people starting new businesses? Choose the three most important from this list. Can you think of any others?</li>
+                </ol>
+                <div class="word-cards-container">
+                    <span class="word-card">low taxes</span>
+                    <span class="word-card">good transport links</span>
+                    <span class="word-card">skilled staff</span>
+                    <span class="word-card">training courses</span>
+                    <span class="word-card">low interest rates</span>
+                    <span class="word-card">high unemployment</span>
+                    <span class="word-card">cheap rents</span>
+                    <span class="word-card">a strong currency</span>
+                    <span class="word-card">a healthy economy</span>
+                    <span class="word-card">government grants</span>
+                    <span class="word-card">a stable political situation</span>
+                    <span class="word-card">easy access to credit</span>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <p><span class="question-label">B</span> Many economies contain a mix of public- and private-sector businesses. Think of companies you know in the areas below. Which are public-sector companies, and which are private-sector ones?</p>
+                <div class="word-cards-container">
+                    <span class="word-card">post office</span>
+                    <span class="word-card">railways</span>
+                    <span class="word-card">television</span>
+                    <span class="word-card">water</span>
+                    <span class="word-card">energy</span>
+                    <span class="word-card">telecoms</span>
+                    <span class="word-card">cars</span>
+                    <span class="word-card">banks</span>
+                    <span class="word-card">newspapers</span>
+                    <span class="word-card">airlines</span>
+                    <span class="word-card">roads</span>
+                    <span class="word-card">mining</span>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <p><span class="question-label">C</span> Many companies in the UK have been privatised. What are the trends in your country? Talk about the business sectors in Exercise B.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Vocabulary Matching -->
+    <div class="page">
+        <div class="icon-header">
+            <!-- Simple SVG Icon for Vocabulary -->
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <h2>Vocabulary: <span class="accent-color">Economic terms</span></h2>
+        </div>
+
+        <p>Match the economic terms (1–10) to their definitions (a–j). <strong>Drag the correct letter</strong> into the dashed box next to the term.</p>
+
+        <div class="draggable-bank" id="drag-bank">
+            <div class="drag-item" draggable="true" id="item-a">a</div>
+            <div class="drag-item" draggable="true" id="item-b">b</div>
+            <div class="drag-item" draggable="true" id="item-c">c</div>
+            <div class="drag-item" draggable="true" id="item-d">d</div>
+            <div class="drag-item" draggable="true" id="item-e">e</div>
+            <div class="drag-item" draggable="true" id="item-f">f</div>
+            <div class="drag-item" draggable="true" id="item-g">g</div>
+            <div class="drag-item" draggable="true" id="item-h">h</div>
+            <div class="drag-item" draggable="true" id="item-i">i</div>
+            <div class="drag-item" draggable="true" id="item-j">j</div>
+        </div>
+
+        <div class="exercise-container">
+            <ul class="matching-list">
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 1. interest rate</div>
+                    <div class="definition"><strong>a)</strong> total value of goods and services produced in a country</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 2. exchange rate</div>
+                    <div class="definition"><strong>b)</strong> percentage increase in prices</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 3. inflation rate</div>
+                    <div class="definition"><strong>c)</strong> cost of borrowing money</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 4. labour force</div>
+                    <div class="definition"><strong>d)</strong> price at which one currency can buy another</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 5. tax incentives</div>
+                    <div class="definition"><strong>e)</strong> percentage of people without jobs</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 6. government bureaucracy</div>
+                    <div class="definition"><strong>f)</strong> the number of people working</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 7. GDP (gross domestic product)</div>
+                    <div class="definition"><strong>g)</strong> low taxes to encourage business activity</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 8. unemployment rate</div>
+                    <div class="definition"><strong>h)</strong> money from overseas</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 9. foreign investment</div>
+                    <div class="definition"><strong>i)</strong> official rules/regulations/paperwork</div>
+                </li>
+                <li class="matching-item">
+                    <div class="term"><span class="answer-box"></span> 10. balance of trade</div>
+                    <div class="definition"><strong>j)</strong> difference in value between a country's imports and exports</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Listening & Fill-in-the-blanks -->
+    <div class="page">
+        <div class="icon-header">
+             <!-- Simple SVG Icon for Listening -->
+            <svg viewBox="0 0 24 24">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            <h2>Listening Practice</h2>
+        </div>
+
+        <video class="custom-video" controls src="ffc.mp4" poster="https://placehold.co/400x600/2c3e50/ecf0f1?text=Play+Video\n(2:3+Ratio)"></video>
+
+        <h3>Try to complete this economic profile.</h3>
+        <p><em>Listen to the audio/video and fill in the blanks using the terms from the previous exercise.</em></p>
+
+        <div class="fill-in-text">
+            The economy is stable following the problems of the past two years. By following a tight monetary policy, the government has reduced the <input type="text" class="blank-input" placeholder="1" data-answer="inflation rate"> to 2%. For borrowers, after going up dramatically, the <input type="text" class="blank-input" placeholder="2" data-answer="interest rate"> is now down to 8%. The last six months have seen a slight improvement in the <input type="text" class="blank-input" placeholder="3" data-answer="exchange rate"> against the dollar. For the country as a whole, the <input type="text" class="blank-input" placeholder="4" data-answer="gdp|gross domestic product"> has grown by 0.15%. Exports are increasing, and the <input type="text" class="blank-input" placeholder="5" data-answer="balance of trade"> is starting to look much healthier.
+            <br><br>
+            In terms of jobs, the <input type="text" class="blank-input" placeholder="6" data-answer="unemployment rate"> continues to be a problem, as it is still 16%. In order to stimulate the economy and attract <input type="text" class="blank-input" placeholder="7" data-answer="foreign investment"> from abroad, the government is offering new <input type="text" class="blank-input" placeholder="8" data-answer="tax incentives">, as well as making a renewed effort to reduce <input type="text" class="blank-input" placeholder="9" data-answer="government bureaucracy"> and red tape. Finally, a large skilled <input type="text" class="blank-input" placeholder="10" data-answer="labour force"> means there could be attractive investment opportunities over the next five years.
+        </div>
+        
+        <button id="check-answers" class="check-btn">Check Answers</button>
+
+        <hr style="border: 0; border-top: 1px solid #bdc3c7; margin: 30px 0;">
+
+        <h3>Transcript (CD2 TRACK 1)</h3>
+        <div class="transcript-box">
+            The economy is stable following the problems of the past two years. By following a tight monetary policy, the government has reduced the inflation rate to two per cent. For borrowers, after going up dramatically, the interest rate is now down to eight per cent. The last six months have seen a slight improvement in the exchange rate against the dollar. For the country as a whole, the GDP has grown by point one five per cent. Exports are increasing, and the balance of trade is starting to look much healthier. In terms of jobs, the unemployment rate continues to be a problem, as it is still 16 per cent. In order to stimulate the economy and attract foreign investment from abroad, the government is offering new tax incentives, as well as making a renewed effort to reduce government bureaucracy and red tape. Finally, a large skilled labour force means there could be attractive investment opportunities over the next five years.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Page Animations
+            const pages = document.querySelectorAll('.page');
+            pages.forEach((page, index) => {
+                page.style.animationDelay = `${index * 0.15}s`;
+            });
+
+            // 2. Selectable Cards (Page 1)
+            const wordCards = document.querySelectorAll('.word-cards-container .word-card');
+            wordCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('selected');
+                });
+            });
+
+            // 3. Drag and Drop Interaction (Page 2)
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropZones = document.querySelectorAll('.answer-box, .draggable-bank');
+            let draggedItem = null;
+
+            dragItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    draggedItem = item;
+                    // setTimeout used to hide the element while dragging beautifully
+                    setTimeout(() => this.style.opacity = '0.5', 0);
+                });
+                
+                item.addEventListener('dragend', function(e) {
+                    setTimeout(() => {
+                        this.style.opacity = '1';
+                        draggedItem = null;
+                    }, 0);
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    // Don't allow drop if an answer-box already has an item
+                    if(zone.classList.contains('answer-box') && zone.children.length > 0) {
+                        return; 
+                    }
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    // Prevent dropping multiple items in one box
+                    if (zone.classList.contains('answer-box') && zone.children.length > 0) {
+                        return; 
+                    }
+                    
+                    if(draggedItem) {
+                        zone.appendChild(draggedItem);
+                    }
+                });
+            });
+
+            // 4. Auto-correction Logic (Page 3)
+            const checkBtn = document.getElementById('check-answers');
+            checkBtn.addEventListener('click', () => {
+                const inputs = document.querySelectorAll('.blank-input');
+                
+                inputs.forEach(input => {
+                    // Accepts multiple answers split by '|', e.g., "gdp|gross domestic product"
+                    const correctAnswers = input.getAttribute('data-answer').toLowerCase().split('|');
+                    const userAnswer = input.value.trim().toLowerCase();
+                    
+                    // Reset styling
+                    input.classList.remove('correct', 'incorrect');
+                    
+                    if (userAnswer === "") {
+                        return; // Ignore empty answers
+                    }
+
+                    // Check if user answer matches any of the allowed variations
+                    if(correctAnswers.includes(userAnswer)) {
+                        input.classList.add('correct');
+                    } else {
+                        input.classList.add('incorrect');
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
