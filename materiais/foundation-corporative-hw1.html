@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business & Economy Vocabulary Worksheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #e2e8f0; /* Cor de fundo um pouco mais escura para destacar o formulário branco */
+        }
+        .correct-input { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; font-weight: 600; }
+        .wrong-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; font-weight: 600;}
+        .audio-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .audio-btn:active { transform: scale(0.90); }
+        .audio-btn:hover { background-color: #e0e7ff; color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        .pdf-hidden { display: flex; }
+        .word-chip {
+            display: inline-block;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin: 4px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilo para Radio Buttons customizados */
+        .quiz-option { cursor: pointer; transition: all 0.2s ease; }
+        .quiz-option:hover { transform: translateY(-2px); }
+        .quiz-option > div { background-color: #ffffff; }
+        .quiz-option:hover > div { border-color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        
+        .quiz-radio:checked + div { background-color: #f0f9ff; border-color: #0ea5e9; box-shadow: 0 0 0 1px #0ea5e9; }
+        .quiz-radio:checked + div .radio-circle { background-color: #0ea5e9; border-color: #0ea5e9; }
+        .quiz-radio:checked + div .radio-circle::after { content: ''; display: block; width: 8px; height: 8px; background: white; border-radius: 50%; margin: 3px auto; }
+        
+        .correct-radio-wrapper { background-color: #ecfdf5 !important; border-color: #10b981 !important; box-shadow: 0 0 0 1px #10b981 !important; }
+        .wrong-radio-wrapper { background-color: #fef2f2 !important; border-color: #ef4444 !important; box-shadow: 0 0 0 1px #ef4444 !important; }
+
+        @media print {
+            .pdf-hidden { display: none !important; }
+            body { background: white; }
+            .shadow-2xl, .shadow-xl, .shadow-md, .shadow-sm { box-shadow: none !important; }
+            #worksheet { margin: 0; padding: 0; width: 100%; max-width: none; border: none !important; }
+            .page-break { page-break-inside: avoid; margin-bottom: 20px; }
+            input[type="text"] { border: none !important; border-bottom: 1px solid #cbd5e1 !important; border-radius: 0 !important; background: transparent !important; }
+            .bg-gradient-to-br { background: #1e1b4b !important; color: white !important; } /* Força o header escuro na impressão digital */
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Top Actions (Outside Worksheet) -->
+    <div class="max-w-5xl mx-auto mt-6 mb-4 px-4 flex flex-col md:flex-row justify-between items-center gap-4 pdf-hidden">
+        <div class="text-sm text-slate-500 font-bold uppercase tracking-wider bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
+            <i class="fa-solid fa-graduation-cap text-indigo-500 mr-2"></i> Interactive Worksheet
+        </div>
+        <button onclick="generatePDF()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center w-full md:w-auto justify-center">
+            <i class="fa-solid fa-download mr-2"></i> Save as PDF
+        </button>
+    </div>
+
+    <!-- MAIN WORKSHEET CONTAINER -->
+    <div id="worksheet" class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden mb-20 border border-slate-200">
+        
+        <!-- Header com Gradiente Premium e Alto Contraste -->
+        <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-900 pt-12 pb-16 px-6 md:px-12 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+                <div class="absolute top-[-20%] right-[-10%] w-[50%] h-[150%] bg-purple-600/20 rounded-full blur-[100px] transform rotate-12"></div>
+                <div class="absolute bottom-[-50%] left-[-10%] w-[40%] h-[100%] bg-indigo-500/20 rounded-full blur-[80px]"></div>
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
+                <div class="w-full md:w-3/5">
+                    <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block backdrop-blur-sm shadow-sm">Business & Economics</span>
+                    <h1 class="text-4xl md:text-5xl font-black text-white leading-tight mb-3 tracking-tight drop-shadow-md">Economy Vocabulary Builder</h1>
+                    <p class="text-indigo-200 text-lg font-medium drop-shadow-sm">Complete all 10 blocks. Translate, unscramble, and correct the sentences.</p>
+                </div>
+                
+                <div class="w-full md:w-2/5 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-2xl">
+                    <label class="block text-xs font-bold text-indigo-300 uppercase tracking-widest mb-2 drop-shadow-sm">Student Name</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                            <i class="fa-solid fa-user text-indigo-500"></i>
+                        </div>
+                        <input type="text" id="studentName" placeholder="Enter your full name..." class="w-full pl-12 pr-4 py-3.5 bg-white border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 outline-none transition-all font-bold text-slate-900 placeholder-slate-400 shadow-inner text-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 md:p-12 bg-slate-50/50">
+            <div id="content-container" class="space-y-12">
+                <!-- Os blocos serão injetados aqui pelo JavaScript -->
+            </div>
+
+            <div class="mt-16 pt-10 border-t-2 border-slate-200 page-break">
+                <div class="flex flex-col items-center gap-8">
+                    
+                    <div id="score-display" class="hidden transform transition-all duration-500 scale-95">
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-1.5 rounded-3xl shadow-2xl">
+                            <div class="bg-white px-12 py-6 rounded-2xl flex flex-col items-center">
+                                <span class="text-slate-500 font-bold uppercase text-sm tracking-widest mb-2">Final Score</span>
+                                <div class="text-5xl font-black text-slate-800 tracking-tighter">
+                                    <span id="score-value" class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">0</span> <span class="text-slate-300 text-4xl">/</span> <span class="text-slate-400 text-4xl">40</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full max-w-md flex flex-col gap-4 pdf-hidden">
+                        <button onclick="checkAnswers()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 px-8 rounded-2xl shadow-[0_8px_30px_rgb(16,185,129,0.3)] transition-all transform hover:-translate-y-1 text-xl flex items-center justify-center uppercase tracking-wide">
+                            <i class="fa-solid fa-check-double mr-3"></i> Check My Answers
+                        </button>
+                        
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <button onclick="generatePDF()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-file-pdf mr-2 text-red-600 text-lg"></i> Save PDF
+                            </button>
+                            <button onclick="sendToWhatsApp()" id="btn-whatsapp" class="bg-green-100 hover:bg-green-200 text-green-800 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center opacity-50 cursor-not-allowed shadow-sm" disabled>
+                                <i class="fa-brands fa-whatsapp mr-2 text-green-600 text-2xl"></i> Send to Teacher
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DADOS DO EXERCÍCIO ---
+        const exerciseData = [
+            {
+                keyword: "interest rate",
+                q1: { pt: "A taxa de juros está muito baixa.", correct: "The interest rate is very low.", wrong: ["The interest rates is very low.", "An interesting rate is very low.", "Interest rate are very low."] },
+                q2: { pt: "As taxas de juros estão subindo.", correct: "Interest rates are going up.", wrong: ["Interest rates is going up.", "The interest rate are go up.", "Interests rates are going up."] },
+                q3: { words: ["rate", "bank", "The", "reduced", "interest", "the"], correct: "The bank reduced the interest rate" },
+                q4: { wrongPhrase: "High interest rates makes loans expensive.", correct: "High interest rates make loans expensive" }
+            },
+            {
+                keyword: "exchange rate",
+                q1: { pt: "A taxa de câmbio mudou ontem.", correct: "The exchange rate changed yesterday.", wrong: ["The exchange rate change yesterday.", "The change rate changed yesterday.", "Exchange rate changes yesterday."] },
+                q2: { pt: "A taxa de câmbio em relação ao dólar melhorou.", correct: "The exchange rate against the dollar improved.", wrong: ["The exchange rate against the dollar improve.", "Exchange rate for dollar improved.", "The exchange rate against dollar improving."] },
+                q3: { words: ["helps", "rate", "strong", "exchange", "A", "travelers"], correct: "A strong exchange rate helps travelers" },
+                q4: { wrongPhrase: "We is watching the exchange rate closely.", correct: "We are watching the exchange rate closely" }
+            },
+            {
+                keyword: "inflation rate",
+                q1: { pt: "A taxa de inflação está caindo.", correct: "The inflation rate is falling.", wrong: ["The inflation rate are falling.", "Inflation rates is falling.", "The inflate rate is falling."] },
+                q2: { pt: "As taxas de inflação estão muito altas.", correct: "Inflation rates are too high.", wrong: ["Inflation rates is too high.", "The inflation rates are to high.", "Inflation rate are too high."] },
+                q3: { words: ["wants", "reduce", "the", "to", "government", "The", "inflation", "rate"], correct: "The government wants to reduce the inflation rate" },
+                q4: { wrongPhrase: "A low inflation rate are good for the economy.", correct: "A low inflation rate is good for the economy" }
+            },
+            {
+                keyword: "labour force",
+                q1: { pt: "O país tem uma força de trabalho qualificada.", correct: "The country has a skilled labour force.", wrong: ["The country have a skilled labour force.", "A country has a skilled labour force.", "The country has a skill labour force."] },
+                q2: { pt: "A força de trabalho está crescendo.", correct: "The labour force is growing.", wrong: ["The labour forces is growing.", "Labour force are growing.", "The labour force is grow."] },
+                q3: { words: ["people", "joined", "young", "the", "Many", "labour", "force"], correct: "Many young people joined the labour force" },
+                q4: { wrongPhrase: "A strong labour force attract companies.", correct: "A strong labour force attracts companies" }
+            },
+            {
+                keyword: "tax incentives",
+                q1: { pt: "O governo oferece incentivos fiscais.", correct: "The government offers tax incentives.", wrong: ["The government offer tax incentives.", "Government offers taxes incentives.", "The government offers tax incentive."] },
+                q2: { pt: "Incentivos fiscais atraem novos negócios.", correct: "Tax incentives attract new businesses.", wrong: ["Tax incentives attracts new businesses.", "Taxes incentives attract new businesses.", "Tax incentives attract new business."] },
+                q3: { words: ["tax", "Investors", "incentives", "like"], correct: "Investors like tax incentives" },
+                q4: { wrongPhrase: "The company receive tax incentives.", correct: "The company received tax incentives" }
+            },
+            {
+                keyword: "government bureaucracy",
+                q1: { pt: "A burocracia governamental atrasa os negócios.", correct: "Government bureaucracy slows business.", wrong: ["Government bureaucracy slow business.", "The government bureaucracy slow business.", "Government bureaucracies slows business."] },
+                q2: { pt: "O país está reduzindo a burocracia governamental.", correct: "The country is reducing government bureaucracy.", wrong: ["The country are reducing government bureaucracy.", "Country is reducing government bureaucracy.", "The country is reduce government bureaucracy."] },
+                q3: { words: ["delays", "much", "creates", "government", "Too", "bureaucracy"], correct: "Too much government bureaucracy creates delays" },
+                q4: { wrongPhrase: "Businesses dislikes government bureaucracy.", correct: "Businesses dislike government bureaucracy" }
+            },
+            {
+                keyword: "GDP",
+                q1: { pt: "O PIB cresceu no ano passado.", correct: "The GDP grew last year.", wrong: ["The GDP growed last year.", "GDP grows last year.", "The GDP grew last years."] },
+                q2: { pt: "O PIB do país está aumentando.", correct: "The country's GDP is increasing.", wrong: ["The country GDP is increasing.", "The countries GDP is increasing.", "The country's GDP are increasing."] },
+                q3: { words: ["economic", "GDP", "Higher", "means", "growth"], correct: "Higher GDP means economic growth" },
+                q4: { wrongPhrase: "GDP falled during the crisis.", correct: "GDP fell during the crisis" }
+            },
+            {
+                keyword: "unemployment rate",
+                q1: { pt: "A taxa de desemprego está diminuindo.", correct: "The unemployment rate is decreasing.", wrong: ["The unemployment rate are decreasing.", "The unemployed rate is decreasing.", "Unemployment rate is decrease."] },
+                q2: { pt: "A taxa de desemprego continua alta.", correct: "The unemployment rate remains high.", wrong: ["The unemployment rate remain high.", "The unemployment rates remains high.", "Unemployment rate remain high."] },
+                q3: { words: ["to", "wants", "unemployment", "the", "reduce", "rate", "government", "The"], correct: "The government wants to reduce the unemployment rate" },
+                q4: { wrongPhrase: "A lower unemployment rate am good for everyone.", correct: "A lower unemployment rate is good for everyone" }
+            },
+            {
+                keyword: "foreign investment",
+                q1: { pt: "O país precisa de mais investimento estrangeiro.", correct: "The country needs more foreign investment.", wrong: ["The country need more foreign investment.", "Country needs more foreign investment.", "The country needs more foreigns investments."] },
+                q2: { pt: "O investimento estrangeiro cria empregos.", correct: "Foreign investment creates jobs.", wrong: ["Foreign investment create jobs.", "Foreigns investments creates jobs.", "Foreign investment creating jobs."] },
+                q3: { words: ["investment", "attract", "policies", "foreign", "New"], correct: "New policies attract foreign investment" },
+                q4: { wrongPhrase: "Foreign investment support economic growth.", correct: "Foreign investment supports economic growth" }
+            },
+            {
+                keyword: "balance of trade",
+                q1: { pt: "A balança comercial está melhorando.", correct: "The balance of trade is improving.", wrong: ["The balance of trade are improving.", "Balance of trade is improving.", "The balance of trades is improving."] },
+                q2: { pt: "As exportações melhoraram a balança comercial.", correct: "Exports improved the balance of trade.", wrong: ["Exports improve the balance of trade.", "Export improved the balance of trade.", "Exports improved balance of trade."] },
+                q3: { words: ["balance", "a", "country", "of", "The", "healthy", "has", "trade"], correct: "The country has a healthy balance of trade" },
+                q4: { wrongPhrase: "A positive balance of trade strengthen the economy.", correct: "A positive balance of trade strengthens the economy" }
+            }
+        ];
+
+        // --- SISTEMA TTS (Áudio) ---
+        let voices = [];
+        window.speechSynthesis.onvoiceschanged = () => { voices = window.speechSynthesis.getVoices(); };
+
+        function playAudio(text) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; 
+            if (voices.length > 0) {
+                const enVoice = voices.find(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-'));
+                if (enVoice) utterance.voice = enVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Embaralha um array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- RENDERIZAÇÃO DA PÁGINA ---
+        function renderWorksheet() {
+            const container = document.getElementById('content-container');
+            
+            exerciseData.forEach((block, index) => {
+                const blockNum = index + 1;
+                const bId = `b${blockNum}`;
+
+                // Prepara Quiz 1
+                let q1Options = [{text: block.q1.correct, isCorrect: true}];
+                block.q1.wrong.forEach(w => q1Options.push({text: w, isCorrect: false}));
+                q1Options = shuffleArray(q1Options);
+
+                // Prepara Quiz 2
+                let q2Options = [{text: block.q2.correct, isCorrect: true}];
+                block.q2.wrong.forEach(w => q2Options.push({text: w, isCorrect: false}));
+                q2Options = shuffleArray(q2Options);
+
+                // Prepara Unscramble HTML
+                const unscrambleChips = block.q3.words.map(w => `<span class="word-chip">${w}</span>`).join(' ');
+
+                const letters = ['A', 'B', 'C', 'D'];
+
+                const blockHTML = `
+                    <div class="bg-white rounded-2xl border-2 border-slate-400 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 page-break">
+                        
+                        <!-- Block Header - Adicionado Gradiente Claro e Maior Contraste -->
+                        <div class="bg-gradient-to-r from-slate-100 to-white border-b-2 border-slate-400 px-6 py-5 flex items-center gap-5">
+                            <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-black text-2xl h-14 w-14 flex items-center justify-center rounded-xl shadow-md">${blockNum}</div>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 capitalize flex-1 tracking-tight">${block.keyword}</h2>
+                            <button onclick="playAudio('${block.keyword}')" class="audio-btn pdf-hidden h-14 w-14 rounded-full border-2 border-indigo-100 flex items-center justify-center text-indigo-600 bg-white shadow-sm" title="Listen pronunciation">
+                                <i class="fa-solid fa-volume-high text-xl"></i>
+                            </button>
+                        </div>
+
+                        <div class="p-6 md:p-8 space-y-10">
+                            
+                            <!-- Quiz 1 -->
+                            <div>
+                                <p class="font-bold text-slate-800 mb-4 text-lg flex items-start"><i class="fa-solid fa-language text-indigo-500 mt-1 mr-3 text-xl"></i> <span>${block.q1.pt}</span></p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="${bId}_q1_group">
+                                    ${q1Options.map((opt, i) => `
+                                        <label class="quiz-option relative flex items-center cursor-pointer">
+                                            <input type="radio" name="${bId}_q1" value="${opt.isCorrect}" class="quiz-radio sr-only">
+                                            <div class="w-full p-4 pl-14 border-2 border-slate-400 rounded-xl text-slate-800 font-semibold text-[15px]">
+                                                <div class="radio-circle absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 border-2 border-slate-400 rounded-full transition-colors"></div>
+                                                <span class="mr-2 font-black text-slate-500">${letters[i]}.</span> ${opt.text}
+                                            </div>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Quiz 2 -->
+                            <div>
+                                <p class="font-bold text-slate-800 mb-4 text-lg flex items-start"><i class="fa-solid fa-language text-indigo-500 mt-1 mr-3 text-xl"></i> <span>${block.q2.pt}</span></p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="${bId}_q2_group">
+                                    ${q2Options.map((opt, i) => `
+                                        <label class="quiz-option relative flex items-center cursor-pointer">
+                                            <input type="radio" name="${bId}_q2" value="${opt.isCorrect}" class="quiz-radio sr-only">
+                                            <div class="w-full p-4 pl-14 border-2 border-slate-400 rounded-xl text-slate-800 font-semibold text-[15px]">
+                                                <div class="radio-circle absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 border-2 border-slate-400 rounded-full transition-colors"></div>
+                                                <span class="mr-2 font-black text-slate-500">${letters[i]}.</span> ${opt.text}
+                                            </div>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Unscramble (Q3) -->
+                            <div class="bg-blue-50/80 p-5 md:p-6 rounded-2xl border-2 border-blue-300 shadow-inner">
+                                <p class="text-sm font-black text-blue-700 mb-3 uppercase tracking-wider flex items-center"><i class="fa-solid fa-shuffle mr-2 text-lg"></i> Unscramble</p>
+                                <div class="mb-4 flex flex-wrap gap-1">${unscrambleChips}</div>
+                                <div class="relative mt-2">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fa-solid fa-pen-to-square text-blue-500 text-lg"></i>
+                                    </div>
+                                    <input type="text" id="${bId}_q3" data-correct="${block.q3.correct}" placeholder="Type the correct sentence here..." class="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-blue-400 rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-500/20 outline-none font-bold text-slate-800 transition-all text-base shadow-sm">
+                                </div>
+                            </div>
+
+                            <!-- Find the Error (Q4) -->
+                            <div class="bg-amber-50/80 p-5 md:p-6 rounded-2xl border-2 border-amber-300 shadow-inner">
+                                <p class="text-sm font-black text-amber-700 mb-3 uppercase tracking-wider flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2 text-lg"></i> Find and correct the error</p>
+                                <p class="text-red-700 mb-4 text-lg italic font-bold bg-white/70 inline-block px-3 py-1 rounded border border-red-200 shadow-sm">"${block.q4.wrongPhrase}"</p>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fa-solid fa-wrench text-amber-600 text-lg"></i>
+                                    </div>
+                                    <input type="text" id="${bId}_q4" data-correct="${block.q4.correct}" placeholder="Write the correct sentence..." class="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-amber-400 rounded-xl focus:border-amber-600 focus:ring-4 focus:ring-amber-500/20 outline-none font-bold text-slate-800 transition-all text-base shadow-sm">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += blockHTML;
+            });
+        }
+
+        // --- LÓGICA DE CORREÇÃO ---
+        
+        function normalize(str) {
+            return str.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ').trim();
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const totalQuestions = 40; // 10 blocos * 4 questões
+
+            for (let i = 1; i <= 10; i++) {
+                const bId = `b${i}`;
+
+                // Verifica Quiz 1
+                const q1Radios = document.getElementsByName(`${bId}_q1`);
+                let q1Answered = false;
+                q1Radios.forEach(radio => {
+                    const wrapper = radio.nextElementSibling;
+                    wrapper.classList.remove('correct-radio-wrapper', 'wrong-radio-wrapper');
+                    
+                    if (radio.checked) {
+                        q1Answered = true;
+                        if (radio.value === "true") {
+                            wrapper.classList.add('correct-radio-wrapper');
+                            score++;
+                        } else {
+                            wrapper.classList.add('wrong-radio-wrapper');
+                        }
+                    }
+                });
+
+                // Verifica Quiz 2
+                const q2Radios = document.getElementsByName(`${bId}_q2`);
+                let q2Answered = false;
+                q2Radios.forEach(radio => {
+                    const wrapper = radio.nextElementSibling;
+                    wrapper.classList.remove('correct-radio-wrapper', 'wrong-radio-wrapper');
+                    
+                    if (radio.checked) {
+                        q2Answered = true;
+                        if (radio.value === "true") {
+                            wrapper.classList.add('correct-radio-wrapper');
+                            score++;
+                        } else {
+                            wrapper.classList.add('wrong-radio-wrapper');
+                        }
+                    }
+                });
+
+                // Verifica Q3 (Unscramble)
+                const q3Input = document.getElementById(`${bId}_q3`);
+                const q3User = normalize(q3Input.value);
+                const q3Correct = normalize(q3Input.dataset.correct);
+                q3Input.classList.remove('correct-input', 'wrong-input');
+                
+                if (q3User === q3Correct && q3User !== "") {
+                    q3Input.classList.add('correct-input');
+                    score++;
+                } else if (q3User !== "") {
+                    q3Input.classList.add('wrong-input');
+                }
+
+                // Verifica Q4 (Error)
+                const q4Input = document.getElementById(`${bId}_q4`);
+                const q4User = normalize(q4Input.value);
+                const q4Correct = normalize(q4Input.dataset.correct);
+                q4Input.classList.remove('correct-input', 'wrong-input');
+                
+                if (q4User === q4Correct && q4User !== "") {
+                    q4Input.classList.add('correct-input');
+                    score++;
+                } else if (q4User !== "") {
+                    q4Input.classList.add('wrong-input');
+                }
+            }
+
+            // Mostra Pontuação
+            document.getElementById('score-value').innerText = score;
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.classList.remove('hidden');
+            setTimeout(() => {
+                scoreDisplay.classList.remove('scale-95');
+                scoreDisplay.classList.add('scale-100');
+            }, 50);
+
+            // Habilita WhatsApp se tiver nome
+            const studentName = document.getElementById('studentName').value.trim();
+            const btnWpp = document.getElementById('btn-whatsapp');
+            if (studentName !== "") {
+                btnWpp.disabled = false;
+                btnWpp.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnWpp.classList.add('hover:-translate-y-1', 'shadow-lg');
+            } else {
+                alert("Please, enter your name at the top to send your results via WhatsApp.");
+                document.getElementById('studentName').focus();
+            }
+            
+            // Scroll para a pontuação
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // --- INTEGRAÇÕES EXTERNAS ---
+
+        function generatePDF() {
+            const studentName = document.getElementById('studentName').value.trim() || 'Student';
+            const element = document.getElementById('worksheet');
+            
+            // Temporariamente remove bordas/sombras externas pesadas para o PDF
+            element.classList.remove('shadow-2xl', 'mb-20', 'border', 'border-slate-200');
+            
+            const opt = {
+                margin:       [10, 5, 10, 5], // top, left, bottom, right
+                filename:     `Economy_Worksheet_${studentName}.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Esconde botões do PDF
+            const hiddenEls = document.querySelectorAll('.pdf-hidden');
+            hiddenEls.forEach(el => el.style.display = 'none');
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restaura elementos
+                hiddenEls.forEach(el => el.style.display = '');
+                element.classList.add('shadow-2xl', 'mb-20', 'border', 'border-slate-200');
+            });
+        }
+
+        function sendToWhatsApp() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) {
+                alert("Please enter your name first.");
+                return;
+            }
+            
+            const teacherNumber = "5511911999759"; // Substitua pelo número da Teacher
+            const score = document.getElementById('score-value').innerText;
+            
+            const message = `Hello Teacher! 🎓\nI am *${name}*.\nI just finished the Economy Vocabulary Worksheet!\nMy preliminary score is: *${score}/40*.\n\nPlease check my PDF when possible. Thank you!`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            const url = `https://wa.me/${teacherNumber}?text=${encodedMessage}`;
+            window.open(url, '_blank');
+        }
+
+        // Iniciar
+        window.onload = () => {
+            renderWorksheet();
+        };
+
+    </script>
+</body>
+</html>
