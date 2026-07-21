@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluency Studio - English Activities</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E3A8A', // Deep Blue
+                        secondary: '#F59E0B', // Amber
+                        accent: '#10B981', // Emerald
+                        background: '#F3F4F6', // Gray 100
+                        card: '#FFFFFF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Sortable list styles */
+        .sortable-item {
+            cursor: grab;
+        }
+        .sortable-item:active {
+            cursor: grabbing;
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background-color: #e2e8f0;
+        }
+
+        /* Match select styles */
+        .match-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        /* Hide elements during PDF generation */
+        .no-print {
+            display: block;
+        }
+        .pdf-export-mode .no-print {
+            display: none !important;
+        }
+        .pdf-export-mode {
+            background-color: white;
+            padding: 20px;
+        }
+        .pdf-export-mode .glass-panel {
+            box-shadow: none;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-primary text-white py-6 shadow-md relative z-10 sticky top-0">
+        <div class="container mx-auto px-4 md:px-8 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="assets/logo_portal_jul.png" alt="Fluency Studio Logo" class="h-10 md:h-12 w-auto object-contain">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Fluency Studio</h1>
+                    <p class="text-sm text-blue-200">By Victor Gomes</p>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="exportToPDF()" class="no-print bg-white text-primary hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg shadow transition duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-red-500"></i> <span class="hidden sm:inline">Save PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 md:px-8 py-8 flex-grow" id="main-content">
+        
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Practice & Activities</h2>
+            <p class="text-slate-500">Complete the exercises below and check your answers.</p>
+        </div>
+
+        <form id="activity-form" class="space-y-12">
+            
+            <section class="glass-panel rounded-2xl p-6 md:p-8" id="section-1">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    <h3 class="text-xl font-semibold text-primary">Translate & Adapt</h3>
+                    <p class="text-sm text-slate-500 ml-auto hidden sm:block">Third Person Singular (He/She/It)</p>
+                </div>
+                <p class="mb-6 text-slate-600">Choose the correct translation, adapting the subject from "I/You/We" to "He" or "She".</p>
+                
+                <div class="space-y-8" id="quiz-container">
+                    <!-- Quiz questions injected by JS -->
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-2xl p-6 md:p-8" id="section-2">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    <h3 class="text-xl font-semibold text-primary">Unscramble & Write</h3>
+                </div>
+                <p class="mb-6 text-slate-600">Unscramble the letters to form words. (Sentences omitted for simplicity in this format).</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="unscramble-container">
+                     <!-- Unscramble questions injected by JS -->
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-2xl p-6 md:p-8" id="section-3">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                    <h3 class="text-xl font-semibold text-primary">Link the sentences</h3>
+                </div>
+                <p class="mb-6 text-slate-600">Select the correct answer for each question.</p>
+                
+                <div class="space-y-4" id="match-container">
+                     <!-- Match questions injected by JS -->
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-2xl p-6 md:p-8" id="section-4">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                    <h3 class="text-xl font-semibold text-primary">Personal Information</h3>
+                </div>
+                <p class="mb-6 text-slate-600">Answer the questions with your personal information.</p>
+                
+                <div class="space-y-4" id="personal-info-container">
+                    <!-- Personal info questions injected by JS -->
+                </div>
+            </section>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8 no-print pb-12">
+                <button type="button" onclick="checkAllAnswers()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 text-lg w-full sm:w-auto">
+                    <i class="fa-solid fa-check"></i> Check Answers
+                </button>
+                <button type="button" onclick="sendToWhatsApp()" class="bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 text-lg w-full sm:w-auto">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> Send to WhatsApp
+                </button>
+                <button type="button" onclick="exportToPDF()" class="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 text-lg w-full sm:w-auto">
+                    <i class="fa-solid fa-file-pdf"></i> Save as PDF
+                </button>
+            </div>
+
+            <!-- Score Display -->
+            <div id="score-display" class="hidden text-center mt-8 p-6 bg-white rounded-2xl shadow-lg border-2 border-primary mb-12">
+                <h3 class="text-2xl font-bold text-primary mb-2">Your Score</h3>
+                <div class="text-5xl font-extrabold text-slate-800 mb-2">
+                    <span id="score-correct" class="text-accent">0</span> / <span id="score-total">0</span>
+                </div>
+                <p id="score-message" class="text-lg font-medium text-slate-600"></p>
+            </div>
+
+        </form>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm no-print">
+        <p>&copy; 2026 Fluency Studio by Victor Gomes. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Data Structures
+        const quizData = [
+            {
+                id: 'q1a',
+                pt: "Eu amo ler revistas. (Adaptar para 'Ele')",
+                options: [
+                    { text: "He loves to read magazines.", correct: true },
+                    { text: "He love read magazines.", correct: false },
+                    { text: "He loves reads magazine.", correct: false },
+                    { text: "He love to reads magazines.", correct: false }
+                ]
+            },
+            {
+                id: 'q1b',
+                pt: "Eu envio e-mails todos os dias. (Adaptar para 'Ela')",
+                options: [
+                    { text: "She send emails everyday.", correct: false },
+                    { text: "She sends emails every day.", correct: true },
+                    { text: "She sending emails every days.", correct: false },
+                    { text: "She sends email every days.", correct: false }
+                ]
+            },
+            {
+                id: 'q1c',
+                pt: "Qual seu endereço de e-mail? (Adaptar para 'dele')",
+                options: [
+                    { text: "What his email address?", correct: false },
+                    { text: "What's her email address?", correct: false },
+                    { text: "What's his email address?", correct: true },
+                    { text: "What is he email address?", correct: false }
+                ]
+            },
+            {
+                id: 'q1d',
+                pt: "Eu leio meus e-mails no meu celular todos os dias. (Adaptar para 'Ele')",
+                options: [
+                    { text: "He reads his emails on his cell phone every day.", correct: true },
+                    { text: "He read his emails on his cell phone everyday.", correct: false },
+                    { text: "He reads my emails in his cell phone every day.", correct: false },
+                    { text: "He read my emails on him cell phone every days.", correct: false }
+                ]
+            },
+            {
+                id: 'q1e',
+                pt: "Eu leio as notícias no meu tablet. (Adaptar para 'Ela')",
+                options: [
+                    { text: "She read the news on her tablet.", correct: false },
+                    { text: "She reads the news in her tablet.", correct: false },
+                    { text: "She read the news in she tablet.", correct: false },
+                    { text: "She reads the news on her tablet.", correct: true }
+                ]
+            },
+            {
+                id: 'q1f',
+                pt: "Você tem uma senha grande em seu computador? (Adaptar para 'Ele')",
+                options: [
+                    { text: "Does he have a big password on his computer?", correct: true },
+                    { text: "Do he has a big password in his computer?", correct: false },
+                    { text: "Does he has a big password on him computer?", correct: false },
+                    { text: "Do he have a big password on his computer?", correct: false }
+                ]
+            },
+            {
+                id: 'q1g',
+                pt: "Você prefere ir ao restaurante ou ao coffee shop? (Adaptar para 'Ela')",
+                options: [
+                    { text: "Do she prefer to go to the restaurant or to the coffee shop?", correct: false },
+                    { text: "Does she prefers to go to the restaurant or the coffee shop?", correct: false },
+                    { text: "Does she prefer to go to the restaurant or to the coffee shop?", correct: true },
+                    { text: "Do she prefers go to restaurant or coffee shop?", correct: false }
+                ]
+            },
+            {
+                id: 'q1h',
+                pt: "Eu tenho livros e revistas na minha casa. (Adaptar para 'Ele')",
+                options: [
+                    { text: "He have books and magazines in his house.", correct: false },
+                    { text: "He has books and magazines in his house.", correct: true },
+                    { text: "He has books and magazines in he house.", correct: false },
+                    { text: "He have books and magazines on his house.", correct: false }
+                ]
+            },
+            {
+                id: 'q1i',
+                pt: "Nós lemos notícias no computador. (Adaptar para 'Ela')",
+                options: [
+                    { text: "She reads news on the computer.", correct: true },
+                    { text: "She read news in the computer.", correct: false },
+                    { text: "She reads news in the computer.", correct: false },
+                    { text: "She read news on the computer.", correct: false }
+                ]
+            },
+            {
+                id: 'q1j',
+                pt: "Eu envio e-mails para meu professor todos os dias. (Adaptar para 'Ele')",
+                options: [
+                    { text: "He send emails to his teacher every day.", correct: false },
+                    { text: "He sends emails to his teacher everyday.", correct: false },
+                    { text: "He send emails for his teacher every day.", correct: false },
+                    { text: "He sends emails to his teacher every day.", correct: true }
+                ]
+            }
+        ];
+
+        const unscrambleData = [
+            { id: 'u2a', letters: 'e/m/n/a/i/g/z/a', answer: 'magazine' },
+            { id: 'u2b', letters: 'd/p/r/a/o/s/w/s', answer: 'password' },
+            { id: 'u2c', letters: 's/m/e/o/i/v', answer: 'movies' },
+            { id: 'u2d', letters: 'k/b/o/o', answer: 'book' },
+            { id: 'u2e', letters: 'e/m/e/g/s/a/s', answer: 'message' },
+            { id: 'u2f', letters: 't/s/o/y/r', answer: 'story' }
+        ];
+
+        const matchQuestions = [
+            { id: 'm3a', q: "What's your email?", a: "It's john.john@itmail.com." },
+            { id: 'm3b', q: "Where do you read your emails?", a: "I read my emails on my cell phone." },
+            { id: 'm3c', q: "Where do you want to go?", a: "I want to go to the mall." },
+            { id: 'm3d', q: "What's your password?", a: "It's 45673." },
+            { id: 'm3e', q: "Where is your American book?", a: "My American book is in my bedroom." },
+            { id: 'm3f', q: "Do you like this Brazilian restaurant?", a: "Yes, I love this Brazilian restaurant." },
+            { id: 'm3g', q: "Do you read the news every day?", a: "No, I don't. I prefer magazines." }
+        ];
+
+        const personalQuestions = [
+            { id: 'p4a', q: "What's your phone number?" },
+            { id: 'p4b', q: "What's your email?" },
+            { id: 'p4c', q: "Where do you read your emails?" },
+            { id: 'p4d', q: "Do you have books in your house?" },
+            { id: 'p4e', q: "Where do you live?" },
+            { id: 'p4f', q: "Where do you want to go abroad?" },
+            { id: 'p4g', q: "What languages do you speak?" }
+        ];
+
+        // Global state for scoring
+        let totalScore = 0;
+        let maxScore = quizData.length + unscrambleData.length + matchQuestions.length;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createFeedbackIcon(isCorrect) {
+            if (isCorrect) {
+                return '<i class="fa-solid fa-circle-check text-accent text-xl absolute -right-8 top-1/2 transform -translate-y-1/2 feedback-icon"></i>';
+            } else {
+                return '<i class="fa-solid fa-circle-xmark text-red-500 text-xl absolute -right-8 top-1/2 transform -translate-y-1/2 feedback-icon"></i>';
+            }
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            
+            quizData.forEach((item, index) => {
+                // Shuffle options for each question
+                const shuffledOptions = shuffleArray([...item.options]);
+                
+                let optionsHtml = '';
+                shuffledOptions.forEach((opt, optIndex) => {
+                    const uniqueId = `${item.id}_opt${optIndex}`;
+                    // Store if it's correct in a data attribute
+                    optionsHtml += `
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-blue-50 transition-colors radio-label relative group ${opt.correct ? 'is-correct' : 'is-wrong'}" data-correct="${opt.correct}">
+                            <input type="radio" name="${item.id}" value="${opt.correct}" class="w-5 h-5 text-primary focus:ring-primary border-gray-300">
+                            <span class="ml-3 text-slate-700 font-medium">${opt.text}</span>
+                        </label>
+                    `;
+                });
+
+                const questionHtml = `
+                    <div class="quiz-item relative" id="container_${item.id}">
+                        <p class="font-semibold text-lg text-slate-800 mb-3"><span class="text-primary mr-1">${String.fromCharCode(97 + index)}.</span> ${item.pt}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 relative pr-10">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHtml;
+            });
+        }
+
+        function renderUnscramble() {
+            const container = document.getElementById('unscramble-container');
+            
+            unscrambleData.forEach((item, index) => {
+                const html = `
+                    <div class="unscramble-item flex flex-col sm:flex-row items-start sm:items-center gap-3 relative pr-10" id="container_${item.id}">
+                        <div class="w-full sm:w-auto flex-shrink-0">
+                            <span class="font-semibold text-primary mr-2">${String.fromCharCode(97 + index)}.</span>
+                            <span class="font-mono bg-gray-100 px-3 py-1 rounded-md text-slate-600 tracking-wider">${item.letters}</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 hidden sm:block"></i>
+                        <input type="text" id="${item.id}" data-answer="${item.answer}" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary transition-colors text-slate-700 font-medium lowercase" placeholder="Type word here..." autocomplete="off">
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function renderMatch() {
+            const container = document.getElementById('match-container');
+            
+            // Extract answers and shuffle them for the dropdown options
+            const allAnswers = matchQuestions.map(mq => mq.a);
+            const shuffledAnswers = shuffleArray([...allAnswers]);
+
+            let optionsHtml = '<option value="">Select the correct answer...</option>';
+            shuffledAnswers.forEach(ans => {
+                // Using btoa to avoid quotes issues in HTML values, though it's overkill, it's safe.
+                // Just use regular string but escape quotes if needed. Here strings are safe.
+                optionsHtml += `<option value="${ans}">${ans}</option>`;
+            });
+
+            matchQuestions.forEach((item, index) => {
+                const html = `
+                    <div class="match-item bg-gray-50 p-4 rounded-xl border border-gray-100 flex flex-col md:flex-row md:items-center gap-4 relative pr-10" id="container_${item.id}">
+                        <div class="md:w-1/2 font-medium text-slate-700">
+                            <span class="text-primary font-bold mr-2">${String.fromCharCode(97 + index)}.</span> ${item.q}
+                        </div>
+                        <div class="md:w-1/2 w-full">
+                            <select id="${item.id}" data-answer="${item.a}" class="match-select w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary transition-colors text-slate-700 bg-white">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function renderPersonalInfo() {
+            const container = document.getElementById('personal-info-container');
+            
+            personalQuestions.forEach((item, index) => {
+                const html = `
+                    <div class="personal-item mb-4">
+                        <label for="${item.id}" class="block font-medium text-slate-700 mb-2">
+                            <span class="text-primary font-bold mr-1">${String.fromCharCode(97 + index)}.</span> ${item.q}
+                        </label>
+                        <input type="text" id="${item.id}" class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-colors text-slate-700" placeholder="Your answer...">
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function checkAllAnswers() {
+            totalScore = 0;
+
+            // Clear previous feedback
+            document.querySelectorAll('.feedback-icon').forEach(el => el.remove());
+            document.querySelectorAll('.border-red-500, .border-green-500, .bg-red-50, .bg-green-50, .ring-2').forEach(el => {
+                el.classList.remove('border-red-500', 'border-green-500', 'bg-red-50', 'bg-green-50', 'ring-2', 'ring-red-500', 'ring-green-500');
+            });
+
+            // 1. Check Quiz
+            quizData.forEach(item => {
+                const container = document.getElementById(`container_${item.id}`);
+                const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+                const labels = container.querySelectorAll('.radio-label');
+                
+                // Highlight correct answer always
+                const correctLabel = container.querySelector('.is-correct');
+                
+                if (selected) {
+                    const isCorrect = selected.value === "true";
+                    if (isCorrect) {
+                        totalScore++;
+                        selected.closest('label').classList.add('border-green-500', 'bg-green-50');
+                        container.insertAdjacentHTML('beforeend', createFeedbackIcon(true));
+                    } else {
+                        selected.closest('label').classList.add('border-red-500', 'bg-red-50');
+                        correctLabel.classList.add('border-green-500', 'ring-2', 'ring-green-500');
+                        container.insertAdjacentHTML('beforeend', createFeedbackIcon(false));
+                    }
+                } else {
+                    // Not answered
+                    correctLabel.classList.add('border-green-500', 'ring-2', 'ring-green-500');
+                    container.insertAdjacentHTML('beforeend', createFeedbackIcon(false));
+                }
+            });
+
+            // 2. Check Unscramble
+            unscrambleData.forEach(item => {
+                const input = document.getElementById(item.id);
+                const container = document.getElementById(`container_${item.id}`);
+                const userAnswer = input.value.trim().toLowerCase();
+                
+                if (userAnswer === item.answer) {
+                    totalScore++;
+                    input.classList.add('border-green-500', 'bg-green-50');
+                    container.insertAdjacentHTML('beforeend', createFeedbackIcon(true));
+                } else {
+                    input.classList.add('border-red-500', 'bg-red-50');
+                    container.insertAdjacentHTML('beforeend', createFeedbackIcon(false));
+                    
+                    // Show correct answer below if wrong
+                    if(!document.getElementById(`hint_${item.id}`)) {
+                        input.insertAdjacentHTML('afterend', `<div id="hint_${item.id}" class="text-xs text-green-600 font-bold mt-1 absolute -bottom-5 left-0">Correct: ${item.answer}</div>`);
+                    }
+                }
+            });
+
+            // 3. Check Match
+            matchQuestions.forEach(item => {
+                const select = document.getElementById(item.id);
+                const container = document.getElementById(`container_${item.id}`);
+                const userAnswer = select.value;
+                
+                if (userAnswer === item.a) {
+                    totalScore++;
+                    select.classList.add('border-green-500', 'bg-green-50');
+                    container.insertAdjacentHTML('beforeend', createFeedbackIcon(true));
+                } else {
+                    select.classList.add('border-red-500', 'bg-red-50');
+                    container.insertAdjacentHTML('beforeend', createFeedbackIcon(false));
+                    
+                     // Show correct answer if wrong
+                     if(!document.getElementById(`hint_${item.id}`)) {
+                        select.insertAdjacentHTML('afterend', `<div id="hint_${item.id}" class="text-xs text-green-600 font-bold mt-1 absolute -bottom-5 left-0">Correct: ${item.a}</div>`);
+                    }
+                }
+            });
+
+            // Show Score
+            showScore();
+        }
+
+        function showScore() {
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreCorrect = document.getElementById('score-correct');
+            const scoreTotal = document.getElementById('score-total');
+            const scoreMessage = document.getElementById('score-message');
+
+            scoreCorrect.innerText = totalScore;
+            scoreTotal.innerText = maxScore;
+            
+            let percentage = (totalScore / maxScore) * 100;
+            if (percentage === 100) {
+                scoreMessage.innerText = "Excellent! You got everything right.";
+                scoreMessage.className = "text-lg font-medium text-emerald-600";
+            } else if (percentage >= 70) {
+                scoreMessage.innerText = "Great job! Keep practicing.";
+                scoreMessage.className = "text-lg font-medium text-blue-600";
+            } else {
+                scoreMessage.innerText = "Good effort. Review the corrections and try again!";
+                scoreMessage.className = "text-lg font-medium text-amber-600";
+            }
+
+            scoreDisplay.classList.remove('hidden');
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function sendToWhatsApp() {
+            // Recalculate score just in case they didn't press the check button
+            // But we don't force visual validation if they just want to send.
+            
+            const phoneNumber = "5511921423578";
+            let message = "*Fluency Studio - Activity Results*\n\n";
+            
+            // If they haven't checked, show current filled status roughly
+            let checkedScore = document.getElementById('score-display').classList.contains('hidden') ? "?" : totalScore;
+            
+            message += `Score: ${checkedScore} / ${maxScore}\n\n`;
+            
+            message += "*Part 4: Personal Information*\n";
+            personalQuestions.forEach((item, index) => {
+                const answer = document.getElementById(item.id).value.trim() || "(No answer)";
+                message += `${String.fromCharCode(97 + index)}) ${item.q}\n> ${answer}\n\n`;
+            });
+
+            message += "_Generated from interactive exercises._";
+
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Open in new tab
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function exportToPDF() {
+            const element = document.getElementById('main-content');
+            
+            // Add class to hide buttons and adjust styling for print
+            document.body.classList.add('pdf-export-mode');
+            
+            // Ensure inputs look like text for better PDF rendering
+            // For select boxes, show selected option
+            const selects = document.querySelectorAll('select');
+            selects.forEach(s => {
+                s.setAttribute('data-orig-bg', s.style.backgroundColor);
+                s.style.appearance = 'none';
+                s.style.backgroundImage = 'none';
+            });
+
+            // html2pdf options
+            const opt = {
+                margin:       [10, 10, 10, 10], // top, left, bottom, right in mm
+                filename:     'Fluency_Studio_Activities.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // Generate PDF
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restore styling after generation
+                document.body.classList.remove('pdf-export-mode');
+                selects.forEach(s => {
+                    s.style.appearance = '';
+                    s.style.backgroundImage = '';
+                });
+            }).catch(err => {
+                console.error("PDF generation error:", err);
+                alert("There was an error generating the PDF. Please try again.");
+                document.body.classList.remove('pdf-export-mode');
+            });
+        }
+
+        window.onload = () => {
+            renderQuiz();
+            renderUnscramble();
+            renderMatch();
+            renderPersonalInfo();
+        };
+
+    </script>
+</body>
+</html>
