@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 8 - I need to visit my family</title>
+<style>
+  :root{
+    --navy: #1c2b4e;
+    --navy-dark: #14213f;
+    --teal: #17b6a9;
+    --teal-dark: #0e968b;
+    --purple: #4a3a86;
+    --purple-btn: #6b3fb0;
+    --purple-card: #e9e4f7;
+    --mint-card: #e2f4ef;
+    --ink: #1c2b4e;
+    --muted: #55617f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; padding:0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6fb;
+    color: var(--ink);
+    display:flex; justify-content:center;
+  }
+  .wrap { width: 100%; max-width: 780px; padding: 28px 20px 60px; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 22px; }
+  .lesson-tag { font-weight:800; font-size: 22px; color: var(--navy); }
+  .logo { width: 44px; height:44px; object-fit:contain; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #2a3f70 100%);
+    border-radius: 16px;
+    padding: 30px 32px;
+    color: white;
+    margin-bottom: 22px;
+  }
+  .hero .kicker { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: #9fb0d8; font-weight:700; margin-bottom: 6px; }
+  .hero h1 { margin: 0 0 14px; font-size: 30px; font-weight: 800; }
+  .hero p { margin:0; font-size: 15px; line-height:1.6; color: #dbe3f5; max-width: 560px; }
+
+  .video-card {
+    background: var(--navy-dark);
+    border-radius: 16px;
+    overflow:hidden;
+    margin-bottom: 22px;
+    aspect-ratio: 16/9;
+    position:relative;
+  }
+  .video-card video { width:100%; height:100%; display:block; object-fit:cover; background:#000; }
+
+  .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 26px; }
+  .card { border-radius: 14px; padding: 20px 22px; }
+  .card-mint { background: var(--mint-card); }
+  .card-purple { background: var(--purple-card); }
+  .card h3 { margin: 0 0 12px; font-size: 14px; letter-spacing:0.5px; text-transform:uppercase; font-weight:800; }
+  .card-mint h3 { color: var(--navy); }
+  .card-purple h3 { color: var(--purple); }
+  .card ul { margin:0; padding-left: 18px; display:flex; flex-direction:column; gap:8px; }
+  .card li { font-size: 13.5px; line-height:1.4; }
+
+  .start-row { display:flex; justify-content:center; }
+  .start-btn {
+    display:inline-flex; align-items:center; gap:10px;
+    background: var(--purple-btn); color:white; text-decoration:none;
+    font-weight:800; font-size: 16px; padding: 14px 38px; border-radius: 30px;
+    box-shadow: 0 8px 18px rgba(107,63,176,0.35);
+  }
+  .start-btn svg { width:14px; height:14px; }
+
+  @media (max-width: 560px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="lesson-tag">LESSON 8</div>
+    <img class="logo" src="logo.png" alt="Fluency Studio logo">
+  </div>
+
+  <div class="hero">
+    <div class="kicker">Languages &amp; Countries</div>
+    <h1>I need to visit my family</h1>
+    <p>Sua família mora no exterior e você quer visitá-los. Você precisa pedir para o seu chefe.</p>
+  </div>
+
+  <div class="video-card">
+    <video controls poster="">
+      <source src="lesson8.mp4" type="video/mp4">
+      Seu navegador não suporta vídeo HTML5.
+    </video>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-mint">
+      <h3>Learning Objectives</h3>
+      <ul>
+        <li>Can name some members of the family and some acquaintances.</li>
+        <li>Can name a few countries.</li>
+        <li>Can say some places they go to.</li>
+        <li>Can say what they do at some places.</li>
+      </ul>
+    </div>
+    <div class="card card-purple">
+      <h3>Grammar</h3>
+      <ul>
+        <li>Subject pronouns <b>we</b> and <b>they</b> in the <b>interrogative</b> form;</li>
+        <li>Preposition of direction <b>to</b>;</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="start-row">
+    <a class="start-btn" href="Licao 8 - Languages and Countries.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      Iniciar
+    </a>
+  </div>
+
+</div>
+</body>
+</html>
