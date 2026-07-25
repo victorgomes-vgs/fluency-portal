@@ -346,12 +346,13 @@
     .num-light{background:var(--badge);border:1px solid var(--input-border);color:var(--font);min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     .num-dark{background:rgba(139,92,246,.22);border:1px solid rgba(167,139,250,.45);color:#c4b5fd;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     [data-theme="light"] .num-dark{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);color:#6d28d9;}
-    .tag-input{background:rgba(30,143,168,.18);color:#7de0f8;border:1px solid rgba(30,143,168,.38);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-output{background:rgba(0,168,157,.16);color:#5eead4;border:1px solid rgba(0,168,157,.40);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-review{background:rgba(139,92,246,.20);color:#c4b5fd;border:1px solid rgba(167,139,250,.48);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    [data-theme="light"] .tag-input{background:rgba(30,143,168,.14);color:#0d5260;border-color:rgba(24,126,116,.35);}
-    [data-theme="light"] .tag-output{background:rgba(0,102,91,.12);color:#00665B;border-color:rgba(0,168,157,.40);}
-    [data-theme="light"] .tag-review{background:rgba(139,92,246,.14);color:#5b21b6;border-color:rgba(139,92,246,.40);}
+    /* INPUT / OUTPUT — teal claro luminoso (sempre legível na trilha) */
+    .tag-input{background:rgba(45,212,191,.28)!important;color:#99F6E4!important;border:1px solid #5EEAD4!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(94,234,212,.95),0 0 16px rgba(45,212,191,.65);box-shadow:0 0 12px rgba(45,212,191,.45);}
+    .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border:1px solid #2DD4BF!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(45,212,191,.95),0 0 16px rgba(20,184,166,.7);box-shadow:0 0 12px rgba(20,184,166,.5);}
+    .tag-review{background:rgba(167,139,250,.28)!important;color:#DDD6FE!important;border:1px solid #C4B5FD!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(196,181,253,.85);box-shadow:0 0 10px rgba(139,92,246,.4);}
+    [data-theme="light"] .tag-input{background:rgba(45,212,191,.28)!important;color:#5EEAD4!important;border-color:#2DD4BF!important;}
+    [data-theme="light"] .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border-color:#14B8A6!important;}
+    [data-theme="light"] .tag-review{background:rgba(167,139,250,.25)!important;color:#A78BFA!important;border-color:#8B5CF6!important;}
     .lesson-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid transparent;transition:all .15s;text-align:center;line-height:1.25;}
     .lesson-link-btn-gravacao{background:linear-gradient(135deg,rgba(53,102,182,.22),rgba(34,82,160,.12));border-color:rgba(91,155,232,.45);color:#93c5fd;}
     .lesson-link-btn-relatorio{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(109,40,217,.12));border-color:rgba(167,139,250,.45);color:#c4b5fd;}
@@ -779,10 +780,38 @@
     .tl-lesson-title{font-size:13px;font-weight:700;}
     .tl-lesson-meta{font-size:10px;opacity:.8;margin-top:2px;}
     .tl-previsao{font-size:9px;opacity:.7;letter-spacing:.02em;}
-    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:none;}
-    .tl-badge-done-output{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:none;}
-    .tl-badge-done-review{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:none;}
+    /* CONCLUÍDA — neon verde luminoso */
+    .tl-badge-done{
+      font-size:9px;font-weight:900;padding:3px 9px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;
+      background:rgba(34,197,94,.22)!important;color:#4ADE80!important;border:1px solid #4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9),0 0 28px rgba(74,222,128,.55);
+      box-shadow:0 0 12px rgba(34,197,94,.65),0 0 24px rgba(74,222,128,.35)!important;
+    }
+    .tl-badge-done-output{
+      background:rgba(34,197,94,.22)!important;border-color:#4ADE80!important;color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
+    .tl-badge-done-review{
+      background:rgba(34,197,94,.22)!important;border-color:#4ADE80!important;color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
     .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--tl-active-bg);color:var(--tl-active-text);border:1px solid var(--tl-active-border);flex-shrink:0;box-shadow:none;}
+    /* Fonte branca da trilha com sombra elegante */
+    .tl-pill-done .tl-lesson-title,
+    .tl-pill-done-output .tl-lesson-title,
+    .tl-pill-done-review .tl-lesson-title,
+    .tl-pill-done .tl-lesson-meta,
+    .tl-pill-done-output .tl-lesson-meta,
+    .tl-pill-done-review .tl-lesson-meta,
+    .tl-pill-active .tl-lesson-title{
+      color:#FFFFFF!important;
+      text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),0 0 12px rgba(255,255,255,.2);
+    }
+    .tl-pill-done .tl-mod-chevron,
+    .tl-pill-done-output .tl-mod-chevron,
+    .tl-pill-done-review .tl-mod-chevron{filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
     .tl-lesson-expand{margin-top:6px;border-radius:8px;overflow:hidden;border:1px solid var(--tl-border);background:var(--card);animation:tlExpand .2s ease;box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
     .tl-lesson-expand .lesson-detail{background:transparent;border-top:none;color:var(--font);}
     .tl-lesson-expand .detail-label{color:var(--font-muted);}
@@ -818,10 +847,23 @@
     }
     [data-theme="light"] .tl-lesson-expand{background:var(--card);border-color:var(--tl-border);box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
     [data-theme="light"] .tl-lesson-expand .detail-label{color:var(--font-muted);}
-    [data-theme="light"] .tl-badge-done{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
-    [data-theme="light"] .tl-badge-done-output{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
-    [data-theme="light"] .tl-badge-done-review{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
+    [data-theme="light"] .tl-badge-done,
+    [data-theme="light"] .tl-badge-done-output,
+    [data-theme="light"] .tl-badge-done-review{
+      background:rgba(34,197,94,.22)!important;color:#4ADE80!important;border-color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
     [data-theme="light"] .tl-badge-current{background:var(--tl-active-bg);color:var(--tl-active-text);border-color:var(--tl-active-border);box-shadow:none;}
+    [data-theme="light"] .tl-pill-done .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done-output .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done-review .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done .tl-lesson-meta,
+    [data-theme="light"] .tl-pill-done-output .tl-lesson-meta,
+    [data-theme="light"] .tl-pill-done-review .tl-lesson-meta{
+      color:#FFFFFF!important;
+      text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),0 0 12px rgba(255,255,255,.2);
+    }
     [data-theme="light"] .tl-hide-btn{border-color:var(--tl-border);background:var(--tl-mod-bg);color:var(--tl-muted);}
     [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:var(--tl-muted);}
     [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:var(--tl-pending-text);}
@@ -866,14 +908,14 @@
 .status-pill-all     { background: linear-gradient(135deg,#1e8fa8,#145f7a); color:#fff; border-color: rgba(44,160,180,.4); }
 .status-pill-ativo   { background: rgba(30,160,110,.14); border-color: rgba(30,160,110,.38); color:#60daa8; }
 .status-pill-lead    { background: rgba(42,120,200,.14); border-color: rgba(42,120,200,.35); color:#88c0f8; }
-.status-pill-interesse { background: rgba(220,160,30,.14); border-color: rgba(220,160,30,.38); color:#f0cc60; }
+.status-pill-interesse { background: rgba(30,64,175,.12); border-color: rgba(30,64,175,.35); color:#1e3a8a; }
 .status-pill-trancado { background: rgba(140,100,200,.14); border-color: rgba(140,100,200,.35); color:#c0a0f8; }
 .status-pill-evadido { background: rgba(200,60,80,.14); border-color: rgba(200,60,80,.38); color:#f09090; }
 .status-pill-inactive { background: var(--badge); border-color: var(--divider); color: var(--font-muted); }
 .status-pill-inactive:hover { filter: brightness(1.12); }
 [data-theme="light"] .status-pill-ativo   { color:#0a5c38; }
 [data-theme="light"] .status-pill-lead    { color:#1a3a80; }
-[data-theme="light"] .status-pill-interesse { color:#7a5500; }
+[data-theme="light"] .status-pill-interesse { color:#1e3a8a; }
 [data-theme="light"] .status-pill-trancado { color:#3d1a80; }
 [data-theme="light"] .status-pill-evadido { color:#8a2030; }
 [data-theme="light"] .status-pill-inactive { color:#1a3a52; }
@@ -973,11 +1015,11 @@
     [data-theme="light"] .input:focus,[data-theme="light"] .input-light:focus{border-color:rgba(53,102,182,.55)!important;box-shadow:0 0 0 3px rgba(134,207,255,.35)!important;}
     [data-theme="light"] .fin-hero{background:linear-gradient(145deg,#fff 0%,#E0ECFF 50%,#D4F7F2 100%);border-color:rgba(53,102,182,.18);box-shadow:0 14px 40px rgba(23,64,130,.10);}
     [data-theme="light"] .fin-hero::before{background:radial-gradient(circle,rgba(53,102,182,.12),transparent 70%);}
-    [data-theme="light"] .student-card{background:var(--gradient-surface);border-color:rgba(53,102,182,.14);}
-    [data-theme="light"] .student-card:hover{box-shadow:0 12px 32px rgba(23,64,130,.12);border-color:rgba(53,102,182,.28);}
+    [data-theme="light"] .student-card{background:var(--card,#fff);border:1.5px solid #0f2c5c;box-shadow:0 4px 12px rgba(15,44,92,.08);}
+    [data-theme="light"] .student-card:hover{box-shadow:0 10px 28px rgba(15,44,92,.14);border-color:#0a1f45;}
     [data-theme="light"] .status-pill-ativo{background:linear-gradient(135deg,rgba(163,224,214,.45),rgba(212,247,242,.8));border-color:rgba(0,102,91,.35);color:#00665B;}
     [data-theme="light"] .status-pill-lead{background:linear-gradient(135deg,rgba(202,222,252,.7),rgba(224,236,255,.9));border-color:rgba(53,102,182,.30);color:#174082;}
-    [data-theme="light"] .status-pill-interesse{background:linear-gradient(135deg,rgba(255,236,200,.5),rgba(255,248,230,.8));border-color:rgba(200,140,30,.28);color:#8a5a00;}
+    [data-theme="light"] .status-pill-interesse{background:linear-gradient(135deg,rgba(219,234,254,.9),rgba(239,246,255,1));border-color:rgba(30,58,138,.35);color:#1e3a8a;}
     [data-theme="light"] .modal-box{box-shadow:0 24px 64px rgba(23,64,130,.18);border-color:rgba(53,102,182,.16);}
     [data-theme="light"] .modal-header{background:var(--gradient-cta);}
     [data-theme="light"] .modal-tab-active{color:#174082!important;border-bottom-color:#3566B6!important;background:rgba(134,207,255,.15);}
@@ -6016,12 +6058,14 @@ const dashCSS=`
 [data-theme="light"] .gcal-embed-head{background:linear-gradient(135deg,rgba(224,236,255,.5),rgba(255,255,255,.9));}
 .fc-side{padding:14px 16px;border-top:1px solid var(--divider);max-height:180px;overflow-y:auto;}
 .fc-side-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--font-muted);margin-bottom:8px;}
-[data-theme="light"] .dash-nav-btn{background:linear-gradient(145deg,#fff,rgba(224,236,255,.85));border-color:rgba(53,102,182,.16);}
-[data-theme="light"] .dash-nav-btn::before{background:linear-gradient(135deg,transparent,rgba(134,207,255,.18));}
-[data-theme="light"] .dash-nav-btn:hover{border-color:rgba(53,102,182,.38);box-shadow:0 12px 32px rgba(23,64,130,.12);}
-[data-theme="light"] .dash-stat-card{background:linear-gradient(145deg,#fff 0%,#f4f9ff 100%);border-color:rgba(53,102,182,.14);position:relative;overflow:hidden;}
-[data-theme="light"] .dash-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3566B6,#86CFFF,#187E74);opacity:.75;}
-[data-theme="light"] .dash-stat-num{background:linear-gradient(135deg,#174082,#3566B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+[data-theme="light"] .dash-nav-btn{background:#fff;border:1.5px solid #0f2c5c;color:#0f172a;}
+[data-theme="light"] .dash-nav-btn::before{background:linear-gradient(135deg,transparent,rgba(15,44,92,.06));}
+[data-theme="light"] .dash-nav-btn:hover{border-color:#0a1f45;box-shadow:0 8px 24px rgba(15,44,92,.12);color:#0a1f45;}
+/* Cards do painel admin: borda navy escura, sem cores quentes */
+[data-theme="light"] .dash-stat-card{background:linear-gradient(145deg,#ffffff 0%,#eef4fb 100%);border:2px solid #0f2c5c;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(15,44,92,.08);}
+[data-theme="light"] .dash-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0a1f45,#0f2c5c,#1e3a8a);opacity:1;}
+[data-theme="light"] .dash-stat-num{background:none;-webkit-background-clip:unset;-webkit-text-fill-color:unset;background-clip:unset;color:#0f172a!important;}
+[data-theme="light"] .dash-stat-label{color:#1e3a5f!important;}
 [data-theme="light"] .aula-hoje-item{background:rgba(255,255,255,.85);border-color:rgba(53,102,182,.12);}
 [data-theme="light"] .aula-hoje-item:hover{background:rgba(134,207,255,.12);border-color:rgba(53,102,182,.28);}
 [data-theme="light"] .fc-wrap{background:linear-gradient(145deg,#fff,rgba(224,236,255,.5));border-color:rgba(53,102,182,.16);box-shadow:0 12px 36px rgba(23,64,130,.08);}
@@ -6213,9 +6257,9 @@ function AdminAgendaDashboard({students,onBack}){
       <button className="btn rounded-xl px-3 py-2 text-sm mb-4 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Voltar ao Dashboard</button>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#f0cc60",fontSize:18}}>{proxima?formatDateBR(proxima.date).slice(0,5):"—"}</div><div className="dash-stat-label">Próxima Aula</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e8fa8"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#c0a0f8"}}>{todosPendentes}</div><div className="dash-stat-label">Tarefas Pendentes</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c",fontSize:18}}>{proxima?formatDateBR(proxima.date).slice(0,5):"—"}</div><div className="dash-stat-label">Próxima Aula</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{todosPendentes}</div><div className="dash-stat-label">Tarefas Pendentes</div></div>
       </div>
 
       <div className="agenda-grid mb-5">
@@ -6952,28 +6996,29 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO]);
 
+  // Ícones: só cores frias/escuras (proibido laranja/dourado/quente)
   const navBtns=[
-    {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#1e8fa8", ativo:true},
-    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#f0a060", ativo:true},
-    {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#60daa8", ativo:true},
-    {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#f0cc60", ativo:true},
-    {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#c0a0f8", ativo:false},
-    {id:"config",    icon:"settings",     label:"Config.",     cor:"#f09090", ativo:true},
+    {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#0f2c5c", ativo:true},
+    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#1e3a8a", ativo:true},
+    {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#0f766e", ativo:true},
+    {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#0e4d6e", ativo:true},
+    {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#334155", ativo:false},
+    {id:"config",    icon:"settings",     label:"Config.",     cor:"#1e293b", ativo:true},
   ];
 
   return(
     <div>
       {/* STATS — 3 cards (sem Total Alunos; ativos bastam) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e8fa8"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#60daa8",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#f0cc60"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
       </div>
 
       {/* AULAS DO DIA */}
       <div className="glass rounded-2xl p-5 mb-5">
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-          <Icon name="calendar-check" size={16} style={{color:"#1e8fa8"}}/>
+          <Icon name="calendar-check" size={16} style={{color:"#0f2c5c"}}/>
           <span style={{fontWeight:700,fontSize:14}}>Aulas de Hoje</span>
           <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:4}}>
             {hoje.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})}
@@ -7003,7 +7048,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
           <button key={b.id} className="dash-nav-btn" onClick={()=>b.ativo&&onNavigate(b.id)} style={{opacity:b.ativo?1:.6,cursor:b.ativo?"pointer":"default",position:"relative"}}>
             <Icon name={b.icon} size={22} style={{color:b.cor}}/>
             <span>{b.label}</span>
-            {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#e8a94c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
+            {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#0f2c5c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
             {!b.ativo&&<span style={{fontSize:9,color:"var(--font-muted)",marginTop:-4}}>Em breve</span>}
           </button>
         ))}
@@ -7135,7 +7180,7 @@ function AdminAlunos({students,onSelectUid}){
                       <div className="student-card-actions">
                         {!(s.hasPortalLogin||s.authUid)&&(
                           <button type="button" onClick={e=>{e.stopPropagation();setRepairTarget(s);setRepairPass("");setRepairMsg("");setRepairErr("");}}
-                            style={{background:"rgba(232,169,76,.18)",border:"1px solid rgba(232,169,76,.45)",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#c8860a",whiteSpace:"nowrap"}}
+                            style={{background:"rgba(15,118,110,.12)",border:"1.5px solid #0f766e",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#0f766e",whiteSpace:"nowrap"}}
                             title="Criar/vincular login do portal">
                             <Icon name="log-in" size={11}/>Acesso
                           </button>
@@ -7279,7 +7324,7 @@ function AdminApp({user}){
             <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
               {pendentesCount>0&&(
                 <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
-                  style={{background:"#FFFBEB",border:"1px solid #FCD34D",color:"#B45309"}}>
+                  style={{background:"#E0F2FE",border:"1.5px solid #0f2c5c",color:"#0f2c5c"}}>
                   <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
                 </button>
               )}
