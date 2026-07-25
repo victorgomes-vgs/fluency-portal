@@ -138,7 +138,8 @@
     /* Finance KPI grid */
     .fin-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
     @media (max-width: 800px) { .fin-kpi-grid { grid-template-columns: 1fr; } }
-    .fin-kpi-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; }
+    .fin-kpi-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; transition: border-color .15s, box-shadow .15s; }
+    .fin-kpi-card:hover { border-color: #0f2c5c; box-shadow: 0 6px 16px rgba(15,44,92,0.12); }
     .fin-kpi-label { font-size: 12px; font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
     .fin-kpi-value { font-size: 28px; font-weight: 800; color: #1E1E1E; letter-spacing: -0.5px; font-family: var(--ds-font); }
     .fin-kpi-sub { font-size: 12px; color: #475569; margin-top: 6px; }
@@ -1191,7 +1192,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-colors-only");
+console.info("Fluency Portal v2026.07.25-finance-fix");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -2088,51 +2089,84 @@ function toJsDate(val){
   if(typeof val.seconds==="number")return new Date(val.seconds*1000);
   return null;
 }
-function invoiceDocId(studentId,parcelaId){return (studentId||"s")+"__"+(parcelaId||"p");}
-/** Derive virtual invoices/transactions from legacy parcelas (read-only fallback). Does not write. */
-function deriveFinanceFromParcelas(students){
+function invoiceDocId(studentId,parcelaId){return String(studentId||"s")+"__"+String(parcelaId||"p").replace(/[^a-zA-Z0-9_-]/g,"_");}
+/** ID estável da parcela — evita cobranças fantasma (ex.: mesmo aluno várias vezes). */
+function parcelaStableId(studentId,p,idx){
+  if(p&&p.id!=null&&String(p.id).trim()!=="")return String(p.id).trim();
+  const bits=[studentId||"s",p&&p.dataVencimento||"nodate",p&&p.mes||"nomes",String(idx)];
+  return "auto_"+bits.join("_").replace(/\s+/g,"_");
+}
+/**
+ * Fonte de verdade do financeiro: SOMENTE parcelas em students.*.financeiro.parcelas
+ * — valor > 0 (sem cobrança vazia)
+ * — sem duplicar o mesmo id
+ * — ignora docs do sistema
+ */
+function buildFinanceFromStudents(students){
   const today=getTodayISO();
   const invoices=[];
   const transactions=[];
+  const seen=new Set();
   (students||[]).forEach(s=>{
+    if(!s)return;
     const sid=s.uid||s.id;
-    (s.financeiro?.parcelas||[]).forEach(p=>{
+    if(!sid||sid===COURSES_CATALOG_DOC||String(sid).startsWith("__system"))return;
+    const parcelas=Array.isArray(s.financeiro?.parcelas)?s.financeiro.parcelas:[];
+    parcelas.forEach((p,idx)=>{
+      if(!p||typeof p!=="object")return;
       const amount=getParcelValor(p);
-      if(!(amount>0)&&!p.dataVencimento)return;
+      if(!(amount>0))return;
+      const pid=parcelaStableId(sid,p,idx);
+      const invId=invoiceDocId(sid,pid);
+      if(seen.has(invId))return;
+      seen.add(invId);
       const status=mapParcelaToInvoiceStatus(p,today);
-      const invId=invoiceDocId(sid,p.id||p.mes||p.dataVencimento);
+      const studentName=s.name||s.nome||"Aluno";
+      const description=(p.mes&&String(p.mes).trim())||("Parcela "+(p.dataVencimento?formatDateBR(p.dataVencimento):String(idx+1)));
       invoices.push({
-        id:invId,_legacy:true,studentId:sid,studentName:s.name||s.nome||"Aluno",
-        amount:amount||0,description:p.mes||("Parcela "+(p.dataVencimento||"")),
-        status,dueDate:p.dataVencimento||null,createdAt:p.dataVencimento||null,
+        id:invId,studentId:sid,studentName,amount,description,status,
+        dueDate:p.dataVencimento||null,createdAt:p.dataVencimento||null,
+        legacyParcelaId:pid,parcelaIndex:idx,_source:"parcela",
       });
-      if(p.status==="paga"&&(amount>0)){
+      if((p.status==="paga"||status==="paid")&&amount>0){
+        const payDate=p.dataPagamento||p.dataVencimento||today;
         transactions.push({
-          id:"tx_"+invId,_legacy:true,studentId:sid,studentName:s.name||s.nome||"Aluno",
-          invoiceId:invId,amount:amount||0,type:"payment",
-          method:p.boletoPix?"bank_transfer":"cash",
-          date:p.dataPagamento||p.dataVencimento||today,status:"paid",
+          id:"tx_"+invId,studentId:sid,studentName,invoiceId:invId,amount,
+          type:"payment",method:p.boletoPix?"bank_transfer":"cash",
+          date:payDate,status:"paid",_source:"parcela",description,
         });
       }
     });
   });
   return{invoices,transactions};
 }
-function computeFinanceKpis(invoices,transactions){
-  const now=new Date();
-  const cutoff=new Date(now.getTime()-30*24*60*60*1000);
-  let revenue30=0,outstanding=0,overdue=0;
+/** @deprecated alias */
+function deriveFinanceFromParcelas(students){return buildFinanceFromStudents(students);}
+/** KPIs do MÊS corrente (não 30 dias / não histórico total). */
+function computeFinanceKpis(invoices,transactions,monthKey){
+  const mk=monthKey||getMonthKey(new Date());
+  let revenueMonth=0,outstanding=0,overdue=0;
+  const revenueItems=[],outstandingItems=[],overdueItems=[];
   (transactions||[]).forEach(t=>{
     if((t.type||"payment")!=="payment")return;
+    const amt=parseFloat(t.amount)||0;
+    if(!(amt>0))return;
     const d=toJsDate(t.date);
-    if(d&&d>=cutoff)revenue30+=(parseFloat(t.amount)||0);
+    if(!d)return;
+    if(getMonthKey(d)!==mk)return;
+    revenueMonth+=amt;
+    revenueItems.push(t);
   });
   (invoices||[]).forEach(inv=>{
     const amt=parseFloat(inv.amount)||0;
-    if(inv.status!=="paid")outstanding+=amt;
-    if(inv.status==="overdue")overdue+=amt;
+    if(!(amt>0))return;
+    if(inv.status!=="paid"){outstanding+=amt;outstandingItems.push(inv);}
+    if(inv.status==="overdue"){overdue+=amt;overdueItems.push(inv);}
   });
-  return{revenue30,outstanding,overdue};
+  revenueItems.sort((a,b)=>(toJsDate(b.date)?.getTime()||0)-(toJsDate(a.date)?.getTime()||0));
+  outstandingItems.sort((a,b)=>String(a.dueDate||"").localeCompare(String(b.dueDate||"")));
+  overdueItems.sort((a,b)=>String(a.dueDate||"").localeCompare(String(b.dueDate||"")));
+  return{revenueMonth,outstanding,overdue,revenueItems,outstandingItems,overdueItems,monthKey:mk};
 }
 function computeCashFlowSeries(transactions,expensesByMonth){
   // Last 6 months revenue (payments) vs expenses
@@ -2157,9 +2191,10 @@ function computeCashFlowSeries(transactions,expensesByMonth){
 /** Upsert invoice (+ optional payment transaction) from a legacy parcela. Never deletes user data. */
 async function upsertInvoiceFromParcela(studentId,parcela,studentName){
   if(!studentId||!parcela)return;
-  const invId=invoiceDocId(studentId,parcela.id||parcela.mes||parcela.dataVencimento);
-  const status=mapParcelaToInvoiceStatus(parcela);
   const amount=getParcelValor(parcela);
+  if(!(amount>0))return; // não cria fatura fantasma sem valor
+  const invId=invoiceDocId(studentId,parcelaStableId(studentId,parcela,0));
+  const status=mapParcelaToInvoiceStatus(parcela);
   const invPayload={
     studentId:String(studentId),
     amount:amount||0,
@@ -3215,14 +3250,10 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
 }
 
 function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
-  const [invoices,setInvoices]=useState([]);
-  const [transactions,setTransactions]=useState([]);
-  const [cloudReady,setCloudReady]=useState(false);
-  const [cloudErr,setCloudErr]=useState("");
-  const [syncing,setSyncing]=useState(false);
+  const [monthKey,setMonthKey]=useState(()=>getMonthKey(new Date()));
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
-  // Expenses kept for cash-flow chart (non-destructive; same storage as before)
+  const [kpiDetail,setKpiDetail]=useState(null); // null | 'revenue' | 'outstanding' | 'overdue'
   const [despesasPorMes,setDespesasPorMes]=useState({});
   const [despesasFixas,setDespesasFixas]=useState([]);
   const [fixasPagasPorMes,setFixasPagasPorMes]=useState({});
@@ -3246,73 +3277,37 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   }
   function readLocalFixasPagas(){try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}}
 
-  // Load invoices + transactions (new architecture). Never delete existing student data.
   useEffect(()=>{
-    let unsubInv=null, unsubTx=null;
-    setCloudErr("");
-    try{
-      unsubInv=db.collection("invoices").onSnapshot(snap=>{
-        const list=snap.docs.map(d=>({id:d.id,...d.data()}));
-        setInvoices(list);
-        setCloudReady(true);
-      },err=>{
-        console.warn("invoices listen:",err);
-        setCloudErr("Coleção invoices indisponível nas regras do Firestore — usando dados legados das parcelas.");
-        setCloudReady(false);
-      });
-      unsubTx=db.collection("transactions").onSnapshot(snap=>{
-        setTransactions(snap.docs.map(d=>({id:d.id,...d.data()})));
-      },err=>console.warn("transactions listen:",err));
-    }catch(e){
-      setCloudErr(e.message||"Erro ao conectar finance collections");
-    }
-    // expenses for chart
-    const localPm=readLocalPorMes();
-    setDespesasPorMes(localPm);
+    setDespesasPorMes(readLocalPorMes());
     setDespesasFixas(readLocalFixas());
     setFixasPagasPorMes(readLocalFixasPagas());
     (async()=>{
       try{
-        const ref=db.collection("users").doc(ADMIN_UID);
-        const snap=await ref.get();
+        const snap=await db.collection("users").doc(ADMIN_UID).get();
         if(snap.exists){
           const data=snap.data()||{};
           if(data.despesasPorMes)setDespesasPorMes(prev=>({...prev,...data.despesasPorMes}));
           if(Array.isArray(data.despesasFixas))setDespesasFixas(data.despesasFixas);
           if(data.despesasFixasPagasPorMes)setFixasPagasPorMes(normalizeFixasPagas(data.despesasFixasPagasPorMes));
         }
-      }catch(e){/* local fallback ok */}
+      }catch(e){}
     })();
-    return()=>{if(unsubInv)unsubInv();if(unsubTx)unsubTx();};
   },[]);
 
-  const legacy=useMemo(()=>deriveFinanceFromParcelas(students),[students]);
-  // Prefer cloud docs; if empty, fall back to legacy parcelas (no data loss)
-  const effectiveInvoices=useMemo(()=>{
-    if(invoices&&invoices.length>0){
-      const nameById=Object.fromEntries((students||[]).map(s=>[s.uid,s.name||s.nome||"Aluno"]));
-      return invoices.map(inv=>({...inv,studentName:inv.studentName||nameById[inv.studentId]||"Aluno"}));
-    }
-    return legacy.invoices;
-  },[invoices,legacy,students]);
-  const effectiveTransactions=useMemo(()=>{
-    if(transactions&&transactions.length>0){
-      const nameById=Object.fromEntries((students||[]).map(s=>[s.uid,s.name||s.nome||"Aluno"]));
-      return transactions.map(t=>({...t,studentName:t.studentName||nameById[t.studentId]||"Aluno"}));
-    }
-    return legacy.transactions;
-  },[transactions,legacy,students]);
+  // Fonte única: parcelas reais dos alunos (evita cobranças fantasma da coleção invoices)
+  const built=useMemo(()=>buildFinanceFromStudents(students),[students]);
+  const effectiveInvoices=built.invoices;
+  const effectiveTransactions=built.transactions;
 
-  const kpis=useMemo(()=>computeFinanceKpis(effectiveInvoices,effectiveTransactions),[effectiveInvoices,effectiveTransactions]);
+  const kpis=useMemo(()=>computeFinanceKpis(effectiveInvoices,effectiveTransactions,monthKey),[effectiveInvoices,effectiveTransactions,monthKey]);
+  const isCurrentMonth=monthKey===getMonthKey(new Date());
 
   const expensesByMonth=useMemo(()=>{
     const out={};
-    // variable expenses per month
     Object.keys(despesasPorMes||{}).forEach(mk=>{
       const arr=despesasPorMes[mk]||[];
       out[mk]=(out[mk]||0)+arr.reduce((s,d)=>s+(parseFloat(d.valor)||0),0);
     });
-    // fixed paid per month
     Object.keys(fixasPagasPorMes||{}).forEach(mk=>{
       const map=fixasPagasPorMes[mk]||{};
       const sum=(despesasFixas||[]).reduce((s,d)=>s+(map[d.id]?parseFloat(d.valor)||0:0),0);
@@ -3323,7 +3318,6 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
 
   const cashFlow=useMemo(()=>computeCashFlowSeries(effectiveTransactions,expensesByMonth),[effectiveTransactions,expensesByMonth]);
 
-  // Chart.js cash flow
   useEffect(()=>{
     if(!chartRef.current||typeof Chart==="undefined")return;
     if(chartInstance.current){chartInstance.current.destroy();chartInstance.current=null;}
@@ -3336,13 +3330,12 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
       data:{
         labels,
         datasets:[
-          {label:"Receita (pagamentos)",data:cashFlow.revenue,backgroundColor:"rgba(21,128,61,0.75)",borderRadius:6},
+          {label:"Recebido no mês",data:cashFlow.revenue,backgroundColor:"rgba(21,128,61,0.75)",borderRadius:6},
           {label:"Despesas",data:cashFlow.expenses,backgroundColor:"rgba(185,28,28,0.65)",borderRadius:6},
         ],
       },
       options:{
-        responsive:true,
-        maintainAspectRatio:false,
+        responsive:true,maintainAspectRatio:false,
         plugins:{
           legend:{labels:{color:"#1E1E1E",font:{family:"Inter, sans-serif",size:12}}},
           tooltip:{callbacks:{label:(ctx)=>ctx.dataset.label+": "+formatCurrency(ctx.parsed.y)}},
@@ -3373,24 +3366,19 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     return list.filter(s=>(s.name||"").toLowerCase().includes(q)||(s.email||"").toLowerCase().includes(q));
   },[studentsByStatus,busca]);
 
-  async function handleSyncFromParcelas(){
-    if(!students||!students.length)return;
-    if(!confirm("Espelhar parcelas existentes dos alunos para as coleções invoices e transactions?\nNenhum dado de aluno será apagado."))return;
-    setSyncing(true);
-    try{
-      for(const s of students){
-        await syncStudentParcelasToInvoices(s.uid,s.financeiro?.parcelas||[],s.name||s.nome);
-      }
-      alert("Sincronização concluída. Se as regras do Firestore permitirem, as coleções invoices/transactions foram preenchidas.");
-    }catch(e){
-      console.error(e);
-      alert("Falha parcial na sincronização. Verifique as regras do Firestore para invoices e transactions.");
-    }finally{
-      setSyncing(false);
-    }
-  }
-
-  const dataSource=invoices.length>0?"Firestore (invoices/transactions)":"Legado (parcelas dos alunos)";
+  const detailTitle=kpiDetail==="revenue"
+    ?"Recebido em "+formatMonthYear(monthKey)
+    :kpiDetail==="outstanding"?"Saldos em aberto (por quê)"
+    :kpiDetail==="overdue"?"Valores em atraso (por quê)"
+    :"";
+  const detailRows=kpiDetail==="revenue"?kpis.revenueItems
+    :kpiDetail==="outstanding"?kpis.outstandingItems
+    :kpiDetail==="overdue"?kpis.overdueItems
+    :[];
+  const detailTotal=kpiDetail==="revenue"?kpis.revenueMonth
+    :kpiDetail==="outstanding"?kpis.outstanding
+    :kpiDetail==="overdue"?kpis.overdue
+    :0;
 
   return(
     <div>
@@ -3401,77 +3389,137 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
           </button>
           <h2 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>Financeiro da Escola</h2>
           <p style={{fontSize:13,color:"#475569",marginTop:4}}>
-            Invoices (a receber) separados de Transactions (recebido) · Fonte: <strong>{dataSource}</strong>
+            Fonte: <strong>parcelas cadastradas em cada aluno</strong> (valor &gt; 0). Sem cobranças fantasma.
           </p>
         </div>
-        <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSyncFromParcelas} disabled={syncing}>
-          <Icon name="refresh-cw" size={14}/>{syncing?"Sincronizando…":"Sincronizar parcelas → invoices"}
+        <div className="fin-month-nav" style={{margin:0}}>
+          <button type="button" className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,-1))} aria-label="Mês anterior"><Icon name="chevron-left" size={18}/></button>
+          <div className="fin-month-label" style={{minWidth:160}}>{formatMonthYear(monthKey)}{!isCurrentMonth&&<div style={{fontSize:11,fontWeight:600,opacity:.55}}>outro mês</div>}</div>
+          <button type="button" className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,1))} disabled={isCurrentMonth} style={{opacity:isCurrentMonth?0.4:1}} aria-label="Próximo mês"><Icon name="chevron-right" size={18}/></button>
+        </div>
+      </div>
+
+      <div className="premium-card" style={{marginBottom:16,background:"#EFF6FF",borderColor:"#BFDBFE"}}>
+        <p style={{fontSize:13,color:"#1e3a8a",margin:0,lineHeight:1.5}}>
+          <strong>Como editar:</strong> clique no aluno abaixo (ou na linha da fatura) → aba Financeiro → edite/remova parcelas.
+          Os números dos cards vêm só do que está cadastrado ali, com valor maior que zero.
+        </p>
+      </div>
+
+      {/* KPI cards — clicáveis */}
+      <div className="fin-kpi-grid">
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("revenue")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Recebido no mês</div>
+          <div className="fin-kpi-value" style={{color:"#15803D"}}>{formatCurrency(kpis.revenueMonth)}</div>
+          <div className="fin-kpi-sub">{formatMonthYear(monthKey)} · {kpis.revenueItems.length} pagamento{kpis.revenueItems.length!==1?"s":""} · clique para ver</div>
+        </button>
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("outstanding")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Saldos em aberto</div>
+          <div className="fin-kpi-value" style={{color:"#B45309"}}>{formatCurrency(kpis.outstanding)}</div>
+          <div className="fin-kpi-sub">{kpis.outstandingItems.length} cobrança{kpis.outstandingItems.length!==1?"s":""} · clique para ver o porquê</div>
+        </button>
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("overdue")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Valor em atraso</div>
+          <div className="fin-kpi-value" style={{color:"#B91C1C"}}>{formatCurrency(kpis.overdue)}</div>
+          <div className="fin-kpi-sub">{kpis.overdueItems.length} vencida{kpis.overdueItems.length!==1?"s":""} · clique para ver o porquê</div>
         </button>
       </div>
 
-      {cloudErr&&(
-        <div className="premium-card" style={{marginBottom:16,background:"#FFFBEB",borderColor:"#FCD34D"}}>
-          <p style={{fontSize:13,color:"#B45309",margin:0}}>{cloudErr}</p>
-          <p style={{fontSize:12,color:"#475569",marginTop:6}}>Crie as coleções <code>invoices</code> e <code>transactions</code> e permita leitura/escrita ao admin nas regras do Firestore.</p>
+      {kpiDetail&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setKpiDetail(null);}}>
+          <div className="modal-box" style={{maxWidth:640}} onClick={e=>e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>DETALHE DO CARD</div>
+                <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>{detailTitle}</div>
+              </div>
+              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={()=>setKpiDetail(null)}>
+                <Icon name="x" size={18}/>
+              </button>
+            </div>
+            <div className="modal-body" style={{padding:0}}>
+              <div style={{padding:"12px 16px",background:"#F8F9FA",borderBottom:"1px solid #E2E8F0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{fontSize:13,color:"#475569"}}>{detailRows.length} item(ns)</span>
+                <strong style={{fontSize:16,color:"#1E1E1E"}}>{formatCurrency(detailTotal)}</strong>
+              </div>
+              {detailRows.length===0?(
+                <div style={{padding:28,textAlign:"center",color:"#475569",fontSize:14}}>Nenhuma conta entra neste total.</div>
+              ):(
+                <div style={{maxHeight:360,overflowY:"auto"}}>
+                  <table className="fin-table">
+                    <thead>
+                      <tr>
+                        <th>Aluno</th>
+                        <th>Descrição</th>
+                        <th>{kpiDetail==="revenue"?"Data pag.":"Vencimento"}</th>
+                        <th>Valor</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detailRows.map(row=>{
+                        const dateRaw=kpiDetail==="revenue"?row.date:row.dueDate;
+                        const d=typeof dateRaw==="string"?dateRaw:(toJsDate(dateRaw)?toJsDate(dateRaw).toISOString().slice(0,10):"");
+                        return(
+                          <tr key={row.id}>
+                            <td style={{fontWeight:600}}>{row.studentName||"Aluno"}</td>
+                            <td>{row.description||"—"}</td>
+                            <td>{d?formatDateBR(d):"—"}</td>
+                            <td style={{fontWeight:700}}>{formatCurrency(row.amount)}</td>
+                            <td>
+                              {onSelectStudent&&(
+                                <button type="button" className="btn btn-primary rounded-lg px-2 py-1 text-xs" onClick={()=>{setKpiDetail(null);onSelectStudent(row.studentId);}}>
+                                  Editar
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setKpiDetail(null)}>Fechar</button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* KPI Metric Cards */}
-      <div className="fin-kpi-grid">
-        <div className="fin-kpi-card">
-          <div className="fin-kpi-label">Receita total (últimos 30 dias)</div>
-          <div className="fin-kpi-value" style={{color:"#15803D"}}>{formatCurrency(kpis.revenue30)}</div>
-          <div className="fin-kpi-sub">Soma de transactions com type = payment</div>
-        </div>
-        <div className="fin-kpi-card">
-          <div className="fin-kpi-label">Saldos em aberto</div>
-          <div className="fin-kpi-value" style={{color:"#B45309"}}>{formatCurrency(kpis.outstanding)}</div>
-          <div className="fin-kpi-sub">Invoices com status ≠ paid</div>
-        </div>
-        <div className="fin-kpi-card">
-          <div className="fin-kpi-label">Valor em atraso</div>
-          <div className="fin-kpi-value" style={{color:"#B91C1C"}}>{formatCurrency(kpis.overdue)}</div>
-          <div className="fin-kpi-sub">Invoices com status = overdue</div>
-        </div>
-      </div>
-
-      {/* Cash Flow Chart */}
       <div className="fin-chart-card">
         <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 4px"}}>Fluxo de caixa — 6 meses</h3>
-        <p style={{fontSize:12,color:"#475569",margin:"0 0 16px"}}>Receita (pagamentos) vs Despesas</p>
+        <p style={{fontSize:12,color:"#475569",margin:"0 0 16px"}}>Recebido por mês (parcelas pagas) vs Despesas</p>
         <div style={{height:280,position:"relative"}}>
           <canvas ref={chartRef} aria-label="Gráfico de fluxo de caixa"/>
         </div>
       </div>
 
-      {/* Recent Transactions Table */}
       <div className="fin-table-card">
-        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Transações recentes</h3>
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Pagamentos recentes</h3>
         <div style={{overflowX:"auto"}}>
           <table className="fin-table">
             <thead>
-              <tr>
-                <th>Data</th>
-                <th>Aluno</th>
-                <th>Valor</th>
-                <th>Status</th>
-              </tr>
+              <tr><th>Data</th><th>Aluno</th><th>Descrição</th><th>Valor</th><th></th></tr>
             </thead>
             <tbody>
               {recentTx.length===0?(
-                <tr><td colSpan={4} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma transação registrada ainda.</td></tr>
-              ):recentTx.map(t=>{
-                const d=toJsDate(t.date);
+                <tr><td colSpan={5} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhum pagamento com valor cadastrado.</td></tr>
+              ):recentTx.map(tx=>{
+                const d=toJsDate(tx.date);
                 const dateStr=d?formatDateBR(d.toISOString().slice(0,10)):"—";
-                const st=(t.type==="refund")?"partially_paid":"paid";
                 return(
-                  <tr key={t.id}>
+                  <tr key={tx.id}>
                     <td>{dateStr}</td>
-                    <td style={{fontWeight:600}}>{t.studentName||"Aluno"}</td>
-                    <td style={{fontWeight:700,color:t.type==="refund"?"#B91C1C":"#15803D"}}>
-                      {t.type==="refund"?"−":""}{formatCurrency(t.amount)}
+                    <td style={{fontWeight:600}}>{tx.studentName||"Aluno"}</td>
+                    <td>{tx.description||"—"}</td>
+                    <td style={{fontWeight:700,color:"#15803D"}}>{formatCurrency(tx.amount)}</td>
+                    <td>
+                      {onSelectStudent&&(
+                        <button type="button" className="btn rounded-lg px-2 py-1 text-xs" onClick={()=>onSelectStudent(tx.studentId)}>Editar</button>
+                      )}
                     </td>
-                    <td><span className={invoiceStatusBadgeClass(t.type==="refund"?"partially_paid":"paid")}>{t.type==="refund"?"Estorno":"Pago"}</span></td>
                   </tr>
                 );
               })}
@@ -3480,30 +3528,28 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
         </div>
       </div>
 
-      {/* Outstanding invoices snapshot */}
       <div className="fin-table-card">
-        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Faturas em aberto / atraso</h3>
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Cobranças em aberto / atraso</h3>
         <div style={{overflowX:"auto"}}>
           <table className="fin-table">
             <thead>
-              <tr>
-                <th>Aluno</th>
-                <th>Descrição</th>
-                <th>Vencimento</th>
-                <th>Valor</th>
-                <th>Status</th>
-              </tr>
+              <tr><th>Aluno</th><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
               {effectiveInvoices.filter(i=>i.status!=="paid").length===0?(
-                <tr><td colSpan={5} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma fatura em aberto.</td></tr>
-              ):effectiveInvoices.filter(i=>i.status!=="paid").slice(0,20).map(inv=>(
-                <tr key={inv.id} style={{cursor:onSelectStudent?"pointer":"default"}} onClick={()=>onSelectStudent&&onSelectStudent(inv.studentId)}>
+                <tr><td colSpan={6} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma cobrança em aberto com valor.</td></tr>
+              ):effectiveInvoices.filter(i=>i.status!=="paid").map(inv=>(
+                <tr key={inv.id}>
                   <td style={{fontWeight:600}}>{inv.studentName||"Aluno"}</td>
                   <td>{inv.description||"—"}</td>
-                  <td>{inv.dueDate?formatDateBR(typeof inv.dueDate==="string"?inv.dueDate:(toJsDate(inv.dueDate)||new Date()).toISOString().slice(0,10)):"—"}</td>
+                  <td>{inv.dueDate?formatDateBR(String(inv.dueDate).slice(0,10)):"—"}</td>
                   <td style={{fontWeight:700}}>{formatCurrency(inv.amount)}</td>
                   <td><span className={invoiceStatusBadgeClass(inv.status)}>{invoiceStatusLabel(inv.status)}</span></td>
+                  <td>
+                    {onSelectStudent&&(
+                      <button type="button" className="btn btn-primary rounded-lg px-2 py-1 text-xs" onClick={()=>onSelectStudent(inv.studentId)}>Editar</button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -3511,15 +3557,14 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
         </div>
       </div>
 
-      {/* Per-student finance navigation (preserves existing workflow) */}
       <div className="premium-card" style={{marginBottom:24}}>
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
           <h3 className="font-bold text-base flex items-center gap-2" style={{color:"#1E1E1E"}}>
-            <Icon name="users" size={16}/> Financeiro por Aluno
+            <Icon name="users" size={16}/> Editar financeiro por aluno
           </h3>
           <div style={{position:"relative",minWidth:200}}>
             <Icon name="search" size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",opacity:.45}}/>
-            <input className="input-light" style={{paddingLeft:32}} placeholder="Buscar aluno..." value={busca} onChange={e=>setBusca(e.target.value)}/>
+            <input className="input-light" style={{paddingLeft:32}} placeholder="Buscar aluno (ex.: Kaio)..." value={busca} onChange={e=>setBusca(e.target.value)}/>
           </div>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:16}}>
@@ -3533,8 +3578,10 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
           {alunosFiltrados.length===0?(
             <div className="text-center py-8 text-sm" style={{color:"#475569"}}>Nenhum aluno encontrado.</div>
           ):alunosFiltrados.map(s=>{
+            const parcelas=(s.financeiro?.parcelas||[]).filter(p=>getParcelValor(p)>0);
             const snap=resolveFinanceSnapshot(s.financeiro?.parcelas||[]);
             const late=snap.isLate;
+            const openSum=parcelas.filter(p=>getEffectiveParcelStatus(p,getTodayISO())!=="paga").reduce((a,p)=>a+getParcelValor(p),0);
             return(
               <button key={s.uid} className="fin-student-pick w-full text-left" style={late?{borderColor:"#FECACA",background:"#FEF2F2"}:{}} onClick={()=>onSelectStudent(s.uid)}>
                 {s.foto
@@ -3543,9 +3590,13 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                 }
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E"}}>{s.name||"Aluno"}</div>
-                  <div style={{fontSize:11,color:"#475569"}}>{(s.financeiro?.parcelas||[]).length} parcelas</div>
+                  <div style={{fontSize:11,color:"#475569"}}>
+                    {parcelas.length} cobrança{parcelas.length!==1?"s":""} com valor
+                    {openSum>0?<> · aberto {formatCurrency(openSum)}</>:null}
+                  </div>
                 </div>
                 <span className={late?"status-badge status-badge-overdue":"status-badge status-badge-paid"}>{late?"Em atraso":"Em dia"}</span>
+                <span style={{fontSize:12,fontWeight:700,color:"#0f2c5c"}}>Editar</span>
                 <Icon name="arrow-right" size={16} style={{opacity:.45}}/>
               </button>
             );
