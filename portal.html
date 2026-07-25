@@ -27,6 +27,7 @@
     });
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
@@ -1069,7 +1070,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-overhaul-ui");
+console.info("Fluency Portal v2026.07.25-overhaul-finance");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1933,6 +1934,145 @@ const FIN_STATUS=[
 ];
 const finStatusMap=Object.fromEntries(FIN_STATUS.map(s=>[s.value,s]));
 const FINANCEIRO_DEFAULT={tipo:"mensalidade",creditosTotal:0,creditosUsados:0,parcelas:[]};
+
+/* ── Finance Architecture: invoices (owed) vs transactions (paid) ───────────
+   Collections: invoices, transactions
+   Legacy student.financeiro.parcelas is preserved and mirrored — never deleted.
+   ─────────────────────────────────────────────────────────────────────────── */
+const INVOICE_STATUS={UNPAID:"unpaid",PARTIAL:"partially_paid",PAID:"paid",OVERDUE:"overdue"};
+function mapParcelaToInvoiceStatus(parcela,todayStr){
+  const eff=getEffectiveParcelStatus(parcela,todayStr||getTodayISO());
+  if(eff==="paga")return INVOICE_STATUS.PAID;
+  if(eff==="vencida")return INVOICE_STATUS.OVERDUE;
+  return INVOICE_STATUS.UNPAID;
+}
+function invoiceStatusBadgeClass(status){
+  if(status==="paid")return"status-badge status-badge-paid";
+  if(status==="overdue")return"status-badge status-badge-overdue";
+  if(status==="partially_paid")return"status-badge status-badge-partial";
+  return"status-badge status-badge-pending";
+}
+function invoiceStatusLabel(status){
+  if(status==="paid")return"Pago";
+  if(status==="overdue")return"Vencido";
+  if(status==="partially_paid")return"Parcial";
+  if(status==="unpaid")return"Em aberto";
+  return status||"—";
+}
+function toJsDate(val){
+  if(!val)return null;
+  if(val instanceof Date)return val;
+  if(typeof val.toDate==="function")return val.toDate();
+  if(typeof val==="string"){const d=new Date(val.length===10?val+"T12:00:00":val);return isNaN(d)?null:d;}
+  if(typeof val.seconds==="number")return new Date(val.seconds*1000);
+  return null;
+}
+function invoiceDocId(studentId,parcelaId){return (studentId||"s")+"__"+(parcelaId||"p");}
+/** Derive virtual invoices/transactions from legacy parcelas (read-only fallback). Does not write. */
+function deriveFinanceFromParcelas(students){
+  const today=getTodayISO();
+  const invoices=[];
+  const transactions=[];
+  (students||[]).forEach(s=>{
+    const sid=s.uid||s.id;
+    (s.financeiro?.parcelas||[]).forEach(p=>{
+      const amount=getParcelValor(p);
+      if(!(amount>0)&&!p.dataVencimento)return;
+      const status=mapParcelaToInvoiceStatus(p,today);
+      const invId=invoiceDocId(sid,p.id||p.mes||p.dataVencimento);
+      invoices.push({
+        id:invId,_legacy:true,studentId:sid,studentName:s.name||s.nome||"Aluno",
+        amount:amount||0,description:p.mes||("Parcela "+(p.dataVencimento||"")),
+        status,dueDate:p.dataVencimento||null,createdAt:p.dataVencimento||null,
+      });
+      if(p.status==="paga"&&(amount>0)){
+        transactions.push({
+          id:"tx_"+invId,_legacy:true,studentId:sid,studentName:s.name||s.nome||"Aluno",
+          invoiceId:invId,amount:amount||0,type:"payment",
+          method:p.boletoPix?"bank_transfer":"cash",
+          date:p.dataPagamento||p.dataVencimento||today,status:"paid",
+        });
+      }
+    });
+  });
+  return{invoices,transactions};
+}
+function computeFinanceKpis(invoices,transactions){
+  const now=new Date();
+  const cutoff=new Date(now.getTime()-30*24*60*60*1000);
+  let revenue30=0,outstanding=0,overdue=0;
+  (transactions||[]).forEach(t=>{
+    if((t.type||"payment")!=="payment")return;
+    const d=toJsDate(t.date);
+    if(d&&d>=cutoff)revenue30+=(parseFloat(t.amount)||0);
+  });
+  (invoices||[]).forEach(inv=>{
+    const amt=parseFloat(inv.amount)||0;
+    if(inv.status!=="paid")outstanding+=amt;
+    if(inv.status==="overdue")overdue+=amt;
+  });
+  return{revenue30,outstanding,overdue};
+}
+function computeCashFlowSeries(transactions,expensesByMonth){
+  // Last 6 months revenue (payments) vs expenses
+  const months=[];
+  const now=new Date();
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push(getMonthKey(d));
+  }
+  const revenue=months.map(mk=>{
+    let sum=0;
+    (transactions||[]).forEach(t=>{
+      if((t.type||"payment")!=="payment")return;
+      const d=toJsDate(t.date);
+      if(d&&getMonthKey(d)===mk)sum+=(parseFloat(t.amount)||0);
+    });
+    return sum;
+  });
+  const expenses=months.map(mk=>(expensesByMonth&&expensesByMonth[mk])||0);
+  return{months,revenue,expenses};
+}
+/** Upsert invoice (+ optional payment transaction) from a legacy parcela. Never deletes user data. */
+async function upsertInvoiceFromParcela(studentId,parcela,studentName){
+  if(!studentId||!parcela)return;
+  const invId=invoiceDocId(studentId,parcela.id||parcela.mes||parcela.dataVencimento);
+  const status=mapParcelaToInvoiceStatus(parcela);
+  const amount=getParcelValor(parcela);
+  const invPayload={
+    studentId:String(studentId),
+    amount:amount||0,
+    description:parcela.mes||("Parcela "+(parcela.dataVencimento||"")),
+    status,
+    dueDate:parcela.dataVencimento||null,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    legacyParcelaId:parcela.id||null,
+    studentName:studentName||null,
+  };
+  try{
+    await db.collection("invoices").doc(invId).set(invPayload,{merge:true});
+    if(status==="paid"&&amount>0){
+      const txId="tx_"+invId;
+      await db.collection("transactions").doc(txId).set({
+        studentId:String(studentId),
+        invoiceId:invId,
+        amount:amount||0,
+        type:"payment",
+        method:parcela.boletoPix?"bank_transfer":"cash",
+        date:parcela.dataPagamento||parcela.dataVencimento||getTodayISO(),
+        studentName:studentName||null,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      },{merge:true});
+    }
+  }catch(err){
+    console.warn("upsertInvoiceFromParcela (check Firestore rules for invoices/transactions):",err&&err.message);
+  }
+}
+async function syncStudentParcelasToInvoices(studentId,parcelas,studentName){
+  const list=Array.isArray(parcelas)?parcelas:[];
+  for(const p of list){await upsertInvoiceFromParcela(studentId,p,studentName);}
+}
 
 /* ── Helpers de aluno (legado + auth) ─────────────────────────────────────── */
 const STATUS_LEGACY_MAP={
@@ -2921,7 +3061,12 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
   const sorted=[...parcelas].sort((a,b)=>(a.dataVencimento||"").localeCompare(b.dataVencimento||""));
   async function setTipo(t){await db.collection("students").doc(uid).update({"financeiro.tipo":t});}
   async function setCredito(field,val){await db.collection("students").doc(uid).update({[`financeiro.${field}`]:parseInt(val)||0});}
-  async function addParcela(){const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};await db.collection("students").doc(uid).update({"financeiro.parcelas":[...parcelas,nova]});}
+  async function addParcela(){
+    const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};
+    const next=[...parcelas,nova];
+    await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+    await upsertInvoiceFromParcela(uid,nova);
+  }
   async function updateParcela(id,field,val){
     const next=parcelas.map(p=>{
       if(p.id!==id)return p;
@@ -2930,8 +3075,14 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
       return u;
     });
     await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+    const updated=next.find(p=>p.id===id);
+    if(updated)await upsertInvoiceFromParcela(uid,updated);
   }
-  async function deleteParcela(id){if(!confirm("Remover esta parcela?"))return;await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});}
+  async function deleteParcela(id){
+    if(!confirm("Remover esta parcela do contrato do aluno? (faturas legadas no Firestore não são apagadas automaticamente)"))return;
+    await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});
+    // Do NOT delete invoices/transactions collections — preserve financial history
+  }
   return(
     <div className="space-y-4">
       <div className="glass rounded-2xl p-5">
@@ -2983,273 +3134,157 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
 }
 
 function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
-  const [monthKey,setMonthKey]=useState(()=>getMonthKey(new Date()));
-  const [despesas,setDespesas]=useState([]); // variáveis do mês
-  const [despesasFixas,setDespesasFixas]=useState([]); // repetem todo mês
-  const [fixasPagasPorMes,setFixasPagasPorMes]=useState({}); // { "2026-07": { id: true } }
+  const [invoices,setInvoices]=useState([]);
+  const [transactions,setTransactions]=useState([]);
+  const [cloudReady,setCloudReady]=useState(false);
+  const [cloudErr,setCloudErr]=useState("");
+  const [syncing,setSyncing]=useState(false);
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
-  const [showDespesaForm,setShowDespesaForm]=useState(false); // false | "variavel" | "fixa"
-  const [despesaForm,setDespesaForm]=useState({data:"",descricao:"",valor:""});
-  const [savingDespesa,setSavingDespesa]=useState(false);
-  const [despesaError,setDespesaError]=useState("");
-  const [porMesCache,setPorMesCache]=useState({});
-  const [togglingPagaId,setTogglingPagaId]=useState(null);
+  // Expenses kept for cash-flow chart (non-destructive; same storage as before)
+  const [despesasPorMes,setDespesasPorMes]=useState({});
+  const [despesasFixas,setDespesasFixas]=useState([]);
+  const [fixasPagasPorMes,setFixasPagasPorMes]=useState({});
+  const chartRef=useRef(null);
+  const chartInstance=useRef(null);
 
-  // studio/financeiro é bloqueado pelas regras do Firestore.
-  // Salva em users/{ADMIN_UID} (admin logado) e faz fallback em localStorage.
   const DESPESAS_LS_KEY="fluency_studio_despesasPorMes";
   const FIXAS_LS_KEY="fluency_studio_despesasFixas";
   const FIXAS_PAGAS_LS_KEY="fluency_studio_despesasFixasPagas";
-  function readLocalPorMes(){
-    try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}
-  }
-  function writeLocalPorMes(porMes){
-    try{localStorage.setItem(DESPESAS_LS_KEY,JSON.stringify(porMes||{}));}catch(e){}
-  }
-  function readLocalFixas(){
-    try{const v=JSON.parse(localStorage.getItem(FIXAS_LS_KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return[];}
-  }
-  function writeLocalFixas(list){
-    try{localStorage.setItem(FIXAS_LS_KEY,JSON.stringify(list||[]));}catch(e){}
-  }
+  function readLocalPorMes(){try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}}
+  function readLocalFixas(){try{const v=JSON.parse(localStorage.getItem(FIXAS_LS_KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return[];}}
   function normalizeFixasPagas(raw){
     if(!raw||typeof raw!=="object")return{};
     const out={};
     Object.keys(raw).forEach(mk=>{
       const v=raw[mk];
-      if(Array.isArray(v)){
-        const map={};
-        v.forEach(id=>{if(id)map[id]=true;});
-        out[mk]=map;
-      }else if(v&&typeof v==="object"){
-        out[mk]={...v};
-      }
+      if(Array.isArray(v)){const map={};v.forEach(id=>{if(id)map[id]=true;});out[mk]=map;}
+      else if(v&&typeof v==="object")out[mk]={...v};
     });
     return out;
   }
-  function readLocalFixasPagas(){
-    try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}
-  }
-  function writeLocalFixasPagas(map){
-    try{localStorage.setItem(FIXAS_PAGAS_LS_KEY,JSON.stringify(map||{}));}catch(e){}
-  }
-  function getDespesasCloudRefs(){
-    return[
-      db.collection("users").doc(ADMIN_UID),
-      db.collection("config").doc("financeiro"),
-    ];
-  }
-  function applyFinanceData(porMes,fixas, pagas, mk){
-    setPorMesCache(porMes||{});
-    setDespesas((porMes&&porMes[mk])||[]);
-    setDespesasFixas(Array.isArray(fixas)?fixas:[]);
-    const np=normalizeFixasPagas(pagas||{});
-    setFixasPagasPorMes(np);
-    writeLocalPorMes(porMes||{});
-    writeLocalFixas(Array.isArray(fixas)?fixas:[]);
-    writeLocalFixasPagas(np);
-  }
+  function readLocalFixasPagas(){try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}}
 
+  // Load invoices + transactions (new architecture). Never delete existing student data.
   useEffect(()=>{
-    let unsub=null;
-    let cancelled=false;
+    let unsubInv=null, unsubTx=null;
+    setCloudErr("");
+    try{
+      unsubInv=db.collection("invoices").onSnapshot(snap=>{
+        const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+        setInvoices(list);
+        setCloudReady(true);
+      },err=>{
+        console.warn("invoices listen:",err);
+        setCloudErr("Coleção invoices indisponível nas regras do Firestore — usando dados legados das parcelas.");
+        setCloudReady(false);
+      });
+      unsubTx=db.collection("transactions").onSnapshot(snap=>{
+        setTransactions(snap.docs.map(d=>({id:d.id,...d.data()})));
+      },err=>console.warn("transactions listen:",err));
+    }catch(e){
+      setCloudErr(e.message||"Erro ao conectar finance collections");
+    }
+    // expenses for chart
     const localPm=readLocalPorMes();
-    const localFx=readLocalFixas();
-    const localPg=readLocalFixasPagas();
-    applyFinanceData(localPm,localFx,localPg,monthKey);
-
+    setDespesasPorMes(localPm);
+    setDespesasFixas(readLocalFixas());
+    setFixasPagasPorMes(readLocalFixasPagas());
     (async()=>{
-      for(const ref of getDespesasCloudRefs()){
-        try{
-          const snap=await ref.get();
-          if(cancelled)return;
-          const data=snap.exists?snap.data():{};
-          const cloudPm=data.despesasPorMes||{};
-          const cloudFx=Array.isArray(data.despesasFixas)?data.despesasFixas:localFx;
-          const cloudPg=data.despesasFixasPagasPorMes!=null?normalizeFixasPagas(data.despesasFixasPagasPorMes):localPg;
-          const merged={...localPm};
-          Object.keys(cloudPm).forEach(k=>{if(Array.isArray(cloudPm[k]))merged[k]=cloudPm[k];});
-          applyFinanceData(merged,cloudFx,cloudPg,monthKey);
-          unsub=ref.onSnapshot(doc=>{
-            const d=doc.exists?doc.data():{};
-            const pm=d.despesasPorMes||{};
-            const fx=Array.isArray(d.despesasFixas)?d.despesasFixas:null;
-            const pg=d.despesasFixasPagasPorMes!=null?normalizeFixasPagas(d.despesasFixasPagasPorMes):null;
-            setPorMesCache(prev=>{
-              const next={...prev};
-              Object.keys(pm).forEach(k=>{if(Array.isArray(pm[k]))next[k]=pm[k];});
-              writeLocalPorMes(next);
-              return next;
-            });
-            if(Array.isArray(pm[monthKey]))setDespesas(pm[monthKey]);
-            if(fx){setDespesasFixas(fx);writeLocalFixas(fx);}
-            if(pg){setFixasPagasPorMes(pg);writeLocalFixasPagas(pg);}
-          },err=>console.error("Erro ao escutar despesas:",err));
-          return;
-        }catch(err){
-          console.warn("Path despesas indisponível:",ref.path,err&&err.message);
+      try{
+        const ref=db.collection("users").doc(ADMIN_UID);
+        const snap=await ref.get();
+        if(snap.exists){
+          const data=snap.data()||{};
+          if(data.despesasPorMes)setDespesasPorMes(prev=>({...prev,...data.despesasPorMes}));
+          if(Array.isArray(data.despesasFixas))setDespesasFixas(data.despesasFixas);
+          if(data.despesasFixasPagasPorMes)setFixasPagasPorMes(normalizeFixasPagas(data.despesasFixasPagasPorMes));
         }
-      }
-      console.warn("Despesas: usando somente armazenamento local deste navegador.");
+      }catch(e){/* local fallback ok */}
     })();
+    return()=>{if(unsubInv)unsubInv();if(unsubTx)unsubTx();};
+  },[]);
 
-    return()=>{cancelled=true;if(unsub)unsub();};
-  },[monthKey]);
+  const legacy=useMemo(()=>deriveFinanceFromParcelas(students),[students]);
+  // Prefer cloud docs; if empty, fall back to legacy parcelas (no data loss)
+  const effectiveInvoices=useMemo(()=>{
+    if(invoices&&invoices.length>0){
+      const nameById=Object.fromEntries((students||[]).map(s=>[s.uid,s.name||s.nome||"Aluno"]));
+      return invoices.map(inv=>({...inv,studentName:inv.studentName||nameById[inv.studentId]||"Aluno"}));
+    }
+    return legacy.invoices;
+  },[invoices,legacy,students]);
+  const effectiveTransactions=useMemo(()=>{
+    if(transactions&&transactions.length>0){
+      const nameById=Object.fromEntries((students||[]).map(s=>[s.uid,s.name||s.nome||"Aluno"]));
+      return transactions.map(t=>({...t,studentName:t.studentName||nameById[t.studentId]||"Aluno"}));
+    }
+    return legacy.transactions;
+  },[transactions,legacy,students]);
+
+  const kpis=useMemo(()=>computeFinanceKpis(effectiveInvoices,effectiveTransactions),[effectiveInvoices,effectiveTransactions]);
+
+  const expensesByMonth=useMemo(()=>{
+    const out={};
+    // variable expenses per month
+    Object.keys(despesasPorMes||{}).forEach(mk=>{
+      const arr=despesasPorMes[mk]||[];
+      out[mk]=(out[mk]||0)+arr.reduce((s,d)=>s+(parseFloat(d.valor)||0),0);
+    });
+    // fixed paid per month
+    Object.keys(fixasPagasPorMes||{}).forEach(mk=>{
+      const map=fixasPagasPorMes[mk]||{};
+      const sum=(despesasFixas||[]).reduce((s,d)=>s+(map[d.id]?parseFloat(d.valor)||0:0),0);
+      out[mk]=(out[mk]||0)+sum;
+    });
+    return out;
+  },[despesasPorMes,despesasFixas,fixasPagasPorMes]);
+
+  const cashFlow=useMemo(()=>computeCashFlowSeries(effectiveTransactions,expensesByMonth),[effectiveTransactions,expensesByMonth]);
+
+  // Chart.js cash flow
+  useEffect(()=>{
+    if(!chartRef.current||typeof Chart==="undefined")return;
+    if(chartInstance.current){chartInstance.current.destroy();chartInstance.current=null;}
+    const labels=cashFlow.months.map(mk=>{
+      const[y,m]=mk.split("-");
+      return MESES_CURTOS[parseInt(m,10)-1]+"/"+String(y).slice(2);
+    });
+    chartInstance.current=new Chart(chartRef.current,{
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          {label:"Receita (pagamentos)",data:cashFlow.revenue,backgroundColor:"rgba(21,128,61,0.75)",borderRadius:6},
+          {label:"Despesas",data:cashFlow.expenses,backgroundColor:"rgba(185,28,28,0.65)",borderRadius:6},
+        ],
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{labels:{color:"#1E1E1E",font:{family:"Inter, sans-serif",size:12}}},
+          tooltip:{callbacks:{label:(ctx)=>ctx.dataset.label+": "+formatCurrency(ctx.parsed.y)}},
+        },
+        scales:{
+          x:{ticks:{color:"#475569"},grid:{color:"#E2E8F0"}},
+          y:{ticks:{color:"#475569",callback:(v)=>"R$ "+v},grid:{color:"#E2E8F0"}},
+        },
+      },
+    });
+    return()=>{if(chartInstance.current){chartInstance.current.destroy();chartInstance.current=null;}};
+  },[cashFlow]);
+
+  const recentTx=useMemo(()=>{
+    return[...effectiveTransactions].sort((a,b)=>{
+      const da=toJsDate(a.date)?.getTime()||0;
+      const db=toJsDate(b.date)?.getTime()||0;
+      return db-da;
+    }).slice(0,10);
+  },[effectiveTransactions]);
 
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
-  const {previsto,recebido}=useMemo(()=>computeStudioFinanceMonth(students,monthKey),[students,monthKey]);
-  const fixasPagasMes=fixasPagasPorMes[monthKey]||{};
-  const totalDespesasPrevistas=useMemo(()=>despesasFixas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesasFixas]);
-  const totalDespesasFixasPagas=useMemo(
-    ()=>despesasFixas.reduce((s,d)=>s+(fixasPagasMes[d.id]?parseFloat(d.valor)||0:0),0),
-    [despesasFixas,fixasPagasMes]
-  );
-  const totalDespesasVariaveis=useMemo(()=>despesas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesas]);
-  // Só entra em DESPESAS o que foi marcado como PAGA (fixas) + variáveis do mês
-  const totalDespesas=totalDespesasVariaveis+totalDespesasFixasPagas;
-  const qtdFixasPagas=useMemo(()=>despesasFixas.filter(d=>!!fixasPagasMes[d.id]).length,[despesasFixas,fixasPagasMes]);
-  const saldo=recebido-totalDespesas;
-  const isCurrentMonth=monthKey===getMonthKey(new Date());
-
-  async function persistFinance({porMes,fixas, pagas}){
-    const nextPm=porMes!==undefined?porMes:{...readLocalPorMes(),...porMesCache};
-    const nextFx=fixas!==undefined?fixas:(despesasFixas.length?despesasFixas:readLocalFixas());
-    const nextPg=pagas!==undefined?normalizeFixasPagas(pagas):normalizeFixasPagas({...readLocalFixasPagas(),...fixasPagasPorMes});
-    setPorMesCache(nextPm);
-    writeLocalPorMes(nextPm);
-    setDespesasFixas(nextFx);
-    writeLocalFixas(nextFx);
-    setFixasPagasPorMes(nextPg);
-    writeLocalFixasPagas(nextPg);
-    let lastErr=null;
-    for(const ref of getDespesasCloudRefs()){
-      try{
-        await ref.set({despesasPorMes:nextPm,despesasFixas:nextFx,despesasFixasPagasPorMes:nextPg},{merge:true});
-        return;
-      }catch(err){
-        lastErr=err;
-        console.warn("Falha ao salvar despesas em",ref.path,err&&err.message);
-      }
-    }
-    if(lastErr)console.warn("Despesas salvas localmente; nuvem bloqueada:",lastErr.message||lastErr);
-  }
-
-  async function saveDespesas(next){
-    const porMes={...readLocalPorMes(),...porMesCache,[monthKey]:next};
-    setDespesas(next);
-    await persistFinance({porMes});
-  }
-
-  async function saveDespesasFixas(next){
-    await persistFinance({fixas:next});
-  }
-
-  async function toggleDespesaFixaPaga(id){
-    if(!id||togglingPagaId)return;
-    const prev={...fixasPagasPorMes};
-    const mesMap={...(prev[monthKey]||{})};
-    const willPay=!mesMap[id];
-    if(willPay)mesMap[id]=true;
-    else delete mesMap[id];
-    const next={...prev,[monthKey]:mesMap};
-    setTogglingPagaId(id);
-    setFixasPagasPorMes(next);
-    writeLocalFixasPagas(next);
-    try{
-      await persistFinance({pagas:next});
-    }catch(err){
-      console.error("Erro ao marcar despesa fixa como paga:",err);
-      setFixasPagasPorMes(prev);
-      writeLocalFixasPagas(prev);
-      alert("Não foi possível salvar o status PAGA. Tente de novo.");
-    }finally{
-      setTogglingPagaId(null);
-    }
-  }
-
-  function openDespesaForm(tipo){
-    setDespesaForm({data:getTodayISO(),descricao:"",valor:""});
-    setDespesaError("");
-    setShowDespesaForm(tipo||"variavel");
-  }
-
-  function closeDespesaForm(){
-    if(savingDespesa)return;
-    setShowDespesaForm(false);
-    setDespesaError("");
-  }
-
-  async function handleSaveDespesa(e){
-    if(e&&e.preventDefault)e.preventDefault();
-    setDespesaError("");
-    const isFixa=showDespesaForm==="fixa";
-    const data=(despesaForm.data||"").trim();
-    const descricao=(despesaForm.descricao||"").trim();
-    const valorNum=parseFloat(String(despesaForm.valor).replace(",","."))||0;
-    if(!data){setDespesaError("Informe a data.");return;}
-    if(!descricao){setDespesaError("Informe a descrição.");return;}
-    if(valorNum<=0){setDespesaError("Informe um valor maior que zero.");return;}
-
-    setSavingDespesa(true);
-    try{
-      if(isFixa){
-        const nova={id:Date.now().toString(),data,descricao,valor:valorNum,fixa:true};
-        await saveDespesasFixas([...despesasFixas,nova]);
-      }else{
-        const nova={id:Date.now().toString(),data,descricao,valor:valorNum};
-        await saveDespesas([...despesas,nova]);
-      }
-      setShowDespesaForm(false);
-      setDespesaForm({data:"",descricao:"",valor:""});
-    }catch(err){
-      console.error("Erro ao salvar despesa:",err);
-      setDespesaError("Não foi possível salvar. Tente de novo.");
-    }finally{
-      setSavingDespesa(false);
-    }
-  }
-
-  async function deleteDespesa(id){
-    if(!confirm("Remover esta despesa?"))return;
-    const prev=despesas;
-    const next=despesas.filter(d=>d.id!==id);
-    setDespesas(next);
-    try{
-      await saveDespesas(next);
-    }catch(err){
-      console.error("Erro ao remover despesa:",err);
-      setDespesas(prev);
-      alert("Não foi possível remover a despesa. Tente de novo.");
-    }
-  }
-
-  async function deleteDespesaFixa(id){
-    if(!confirm("Remover esta despesa fixa?\nEla deixa de se repetir em todos os meses."))return;
-    const prevFx=despesasFixas;
-    const prevPg=fixasPagasPorMes;
-    const next=despesasFixas.filter(d=>d.id!==id);
-    const nextPg={...fixasPagasPorMes};
-    Object.keys(nextPg).forEach(mk=>{
-      if(nextPg[mk]&&nextPg[mk][id]){
-        const m={...nextPg[mk]};
-        delete m[id];
-        nextPg[mk]=m;
-      }
-    });
-    setDespesasFixas(next);
-    setFixasPagasPorMes(nextPg);
-    try{
-      await persistFinance({fixas:next,pagas:nextPg});
-    }catch(err){
-      console.error("Erro ao remover despesa fixa:",err);
-      setDespesasFixas(prevFx);
-      setFixasPagasPorMes(prevPg);
-      alert("Não foi possível remover a despesa fixa. Tente de novo.");
-    }
-  }
-
   const alunosFiltrados=useMemo(()=>{
     let list=studentsByStatus;
     if(!busca.trim())return list;
@@ -3257,214 +3292,149 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     return list.filter(s=>(s.name||"").toLowerCase().includes(q)||(s.email||"").toLowerCase().includes(q));
   },[studentsByStatus,busca]);
 
-  const despesasOrdenadas=useMemo(()=>{
-    return[...despesas].sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.id||"").localeCompare(a.id||""));
-  },[despesas]);
+  async function handleSyncFromParcelas(){
+    if(!students||!students.length)return;
+    if(!confirm("Espelhar parcelas existentes dos alunos para as coleções invoices e transactions?\nNenhum dado de aluno será apagado."))return;
+    setSyncing(true);
+    try{
+      for(const s of students){
+        await syncStudentParcelasToInvoices(s.uid,s.financeiro?.parcelas||[],s.name||s.nome);
+      }
+      alert("Sincronização concluída. Se as regras do Firestore permitirem, as coleções invoices/transactions foram preenchidas.");
+    }catch(e){
+      console.error(e);
+      alert("Falha parcial na sincronização. Verifique as regras do Firestore para invoices e transactions.");
+    }finally{
+      setSyncing(false);
+    }
+  }
 
-  const despesasFixasOrdenadas=useMemo(()=>{
-    return[...despesasFixas].sort((a,b)=>{
-      const da=(a.data||"").slice(8,10); // dia
-      const db=(b.data||"").slice(8,10);
-      return da.localeCompare(db)||(a.descricao||"").localeCompare(b.descricao||"");
-    });
-  },[despesasFixas]);
+  const dataSource=invoices.length>0?"Firestore (invoices/transactions)":"Legado (parcelas dos alunos)";
 
   return(
     <div>
-      <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2 mb-5" onClick={onBack}>
-        <Icon name="arrow-left" size={14}/> Voltar ao Dashboard
-      </button>
-
-      <div className="fin-hero fin-hero-glow mb-5">
-        <div style={{position:"relative",zIndex:1}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
-            <div style={{width:48,height:48,borderRadius:14,background:"linear-gradient(135deg,#1e8fa8,#145f7a)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 20px rgba(30,143,168,.35)"}}>
-              <Icon name="pie-chart" size={24} style={{color:"#fff"}}/>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:800,letterSpacing:".12em",opacity:.65}}>PAINEL FINANCEIRO</div>
-              <div style={{fontFamily:"'Sora',sans-serif",fontSize:22,fontWeight:800}}>Fluency Studio</div>
-            </div>
-          </div>
-
-          <div className="fin-month-nav">
-            <button className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,-1))}><Icon name="chevron-left" size={18}/></button>
-            <div className="fin-month-label">{formatMonthYear(monthKey)}{!isCurrentMonth&&<div style={{fontSize:11,fontWeight:600,opacity:.55,marginTop:2}}>Arquivo mensal</div>}</div>
-            <button className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,1))} disabled={isCurrentMonth} style={{opacity:isCurrentMonth?0.4:1}}><Icon name="chevron-right" size={18}/></button>
-          </div>
-
-          <div className="fin-metric-grid">
-            <div className="fin-metric-card fin-metric-previsto">
-              <div className="fin-metric-icon"><Icon name="calendar" size={20} style={{color:"#88c0f8"}}/></div>
-              <div className="fin-metric-label">Total Previsto do Mês</div>
-              <div className="fin-metric-value" style={{color:"#88c0f8"}}>{formatCurrency(previsto)}</div>
-              <div className="fin-metric-sub">Parcelas com vencimento em {formatMonthYear(monthKey)}{filtroStatus==="ativo"?" · alunos ativos":""}</div>
-            </div>
-            <div className="fin-metric-card fin-metric-recebido">
-              <div className="fin-metric-icon"><Icon name="trending-up" size={20} style={{color:"#60daa8"}}/></div>
-              <div className="fin-metric-label">Total Recebido até o Momento</div>
-              <div className="fin-metric-value" style={{color:"#60daa8"}}>{formatCurrency(recebido)}</div>
-              <div className="fin-metric-sub">Pagamentos confirmados no mês{filtroStatus==="ativo"?" · alunos ativos":""}</div>
-            </div>
-            <div className="fin-metric-card fin-metric-despesas-prev">
-              <div className="fin-metric-icon"><Icon name="refresh-cw" size={20} style={{color:"#f0b060"}}/></div>
-              <div className="fin-metric-label">Despesas Previstas</div>
-              <div className="fin-metric-value" style={{color:"#f0b060"}}>{formatCurrency(totalDespesasPrevistas)}</div>
-              <div className="fin-metric-sub">{despesasFixas.length} fixa{despesasFixas.length!==1?"s":""} · todo mês</div>
-            </div>
-            <div className="fin-metric-card fin-metric-despesas">
-              <div className="fin-metric-icon"><Icon name="credit-card" size={20} style={{color:"#f0909a"}}/></div>
-              <div className="fin-metric-label">Despesas</div>
-              <div className="fin-metric-value" style={{color:"#f0909a"}}>{formatCurrency(totalDespesas)}</div>
-              <div className="fin-metric-sub">{qtdFixasPagas} fixa{qtdFixasPagas!==1?"s":""} paga{qtdFixasPagas!==1?"s":""} + {despesas.length} variável{despesas.length!==1?"is":""}</div>
-            </div>
-          </div>
-
-          <div className="fin-saldo-bar">
-            <div>
-              <div style={{fontSize:11,fontWeight:700,opacity:.65,letterSpacing:".06em"}}>SALDO DO MÊS</div>
-              <div style={{fontSize:12,opacity:.55,marginTop:2}}>Recebido − Despesas (fixas pagas + variáveis)</div>
-            </div>
-            <div className={"fin-saldo-val "+(saldo>=0?"fin-saldo-pos":"fin-saldo-neg")}>{formatCurrency(saldo)}</div>
-          </div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12,marginBottom:20}}>
+        <div>
+          <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2 mb-3" onClick={onBack}>
+            <Icon name="arrow-left" size={14}/> Voltar ao Painel
+          </button>
+          <h2 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>Financeiro da Escola</h2>
+          <p style={{fontSize:13,color:"#475569",marginTop:4}}>
+            Invoices (a receber) separados de Transactions (recebido) · Fonte: <strong>{dataSource}</strong>
+          </p>
         </div>
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSyncFromParcelas} disabled={syncing}>
+          <Icon name="refresh-cw" size={14}/>{syncing?"Sincronizando…":"Sincronizar parcelas → invoices"}
+        </button>
       </div>
 
-      <div className="glass rounded-2xl p-5 mb-5">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <h3 className="font-bold text-base flex items-center gap-2">
-            <Icon name="credit-card" size={16} style={{color:"#f0909a"}}/>
-            Despesas — {formatMonthYear(monthKey)}
-          </h3>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            <button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>openDespesaForm("fixa")} style={{borderColor:"rgba(220,140,40,.45)",background:"rgba(220,140,40,.12)",color:"#f0b060"}}>
-              <Icon name="refresh-cw" size={14}/> Despesa Fixa
-            </button>
-            <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>openDespesaForm("variavel")}>
-              <Icon name="plus" size={14}/> Nova Despesa
-            </button>
-          </div>
-        </div>
-
-        {despesasFixasOrdenadas.length>0&&(
-          <div style={{marginBottom:16}}>
-            <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"#f0b060",marginBottom:8,opacity:.9}}>Fixas (todo mês)</div>
-            {despesasFixasOrdenadas.map(d=>{
-              const paga=!!fixasPagasMes[d.id];
-              const busy=togglingPagaId===d.id;
-              return(
-              <div key={d.id} className="fin-despesa-row" style={{borderColor:paga?"rgba(30,160,110,.35)":"rgba(220,140,40,.28)",opacity:paga?1:0.92}}>
-                <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"70px 110px 1fr 120px",gap:10,alignItems:"center"}}>
-                  <span className="fin-badge-fixa">Fixa</span>
-                  <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{d.data?formatDateBR(d.data):"—"}</div>
-                  <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
-                  <div style={{fontSize:14,fontWeight:800,color:paga?"#60daa8":"#f0b060",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
-                </div>
-                <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
-                  <button
-                    type="button"
-                    className="btn rounded-lg"
-                    onClick={()=>toggleDespesaFixaPaga(d.id)}
-                    disabled={busy}
-                    title={paga?"Desmarcar como paga neste mês":"Marcar como paga neste mês (entra em Despesas)"}
-                    style={{
-                      height:32,padding:"0 10px",fontSize:11,fontWeight:800,letterSpacing:".06em",
-                      border:paga?"1px solid rgba(30,160,110,.45)":"1px solid rgba(96,218,168,.35)",
-                      background:paga?"linear-gradient(135deg,rgba(30,160,110,.28),rgba(13,90,72,.14))":"rgba(30,160,110,.10)",
-                      color:paga?"#60daa8":"#86d4b0",
-                      opacity:busy?0.6:1,
-                    }}
-                  >
-                    {busy?"…":(paga?"PAGA ✓":"PAGA")}
-                  </button>
-                  <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesaFixa(d.id)} title="Remover despesa fixa" aria-label="Remover despesa fixa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a"}}>
-                    <Icon name="x" size={16}/>
-                  </button>
-                </div>
-              </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"var(--font-muted)",marginBottom:8}}>Variáveis deste mês</div>
-        {despesasOrdenadas.length===0?(
-          <div className="text-center py-6 muted text-sm">Nenhuma despesa variável em {formatMonthYear(monthKey)}.</div>
-        ):(
-          despesasOrdenadas.map(d=>(
-            <div key={d.id} className="fin-despesa-row">
-              <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"110px 1fr 120px",gap:12,alignItems:"center"}}>
-                <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{formatDateBR(d.data)}</div>
-                <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
-                <div style={{fontSize:14,fontWeight:800,color:"#f0909a",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
-              </div>
-              <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesa(d.id)} title="Remover despesa" aria-label="Remover despesa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a",flexShrink:0}}>
-                <Icon name="x" size={16}/>
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-
-      {showDespesaForm&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)closeDespesaForm();}}>
-          <div className="modal-box" style={{maxWidth:440}} onClick={e=>e.stopPropagation()}>
-            <div className="modal-header">
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <Icon name={showDespesaForm==="fixa"?"refresh-cw":"credit-card"} size={20}/>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>
-                    {showDespesaForm==="fixa"?"DESPESA FIXA · TODO MÊS":`DESPESAS · ${formatMonthYear(monthKey).toUpperCase()}`}
-                  </div>
-                  <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>
-                    {showDespesaForm==="fixa"?"Nova Despesa Fixa":"Nova Despesa"}
-                  </div>
-                </div>
-              </div>
-              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={closeDespesaForm} disabled={savingDespesa}>
-                <Icon name="x" size={18}/>
-              </button>
-            </div>
-            <form onSubmit={handleSaveDespesa}>
-              <div className="modal-body" style={{display:"flex",flexDirection:"column",gap:16}}>
-                {showDespesaForm==="fixa"&&(
-                  <div style={{fontSize:13,lineHeight:1.5,opacity:.85,padding:"10px 12px",borderRadius:10,background:"rgba(220,140,40,.12)",border:"1px solid rgba(220,140,40,.28)",color:"#f0b060"}}>
-                    Esta despesa se repete automaticamente em <strong>todos os meses</strong> e entra em Despesas Previstas. A data indica o dia de referência no mês.
-                  </div>
-                )}
-                <div>
-                  <label className="form-label" htmlFor="despesa-data">Data</label>
-                  <input id="despesa-data" type="date" className="input-light w-full" value={despesaForm.data} onChange={e=>setDespesaForm(f=>({...f,data:e.target.value}))} required/>
-                </div>
-                <div>
-                  <label className="form-label" htmlFor="despesa-desc">Descrição</label>
-                  <input id="despesa-desc" type="text" className="input-light w-full" placeholder={showDespesaForm==="fixa"?"Ex: Aluguel, internet, plataforma...":"Ex: Material, taxa, compra..."} value={despesaForm.descricao} onChange={e=>setDespesaForm(f=>({...f,descricao:e.target.value}))} required autoFocus/>
-                </div>
-                <div>
-                  <label className="form-label" htmlFor="despesa-valor">Valor (R$)</label>
-                  <input id="despesa-valor" type="number" step="0.01" min="0.01" className="input-light w-full" placeholder="0,00" value={despesaForm.valor} onChange={e=>setDespesaForm(f=>({...f,valor:e.target.value}))} required/>
-                </div>
-                {despesaError&&(
-                  <div style={{fontSize:13,color:"#f0909a",fontWeight:600,padding:"10px 12px",borderRadius:10,background:"rgba(200,60,80,.12)",border:"1px solid rgba(200,60,80,.28)"}}>{despesaError}</div>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={closeDespesaForm} disabled={savingDespesa}>Cancelar</button>
-                <button type="submit" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={savingDespesa}>
-                  <Icon name="check" size={14}/>
-                  {savingDespesa?"Salvando…":"Salvar"}
-                </button>
-              </div>
-            </form>
-          </div>
+      {cloudErr&&(
+        <div className="premium-card" style={{marginBottom:16,background:"#FFFBEB",borderColor:"#FCD34D"}}>
+          <p style={{fontSize:13,color:"#B45309",margin:0}}>{cloudErr}</p>
+          <p style={{fontSize:12,color:"#475569",marginTop:6}}>Crie as coleções <code>invoices</code> e <code>transactions</code> e permita leitura/escrita ao admin nas regras do Firestore.</p>
         </div>
       )}
 
-      <div className="glass rounded-2xl p-5">
+      {/* KPI Metric Cards */}
+      <div className="fin-kpi-grid">
+        <div className="fin-kpi-card">
+          <div className="fin-kpi-label">Receita total (últimos 30 dias)</div>
+          <div className="fin-kpi-value" style={{color:"#15803D"}}>{formatCurrency(kpis.revenue30)}</div>
+          <div className="fin-kpi-sub">Soma de transactions com type = payment</div>
+        </div>
+        <div className="fin-kpi-card">
+          <div className="fin-kpi-label">Saldos em aberto</div>
+          <div className="fin-kpi-value" style={{color:"#B45309"}}>{formatCurrency(kpis.outstanding)}</div>
+          <div className="fin-kpi-sub">Invoices com status ≠ paid</div>
+        </div>
+        <div className="fin-kpi-card">
+          <div className="fin-kpi-label">Valor em atraso</div>
+          <div className="fin-kpi-value" style={{color:"#B91C1C"}}>{formatCurrency(kpis.overdue)}</div>
+          <div className="fin-kpi-sub">Invoices com status = overdue</div>
+        </div>
+      </div>
+
+      {/* Cash Flow Chart */}
+      <div className="fin-chart-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 4px"}}>Fluxo de caixa — 6 meses</h3>
+        <p style={{fontSize:12,color:"#475569",margin:"0 0 16px"}}>Receita (pagamentos) vs Despesas</p>
+        <div style={{height:280,position:"relative"}}>
+          <canvas ref={chartRef} aria-label="Gráfico de fluxo de caixa"/>
+        </div>
+      </div>
+
+      {/* Recent Transactions Table */}
+      <div className="fin-table-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Transações recentes</h3>
+        <div style={{overflowX:"auto"}}>
+          <table className="fin-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Aluno</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentTx.length===0?(
+                <tr><td colSpan={4} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma transação registrada ainda.</td></tr>
+              ):recentTx.map(t=>{
+                const d=toJsDate(t.date);
+                const dateStr=d?formatDateBR(d.toISOString().slice(0,10)):"—";
+                const st=(t.type==="refund")?"partially_paid":"paid";
+                return(
+                  <tr key={t.id}>
+                    <td>{dateStr}</td>
+                    <td style={{fontWeight:600}}>{t.studentName||"Aluno"}</td>
+                    <td style={{fontWeight:700,color:t.type==="refund"?"#B91C1C":"#15803D"}}>
+                      {t.type==="refund"?"−":""}{formatCurrency(t.amount)}
+                    </td>
+                    <td><span className={invoiceStatusBadgeClass(t.type==="refund"?"partially_paid":"paid")}>{t.type==="refund"?"Estorno":"Pago"}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Outstanding invoices snapshot */}
+      <div className="fin-table-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Faturas em aberto / atraso</h3>
+        <div style={{overflowX:"auto"}}>
+          <table className="fin-table">
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Descrição</th>
+                <th>Vencimento</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {effectiveInvoices.filter(i=>i.status!=="paid").length===0?(
+                <tr><td colSpan={5} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma fatura em aberto.</td></tr>
+              ):effectiveInvoices.filter(i=>i.status!=="paid").slice(0,20).map(inv=>(
+                <tr key={inv.id} style={{cursor:onSelectStudent?"pointer":"default"}} onClick={()=>onSelectStudent&&onSelectStudent(inv.studentId)}>
+                  <td style={{fontWeight:600}}>{inv.studentName||"Aluno"}</td>
+                  <td>{inv.description||"—"}</td>
+                  <td>{inv.dueDate?formatDateBR(typeof inv.dueDate==="string"?inv.dueDate:(toJsDate(inv.dueDate)||new Date()).toISOString().slice(0,10)):"—"}</td>
+                  <td style={{fontWeight:700}}>{formatCurrency(inv.amount)}</td>
+                  <td><span className={invoiceStatusBadgeClass(inv.status)}>{invoiceStatusLabel(inv.status)}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Per-student finance navigation (preserves existing workflow) */}
+      <div className="premium-card" style={{marginBottom:24}}>
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
-          <h3 className="font-bold text-base flex items-center gap-2">
-            <Icon name="users" size={16} style={{color:"#1e8fa8"}}/>
-            Financeiro por Aluno
+          <h3 className="font-bold text-base flex items-center gap-2" style={{color:"#1E1E1E"}}>
+            <Icon name="users" size={16}/> Financeiro por Aluno
           </h3>
           <div style={{position:"relative",minWidth:200}}>
             <Icon name="search" size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",opacity:.45}}/>
@@ -3474,79 +3444,37 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
         <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:16}}>
           {ADMIN_STATUS_FILTERS.map(f=>(
             <button key={f.v} className={"status-pill "+(filtroStatus===f.v?f.cls:"status-pill-inactive")} onClick={()=>setFiltroStatus(f.v)} style={{fontSize:11}}>
-              {f.l}{contadores[f.v]!==undefined&&<span style={{marginLeft:5,background:"rgba(255,255,255,.15)",borderRadius:99,padding:"1px 6px",fontSize:10}}>{contadores[f.v]}</span>}
+              {f.l}{contadores[f.v]!==undefined&&<span style={{marginLeft:5,background:"rgba(0,0,0,.06)",borderRadius:99,padding:"1px 6px",fontSize:10}}>{contadores[f.v]}</span>}
             </button>
           ))}
         </div>
-        <div>
-          {alunosFiltrados.length === 0 ? (
-            <div className="text-center py-8 muted text-sm">
-              {filtroStatus === "ativo" && !busca.trim() ? "Nenhum aluno ativo no momento." : "Nenhum aluno encontrado com este filtro."}
-            </div>
-          ) : (
-            <>
-              {alunosFiltrados.filter(s => resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate).length > 0 && (
-                <div style={{marginBottom: 20}}>
-                  <div style={{fontSize: 12, fontWeight: 800, color: "#f87171", textTransform: "uppercase", marginBottom: 8, paddingLeft: 4}}>
-                    Atenção: Pagamentos em Atraso
-                  </div>
-                  <div className="space-y-2">
-                    {alunosFiltrados
-                      .filter(s => resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate)
-                      .map(s => {
-                        const parcelas = s.financeiro?.parcelas || [];
-                        const pagas = parcelas.filter(p => p.status === "paga").length;
-                        return (
-                          <button key={s.uid} className="fin-student-pick w-full text-left" style={{borderColor: "rgba(248, 113, 113, 0.4)", background: "rgba(248, 113, 113, 0.05)"}} onClick={() => onSelectStudent(s.uid)}>
-                            {s.foto
-                              ? <img src={s.foto} alt="" style={{width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--divider)"}}/>
-                              : <div style={{width: 40, height: 40, borderRadius: "50%", background: "var(--badge)", display: "flex", alignItems: "center", justifyContent: "center"}}><Icon name="user" size={18}/></div>
-                            }
-                            <div style={{flex: 1, minWidth: 0}}>
-                              <div style={{fontWeight: 700, fontSize: 14}}>{s.name || "Aluno"}</div>
-                              <div style={{fontSize: 11, color: "var(--font-muted)"}}>{parcelas.length} parcelas · {pagas} pagas</div>
-                            </div>
-                            <span className="fin-badge fin-vencida">Atrasado</span>
-                            <Icon name="arrow-right" size={16} style={{opacity: .45}}/>
-                          </button>
-                        );
-                      })}
-                  </div>
+        <div className="space-y-2">
+          {alunosFiltrados.length===0?(
+            <div className="text-center py-8 text-sm" style={{color:"#475569"}}>Nenhum aluno encontrado.</div>
+          ):alunosFiltrados.map(s=>{
+            const snap=resolveFinanceSnapshot(s.financeiro?.parcelas||[]);
+            const late=snap.isLate;
+            return(
+              <button key={s.uid} className="fin-student-pick w-full text-left" style={late?{borderColor:"#FECACA",background:"#FEF2F2"}:{}} onClick={()=>onSelectStudent(s.uid)}>
+                {s.foto
+                  ?<img src={s.foto} alt="" style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid #E2E8F0"}}/>
+                  :<div style={{width:40,height:40,borderRadius:"50%",background:"#F8F9FA",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
+                }
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E"}}>{s.name||"Aluno"}</div>
+                  <div style={{fontSize:11,color:"#475569"}}>{(s.financeiro?.parcelas||[]).length} parcelas</div>
                 </div>
-              )}
-
-              <div style={{fontSize: 12, fontWeight: 800, color: "var(--font-muted)", textTransform: "uppercase", marginBottom: 8, paddingLeft: 4}}>
-                Situação Regular
-              </div>
-              <div className="space-y-2">
-                {alunosFiltrados
-                  .filter(s => !resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate)
-                  .map(s => {
-                    const parcelas = s.financeiro?.parcelas || [];
-                    const pagas = parcelas.filter(p => p.status === "paga").length;
-                    return (
-                      <button key={s.uid} className="fin-student-pick w-full text-left" onClick={() => onSelectStudent(s.uid)}>
-                        {s.foto
-                          ? <img src={s.foto} alt="" style={{width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--divider)"}}/>
-                          : <div style={{width: 40, height: 40, borderRadius: "50%", background: "var(--badge)", display: "flex", alignItems: "center", justifyContent: "center"}}><Icon name="user" size={18}/></div>
-                        }
-                        <div style={{flex: 1, minWidth: 0}}>
-                          <div style={{fontWeight: 700, fontSize: 14}}>{s.name || "Aluno"}</div>
-                          <div style={{fontSize: 11, color: "var(--font-muted)"}}>{parcelas.length} parcelas · {pagas} pagas</div>
-                        </div>
-                        <StatusBadge status={s.status || "lead"}/>
-                        <Icon name="arrow-right" size={16} style={{opacity: .45}}/>
-                      </button>
-                    );
-                  })}
-              </div>
-            </>
-          )}
+                <span className={late?"status-badge status-badge-overdue":"status-badge status-badge-paid"}>{late?"Em atraso":"Em dia"}</span>
+                <Icon name="arrow-right" size={16} style={{opacity:.45}}/>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
+
 
 function computeDiarioStats(entries){
   const now=new Date();
@@ -7006,7 +6934,6 @@ function AdminApp({user}){
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
 
   const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
-  const showBack=adminView!=="dashboard";
 
   const adminNav=[
     {id:"dashboard",icon:"layout-dashboard",label:"Painel"},
