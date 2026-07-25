@@ -316,58 +316,58 @@
     }
     .lesson-card.lesson-pending.lesson-locked,.review-card.lesson-pending.lesson-locked{cursor:not-allowed;opacity:.8;}
     .lesson-card.lesson-andamento,.review-card.lesson-andamento{
-      background:linear-gradient(135deg,rgba(14,165,233,.45),rgba(56,189,248,.28))!important;
-      border:1.5px solid #38bdf8!important;
-      border-left:3px solid #7dd3fc!important;
-      color:#e0f2fe!important;
-      box-shadow:0 0 16px rgba(56,189,248,.35)!important;
+      background:var(--tl-active-bg)!important;
+      border:1px solid var(--tl-active-border)!important;
+      border-left:3px solid var(--tl-active-border)!important;
+      color:var(--tl-active-text)!important;
+      box-shadow:none!important;
     }
-    /* INPUT concluída → azul forte + neon (landing #3b82f6) */
+    /* INPUT concluída — sólido, sem neon */
     .lesson-card.done-card,.lesson-card.done-card.done-input{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 35%,#2563eb 65%,#3b82f6 100%)!important;
-      border:1.5px solid #7dd3fc!important;
-      border-left:3px solid #93c5fd!important;
+      background:var(--tl-done-input)!important;
+      border:1px solid var(--tl-done-input)!important;
+      border-left:3px solid var(--tl-done-input)!important;
       color:#fff!important;
-      box-shadow:0 0 0 1px rgba(125,211,252,.5),0 0 18px rgba(59,130,246,.65),0 0 32px rgba(56,189,248,.35)!important;
+      box-shadow:none!important;
     }
-    /* OUTPUT concluída → verde + neon teal */
+    /* OUTPUT concluída — sólido, sem neon */
     .lesson-card.done-card.done-output{
-      background:linear-gradient(135deg,#064e3b 0%,#047857 40%,#00a89d 100%)!important;
-      border:1.5px solid #5eead4!important;
-      border-left:3px solid #2dd4bf!important;
-      color:#ecfdf5!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.6)!important;
+      background:var(--tl-done-output)!important;
+      border:1px solid var(--tl-done-output)!important;
+      border-left:3px solid var(--tl-done-output)!important;
+      color:#fff!important;
+      box-shadow:none!important;
     }
-    .review-card{background:rgba(139,92,246,.12);border-bottom:1px solid rgba(139,92,246,.22);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
-    .review-card:hover{background:rgba(139,92,246,.18);}
+    .review-card{background:var(--lesson);border-bottom:1px solid var(--divider);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
+    .review-card:hover{filter:brightness(0.98);}
     .review-card:last-child{border-bottom:none;}
     .review-card.done-card,.lesson-card.done-card.done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 40%,#8b5cf6 100%)!important;
-      border:1.5px solid #d8b4fe!important;
-      border-left:3px solid #c4b5fd!important;
-      color:#f5f3ff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.6)!important;
+      background:var(--tl-done-review)!important;
+      border:1px solid var(--tl-done-review)!important;
+      border-left:3px solid var(--tl-done-review)!important;
+      color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.lesson-pending,[data-theme="light"] .review-card.lesson-pending{
-      background:linear-gradient(145deg,#c5cad3,#d5dae2,#e2e6ec)!important;
-      border-color:#9aa3b2!important;border-left-color:#6b7280!important;color:#4b5563!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;border-left-color:#94A3B8!important;color:var(--tl-pending-text)!important;
       box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.done-card,[data-theme="light"] .lesson-card.done-card.done-input{
-      background:linear-gradient(135deg,#174082 0%,#2252A0 40%,#3566B6 75%,#5b9be8 100%)!important;
-      border-color:#86CFFF!important;border-left-color:#7dd3fc!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(134,207,255,.5),0 0 20px rgba(53,102,182,.4)!important;
+      background:var(--tl-done-input)!important;
+      border-color:var(--tl-done-input)!important;border-left-color:var(--tl-done-input)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.done-card.done-output{
-      background:linear-gradient(135deg,#00665B,#187E74,#00a89d)!important;
-      border-color:#5eead4!important;border-left-color:#2dd4bf!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.45),0 0 18px rgba(0,168,157,.35)!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;border-left-color:var(--tl-done-output)!important;color:#fff!important;
+      box-shadow:none!important;
     }
-    [data-theme="light"] .review-card{background:rgba(139,92,246,.08);border-bottom-color:rgba(139,92,246,.20);}
+    [data-theme="light"] .review-card{background:var(--lesson);border-bottom-color:var(--divider);}
     [data-theme="light"] .review-card.done-card,[data-theme="light"] .lesson-card.done-card.done-review{
-      background:linear-gradient(135deg,#5b21b6,#7c3aed,#8b5cf6)!important;
-      border-color:#d8b4fe!important;border-left-color:#c4b5fd!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.45),0 0 18px rgba(139,92,246,.35)!important;
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;border-left-color:var(--tl-done-review)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     .lesson-detail{background:var(--detail);border-top:1px solid var(--divider);padding:14px 18px 16px;}
     .detail-label{font-size:11px;font-weight:700;color:#6ec8dc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
@@ -684,184 +684,180 @@
     .page-back{display:flex;align-items:center;gap:8px;padding:8px 0 16px;cursor:pointer;border:none;background:transparent;color:var(--font-muted);font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;}
     .page-back:hover{color:var(--font);}
 
-    /* ── TRILHA TIMELINE (card sempre escuro + shine, inclusive no light mode) ── */
-    .tl-wrap{background:linear-gradient(165deg,#0c1a2e 0%,#0a1628 55%,#081220 100%)!important;border:1.5px solid rgba(255,255,255,.09)!important;border-radius:22px;padding:22px 14px 26px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)!important;color:#e8f0f8;}
-    .tl-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,191,165,.12),transparent 60%)!important;pointer-events:none;}
-    .tl-wrap::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:tlShine 6s ease-in-out infinite;pointer-events:none;z-index:1;}
-    @keyframes tlShine{0%,100%{left:-100%;}50%{left:140%;}}
+    /* ── TRILHA TIMELINE (premium soft — SEM neon; cores via CSS vars editáveis) ── */
+    :root {
+      --tl-bg: #F1F5F9;
+      --tl-border: #E2E8F0;
+      --tl-text: #1E1E1E;
+      --tl-muted: #475569;
+      --tl-mod-bg: #FFFFFF;
+      --tl-mod-text: #1E1E1E;
+      --tl-node: #4F46E5;
+      --tl-node-done: #2563EB;
+      --tl-node-output: #0D9488;
+      --tl-node-review: #7C3AED;
+      --tl-node-active: #0284C7;
+      --tl-pending-bg: #E2E8F0;
+      --tl-pending-text: #475569;
+      --tl-done-input: #1D4ED8;
+      --tl-done-output: #0F766E;
+      --tl-done-review: #6D28D9;
+      --tl-active-bg: #E0F2FE;
+      --tl-active-border: #0284C7;
+      --tl-active-text: #0C4A6E;
+      --tl-glow: 0; /* 0 = sem neon; 1 = brilho (legado) */
+      --accent-solid: #0F172A;
+      --font-family-ui: 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+    }
+    .tl-wrap{
+      background:var(--tl-bg)!important;
+      border:1px solid var(--tl-border)!important;
+      border-radius:12px;padding:22px 14px 26px;position:relative;overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05)!important;
+      color:var(--tl-text);
+    }
+    .tl-wrap::before,.tl-wrap::after{display:none!important;content:none!important;animation:none!important;}
     .tl-module-block{display:flex;gap:0;position:relative;}
     .tl-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;}
-    .tl-node{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#00d9c0,#00BFA5);border:2px solid rgba(255,255,255,.35);box-shadow:0 0 12px rgba(0,191,165,.55);flex-shrink:0;z-index:2;animation:tlPulse 2.5s ease-in-out infinite;}
+    .tl-node{width:14px;height:14px;border-radius:50%;background:var(--tl-node);border:2px solid #fff;box-shadow:none;flex-shrink:0;z-index:2;animation:none;}
     .tl-node-mod{width:16px;height:16px;}
-    .tl-node-lesson{width:8px;height:8px;background:#6b7280;border-color:#9ca3af;box-shadow:none;animation:none;}
-    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#60a5fa,#2563eb);border-color:#7dd3fc;box-shadow:0 0 12px rgba(59,130,246,.85);}
-    .tl-node-lesson.tl-node-done-output{background:linear-gradient(135deg,#2dd4bf,#00a89d);border-color:#5eead4;box-shadow:0 0 12px rgba(0,168,157,.85);}
-    .tl-node-lesson.tl-node-done-review{background:linear-gradient(135deg,#c4b5fd,#8b5cf6);border-color:#d8b4fe;box-shadow:0 0 12px rgba(139,92,246,.85);}
-    .tl-node-lesson.tl-node-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border-color:#7dd3fc;box-shadow:0 0 12px rgba(56,189,248,.7);animation:tlPulse 2s ease-in-out infinite;}
-    @keyframes tlPulse{0%,100%{box-shadow:0 0 8px rgba(0,191,165,.4);}50%{box-shadow:0 0 18px rgba(0,191,165,.75);}}
+    .tl-node-lesson{width:8px;height:8px;background:#94A3B8;border-color:#CBD5E1;box-shadow:none;animation:none;}
+    .tl-node-lesson.tl-node-done{background:var(--tl-node-done);border-color:var(--tl-node-done);box-shadow:none;}
+    .tl-node-lesson.tl-node-done-output{background:var(--tl-node-output);border-color:var(--tl-node-output);box-shadow:none;}
+    .tl-node-lesson.tl-node-done-review{background:var(--tl-node-review);border-color:var(--tl-node-review);box-shadow:none;}
+    .tl-node-lesson.tl-node-active{background:var(--tl-node-active);border-color:var(--tl-node-active);box-shadow:none;animation:none;}
+    @keyframes tlPulse{0%,100%{opacity:1;}50%{opacity:1;}}
     .tl-segment{width:2px;flex:1;min-height:28px;position:relative;margin:4px 0;}
     .tl-segment-svg{width:2px;height:100%;display:block;overflow:visible;}
-    .tl-line-track{stroke:rgba(255,255,255,.12);stroke-width:2;fill:none;}
-    .tl-line-flow{stroke:url(#tlGrad);stroke-width:2;fill:none;stroke-dasharray:6 10;animation:tlDash 1.2s linear infinite;}
-    .tl-line-flow-mod{stroke-dasharray:8 14;animation:tlDash 1.8s linear infinite;}
-    @keyframes tlDash{to{stroke-dashoffset:-32;}}
-    .tl-arrow{fill:#00d9c0;opacity:.9;animation:tlArrowMove 2s ease-in-out infinite;}
-    @keyframes tlArrowMove{0%,100%{opacity:.4;transform:translateY(0);}50%{opacity:1;transform:translateY(4px);}}
-    [data-theme="light"] .tl-line-track{stroke:rgba(34,82,160,.30);}
-    [data-theme="light"] .tl-arrow{fill:#2252A0;}
-    [data-theme="light"] .tl-node-lesson{background:rgba(53,102,182,.25);border-color:rgba(53,102,182,.35);}
+    .tl-line-track{stroke:var(--tl-border);stroke-width:2;fill:none;}
+    .tl-line-flow{stroke:var(--tl-node);stroke-width:2;fill:none;stroke-dasharray:none;animation:none;opacity:.85;}
+    .tl-line-flow-mod{stroke-dasharray:none;animation:none;}
+    @keyframes tlDash{to{stroke-dashoffset:0;}}
+    .tl-arrow{fill:var(--tl-node);opacity:.9;animation:none;}
+    @keyframes tlArrowMove{0%,100%{opacity:1;transform:none;}}
+    [data-theme="light"] .tl-line-track{stroke:var(--tl-border);}
+    [data-theme="light"] .tl-arrow{fill:var(--tl-node);}
+    [data-theme="light"] .tl-node-lesson{background:#94A3B8;border-color:#CBD5E1;}
     .tl-content{flex:1;min-width:0;padding-bottom:8px;}
     .tl-mod-row{display:flex;align-items:stretch;gap:8px;margin-bottom:6px;}
-    .tl-mod-header{flex:1;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(18,36,61,.95),rgba(12,26,46,.9));border:1px solid rgba(255,255,255,.12);cursor:pointer;text-align:left;color:#fff;transition:filter .15s,border-color .15s;font-family:inherit;}
-    .tl-mod-header:hover{filter:brightness(1.08);border-color:rgba(0,191,165,.35);}
+    .tl-mod-header{flex:1;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:var(--tl-mod-bg);border:1px solid var(--tl-border);cursor:pointer;text-align:left;color:var(--tl-mod-text);transition:border-color .15s,box-shadow .15s;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+    .tl-mod-header:hover{border-color:var(--tl-node);box-shadow:0 2px 8px rgba(0,0,0,.06);}
     .tl-mod-num{display:flex;flex-direction:column;align-items:center;min-width:44px;}
-    .tl-mod-lbl{font-size:8px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.55);text-transform:uppercase;}
-    .tl-mod-id{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;line-height:1;color:#fff;}
-    .tl-mod-sep{width:1px;height:36px;background:rgba(255,255,255,.18);flex-shrink:0;}
-    .tl-mod-title{flex:1;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.3;color:rgba(255,255,255,.92);}
-    .tl-mod-chevron{color:rgba(255,255,255,.45);flex-shrink:0;transition:transform .2s;}
+    .tl-mod-lbl{font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--tl-muted);text-transform:uppercase;}
+    .tl-mod-id{font-family:var(--font-family-ui);font-size:26px;font-weight:800;line-height:1;color:var(--tl-mod-text);}
+    .tl-mod-sep{width:1px;height:36px;background:var(--tl-border);flex-shrink:0;}
+    .tl-mod-title{flex:1;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.3;color:var(--tl-mod-text);}
+    .tl-mod-chevron{color:var(--tl-muted);flex-shrink:0;transition:transform .2s;}
     .tl-mod-chevron-open{transform:rotate(180deg);}
-    .tl-hide-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.7);font-size:9px;font-weight:700;letter-spacing:.04em;transition:all .15s;flex-shrink:0;min-width:52px;font-family:inherit;}
-    .tl-hide-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+    .tl-hide-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 10px;border-radius:8px;border:1px solid var(--tl-border);background:var(--tl-mod-bg);cursor:pointer;color:var(--tl-muted);font-size:9px;font-weight:700;letter-spacing:.04em;transition:all .15s;flex-shrink:0;min-width:52px;font-family:inherit;}
+    .tl-hide-btn:hover{background:var(--tl-pending-bg);color:var(--tl-text);}
     .tl-hide-btn.tl-hidden-active{background:rgba(229,99,107,.18);border-color:rgba(229,99,107,.4);color:#f87171;}
     .tl-lesson-row{display:flex;gap:0;margin-bottom:4px;}
     .tl-lesson-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:14px;}
     .tl-segment-sm{min-height:20px;}
     .tl-lesson-body{flex:1;min-width:0;}
-    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:12px;border:1.5px solid transparent;cursor:pointer;text-align:left;font-family:inherit;transition:transform .18s,box-shadow .25s,border-color .25s,background .25s,filter .18s;position:relative;overflow:hidden;isolation:isolate;}
-    .tl-lesson-pill::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity .25s;}
-    .tl-lesson-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.14) 50%,transparent 60%);transform:translateX(-100%);transition:none;pointer-events:none;z-index:1;}
+    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:8px;border:1px solid var(--tl-border);cursor:pointer;text-align:left;font-family:inherit;transition:border-color .15s,background .15s,box-shadow .15s;position:relative;overflow:hidden;isolation:isolate;box-shadow:none;}
+    .tl-lesson-pill::before,.tl-lesson-pill::after{display:none!important;content:none!important;animation:none!important;}
     .tl-lesson-pill > *{position:relative;z-index:2;}
-    /* ── PENDENTE: capa cinza (aluno + adm). Tags coloridas ficam por cima. ── */
+    /* Pendente — sem neon */
     .tl-pill-pending{
-      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
-      border-color:rgba(160,170,185,.38)!important;
-      color:rgba(210,218,228,.82)!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;
+      color:var(--tl-pending-text)!important;
       box-shadow:none!important;
-      filter:saturate(.85);
+      filter:none;
     }
-    .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
+    .tl-pill-pending:hover{filter:brightness(0.97);box-shadow:0 2px 6px rgba(0,0,0,.05)!important;}
     .tl-pill-pending .tl-lesson-title,.tl-pill-pending .tl-lesson-meta{color:inherit;}
-    .tl-pill-locked{cursor:not-allowed!important;opacity:.78;pointer-events:auto;}
-    .tl-pill-locked:hover{background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;filter:saturate(.85);transform:none!important;}
+    .tl-pill-locked{cursor:not-allowed!important;opacity:.72;pointer-events:auto;}
+    .tl-pill-locked:hover{filter:none;transform:none!important;}
     .tl-pill-locked::after{display:none;}
-    .tl-badge-locked{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(100,116,139,.35);color:#cbd5e1;border:1px solid rgba(148,163,184,.4);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
-    /* ── CONCLUÍDA INPUT: azul forte + neon (estilo Portal landing) ── */
+    .tl-badge-locked{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
+    /* Concluídas — sólido premium, SEM glow/neon */
     .tl-pill-done{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
-      border-color:#7dd3fc!important;
+      background:var(--tl-done-input)!important;
+      border-color:var(--tl-done-input)!important;
       color:#fff!important;
-      box-shadow:
-        0 0 0 1px rgba(125,211,252,.55),
-        0 0 14px rgba(59,130,246,.75),
-        0 0 32px rgba(56,189,248,.45),
-        0 10px 28px -8px rgba(29,78,216,.55)!important;
+      box-shadow:none!important;
     }
-    .tl-pill-done::before{
-      opacity:1;
-      background:
-        radial-gradient(ellipse 80% 70% at 15% 20%,rgba(125,211,252,.28),transparent 55%),
-        radial-gradient(ellipse 60% 50% at 90% 80%,rgba(37,99,235,.25),transparent 55%);
-    }
-    .tl-pill-done:hover{transform:translateY(-1px);filter:brightness(1.06);}
-    .tl-pill-done:hover::after{animation:tlPillShine .65s ease;}
-    /* OUTPUT concluída: verde profundo + neon teal (card-fluency landing) */
+    .tl-pill-done::before{display:none!important;}
+    .tl-pill-done:hover{filter:brightness(1.05);transform:none;}
+    .tl-pill-done:hover::after{animation:none;}
     .tl-pill-done-output{
-      background:linear-gradient(135deg,#064e3b 0%,#047857 35%,#059669 65%,#00a89d 100%)!important;
-      border-color:#5eead4!important;
-      color:#ecfdf5!important;
-      box-shadow:
-        0 0 0 1px rgba(94,234,212,.55),
-        0 0 14px rgba(0,168,157,.7),
-        0 0 30px rgba(45,212,191,.4),
-        0 10px 28px -8px rgba(0,102,91,.5)!important;
-    }
-    .tl-pill-done-output::before{
-      opacity:1;
-      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(94,234,212,.28),transparent 55%);
-    }
-    /* REVIEW concluída: roxo + neon (card-corporate landing) */
-    .tl-pill-done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 35%,#7c3aed 65%,#8b5cf6 100%)!important;
-      border-color:#d8b4fe!important;
-      color:#f5f3ff!important;
-      box-shadow:
-        0 0 0 1px rgba(216,180,254,.55),
-        0 0 14px rgba(139,92,246,.7),
-        0 0 30px rgba(167,139,250,.4),
-        0 10px 28px -8px rgba(109,40,217,.5)!important;
-    }
-    .tl-pill-done-review::before{
-      opacity:1;
-      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(216,180,254,.28),transparent 55%);
-    }
-    .tl-pill-active{
-      background:linear-gradient(135deg,rgba(14,165,233,.55),rgba(56,189,248,.35),rgba(37,99,235,.3))!important;
-      border-color:#38bdf8!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;
       color:#fff!important;
-      box-shadow:0 0 0 1px rgba(56,189,248,.45),0 0 16px rgba(56,189,248,.4)!important;
+      box-shadow:none!important;
     }
-    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{/* capa cinza herdada */}
-    @keyframes tlPillShine{to{transform:translateX(100%);}}
+    .tl-pill-done-output::before{display:none!important;}
+    .tl-pill-done-review{
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;
+      color:#fff!important;
+      box-shadow:none!important;
+    }
+    .tl-pill-done-review::before{display:none!important;}
+    .tl-pill-active{
+      background:var(--tl-active-bg)!important;
+      border-color:var(--tl-active-border)!important;
+      color:var(--tl-active-text)!important;
+      box-shadow:none!important;
+    }
+    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{}
+    @keyframes tlPillShine{to{transform:none;}}
     .tl-lesson-title{font-size:13px;font-weight:700;}
-    .tl-lesson-meta{font-size:10px;opacity:.75;margin-top:2px;}
-    .tl-previsao{font-size:9px;opacity:.65;letter-spacing:.02em;}
-    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(8,47,120,.75);color:#e0f2fe;border:1px solid #7dd3fc;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 0 12px rgba(59,130,246,.55);}
-    .tl-badge-done-output{background:rgba(4,70,50,.8);border-color:#5eead4;color:#ccfbf1;box-shadow:0 0 12px rgba(0,168,157,.55);}
-    .tl-badge-done-review{background:rgba(76,29,149,.8);border-color:#d8b4fe;color:#f5f3ff;box-shadow:0 0 12px rgba(139,92,246,.55);}
-    .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(56,189,248,.35);color:#7dd3fc;border:1px solid rgba(56,189,248,.5);flex-shrink:0;}
-    /* Painel expandido: legível pro admin (não herda o cinza da capa) */
-    .tl-lesson-expand{margin-top:6px;border-radius:14px;overflow:hidden;border:1px solid rgba(125,211,252,.18);background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));animation:tlExpand .25s ease;box-shadow:0 8px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);color:var(--font);}
+    .tl-lesson-meta{font-size:10px;opacity:.8;margin-top:2px;}
+    .tl-previsao{font-size:9px;opacity:.7;letter-spacing:.02em;}
+    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:none;}
+    .tl-badge-done-output{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:none;}
+    .tl-badge-done-review{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:none;}
+    .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--tl-active-bg);color:var(--tl-active-text);border:1px solid var(--tl-active-border);flex-shrink:0;box-shadow:none;}
+    .tl-lesson-expand{margin-top:6px;border-radius:8px;overflow:hidden;border:1px solid var(--tl-border);background:var(--card);animation:tlExpand .2s ease;box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
     .tl-lesson-expand .lesson-detail{background:transparent;border-top:none;color:var(--font);}
-    .tl-lesson-expand .detail-label{color:#7dd3fc;}
+    .tl-lesson-expand .detail-label{color:var(--font-muted);}
     .tl-lesson-expand .input-light,.tl-lesson-expand .input{color:var(--font);}
-    @keyframes tlExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-    .tl-mod-hidden-badge{font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(229,99,107,.2);color:#f87171;border:1px solid rgba(229,99,107,.35);margin-left:6px;}
-    .tl-badge-pendente{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(148,163,184,.28);color:#e2e8f0;border:1px solid rgba(148,163,184,.45);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}
+    @keyframes tlExpand{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+    .tl-mod-hidden-badge{font-size:9px;padding:2px 8px;border-radius:99px;background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;margin-left:6px;}
+    .tl-badge-pendente{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}
     /* Light mode: o CARD da trilha (.tl-wrap) permanece escuro (igual dark) com shine.
        Apenas o expand de lição aberta fica legível em light se necessário. */
-    [data-theme="light"] .tl-wrap,
-    [data-theme="light"] .tl-wrap::before{/* forçado pelo !important do dark card */}
-    [data-theme="light"] .tl-mod-header{background:linear-gradient(135deg,rgba(18,36,61,.95),rgba(12,26,46,.9))!important;border-color:rgba(255,255,255,.12)!important;color:#fff!important;}
-    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:#fff!important;}
+    [data-theme="light"] .tl-wrap{background:var(--tl-bg)!important;border-color:var(--tl-border)!important;color:var(--tl-text)!important;}
+    [data-theme="light"] .tl-mod-header{background:var(--tl-mod-bg)!important;border-color:var(--tl-border)!important;color:var(--tl-mod-text)!important;}
+    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:var(--tl-mod-text)!important;}
     [data-theme="light"] .tl-pill-pending,
     [data-theme="light"] .tl-pill-locked:hover{
-      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
-      border-color:rgba(160,170,185,.38)!important;
-      color:rgba(210,218,228,.82)!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;
+      color:var(--tl-pending-text)!important;
       box-shadow:none!important;
-      filter:saturate(.85);
+      filter:none;
     }
-    [data-theme="light"] .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
-    [data-theme="light"] .tl-badge-locked,[data-theme="light"] .tl-badge-pendente{background:rgba(100,116,139,.35);color:#cbd5e1;border-color:rgba(148,163,184,.4);}
-    [data-theme="light"] .tl-pill-done{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
-      border-color:#7dd3fc!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(125,211,252,.55),0 0 14px rgba(59,130,246,.75),0 0 32px rgba(56,189,248,.45)!important;
-    }
+    [data-theme="light"] .tl-pill-pending:hover{filter:brightness(0.97);}
+    [data-theme="light"] .tl-badge-locked,[data-theme="light"] .tl-badge-pendente{background:#F1F5F9;color:#475569;border-color:#E2E8F0;}
+    [data-theme="light"] .tl-pill-done{background:var(--tl-done-input)!important;border-color:var(--tl-done-input)!important;color:#fff!important;box-shadow:none!important;}
     [data-theme="light"] .tl-pill-done-output{
-      background:linear-gradient(135deg,#0f3d36 0%,#0d9488 40%,#14b8a6 100%)!important;
-      border-color:#5eead4!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.45)!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .tl-pill-done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 45%,#8b5cf6 100%)!important;
-      border-color:#d8b4fe!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.45)!important;
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;color:#fff!important;
+      box-shadow:none!important;
     }
-    [data-theme="light"] .tl-lesson-expand{background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));border-color:rgba(125,211,252,.18);box-shadow:0 8px 28px rgba(0,0,0,.35);color:#e8f0f8;}
-    [data-theme="light"] .tl-lesson-expand .detail-label{color:#7dd3fc;}
-    [data-theme="light"] .tl-badge-done{background:rgba(59,130,246,.25);color:#bfdbfe;border-color:#60a5fa;}
-    [data-theme="light"] .tl-badge-done-output{background:rgba(20,184,166,.25);color:#99f6e4;border-color:#5eead4;}
-    [data-theme="light"] .tl-badge-done-review{background:rgba(139,92,246,.25);color:#e9d5ff;border-color:#c4b5fd;}
-    [data-theme="light"] .tl-badge-current{background:rgba(56,189,248,.35);color:#7dd3fc;border-color:rgba(56,189,248,.5);}
-    [data-theme="light"] .tl-hide-btn{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);}
-    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:rgba(200,215,230,.8);}
-    [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:rgba(200,210,220,.75);}
-    [data-theme="light"] .tl-pill-done .tl-lesson-meta,[data-theme="light"] .tl-pill-done .tl-previsao{color:rgba(255,255,255,.85);}
-    [data-theme="light"] .tl-line-track{stroke:rgba(255,255,255,.12)!important;}
-    [data-theme="light"] .tl-arrow{fill:#00d9c0!important;}
-    [data-theme="light"] .tl-node-lesson{background:#6b7280!important;border-color:#9ca3af!important;}
+    [data-theme="light"] .tl-lesson-expand{background:var(--card);border-color:var(--tl-border);box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
+    [data-theme="light"] .tl-lesson-expand .detail-label{color:var(--font-muted);}
+    [data-theme="light"] .tl-badge-done{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
+    [data-theme="light"] .tl-badge-done-output{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
+    [data-theme="light"] .tl-badge-done-review{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);box-shadow:none;}
+    [data-theme="light"] .tl-badge-current{background:var(--tl-active-bg);color:var(--tl-active-text);border-color:var(--tl-active-border);box-shadow:none;}
+    [data-theme="light"] .tl-hide-btn{border-color:var(--tl-border);background:var(--tl-mod-bg);color:var(--tl-muted);}
+    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:var(--tl-muted);}
+    [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:var(--tl-pending-text);}
+    [data-theme="light"] .tl-pill-done .tl-lesson-meta,[data-theme="light"] .tl-pill-done .tl-previsao{color:rgba(255,255,255,.9);}
+    [data-theme="light"] .tl-line-track{stroke:var(--tl-border)!important;}
+    [data-theme="light"] .tl-arrow{fill:var(--tl-node)!important;}
+    [data-theme="light"] .tl-node-lesson{background:#94A3B8!important;border-color:#CBD5E1!important;}
     /* student cards list */
     .student-card{display:flex;flex-direction:column;gap:12px;}
     .student-card-head{display:flex;align-items:flex-start;gap:12px;}
@@ -1030,38 +1026,133 @@
     [data-theme="light"] .fin-pay-card:hover{border-color:rgba(53,102,182,.28);box-shadow:0 8px 24px rgba(23,64,130,.10);}
     [data-theme="light"] .page-back:hover{color:#2252A0;}
     [data-theme="light"] .sd-journey-mod{color:#86CFFF;}
+
+    /* ── APARÊNCIA (painel global) ── */
+    .ap-fab{
+      position:fixed;bottom:22px;left:22px;z-index:950;
+      width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+      background:#0F172A;color:#fff;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 6px 20px rgba(15,23,42,.28);transition:transform .15s,background .15s;
+    }
+    .ap-fab:hover{transform:scale(1.06);background:#4F46E5;}
+    .ap-panel{
+      position:fixed;bottom:84px;left:22px;z-index:950;width:min(420px,calc(100vw - 32px));
+      max-height:min(78vh,640px);overflow:hidden;display:flex;flex-direction:column;
+      background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;
+      box-shadow:0 16px 48px rgba(0,0,0,.18);animation:slideUp .2s ease-out;
+    }
+    .ap-panel-head{
+      padding:14px 16px;background:#1E293B;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .ap-panel-body{padding:14px 16px;overflow-y:auto;flex:1;background:#F8F9FA;}
+    .ap-panel-foot{
+      padding:12px 16px;border-top:1px solid #E2E8F0;background:#fff;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+    }
+    .ap-section{margin-bottom:16px;}
+    .ap-section h4{
+      font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+      color:#475569;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid #E2E8F0;
+    }
+    .ap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .ap-field label{display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:4px;}
+    .ap-color-row{display:flex;align-items:center;gap:8px;}
+    .ap-color-row input[type="color"]{
+      width:40px;height:36px;border:1px solid #E2E8F0;border-radius:8px;padding:2px;background:#fff;cursor:pointer;
+    }
+    .ap-color-row input[type="text"]{
+      flex:1;min-width:0;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:12px;color:#1E1E1E;font-family:ui-monospace,monospace;
+    }
+    .ap-select,.ap-field select{
+      width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff;color:#1E1E1E;
+    }
+    .ap-toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#1E1E1E;cursor:pointer;}
+    .ap-toggle input{width:18px;height:18px;}
+    .ap-preview-card{
+      background:var(--card);border:1px solid var(--divider);border-radius:8px;padding:14px;margin-top:8px;
+      box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);
+    }
+    body{font-family:var(--font-family-ui),var(--ds-font),'Inter',system-ui,sans-serif;}
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
 
   <script>
-  // Carrega tema do Firebase assim que possível e aplica CSS variables (retrocompatibilidade)
+  // Aparência global: CSS vars + localStorage + Firebase config/aparencia
   (function(){
+    var THEME_KEYS=[
+      'bg','font','fontMuted','card','lesson','detail','header','tabbar','badge','btn',
+      'done','doneBorder','doneText','divider','inputBg','inputBorder','accentSolid',
+      'fontFamily',
+      'tlBg','tlBorder','tlText','tlMuted','tlModBg','tlModText','tlNode','tlNodeDone',
+      'tlNodeOutput','tlNodeReview','tlNodeActive','tlPendingBg','tlPendingText',
+      'tlDoneInput','tlDoneOutput','tlDoneReview','tlActiveBg','tlActiveBorder','tlActiveText',
+      'sidebarBg','sidebarText'
+    ];
+    var CSS_MAP={
+      bg:'--bg',font:'--font',fontMuted:'--font-muted',card:'--card',lesson:'--lesson',
+      detail:'--detail',header:'--header',tabbar:'--tabbar',badge:'--badge',btn:'--btn',
+      done:'--done',doneBorder:'--done-border',doneText:'--done-text',
+      divider:'--divider',inputBg:'--input-bg',inputBorder:'--input-border',
+      accentSolid:'--accent-solid',
+      fontFamily:'--font-family-ui',
+      tlBg:'--tl-bg',tlBorder:'--tl-border',tlText:'--tl-text',tlMuted:'--tl-muted',
+      tlModBg:'--tl-mod-bg',tlModText:'--tl-mod-text',
+      tlNode:'--tl-node',tlNodeDone:'--tl-node-done',tlNodeOutput:'--tl-node-output',
+      tlNodeReview:'--tl-node-review',tlNodeActive:'--tl-node-active',
+      tlPendingBg:'--tl-pending-bg',tlPendingText:'--tl-pending-text',
+      tlDoneInput:'--tl-done-input',tlDoneOutput:'--tl-done-output',tlDoneReview:'--tl-done-review',
+      tlActiveBg:'--tl-active-bg',tlActiveBorder:'--tl-active-border',tlActiveText:'--tl-active-text',
+      sidebarBg:'--ds-sidebar',sidebarText:'--ds-sidebar-text'
+    };
     function applyTheme(t){
       if(!t)return;
-      const r=document.documentElement.style;
-      if(t.bg)r.setProperty('--bg',t.bg);
-      if(t.font)r.setProperty('--font',t.font);
-      if(t.card)r.setProperty('--card',t.card);
-      if(t.lesson)r.setProperty('--lesson',t.lesson);
-      if(t.detail)r.setProperty('--detail',t.detail);
-      if(t.header)r.setProperty('--header',t.header);
-      if(t.tabbar)r.setProperty('--tabbar',t.tabbar);
-      if(t.badge)r.setProperty('--badge',t.badge);
-      if(t.btn)r.setProperty('--btn',t.btn);
-      if(t.done)r.setProperty('--done',t.done);
-      if(t.doneBorder)r.setProperty('--done-border',t.doneBorder);
-      if(t.doneText)r.setProperty('--done-text',t.doneText);
+      var r=document.documentElement.style;
+      THEME_KEYS.forEach(function(k){
+        if(t[k]!=null&&t[k]!==''&&CSS_MAP[k]) r.setProperty(CSS_MAP[k], t[k]);
+      });
+      if(t.fontFamily){
+        document.body && (document.body.style.fontFamily = t.fontFamily + ", system-ui, sans-serif");
+      }
+      if(t.mode==='light'||t.mode==='dark'){
+        document.documentElement.setAttribute('data-theme', t.mode);
+      }
+      try{ window.__fsAppearance = Object.assign({}, window.__fsAppearance||{}, t); }catch(e){}
     }
     window.__applyTheme=applyTheme;
-    // Aplicar tema salvo localmente
-    const saved=localStorage.getItem('fs-theme')||'light';
-    const isDark=saved==='dark'||(saved==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-    // Tenta carregar do Firebase para retrocompatibilidade
+    window.__THEME_KEYS=THEME_KEYS;
+    window.__THEME_CSS_MAP=CSS_MAP;
+    window.__APPEARANCE_DEFAULTS={
+      mode:'light',
+      bg:'#F8F9FA', font:'#1E1E1E', fontMuted:'#475569', card:'#FFFFFF',
+      lesson:'#FFFFFF', detail:'#F1F5F9', header:'#FFFFFF', tabbar:'#E2E8F0',
+      badge:'#F1F5F9', btn:'#FFFFFF', done:'#F0FDF4', doneBorder:'#15803D', doneText:'#15803D',
+      divider:'#E2E8F0', inputBg:'#FFFFFF', inputBorder:'#CBD5E1', accentSolid:'#0F172A',
+      fontFamily:"'Inter', 'Helvetica Neue', 'Segoe UI'",
+      tlBg:'#F1F5F9', tlBorder:'#E2E8F0', tlText:'#1E1E1E', tlMuted:'#475569',
+      tlModBg:'#FFFFFF', tlModText:'#1E1E1E',
+      tlNode:'#4F46E5', tlNodeDone:'#2563EB', tlNodeOutput:'#0D9488', tlNodeReview:'#7C3AED',
+      tlNodeActive:'#0284C7', tlPendingBg:'#E2E8F0', tlPendingText:'#475569',
+      tlDoneInput:'#1D4ED8', tlDoneOutput:'#0F766E', tlDoneReview:'#6D28D9',
+      tlActiveBg:'#E0F2FE', tlActiveBorder:'#0284C7', tlActiveText:'#0C4A6E',
+      sidebarBg:'#1E293B', sidebarText:'#FFFFFF'
+    };
+    // local first
     try{
-      firebase.firestore().collection('config').doc('aparencia').get().then(doc=>{
-        if(doc.exists)applyTheme(doc.data());
-      }).catch(()=>{});
+      var local=JSON.parse(localStorage.getItem('fs-appearance')||'null');
+      if(local) applyTheme(local);
+    }catch(e){}
+    var saved=localStorage.getItem('fs-theme')||'light';
+    var isDark=saved==='dark'||(saved==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if(!document.documentElement.getAttribute('data-theme')){
+      document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+    }
+    try{
+      firebase.firestore().collection('config').doc('aparencia').get().then(function(doc){
+        if(doc.exists){
+          var data=doc.data()||{};
+          applyTheme(data);
+          try{ localStorage.setItem('fs-appearance', JSON.stringify(data)); }catch(e){}
+        }
+      }).catch(function(){});
     }catch(e){}
   })();
   </script>
@@ -1070,7 +1161,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-overhaul-finance");
+console.info("Fluency Portal v2026.07.25-appearance-studio");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1807,11 +1898,11 @@ function getLessonBorderColor(item){
   const isOutput=item.lessonType==="output";
   if(item.status==="andamento")return "#38bdf8";
   if(item.status==="pendente"||(!done&&!item.status))return "#94a3b8"; // cinza pendente
-  if(isReview)return done?"#c4b5fd":"#a78bfa"; // roxo neon
-  if(isOutput)return done?"#2dd4bf":"#00a89d"; // teal neon
-  // input concluída → azul neon
-  if(done)return "#60a5fa";
-  return "#5b9be8";
+  if(isReview)return done?"#6D28D9":"#7C3AED"; // review sólido
+  if(isOutput)return done?"#0F766E":"#0D9488"; // output sólido
+  // input concluída → azul sólido
+  if(done)return "#1D4ED8";
+  return "#2563EB";
 }
 
 function getReflectiveMeta(lessonType, contentNum, reviewNum){
@@ -6633,10 +6724,261 @@ function AdminCursos({students}){
   );
 }
 
+
+/* ── APARÊNCIA: painel de cores global (todas as páginas) ─────────────────── */
+const APPEARANCE_DEFAULTS = (typeof window !== "undefined" && window.__APPEARANCE_DEFAULTS) || {
+  mode:"light", bg:"#F8F9FA", font:"#1E1E1E", fontMuted:"#475569", card:"#FFFFFF",
+  lesson:"#FFFFFF", detail:"#F1F5F9", header:"#FFFFFF", tabbar:"#E2E8F0", badge:"#F1F5F9",
+  btn:"#FFFFFF", done:"#F0FDF4", doneBorder:"#15803D", doneText:"#15803D",
+  divider:"#E2E8F0", inputBg:"#FFFFFF", inputBorder:"#CBD5E1", accentSolid:"#0F172A",
+  fontFamily:"'Inter', 'Helvetica Neue', 'Segoe UI'",
+  tlBg:"#F1F5F9", tlBorder:"#E2E8F0", tlText:"#1E1E1E", tlMuted:"#475569",
+  tlModBg:"#FFFFFF", tlModText:"#1E1E1E",
+  tlNode:"#4F46E5", tlNodeDone:"#2563EB", tlNodeOutput:"#0D9488", tlNodeReview:"#7C3AED",
+  tlNodeActive:"#0284C7", tlPendingBg:"#E2E8F0", tlPendingText:"#475569",
+  tlDoneInput:"#1D4ED8", tlDoneOutput:"#0F766E", tlDoneReview:"#6D28D9",
+  tlActiveBg:"#E0F2FE", tlActiveBorder:"#0284C7", tlActiveText:"#0C4A6E",
+  sidebarBg:"#1E293B", sidebarText:"#FFFFFF"
+};
+const APPEARANCE_FIELDS = [
+  { group:"Geral", items:[
+    {key:"mode", label:"Modo base", type:"select", options:[{v:"light",l:"Claro"},{v:"dark",l:"Escuro"}]},
+    {key:"fontFamily", label:"Família da fonte", type:"select", options:[
+      {v:"'Inter', 'Helvetica Neue', 'Segoe UI'", l:"Inter (premium)"},
+      {v:"'Outfit', system-ui, sans-serif", l:"Outfit"},
+      {v:"'Segoe UI', system-ui, sans-serif", l:"Segoe UI"},
+      {v:"'Helvetica Neue', Helvetica, Arial, sans-serif", l:"Helvetica Neue"},
+      {v:"Georgia, 'Times New Roman', serif", l:"Georgia (serif)"},
+    ]},
+  ]},
+  { group:"Páginas & layout", items:[
+    {key:"bg", label:"Background da página"},
+    {key:"card", label:"Cards / containers"},
+    {key:"font", label:"Texto principal"},
+    {key:"fontMuted", label:"Texto secundário"},
+    {key:"detail", label:"Áreas de detalhe"},
+    {key:"header", label:"Header"},
+    {key:"divider", label:"Bordas / divisores"},
+    {key:"btn", label:"Botões secundários"},
+    {key:"accentSolid", label:"Botão primário / acento"},
+    {key:"inputBg", label:"Fundo dos inputs"},
+    {key:"inputBorder", label:"Borda dos inputs"},
+    {key:"sidebarBg", label:"Sidebar admin"},
+    {key:"sidebarText", label:"Texto sidebar"},
+  ]},
+  { group:"Trilha (sem neon)", items:[
+    {key:"tlBg", label:"Fundo da trilha"},
+    {key:"tlBorder", label:"Borda da trilha"},
+    {key:"tlText", label:"Texto da trilha"},
+    {key:"tlMuted", label:"Texto secundário trilha"},
+    {key:"tlModBg", label:"Card do módulo"},
+    {key:"tlModText", label:"Texto do módulo"},
+    {key:"tlNode", label:"Nó / linha da trilha"},
+    {key:"tlPendingBg", label:"Lição pendente (fundo)"},
+    {key:"tlPendingText", label:"Lição pendente (texto)"},
+    {key:"tlDoneInput", label:"Input concluída"},
+    {key:"tlDoneOutput", label:"Output concluída"},
+    {key:"tlDoneReview", label:"Review concluída"},
+    {key:"tlActiveBg", label:"Lição atual (fundo)"},
+    {key:"tlActiveBorder", label:"Lição atual (borda)"},
+    {key:"tlActiveText", label:"Lição atual (texto)"},
+    {key:"tlNodeDone", label:"Ponto input feito"},
+    {key:"tlNodeOutput", label:"Ponto output feito"},
+    {key:"tlNodeReview", label:"Ponto review feito"},
+    {key:"tlNodeActive", label:"Ponto lição atual"},
+  ]},
+];
+
+function loadAppearanceState(){
+  try{
+    const local=JSON.parse(localStorage.getItem("fs-appearance")||"null");
+    if(local&&typeof local==="object")return{...APPEARANCE_DEFAULTS,...local};
+  }catch(e){}
+  if(typeof window!=="undefined"&&window.__fsAppearance)return{...APPEARANCE_DEFAULTS,...window.__fsAppearance};
+  return{...APPEARANCE_DEFAULTS};
+}
+
+function ColorField({label,value,onChange}){
+  const hex=(value&&String(value).startsWith("#"))?value:"#000000";
+  return(
+    <div className="ap-field">
+      <label>{label}</label>
+      <div className="ap-color-row">
+        <input type="color" value={hex.length===7?hex:"#000000"} onChange={e=>onChange(e.target.value)} title={label}/>
+        <input type="text" value={value||""} onChange={e=>onChange(e.target.value)} placeholder="#000000" spellCheck={false}/>
+      </div>
+    </div>
+  );
+}
+
+function AppearanceEditor({embedded,onClose}){
+  const [form,setForm]=useState(loadAppearanceState);
+  const [saving,setSaving]=useState(false);
+  const [msg,setMsg]=useState("");
+  const [err,setErr]=useState("");
+  const isAdminUser=auth.currentUser&&auth.currentUser.uid===ADMIN_UID;
+
+  useEffect(()=>{
+    // live cloud sync load
+    let unsub=null;
+    try{
+      unsub=db.collection("config").doc("aparencia").onSnapshot(doc=>{
+        if(doc.exists){
+          const data={...APPEARANCE_DEFAULTS,...doc.data()};
+          setForm(data);
+          if(window.__applyTheme)window.__applyTheme(data);
+        }
+      },()=>{});
+    }catch(e){}
+    return()=>{if(unsub)unsub();};
+  },[]);
+
+  function setKey(k,v){
+    setForm(prev=>{
+      const next={...prev,[k]:v};
+      if(window.__applyTheme)window.__applyTheme(next);
+      return next;
+    });
+    setMsg("");setErr("");
+  }
+
+  async function save(){
+    setSaving(true);setMsg("");setErr("");
+    try{
+      const payload={...form,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser?auth.currentUser.uid:null};
+      // strip serverTimestamp for local
+      const localPayload={...form};
+      localStorage.setItem("fs-appearance",JSON.stringify(localPayload));
+      if(form.mode)localStorage.setItem("fs-theme",form.mode);
+      if(window.__applyTheme)window.__applyTheme(form);
+      if(isAdminUser){
+        await db.collection("config").doc("aparencia").set(payload,{merge:true});
+        setMsg("Aparência salva para todo o portal (Firebase + este navegador).");
+      }else{
+        // aluno: salva só local + tenta user prefs (sem apagar dados)
+        try{
+          await db.collection("users").doc(auth.currentUser.uid).set({appearance:localPayload},{merge:true});
+          setMsg("Preferências salvas neste navegador e no seu perfil.");
+        }catch(e){
+          setMsg("Preferências salvas neste navegador.");
+        }
+      }
+    }catch(e){
+      console.error(e);
+      setErr("Não foi possível salvar no Firebase. As cores ficaram aplicadas localmente. Verifique regras de config/aparencia.");
+      try{localStorage.setItem("fs-appearance",JSON.stringify(form));}catch(x){}
+    }finally{
+      setSaving(false);
+    }
+  }
+
+  function resetDefaults(){
+    const d={...APPEARANCE_DEFAULTS};
+    setForm(d);
+    if(window.__applyTheme)window.__applyTheme(d);
+    setMsg("Padrão premium (sem neon) aplicado — clique em Salvar para gravar.");
+  }
+
+  const body=(
+    <>
+      <div className={embedded?"":"ap-panel-body"}>
+        <p style={{fontSize:12,color:"#475569",margin:"0 0 14px",lineHeight:1.5}}>
+          Altere cores e fontes com prévia ao vivo. <strong>Trilha sem neon</strong> por padrão.
+          {isAdminUser?" Admin: salvar aplica para todos os alunos.":" Suas preferências ficam neste dispositivo."}
+        </p>
+        {APPEARANCE_FIELDS.map(sec=>(
+          <div className="ap-section" key={sec.group}>
+            <h4>{sec.group}</h4>
+            <div className="ap-grid">
+              {sec.items.map(item=>{
+                if(item.type==="select"){
+                  return(
+                    <div className="ap-field" key={item.key} style={{gridColumn:item.key==="fontFamily"?"1 / -1":undefined}}>
+                      <label>{item.label}</label>
+                      <select className="ap-select" value={form[item.key]||""} onChange={e=>setKey(item.key,e.target.value)}>
+                        {item.options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+                      </select>
+                    </div>
+                  );
+                }
+                return <ColorField key={item.key} label={item.label} value={form[item.key]} onChange={v=>setKey(item.key,v)}/>;
+              })}
+            </div>
+          </div>
+        ))}
+        <div className="ap-preview-card">
+          <div style={{fontSize:11,fontWeight:700,color:"var(--font-muted)",marginBottom:6}}>PRÉVIA</div>
+          <div style={{fontWeight:800,fontSize:16,marginBottom:4}}>Card de exemplo</div>
+          <div style={{fontSize:13,color:"var(--font-muted)"}}>Texto secundário · trilha e páginas usam estas cores.</div>
+          <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-input)"}}>Input</span>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-output)"}}>Output</span>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-review)"}}>Review</span>
+          </div>
+        </div>
+        {msg&&<p style={{fontSize:12,color:"#15803D",marginTop:12,background:"#F0FDF4",padding:"8px 10px",borderRadius:8}}>{msg}</p>}
+        {err&&<p style={{fontSize:12,color:"#B91C1C",marginTop:12,background:"#FEF2F2",padding:"8px 10px",borderRadius:8}}>{err}</p>}
+      </div>
+      <div className={embedded?"flex gap-2 flex-wrap mt-4":"ap-panel-foot"}>
+        <button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={resetDefaults}>Restaurar padrão</button>
+        {onClose&&<button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={onClose}>Fechar</button>}
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={save} disabled={saving}>
+          {saving?"Salvando…":"Salvar aparência"}
+        </button>
+      </div>
+    </>
+  );
+
+  if(embedded){
+    return(
+      <div className="premium-card" style={{marginBottom:24}}>
+        <h3 style={{fontSize:18,fontWeight:800,color:"#1E1E1E",margin:"0 0 4px"}}>Aparência do portal</h3>
+        <p style={{fontSize:13,color:"#475569",margin:"0 0 16px"}}>Background, cards, fontes e trilha — você decide e salva.</p>
+        {body}
+      </div>
+    );
+  }
+
+  return(
+    <div className="ap-panel" role="dialog" aria-label="Aparência">
+      <div className="ap-panel-head">
+        <div>
+          <div style={{fontSize:11,opacity:.75,fontWeight:700,letterSpacing:".08em"}}>PERSONALIZAR</div>
+          <div style={{fontWeight:800,fontSize:16}}>Aparência</div>
+        </div>
+        <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.12)",border:"none",color:"#fff"}} onClick={onClose} aria-label="Fechar">
+          <Icon name="x" size={18}/>
+        </button>
+      </div>
+      {body}
+    </div>
+  );
+}
+
+function AppearanceFab(){
+  const [open,setOpen]=useState(false);
+  // disponível em todas as páginas quando logado
+  if(!auth.currentUser)return null;
+  return(
+    <>
+      <button type="button" className="ap-fab" title="Aparência — cores e fontes" aria-label="Abrir aparência" onClick={()=>setOpen(o=>!o)}>
+        <Icon name="palette" size={22}/>
+      </button>
+      {open&&<AppearanceEditor onClose={()=>setOpen(false)}/>}
+    </>
+  );
+}
+
+
 function AdminConfig({students}){
+  const [tab,setTab]=useState("aparencia");
   return(
     <div>
-      <AdminCursos students={students}/>
+      <div className="tab-bar mb-5" style={{maxWidth:420}}>
+        <button type="button" className={"tab-btn"+(tab==="aparencia"?" tab-btn-active":"")} onClick={()=>setTab("aparencia")}>Aparência</button>
+        <button type="button" className={"tab-btn"+(tab==="cursos"?" tab-btn-active":"")} onClick={()=>setTab("cursos")}>Cursos</button>
+      </div>
+      {tab==="aparencia"?<AppearanceEditor embedded/>:<AdminCursos students={students}/>}
     </div>
   );
 }
@@ -7154,8 +7496,8 @@ function App(){
     </div>
   );
   if(!user)return <Login/>;
-  if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
-  return <StudentSession user={user}/>;
+  if(user.uid===ADMIN_UID)return <><AdminApp user={user}/><AppearanceFab/></>;
+  return <><StudentSession user={user}/><AppearanceFab/></>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
