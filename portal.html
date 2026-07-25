@@ -561,16 +561,16 @@
     /* ── STUDENT DASHBOARD (referência visual) ── */
     .student-dash-wrap{background:var(--sd-page-bg);min-height:calc(100vh - 52px);padding-bottom:28px;margin:0 -16px;padding-left:16px;padding-right:16px;}
     .student-dash{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto;padding-top:8px;}
-    .sd-card-light{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);color:#1E1E1E;}
+    .sd-card-light{background:var(--card,#FFFFFF);border:1px solid var(--divider,#E2E8F0);border-radius:8px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.05);color:var(--font,#1E1E1E);position:relative;}
     [data-theme="light"] .sd-card-light{
-      background:linear-gradient(145deg,#fff 0%,#f2f8ff 55%,#e8f4fc 100%);
-      border-color:rgba(53,102,182,.16);
-      box-shadow:0 10px 32px rgba(23,64,130,.10), inset 0 1px 0 rgba(255,255,255,1);
+      background:var(--card,#FFFFFF);
+      border-color:var(--divider,#E2E8F0);
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
       position:relative;overflow:hidden;
     }
     [data-theme="light"] .sd-card-light::before{
       content:'';position:absolute;top:0;left:0;right:0;height:3px;
-      background:var(--gradient-bar);opacity:.85;
+      background:var(--gradient-bar,linear-gradient(90deg,#0F172A,#4F46E5));opacity:.85;pointer-events:none;
     }
     .sd-card-dark{background:linear-gradient(145deg,var(--sd-dark-card-2),var(--sd-dark-card));border:1.5px solid rgba(255,255,255,.12);border-radius:20px;padding:18px 20px;box-shadow:0 10px 30px rgba(0,0,0,.28);color:var(--sd-dark-text);}
     [data-theme="light"] .sd-card-dark{
@@ -578,11 +578,13 @@
       border-color:rgba(134,207,255,.22);
       box-shadow:0 14px 40px rgba(23,64,130,.22), inset 0 1px 0 rgba(134,207,255,.15);
     }
-    .sd-greeting{display:flex;align-items:center;gap:14px;}
+    .sd-greeting{display:flex;align-items:center;gap:14px;min-width:0;width:100%;}
+    .sd-greeting-text{min-width:0;flex:1;overflow:hidden;}
     .sd-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2.5px solid rgba(20,184,166,.35);flex-shrink:0;}
     .sd-avatar-ph{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
     .sd-hello{font-size:14px;color:var(--sd-surface-muted);font-weight:500;}
-    .sd-name{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;line-height:1.15;color:var(--sd-surface-text);margin-top:2px;}
+    .sd-name{font-family:'Sora',sans-serif,var(--font-family-ui);font-size:22px;font-weight:800;line-height:1.2;color:var(--sd-surface-text,#1E1E1E);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block;}
+    .sd-fullname-full{font-size:12px;font-weight:600;color:var(--sd-surface-muted,#475569);margin-top:4px;line-height:1.3;word-break:break-word;}
     .sd-bday{font-size:13px;font-weight:600;color:var(--sd-surface-muted);margin-top:6px;}
     .sd-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .sd-scroll::-webkit-scrollbar{display:none;}
@@ -632,7 +634,9 @@
     [data-theme="light"] .sd-nav-carousel:hover .sd-nav-icon{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 24px rgba(53,102,182,.28);}
     [data-theme="light"] .sd-nav-label{color:#174082;font-weight:800;}
     [data-theme="light"] .sd-metric-num{color:#174082;}
-    [data-theme="light"] .sd-name{color:#174082;}
+    [data-theme="light"] .sd-name{color:var(--font,#1E1E1E);}
+    [data-theme="light"] .sd-hello{color:var(--font-muted,#475569);}
+    [data-theme="light"] .sd-fullname-full{color:var(--font-muted,#475569);}
     .sd-nav-label{font-size:10px;font-weight:700;color:var(--sd-surface-text);letter-spacing:.01em;line-height:1.2;}
     .sd-nav-sub{font-size:10px;color:var(--sd-surface-muted);line-height:1.35;max-width:120px;}
     .sd-journey-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
@@ -1192,7 +1196,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-finance-fix");
+console.info("Fluency Portal v2026.07.25-names-appearance");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1836,6 +1840,17 @@ function getLessonTitle(n){return `Lesson ${n}`;}
 function getTodayPT(){return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function formatDateBR(iso){if(!iso)return "—";const[y,m,d]=iso.split("-");return `${d}/${m}/${y}`;}
 function formatCurrency(val){if(val===null||val===undefined||val===""||isNaN(val))return "—";return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(val);}
+/** Nome completo limpo (perfil, ficha). */
+function getFullName(name){
+  const n=String(name||"").trim().replace(/\s+/g," ");
+  return n||"Aluno";
+}
+/** Só o primeiro nome (cards compactos). */
+function getFirstName(name){
+  const full=getFullName(name);
+  if(full==="Aluno")return full;
+  return full.split(/\s+/)[0]||full;
+}
 const MESES_CURTOS=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 const MESES_LONGOS=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 function getParcelValor(p){const v=p?.valorDesconto>0?p.valorDesconto:p?.valor;return v>0?v:0;}
@@ -3589,7 +3604,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                   :<div style={{width:40,height:40,borderRadius:"50%",background:"#F8F9FA",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
                 }
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E"}}>{s.name||"Aluno"}</div>
+                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
                   <div style={{fontSize:11,color:"#475569"}}>
                     {parcelas.length} cobrança{parcelas.length!==1?"s":""} com valor
                     {openSum>0?<> · aberto {formatCurrency(openSum)}</>:null}
@@ -3735,15 +3750,15 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
 
   return(
     <div className="student-dash">
-      {/* Card 1 — Perfil (foto, nome) */}
+      {/* Card 1 — Perfil: só primeiro nome no card */}
       <div className="sd-card-light sd-greeting">
         {profile.foto
           ?<img src={profile.foto} alt="" className="sd-avatar"/>
           :<div className="sd-avatar-ph"><Icon name="user" size={24}/></div>
         }
-        <div>
+        <div className="sd-greeting-text">
           <div className="sd-hello">Hello,</div>
-          <div className="sd-name">{profile.name||"Aluno"}</div>
+          <div className="sd-name" title={getFullName(profile.name)}>{getFirstName(profile.name)}</div>
         </div>
       </div>
 
@@ -3958,8 +3973,11 @@ function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab, hide
         <div className="glass rounded-2xl p-5">
           <p className="muted text-sm">{saudacao} 👋</p>
           <h2 className="text-2xl font-extrabold mt-1" style={{fontFamily:"'Sora',sans-serif"}}>
-            {profile?.name?.split(" ")[0] || "Aluno"}
+            {getFirstName(profile?.name)}
           </h2>
+          {getFullName(profile?.name)!==getFirstName(profile?.name)&&(
+            <p className="muted text-sm mt-1" style={{wordBreak:"break-word"}}>{getFullName(profile?.name)}</p>
+          )}
           <p className="muted text-xs mt-1">{hojeDisplay}</p>
         </div>
       )}
@@ -4422,7 +4440,10 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                   :<div style={{width:64,height:64,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"2px solid var(--divider)"}}><Icon name="user" size={28}/></div>
                 }
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",wordBreak:"break-word"}}>{profile.name}</h1>
+                  <div className="sd-hello" style={{marginBottom:2}}>Perfil do aluno</div>
+                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",wordBreak:"break-word",color:"var(--font,#1E1E1E)",lineHeight:1.25}} title={getFullName(profile.name)}>
+                    {getFullName(profile.name)}
+                  </h1>
                   <div className="student-card-meta" style={{marginTop:12}}>
                     <div><span className="meta-label">Curso</span><span className="meta-val">{courseName||"—"}</span></div>
                     <div><span className="meta-label">Módulo</span><span className="meta-val">{currentMod} · {currentModMeta?.name||"—"}</span></div>
@@ -6936,8 +6957,9 @@ function AppearanceEditor({embedded,onClose}){
     <>
       <div className={embedded?"":"ap-panel-body"}>
         <p style={{fontSize:12,color:"#475569",margin:"0 0 14px",lineHeight:1.5}}>
-          Só as <strong>cores e a fonte</strong> que você escolher — sem dark, light ou system.
-          {isAdminUser?" Admin: ao salvar, vale para todo o portal.":" Preferências neste dispositivo."}
+          {isAdminUser
+            ?<>Ao clicar em <strong>Salvar aparência</strong>, as cores vão para o Firebase (<code>config/aparencia</code>) e passam a valer para <strong>todos os alunos e o admin</strong> no portal.</>
+            :<>As cores do portal são definidas pelo professor. Você não altera o tema global.</>}
         </p>
         {APPEARANCE_FIELDS.map(sec=>(
           <div className="ap-section" key={sec.group}>
@@ -7010,16 +7032,35 @@ function AppearanceEditor({embedded,onClose}){
 
 function AppearanceFab(){
   const [open,setOpen]=useState(false);
-  // disponível em todas as páginas quando logado
-  if(!auth.currentUser)return null;
+  // Só o admin define as cores do portal (global para todos)
+  if(!auth.currentUser||auth.currentUser.uid!==ADMIN_UID)return null;
   return(
     <>
-      <button type="button" className="ap-fab" title="Aparência — cores e fontes" aria-label="Abrir aparência" onClick={()=>setOpen(o=>!o)}>
+      <button type="button" className="ap-fab" title="Aparência do portal (vale para todos)" aria-label="Abrir aparência" onClick={()=>setOpen(o=>!o)}>
         <Icon name="palette" size={22}/>
       </button>
       {open&&<AppearanceEditor onClose={()=>setOpen(false)}/>}
     </>
   );
+}
+
+/** Aplica cores globais em tempo real quando o admin salva config/aparencia. */
+function useGlobalAppearanceSync(){
+  useEffect(()=>{
+    let unsub=null;
+    try{
+      unsub=db.collection("config").doc("aparencia").onSnapshot(doc=>{
+        if(!doc.exists)return;
+        const data=typeof window.__stripThemeMode==="function"
+          ?window.__stripThemeMode(doc.data()||{})
+          :{...(doc.data()||{})};
+        delete data.mode;delete data.theme;delete data.updatedAt;delete data.updatedBy;
+        if(window.__applyTheme)window.__applyTheme(data);
+        try{localStorage.setItem("fs-appearance",JSON.stringify(data));}catch(e){}
+      },err=>console.warn("aparencia sync:",err&&err.message));
+    }catch(e){}
+    return()=>{if(unsub)unsub();};
+  },[]);
 }
 
 
@@ -7085,7 +7126,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
               }
               <div className="aula-hoje-hora">{s.horario||"—"}</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontWeight:700,fontSize:13}}>{s.name||"Aluno"}</div>
+                <div style={{fontWeight:700,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
                 <div style={{fontSize:11,color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)}</div>
               </div>
             </div>
@@ -7224,7 +7265,7 @@ function AdminAlunos({students,onSelectUid}){
                           :<div style={{width:48,height:48,borderRadius:"50%",background:"var(--badge)",border:"1px solid var(--divider)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={20}/></div>
                         }
                         <div style={{minWidth:0,flex:1}}>
-                          <div className="font-bold" style={{fontSize:14,lineHeight:1.3,wordBreak:"break-word"}}>{s.name||"Aluno"}</div>
+                          <div className="font-bold" style={{fontSize:14,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
                           <div style={{marginTop:6}}><StatusBadge status={s.status||"lead"}/></div>
                         </div>
                       </div>
@@ -7523,6 +7564,8 @@ function StudentSession({user}){
 function App(){
   const [user,setUser]=useState(undefined);
   const [authErr,setAuthErr]=useState("");
+  // Cores salvas pelo admin (config/aparencia) chegam em tempo real para todo mundo
+  useGlobalAppearanceSync();
   useEffect(()=>{
     const unsub=auth.onAuthStateChanged(u=>setUser(u||null),err=>{
       console.error("onAuthStateChanged:",err);
@@ -7547,8 +7590,9 @@ function App(){
     </div>
   );
   if(!user)return <Login/>;
+  // Paleta só no admin — salvar muda o portal de todos
   if(user.uid===ADMIN_UID)return <><AdminApp user={user}/><AppearanceFab/></>;
-  return <><StudentSession user={user}/><AppearanceFab/></>;
+  return <StudentSession user={user}/>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
