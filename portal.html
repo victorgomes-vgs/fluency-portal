@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="https://thefluency.studio/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -27,6 +27,7 @@
     });
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
@@ -34,73 +35,167 @@
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;padding:0;}
 
-    /* ── TEMA: Dark (padrão) — bordas e textos mais visíveis ── */
-    :root, [data-theme="dark"] {
-      --bg: linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%);
-      --font: #eef4f8;
-      --font-muted: rgba(196,212,228,.82);
-      --card: #1e2d45;
-      --lesson: #1a2740;
-      --detail: #141f33;
-      --header: rgba(10,18,38,.94);
-      --tabbar: rgba(255,255,255,.08);
-      --badge: rgba(255,255,255,.12);
-      --btn: rgba(255,255,255,.10);
-      --done: rgba(6,78,59,.42);
-      --done-border: rgba(134,239,172,.55);
-      --done-text: #a7f3d0;
-      --divider: rgba(255,255,255,.18);
-      --input-bg: rgba(0,0,0,.30);
-      --input-border: rgba(255,255,255,.24);
-      --shadow: 0 8px 32px rgba(0,0,0,.42);
-      --sd-page-bg: #0b1220;
-      --sd-surface: #ffffff;
-      --sd-surface-text: #0f172a;
-      --sd-surface-muted: #475569;
-      --sd-surface-border: rgba(15,23,42,.10);
-      --sd-dark-card: #152238;
-      --sd-dark-card-2: #1a2d4a;
-      --sd-dark-text: #e8f0f8;
-      --sd-dark-muted: rgba(200,215,230,.75);
-      --sd-donut-track: #2a3f5c;
+    /* ═══════════════════════════════════════════════════════════
+       DESIGN SYSTEM — High-End Premium (WCAG 4.5:1+)
+       Palette locked per platform overhaul directive
+       ═══════════════════════════════════════════════════════════ */
+    :root {
+      --ds-bg: #F8F9FA;
+      --ds-card: #FFFFFF;
+      --ds-sidebar: #1E293B;
+      --ds-text: #1E1E1E;
+      --ds-text-secondary: #475569;
+      --ds-sidebar-text: #FFFFFF;
+      --ds-sidebar-muted: #CBD5E1;
+      --ds-accent: #0F172A;
+      --ds-accent-indigo: #4F46E5;
+      --ds-border: #E2E8F0;
+      --ds-card-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      --ds-card-radius: 8px;
+      --ds-card-pad: 24px;
+      --ds-font: 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+      --ds-status-paid-fg: #15803D;
+      --ds-status-paid-bg: #F0FDF4;
+      --ds-status-pending-fg: #B45309;
+      --ds-status-pending-bg: #FFFBEB;
+      --ds-status-overdue-fg: #B91C1C;
+      --ds-status-overdue-bg: #FEF2F2;
+    }
+    .premium-card {
+      background: var(--ds-card);
+      border-radius: var(--ds-card-radius);
+      box-shadow: var(--ds-card-shadow);
+      border: 1px solid var(--ds-border);
+      padding: var(--ds-card-pad);
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700; letter-spacing: .04em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+      white-space: nowrap;
+    }
+    .status-badge-paid { color: var(--ds-status-paid-fg); background: var(--ds-status-paid-bg); }
+    .status-badge-pending, .status-badge-unpaid { color: var(--ds-status-pending-fg); background: var(--ds-status-pending-bg); }
+    .status-badge-overdue { color: var(--ds-status-overdue-fg); background: var(--ds-status-overdue-bg); }
+    .status-badge-partial { color: #1D4ED8; background: #EFF6FF; }
+
+    /* Admin shell: deep slate sidebar + light main */
+    .admin-shell { display: flex; min-height: 100vh; background: var(--ds-bg); }
+    .admin-sidebar {
+      width: 260px; flex-shrink: 0; background: var(--ds-sidebar);
+      color: var(--ds-sidebar-text); display: flex; flex-direction: column;
+      padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      border-right: 1px solid rgba(203,213,225,.12);
+    }
+    .admin-sidebar-brand { padding: 0 20px 28px; border-bottom: 1px solid rgba(203,213,225,.12); margin-bottom: 16px; }
+    .admin-sidebar-brand .brand-byline { color: var(--ds-sidebar-muted) !important; }
+    .admin-sidebar-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ds-sidebar-muted); padding: 8px 20px 10px;
+    }
+    .admin-nav-item {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      padding: 12px 20px; border: none; background: transparent; cursor: pointer;
+      color: var(--ds-sidebar-muted); font-size: 14px; font-weight: 500;
+      font-family: var(--ds-font); text-align: left; transition: background .15s, color .15s;
+    }
+    .admin-nav-item:hover { background: rgba(255,255,255,.06); color: var(--ds-sidebar-text); }
+    .admin-nav-item.active { background: rgba(79,70,229,.28); color: #FFFFFF; font-weight: 600; }
+    .admin-nav-item .nav-badge {
+      margin-left: auto; background: #F59E0B; color: #1E1E1E; font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 99px;
+    }
+    .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--ds-bg); }
+    .admin-main-header {
+      background: #FFFFFF; border-bottom: 1px solid var(--ds-border);
+      padding: 16px 28px; position: sticky; top: 0; z-index: 40;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    .admin-main-body { padding: 28px; max-width: 1200px; width: 100%; margin: 0 auto; }
+    .role-pill {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em; padding: 3px 10px;
+      border-radius: 99px; text-transform: uppercase;
+    }
+    .role-pill-admin { background: #1E293B; color: #FFFFFF; }
+    .role-pill-student { background: #EEF2FF; color: #3730A3; border: 1px solid #C7D2FE; }
+    .view-separator {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ds-text-secondary); margin: 0 0 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--ds-border);
+    }
+    @media (max-width: 900px) {
+      .admin-shell { flex-direction: column; }
+      .admin-sidebar {
+        width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap;
+        padding: 12px; gap: 4px; align-items: center;
+      }
+      .admin-sidebar-brand { border: none; margin: 0; padding: 8px 12px; }
+      .admin-sidebar-label { display: none; }
+      .admin-nav-item { width: auto; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
+      .admin-main-body { padding: 16px; }
     }
 
-    [data-theme="light"] {
-      --bg: linear-gradient(152deg, #E0ECFF 0%, #f6faff 38%, #eef6ff 62%, #D4F7F2 100%);
-      --font: #174082;
-      --font-muted: #2252A0;
-      --card: rgba(255,255,255,.94);
-      --lesson: rgba(255,255,255,.88);
-      --detail: rgba(224,236,255,.72);
-      --header: rgba(255,255,255,.92);
-      --tabbar: rgba(202,222,252,.55);
-      --badge: rgba(53,102,182,.10);
-      --btn: rgba(255,255,255,.90);
-      --done: rgba(53,102,182,.14);
-      --done-border: rgba(53,102,182,.45);
-      --done-text: #174082;
-      --divider: rgba(34,82,160,.22);
-      --input-bg: rgba(255,255,255,.94);
-      --input-border: rgba(53,102,182,.30);
-      --shadow: 0 10px 36px rgba(23,64,130,.11), 0 2px 8px rgba(53,102,182,.07);
+    /* Finance KPI grid */
+    .fin-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 800px) { .fin-kpi-grid { grid-template-columns: 1fr; } }
+    .fin-kpi-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; transition: border-color .15s, box-shadow .15s; }
+    .fin-kpi-card:hover { border-color: #0f2c5c; box-shadow: 0 6px 16px rgba(15,44,92,0.12); }
+    .fin-kpi-label { font-size: 12px; font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .fin-kpi-value { font-size: 28px; font-weight: 800; color: #1E1E1E; letter-spacing: -0.5px; font-family: var(--ds-font); }
+    .fin-kpi-sub { font-size: 12px; color: #475569; margin-top: 6px; }
+    .fin-chart-card, .fin-table-card {
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; margin-bottom: 24px;
+    }
+    .fin-table { width: 100%; border-collapse: collapse; font-size: 14px; color: #1E1E1E; }
+    .fin-table th {
+      text-align: left; padding: 12px 14px; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em; color: #475569;
+      border-bottom: 2px solid #E2E8F0; background: #F8F9FA;
+    }
+    .fin-table td { padding: 14px; border-bottom: 1px solid #E2E8F0; color: #1E1E1E; vertical-align: middle; }
+    .fin-table tr:hover td { background: #F8F9FA; }
+
+
+    /* ── TEMA ÚNICO: só cores salvas (sem dark/light/system) ──
+       :root e [data-theme] usam o mesmo base. applyTheme sobrescreve com as cores escolhidas. */
+    :root, [data-theme], [data-theme="light"], [data-theme="dark"] {
+      --bg: #F8F9FA;
+      --font: #1E1E1E;
+      --font-muted: #475569;
+      --card: #FFFFFF;
+      --lesson: #FFFFFF;
+      --detail: #F1F5F9;
+      --header: #FFFFFF;
+      --tabbar: #E2E8F0;
+      --badge: #F1F5F9;
+      --btn: #FFFFFF;
+      --done: #F0FDF4;
+      --done-border: #15803D;
+      --done-text: #15803D;
+      --divider: #E2E8F0;
+      --input-bg: #FFFFFF;
+      --input-border: #CBD5E1;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       --sd-page-bg: transparent;
-      --sd-surface: rgba(255,255,255,.96);
-      --sd-surface-text: #174082;
-      --sd-surface-muted: #3566B6;
-      --sd-surface-border: rgba(53,102,182,.18);
-      --sd-dark-card: #174082;
-      --sd-dark-card-2: #2252A0;
-      --sd-dark-text: #f8fbff;
-      --sd-dark-muted: rgba(202,222,252,.92);
-      --sd-donut-track: #CADEFC;
-      --accent-primary: #2252A0;
-      --accent-bright: #3566B6;
-      --accent-cyan: #86CFFF;
-      --accent-teal: #187E74;
-      --accent-teal-deep: #00665B;
-      --gradient-cta: linear-gradient(135deg, #3566B6 0%, #2252A0 45%, #187E74 100%);
-      --gradient-surface: linear-gradient(145deg, rgba(255,255,255,.98), rgba(224,236,255,.72));
-      --gradient-bar: linear-gradient(90deg, #3566B6, #86CFFF, #187E74);
+      --sd-surface: #FFFFFF;
+      --sd-surface-text: #1E1E1E;
+      --sd-surface-muted: #475569;
+      --sd-surface-border: #E2E8F0;
+      --sd-dark-card: #1E293B;
+      --sd-dark-card-2: #334155;
+      --sd-dark-text: #F8FAFC;
+      --sd-dark-muted: #CBD5E1;
+      --sd-donut-track: #E2E8F0;
+      --accent-primary: #0F172A;
+      --accent-bright: #4F46E5;
+      --accent-cyan: #0284C7;
+      --accent-teal: #0D9488;
+      --accent-teal-deep: #0F766E;
+      --gradient-cta: linear-gradient(135deg, #0F172A 0%, #4F46E5 100%);
+      --gradient-surface: #FFFFFF;
+      --gradient-bar: linear-gradient(90deg, #0F172A, #4F46E5);
+      --accent-solid: #0F172A;
     }
 
     /* Transição suave entre temas */
@@ -109,38 +204,22 @@
     }
     .animate-spin { transition: none !important; }
 
-    body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:radial-gradient(ellipse 900px 600px at 10% 0%,rgba(32,120,150,.07),transparent 65%),
-                 radial-gradient(ellipse 700px 500px at 90% 95%,rgba(20,60,110,.09),transparent 65%);}
-    [data-theme="light"] body::before{
-      display:block;
-      background:
-        radial-gradient(ellipse 720px 480px at 8% 5%, rgba(53,102,182,.22), transparent 68%),
-        radial-gradient(ellipse 560px 420px at 92% 88%, rgba(24,126,116,.16), transparent 70%),
-        radial-gradient(ellipse 480px 360px at 55% 42%, rgba(134,207,255,.20), transparent 72%);
-      animation:lightMesh 14s ease-in-out infinite alternate;
-    }
-    [data-theme="light"] body::after{
-      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(circle 140px at 12% 22%, rgba(53,102,182,.10), transparent),
-        radial-gradient(circle 100px at 88% 18%, rgba(134,207,255,.14), transparent),
-        radial-gradient(circle 120px at 78% 72%, rgba(0,102,91,.09), transparent);
-      animation:lightOrbs 20s ease-in-out infinite;
-    }
-    @keyframes lightMesh{0%{opacity:.85;transform:scale(1);}100%{opacity:1;transform:scale(1.03);}}
-    @keyframes lightOrbs{0%,100%{transform:translate(0,0);}33%{transform:translate(12px,-8px);}66%{transform:translate(-8px,10px);}}
-    @keyframes lightShimmer{0%{background-position:200% center;}100%{background-position:-200% center;}}
-    @keyframes lightPulse{0%,100%{box-shadow:0 4px 20px rgba(53,102,182,.18);}50%{box-shadow:0 8px 32px rgba(53,102,182,.28);}}
+    body{font-family:var(--ds-font),'Inter','Outfit',system-ui,sans-serif;font-size:16px;line-height:1.5;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
     #root{position:relative;z-index:1;}
 
-    /* ── CARDS ── */
-    .glass{background:var(--card);border:1.5px solid var(--divider);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);}
+    /* ── CARDS (Efeito Vidro) ── */
+    .glass{
+      background: var(--card);
+      border: 1px solid var(--divider);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: var(--shadow);
+    }
     .glass.rounded-2xl{transition:box-shadow .25s,border-color .25s,transform .2s;}
     .glass.rounded-2xl:hover{box-shadow:0 12px 40px rgba(0,0,0,.30);}
-    [data-theme="light"] .glass{background:var(--gradient-surface);border-color:rgba(53,102,182,.18);box-shadow:0 10px 36px rgba(23,64,130,.10), inset 0 1px 0 rgba(255,255,255,.95);}
-    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 18px 48px rgba(23,64,130,.14), 0 0 0 1px rgba(134,207,255,.35);border-color:rgba(53,102,182,.30);transform:translateY(-2px);}
+    [data-theme="light"] .glass{background:var(--card);border:1px solid var(--divider);box-shadow:var(--shadow);border-radius:8px;backdrop-filter:none;-webkit-backdrop-filter:none;}
+    [data-theme="light"] .glass.rounded-2xl{border-radius:8px;}
+    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 6px 16px rgba(0,0,0,0.08);border-color:var(--divider);transform:none;}
     .muted{color:var(--font-muted);}
     .chip{background:var(--badge);border:1.5px solid var(--divider);}
     .btn{border:1.5px solid var(--divider);background:var(--btn);transition:transform .08s,background .12s,border-color 280ms ease,color 280ms ease;cursor:pointer;color:var(--font);}
@@ -148,8 +227,8 @@
     .btn:active{transform:translateY(1px);}
     .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
     .btn-primary:hover{filter:brightness(1.10);}
-    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#3566B6 0%,#2252A0 45%,#187E74 100%)!important;border:1px solid rgba(53,102,182,.35)!important;box-shadow:0 4px 18px rgba(34,82,160,.32);color:#fff!important;}
-    [data-theme="light"] .btn-primary:hover{filter:none;background:linear-gradient(135deg,#2252A0,#174082,#00665B)!important;box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);color:#fff!important;}
+    [data-theme="light"] .btn-primary{background:var(--accent-solid,#0F172A)!important;border:1px solid var(--accent-solid,#0F172A)!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
+    [data-theme="light"] .btn-primary:hover{filter:none;background:var(--accent-bright,#4F46E5)!important;border-color:var(--accent-bright,#4F46E5)!important;box-shadow:0 4px 14px rgba(79,70,229,.28);transform:translateY(-1px);color:#fff!important;}
     [data-theme="light"] .btn-primary svg{color:#fff!important;}
     [data-theme="light"] .admin-toolbar .btn:not(.btn-primary){color:var(--font);background:var(--btn);}
     .btn-danger{border:1px solid rgba(200,60,80,.35);background:rgba(200,60,80,.10);color:#e07080;}
@@ -209,58 +288,58 @@
     }
     .lesson-card.lesson-pending.lesson-locked,.review-card.lesson-pending.lesson-locked{cursor:not-allowed;opacity:.8;}
     .lesson-card.lesson-andamento,.review-card.lesson-andamento{
-      background:linear-gradient(135deg,rgba(14,165,233,.45),rgba(56,189,248,.28))!important;
-      border:1.5px solid #38bdf8!important;
-      border-left:3px solid #7dd3fc!important;
-      color:#e0f2fe!important;
-      box-shadow:0 0 16px rgba(56,189,248,.35)!important;
+      background:var(--tl-active-bg)!important;
+      border:1px solid var(--tl-active-border)!important;
+      border-left:3px solid var(--tl-active-border)!important;
+      color:var(--tl-active-text)!important;
+      box-shadow:none!important;
     }
-    /* INPUT concluída → azul forte + neon (landing #3b82f6) */
+    /* INPUT concluída — sólido, sem neon */
     .lesson-card.done-card,.lesson-card.done-card.done-input{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 35%,#2563eb 65%,#3b82f6 100%)!important;
-      border:1.5px solid #7dd3fc!important;
-      border-left:3px solid #93c5fd!important;
+      background:var(--tl-done-input)!important;
+      border:1px solid var(--tl-done-input)!important;
+      border-left:3px solid var(--tl-done-input)!important;
       color:#fff!important;
-      box-shadow:0 0 0 1px rgba(125,211,252,.5),0 0 18px rgba(59,130,246,.65),0 0 32px rgba(56,189,248,.35)!important;
+      box-shadow:none!important;
     }
-    /* OUTPUT concluída → verde + neon teal */
+    /* OUTPUT concluída — sólido, sem neon */
     .lesson-card.done-card.done-output{
-      background:linear-gradient(135deg,#064e3b 0%,#047857 40%,#00a89d 100%)!important;
-      border:1.5px solid #5eead4!important;
-      border-left:3px solid #2dd4bf!important;
-      color:#ecfdf5!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.6)!important;
+      background:var(--tl-done-output)!important;
+      border:1px solid var(--tl-done-output)!important;
+      border-left:3px solid var(--tl-done-output)!important;
+      color:#fff!important;
+      box-shadow:none!important;
     }
-    .review-card{background:rgba(139,92,246,.12);border-bottom:1px solid rgba(139,92,246,.22);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
-    .review-card:hover{background:rgba(139,92,246,.18);}
+    .review-card{background:var(--lesson);border-bottom:1px solid var(--divider);color:var(--font);transition:background 400ms ease,border-color 400ms ease,box-shadow 400ms ease;}
+    .review-card:hover{filter:brightness(0.98);}
     .review-card:last-child{border-bottom:none;}
     .review-card.done-card,.lesson-card.done-card.done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 40%,#8b5cf6 100%)!important;
-      border:1.5px solid #d8b4fe!important;
-      border-left:3px solid #c4b5fd!important;
-      color:#f5f3ff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.6)!important;
+      background:var(--tl-done-review)!important;
+      border:1px solid var(--tl-done-review)!important;
+      border-left:3px solid var(--tl-done-review)!important;
+      color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.lesson-pending,[data-theme="light"] .review-card.lesson-pending{
-      background:linear-gradient(145deg,#c5cad3,#d5dae2,#e2e6ec)!important;
-      border-color:#9aa3b2!important;border-left-color:#6b7280!important;color:#4b5563!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;border-left-color:#94A3B8!important;color:var(--tl-pending-text)!important;
       box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.done-card,[data-theme="light"] .lesson-card.done-card.done-input{
-      background:linear-gradient(135deg,#174082 0%,#2252A0 40%,#3566B6 75%,#5b9be8 100%)!important;
-      border-color:#86CFFF!important;border-left-color:#7dd3fc!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(134,207,255,.5),0 0 20px rgba(53,102,182,.4)!important;
+      background:var(--tl-done-input)!important;
+      border-color:var(--tl-done-input)!important;border-left-color:var(--tl-done-input)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .lesson-card.done-card.done-output{
-      background:linear-gradient(135deg,#00665B,#187E74,#00a89d)!important;
-      border-color:#5eead4!important;border-left-color:#2dd4bf!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.45),0 0 18px rgba(0,168,157,.35)!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;border-left-color:var(--tl-done-output)!important;color:#fff!important;
+      box-shadow:none!important;
     }
-    [data-theme="light"] .review-card{background:rgba(139,92,246,.08);border-bottom-color:rgba(139,92,246,.20);}
+    [data-theme="light"] .review-card{background:var(--lesson);border-bottom-color:var(--divider);}
     [data-theme="light"] .review-card.done-card,[data-theme="light"] .lesson-card.done-card.done-review{
-      background:linear-gradient(135deg,#5b21b6,#7c3aed,#8b5cf6)!important;
-      border-color:#d8b4fe!important;border-left-color:#c4b5fd!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.45),0 0 18px rgba(139,92,246,.35)!important;
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;border-left-color:var(--tl-done-review)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     .lesson-detail{background:var(--detail);border-top:1px solid var(--divider);padding:14px 18px 16px;}
     .detail-label{font-size:11px;font-weight:700;color:#6ec8dc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
@@ -268,12 +347,13 @@
     .num-light{background:var(--badge);border:1px solid var(--input-border);color:var(--font);min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     .num-dark{background:rgba(139,92,246,.22);border:1px solid rgba(167,139,250,.45);color:#c4b5fd;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     [data-theme="light"] .num-dark{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);color:#6d28d9;}
-    .tag-input{background:rgba(30,143,168,.18);color:#7de0f8;border:1px solid rgba(30,143,168,.38);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-output{background:rgba(0,168,157,.16);color:#5eead4;border:1px solid rgba(0,168,157,.40);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    .tag-review{background:rgba(139,92,246,.20);color:#c4b5fd;border:1px solid rgba(167,139,250,.48);font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap;}
-    [data-theme="light"] .tag-input{background:rgba(30,143,168,.14);color:#0d5260;border-color:rgba(24,126,116,.35);}
-    [data-theme="light"] .tag-output{background:rgba(0,102,91,.12);color:#00665B;border-color:rgba(0,168,157,.40);}
-    [data-theme="light"] .tag-review{background:rgba(139,92,246,.14);color:#5b21b6;border-color:rgba(139,92,246,.40);}
+    /* INPUT / OUTPUT — teal claro luminoso (sempre legível na trilha) */
+    .tag-input{background:rgba(45,212,191,.28)!important;color:#99F6E4!important;border:1px solid #5EEAD4!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(94,234,212,.95),0 0 16px rgba(45,212,191,.65);box-shadow:0 0 12px rgba(45,212,191,.45);}
+    .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border:1px solid #2DD4BF!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(45,212,191,.95),0 0 16px rgba(20,184,166,.7);box-shadow:0 0 12px rgba(20,184,166,.5);}
+    .tag-review{background:rgba(167,139,250,.28)!important;color:#DDD6FE!important;border:1px solid #C4B5FD!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(196,181,253,.85);box-shadow:0 0 10px rgba(139,92,246,.4);}
+    [data-theme="light"] .tag-input{background:rgba(45,212,191,.28)!important;color:#5EEAD4!important;border-color:#2DD4BF!important;}
+    [data-theme="light"] .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border-color:#14B8A6!important;}
+    [data-theme="light"] .tag-review{background:rgba(167,139,250,.25)!important;color:#A78BFA!important;border-color:#8B5CF6!important;}
     .lesson-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid transparent;transition:all .15s;text-align:center;line-height:1.25;}
     .lesson-link-btn-gravacao{background:linear-gradient(135deg,rgba(53,102,182,.22),rgba(34,82,160,.12));border-color:rgba(91,155,232,.45);color:#93c5fd;}
     .lesson-link-btn-relatorio{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(109,40,217,.12));border-color:rgba(167,139,250,.45);color:#c4b5fd;}
@@ -351,17 +431,20 @@
     textarea.obs-input:focus{border-color:rgba(30,143,168,.7);}
 
     /* ── FINANCEIRO ── */
-    .fin-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;}
-    .fin-paga{background:rgba(30,160,110,.18);border:1px solid rgba(30,160,110,.40);color:#60daa8;}
-    .fin-avencer{background:rgba(220,160,30,.14);border:1px solid rgba(220,160,30,.38);color:#f0cc60;}
-    .fin-vencida{background:rgba(200,60,80,.16);border:1px solid rgba(200,60,80,.40);color:#f0909a;}
-    .fin-aberto{background:rgba(42,120,200,.14);border:1px solid rgba(42,120,200,.33);color:#88c0f8;}
-    .fin-creditos{background:rgba(110,80,200,.14);border:1px solid rgba(110,80,200,.33);color:#c0a8f8;}
-    [data-theme="light"] .fin-paga{color:#0a5c38;background:rgba(20,140,90,.10);}
-    [data-theme="light"] .fin-vencida{color:#8a2030;background:rgba(200,60,80,.08);}
-    [data-theme="light"] .fin-avencer{color:#7a5500;background:rgba(220,160,30,.08);}
-    [data-theme="light"] .fin-aberto{color:#1a3a80;background:rgba(42,120,200,.08);}
-    [data-theme="light"] .fin-creditos{color:#3d1a80;background:rgba(110,80,200,.08);}
+    .fin-badge{font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;border:none;}
+    .fin-paga{background:#F0FDF4;color:#15803D;}
+    .fin-avencer{background:#FFFBEB;color:#B45309;}
+    .fin-vencida{background:#FEF2F2;color:#B91C1C;}
+    .fin-aberto{background:#FFFBEB;color:#B45309;}
+    .fin-creditos{background:#EEF2FF;color:#3730A3;}
+    [data-theme="light"] .fin-paga{color:#15803D;background:#F0FDF4;}
+    [data-theme="light"] .fin-vencida{color:#B91C1C;background:#FEF2F2;}
+    [data-theme="light"] .fin-avencer{color:#B45309;background:#FFFBEB;}
+    [data-theme="light"] .fin-aberto{color:#B45309;background:#FFFBEB;}
+    [data-theme="light"] .fin-creditos{color:#3730A3;background:#EEF2FF;}
+    [data-theme="dark"] .fin-paga{background:rgba(21,128,61,.22);color:#86EFAC;border:1px solid rgba(134,239,172,.35);}
+    [data-theme="dark"] .fin-vencida{background:rgba(185,28,28,.22);color:#FCA5A5;border:1px solid rgba(252,165,165,.35);}
+    [data-theme="dark"] .fin-avencer,[data-theme="dark"] .fin-aberto{background:rgba(180,83,9,.22);color:#FCD34D;border:1px solid rgba(252,211,77,.35);}
 
     /* ── FINANCEIRO DASHBOARD & PAYMENT CARDS ── */
     .fin-hero{background:linear-gradient(145deg,rgba(18,36,58,.98),rgba(10,24,44,.95));border:1.5px solid rgba(30,143,168,.28);border-radius:22px;padding:22px 24px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.06);}
@@ -478,7 +561,7 @@
     /* ── STUDENT DASHBOARD (referência visual) ── */
     .student-dash-wrap{background:var(--sd-page-bg);min-height:calc(100vh - 52px);padding-bottom:28px;margin:0 -16px;padding-left:16px;padding-right:16px;}
     .student-dash{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto;padding-top:8px;}
-    .sd-card-light{background:var(--sd-surface);border:1.5px solid var(--sd-surface-border);border-radius:20px;padding:18px 20px;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--sd-surface-text);}
+    .sd-card-light{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);color:#1E1E1E;}
     [data-theme="light"] .sd-card-light{
       background:linear-gradient(145deg,#fff 0%,#f2f8ff 55%,#e8f4fc 100%);
       border-color:rgba(53,102,182,.16);
@@ -574,184 +657,221 @@
     .page-back{display:flex;align-items:center;gap:8px;padding:8px 0 16px;cursor:pointer;border:none;background:transparent;color:var(--font-muted);font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;}
     .page-back:hover{color:var(--font);}
 
-    /* ── TRILHA TIMELINE (card sempre escuro + shine, inclusive no light mode) ── */
-    .tl-wrap{background:linear-gradient(165deg,#0c1a2e 0%,#0a1628 55%,#081220 100%)!important;border:1.5px solid rgba(255,255,255,.09)!important;border-radius:22px;padding:22px 14px 26px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)!important;color:#e8f0f8;}
-    .tl-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,191,165,.12),transparent 60%)!important;pointer-events:none;}
-    .tl-wrap::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:tlShine 6s ease-in-out infinite;pointer-events:none;z-index:1;}
-    @keyframes tlShine{0%,100%{left:-100%;}50%{left:140%;}}
+    /* ── TRILHA TIMELINE (premium soft — SEM neon; cores via CSS vars editáveis) ── */
+    :root {
+      --tl-bg: #F1F5F9;
+      --tl-border: #E2E8F0;
+      --tl-text: #1E1E1E;
+      --tl-muted: #475569;
+      --tl-mod-bg: #FFFFFF;
+      --tl-mod-text: #1E1E1E;
+      --tl-node: #4F46E5;
+      --tl-node-done: #2563EB;
+      --tl-node-output: #0D9488;
+      --tl-node-review: #7C3AED;
+      --tl-node-active: #0284C7;
+      --tl-pending-bg: #E2E8F0;
+      --tl-pending-text: #475569;
+      --tl-done-input: #1D4ED8;
+      --tl-done-output: #0F766E;
+      --tl-done-review: #6D28D9;
+      --tl-active-bg: #E0F2FE;
+      --tl-active-border: #0284C7;
+      --tl-active-text: #0C4A6E;
+      --tl-glow: 0; /* 0 = sem neon; 1 = brilho (legado) */
+      --accent-solid: #0F172A;
+      --font-family-ui: 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+    }
+    .tl-wrap{
+      background:var(--tl-bg)!important;
+      border:1px solid var(--tl-border)!important;
+      border-radius:12px;padding:22px 14px 26px;position:relative;overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05)!important;
+      color:var(--tl-text);
+    }
+    .tl-wrap::before,.tl-wrap::after{display:none!important;content:none!important;animation:none!important;}
     .tl-module-block{display:flex;gap:0;position:relative;}
     .tl-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;}
-    .tl-node{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#00d9c0,#00BFA5);border:2px solid rgba(255,255,255,.35);box-shadow:0 0 12px rgba(0,191,165,.55);flex-shrink:0;z-index:2;animation:tlPulse 2.5s ease-in-out infinite;}
+    .tl-node{width:14px;height:14px;border-radius:50%;background:var(--tl-node);border:2px solid #fff;box-shadow:none;flex-shrink:0;z-index:2;animation:none;}
     .tl-node-mod{width:16px;height:16px;}
-    .tl-node-lesson{width:8px;height:8px;background:#6b7280;border-color:#9ca3af;box-shadow:none;animation:none;}
-    .tl-node-lesson.tl-node-done{background:linear-gradient(135deg,#60a5fa,#2563eb);border-color:#7dd3fc;box-shadow:0 0 12px rgba(59,130,246,.85);}
-    .tl-node-lesson.tl-node-done-output{background:linear-gradient(135deg,#2dd4bf,#00a89d);border-color:#5eead4;box-shadow:0 0 12px rgba(0,168,157,.85);}
-    .tl-node-lesson.tl-node-done-review{background:linear-gradient(135deg,#c4b5fd,#8b5cf6);border-color:#d8b4fe;box-shadow:0 0 12px rgba(139,92,246,.85);}
-    .tl-node-lesson.tl-node-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);border-color:#7dd3fc;box-shadow:0 0 12px rgba(56,189,248,.7);animation:tlPulse 2s ease-in-out infinite;}
-    @keyframes tlPulse{0%,100%{box-shadow:0 0 8px rgba(0,191,165,.4);}50%{box-shadow:0 0 18px rgba(0,191,165,.75);}}
+    .tl-node-lesson{width:8px;height:8px;background:#94A3B8;border-color:#CBD5E1;box-shadow:none;animation:none;}
+    .tl-node-lesson.tl-node-done{background:var(--tl-node-done);border-color:var(--tl-node-done);box-shadow:none;}
+    .tl-node-lesson.tl-node-done-output{background:var(--tl-node-output);border-color:var(--tl-node-output);box-shadow:none;}
+    .tl-node-lesson.tl-node-done-review{background:var(--tl-node-review);border-color:var(--tl-node-review);box-shadow:none;}
+    .tl-node-lesson.tl-node-active{background:var(--tl-node-active);border-color:var(--tl-node-active);box-shadow:none;animation:none;}
+    @keyframes tlPulse{0%,100%{opacity:1;}50%{opacity:1;}}
     .tl-segment{width:2px;flex:1;min-height:28px;position:relative;margin:4px 0;}
     .tl-segment-svg{width:2px;height:100%;display:block;overflow:visible;}
-    .tl-line-track{stroke:rgba(255,255,255,.12);stroke-width:2;fill:none;}
-    .tl-line-flow{stroke:url(#tlGrad);stroke-width:2;fill:none;stroke-dasharray:6 10;animation:tlDash 1.2s linear infinite;}
-    .tl-line-flow-mod{stroke-dasharray:8 14;animation:tlDash 1.8s linear infinite;}
-    @keyframes tlDash{to{stroke-dashoffset:-32;}}
-    .tl-arrow{fill:#00d9c0;opacity:.9;animation:tlArrowMove 2s ease-in-out infinite;}
-    @keyframes tlArrowMove{0%,100%{opacity:.4;transform:translateY(0);}50%{opacity:1;transform:translateY(4px);}}
-    [data-theme="light"] .tl-line-track{stroke:rgba(34,82,160,.30);}
-    [data-theme="light"] .tl-arrow{fill:#2252A0;}
-    [data-theme="light"] .tl-node-lesson{background:rgba(53,102,182,.25);border-color:rgba(53,102,182,.35);}
+    .tl-line-track{stroke:var(--tl-border);stroke-width:2;fill:none;}
+    .tl-line-flow{stroke:var(--tl-node);stroke-width:2;fill:none;stroke-dasharray:none;animation:none;opacity:.85;}
+    .tl-line-flow-mod{stroke-dasharray:none;animation:none;}
+    @keyframes tlDash{to{stroke-dashoffset:0;}}
+    .tl-arrow{fill:var(--tl-node);opacity:.9;animation:none;}
+    @keyframes tlArrowMove{0%,100%{opacity:1;transform:none;}}
+    [data-theme="light"] .tl-line-track{stroke:var(--tl-border);}
+    [data-theme="light"] .tl-arrow{fill:var(--tl-node);}
+    [data-theme="light"] .tl-node-lesson{background:#94A3B8;border-color:#CBD5E1;}
     .tl-content{flex:1;min-width:0;padding-bottom:8px;}
     .tl-mod-row{display:flex;align-items:stretch;gap:8px;margin-bottom:6px;}
-    .tl-mod-header{flex:1;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(18,36,61,.95),rgba(12,26,46,.9));border:1px solid rgba(255,255,255,.12);cursor:pointer;text-align:left;color:#fff;transition:filter .15s,border-color .15s;font-family:inherit;}
-    .tl-mod-header:hover{filter:brightness(1.08);border-color:rgba(0,191,165,.35);}
+    .tl-mod-header{flex:1;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:var(--tl-mod-bg);border:1px solid var(--tl-border);cursor:pointer;text-align:left;color:var(--tl-mod-text);transition:border-color .15s,box-shadow .15s;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+    .tl-mod-header:hover{border-color:var(--tl-node);box-shadow:0 2px 8px rgba(0,0,0,.06);}
     .tl-mod-num{display:flex;flex-direction:column;align-items:center;min-width:44px;}
-    .tl-mod-lbl{font-size:8px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.55);text-transform:uppercase;}
-    .tl-mod-id{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;line-height:1;color:#fff;}
-    .tl-mod-sep{width:1px;height:36px;background:rgba(255,255,255,.18);flex-shrink:0;}
-    .tl-mod-title{flex:1;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.3;color:rgba(255,255,255,.92);}
-    .tl-mod-chevron{color:rgba(255,255,255,.45);flex-shrink:0;transition:transform .2s;}
+    .tl-mod-lbl{font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--tl-muted);text-transform:uppercase;}
+    .tl-mod-id{font-family:var(--font-family-ui);font-size:26px;font-weight:800;line-height:1;color:var(--tl-mod-text);}
+    .tl-mod-sep{width:1px;height:36px;background:var(--tl-border);flex-shrink:0;}
+    .tl-mod-title{flex:1;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.3;color:var(--tl-mod-text);}
+    .tl-mod-chevron{color:var(--tl-muted);flex-shrink:0;transition:transform .2s;}
     .tl-mod-chevron-open{transform:rotate(180deg);}
-    .tl-hide-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.7);font-size:9px;font-weight:700;letter-spacing:.04em;transition:all .15s;flex-shrink:0;min-width:52px;font-family:inherit;}
-    .tl-hide-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+    .tl-hide-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 10px;border-radius:8px;border:1px solid var(--tl-border);background:var(--tl-mod-bg);cursor:pointer;color:var(--tl-muted);font-size:9px;font-weight:700;letter-spacing:.04em;transition:all .15s;flex-shrink:0;min-width:52px;font-family:inherit;}
+    .tl-hide-btn:hover{background:var(--tl-pending-bg);color:var(--tl-text);}
     .tl-hide-btn.tl-hidden-active{background:rgba(229,99,107,.18);border-color:rgba(229,99,107,.4);color:#f87171;}
     .tl-lesson-row{display:flex;gap:0;margin-bottom:4px;}
     .tl-lesson-rail{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:14px;}
     .tl-segment-sm{min-height:20px;}
     .tl-lesson-body{flex:1;min-width:0;}
-    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:12px;border:1.5px solid transparent;cursor:pointer;text-align:left;font-family:inherit;transition:transform .18s,box-shadow .25s,border-color .25s,background .25s,filter .18s;position:relative;overflow:hidden;isolation:isolate;}
-    .tl-lesson-pill::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity .25s;}
-    .tl-lesson-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.14) 50%,transparent 60%);transform:translateX(-100%);transition:none;pointer-events:none;z-index:1;}
+    .tl-lesson-pill{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-radius:8px;border:1px solid var(--tl-border);cursor:pointer;text-align:left;font-family:inherit;transition:border-color .15s,background .15s,box-shadow .15s;position:relative;overflow:hidden;isolation:isolate;box-shadow:none;}
+    .tl-lesson-pill::before,.tl-lesson-pill::after{display:none!important;content:none!important;animation:none!important;}
     .tl-lesson-pill > *{position:relative;z-index:2;}
-    /* ── PENDENTE: capa cinza (aluno + adm). Tags coloridas ficam por cima. ── */
+    /* Pendente — sem neon */
     .tl-pill-pending{
-      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
-      border-color:rgba(160,170,185,.38)!important;
-      color:rgba(210,218,228,.82)!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;
+      color:var(--tl-pending-text)!important;
       box-shadow:none!important;
-      filter:saturate(.85);
+      filter:none;
     }
-    .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
+    .tl-pill-pending:hover{filter:brightness(0.97);box-shadow:0 2px 6px rgba(0,0,0,.05)!important;}
     .tl-pill-pending .tl-lesson-title,.tl-pill-pending .tl-lesson-meta{color:inherit;}
-    .tl-pill-locked{cursor:not-allowed!important;opacity:.78;pointer-events:auto;}
-    .tl-pill-locked:hover{background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;filter:saturate(.85);transform:none!important;}
+    .tl-pill-locked{cursor:not-allowed!important;opacity:.72;pointer-events:auto;}
+    .tl-pill-locked:hover{filter:none;transform:none!important;}
     .tl-pill-locked::after{display:none;}
-    .tl-badge-locked{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(100,116,139,.35);color:#cbd5e1;border:1px solid rgba(148,163,184,.4);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
-    /* ── CONCLUÍDA INPUT: azul forte + neon (estilo Portal landing) ── */
+    .tl-badge-locked{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
+    /* Concluídas — sólido premium, SEM glow/neon */
     .tl-pill-done{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
-      border-color:#7dd3fc!important;
+      background:var(--tl-done-input)!important;
+      border-color:var(--tl-done-input)!important;
       color:#fff!important;
-      box-shadow:
-        0 0 0 1px rgba(125,211,252,.55),
-        0 0 14px rgba(59,130,246,.75),
-        0 0 32px rgba(56,189,248,.45),
-        0 10px 28px -8px rgba(29,78,216,.55)!important;
+      box-shadow:none!important;
     }
-    .tl-pill-done::before{
-      opacity:1;
-      background:
-        radial-gradient(ellipse 80% 70% at 15% 20%,rgba(125,211,252,.28),transparent 55%),
-        radial-gradient(ellipse 60% 50% at 90% 80%,rgba(37,99,235,.25),transparent 55%);
-    }
-    .tl-pill-done:hover{transform:translateY(-1px);filter:brightness(1.06);}
-    .tl-pill-done:hover::after{animation:tlPillShine .65s ease;}
-    /* OUTPUT concluída: verde profundo + neon teal (card-fluency landing) */
+    .tl-pill-done::before{display:none!important;}
+    .tl-pill-done:hover{filter:brightness(1.05);transform:none;}
+    .tl-pill-done:hover::after{animation:none;}
     .tl-pill-done-output{
-      background:linear-gradient(135deg,#064e3b 0%,#047857 35%,#059669 65%,#00a89d 100%)!important;
-      border-color:#5eead4!important;
-      color:#ecfdf5!important;
-      box-shadow:
-        0 0 0 1px rgba(94,234,212,.55),
-        0 0 14px rgba(0,168,157,.7),
-        0 0 30px rgba(45,212,191,.4),
-        0 10px 28px -8px rgba(0,102,91,.5)!important;
-    }
-    .tl-pill-done-output::before{
-      opacity:1;
-      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(94,234,212,.28),transparent 55%);
-    }
-    /* REVIEW concluída: roxo + neon (card-corporate landing) */
-    .tl-pill-done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 35%,#7c3aed 65%,#8b5cf6 100%)!important;
-      border-color:#d8b4fe!important;
-      color:#f5f3ff!important;
-      box-shadow:
-        0 0 0 1px rgba(216,180,254,.55),
-        0 0 14px rgba(139,92,246,.7),
-        0 0 30px rgba(167,139,250,.4),
-        0 10px 28px -8px rgba(109,40,217,.5)!important;
-    }
-    .tl-pill-done-review::before{
-      opacity:1;
-      background:radial-gradient(ellipse 80% 70% at 20% 15%,rgba(216,180,254,.28),transparent 55%);
-    }
-    .tl-pill-active{
-      background:linear-gradient(135deg,rgba(14,165,233,.55),rgba(56,189,248,.35),rgba(37,99,235,.3))!important;
-      border-color:#38bdf8!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;
       color:#fff!important;
-      box-shadow:0 0 0 1px rgba(56,189,248,.45),0 0 16px rgba(56,189,248,.4)!important;
+      box-shadow:none!important;
     }
-    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{/* capa cinza herdada */}
-    @keyframes tlPillShine{to{transform:translateX(100%);}}
+    .tl-pill-done-output::before{display:none!important;}
+    .tl-pill-done-review{
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;
+      color:#fff!important;
+      box-shadow:none!important;
+    }
+    .tl-pill-done-review::before{display:none!important;}
+    .tl-pill-active{
+      background:var(--tl-active-bg)!important;
+      border-color:var(--tl-active-border)!important;
+      color:var(--tl-active-text)!important;
+      box-shadow:none!important;
+    }
+    .tl-pill-pending-input,.tl-pill-pending-output,.tl-pill-pending-review{}
+    @keyframes tlPillShine{to{transform:none;}}
     .tl-lesson-title{font-size:13px;font-weight:700;}
-    .tl-lesson-meta{font-size:10px;opacity:.75;margin-top:2px;}
-    .tl-previsao{font-size:9px;opacity:.65;letter-spacing:.02em;}
-    .tl-badge-done{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(8,47,120,.75);color:#e0f2fe;border:1px solid #7dd3fc;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;box-shadow:0 0 12px rgba(59,130,246,.55);}
-    .tl-badge-done-output{background:rgba(4,70,50,.8);border-color:#5eead4;color:#ccfbf1;box-shadow:0 0 12px rgba(0,168,157,.55);}
-    .tl-badge-done-review{background:rgba(76,29,149,.8);border-color:#d8b4fe;color:#f5f3ff;box-shadow:0 0 12px rgba(139,92,246,.55);}
-    .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(56,189,248,.35);color:#7dd3fc;border:1px solid rgba(56,189,248,.5);flex-shrink:0;}
-    /* Painel expandido: legível pro admin (não herda o cinza da capa) */
-    .tl-lesson-expand{margin-top:6px;border-radius:14px;overflow:hidden;border:1px solid rgba(125,211,252,.18);background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));animation:tlExpand .25s ease;box-shadow:0 8px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);color:var(--font);}
+    .tl-lesson-meta{font-size:10px;opacity:.8;margin-top:2px;}
+    .tl-previsao{font-size:9px;opacity:.7;letter-spacing:.02em;}
+    /* CONCLUÍDA — neon verde luminoso */
+    .tl-badge-done{
+      font-size:9px;font-weight:900;padding:3px 9px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;
+      background:rgba(34,197,94,.22)!important;color:#4ADE80!important;border:1px solid #4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9),0 0 28px rgba(74,222,128,.55);
+      box-shadow:0 0 12px rgba(34,197,94,.65),0 0 24px rgba(74,222,128,.35)!important;
+    }
+    .tl-badge-done-output{
+      background:rgba(34,197,94,.22)!important;border-color:#4ADE80!important;color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
+    .tl-badge-done-review{
+      background:rgba(34,197,94,.22)!important;border-color:#4ADE80!important;color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
+    .tl-badge-current{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--tl-active-bg);color:var(--tl-active-text);border:1px solid var(--tl-active-border);flex-shrink:0;box-shadow:none;}
+    /* Fonte branca da trilha com sombra elegante */
+    .tl-pill-done .tl-lesson-title,
+    .tl-pill-done-output .tl-lesson-title,
+    .tl-pill-done-review .tl-lesson-title,
+    .tl-pill-done .tl-lesson-meta,
+    .tl-pill-done-output .tl-lesson-meta,
+    .tl-pill-done-review .tl-lesson-meta,
+    .tl-pill-active .tl-lesson-title{
+      color:#FFFFFF!important;
+      text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),0 0 12px rgba(255,255,255,.2);
+    }
+    .tl-pill-done .tl-mod-chevron,
+    .tl-pill-done-output .tl-mod-chevron,
+    .tl-pill-done-review .tl-mod-chevron{filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
+    .tl-lesson-expand{margin-top:6px;border-radius:8px;overflow:hidden;border:1px solid var(--tl-border);background:var(--card);animation:tlExpand .2s ease;box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
     .tl-lesson-expand .lesson-detail{background:transparent;border-top:none;color:var(--font);}
-    .tl-lesson-expand .detail-label{color:#7dd3fc;}
+    .tl-lesson-expand .detail-label{color:var(--font-muted);}
     .tl-lesson-expand .input-light,.tl-lesson-expand .input{color:var(--font);}
-    @keyframes tlExpand{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-    .tl-mod-hidden-badge{font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(229,99,107,.2);color:#f87171;border:1px solid rgba(229,99,107,.35);margin-left:6px;}
-    .tl-badge-pendente{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(148,163,184,.28);color:#e2e8f0;border:1px solid rgba(148,163,184,.45);letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}
+    @keyframes tlExpand{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+    .tl-mod-hidden-badge{font-size:9px;padding:2px 8px;border-radius:99px;background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;margin-left:6px;}
+    .tl-badge-pendente{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;}
     /* Light mode: o CARD da trilha (.tl-wrap) permanece escuro (igual dark) com shine.
        Apenas o expand de lição aberta fica legível em light se necessário. */
-    [data-theme="light"] .tl-wrap,
-    [data-theme="light"] .tl-wrap::before{/* forçado pelo !important do dark card */}
-    [data-theme="light"] .tl-mod-header{background:linear-gradient(135deg,rgba(18,36,61,.95),rgba(12,26,46,.9))!important;border-color:rgba(255,255,255,.12)!important;color:#fff!important;}
-    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:#fff!important;}
+    [data-theme="light"] .tl-wrap{background:var(--tl-bg)!important;border-color:var(--tl-border)!important;color:var(--tl-text)!important;}
+    [data-theme="light"] .tl-mod-header{background:var(--tl-mod-bg)!important;border-color:var(--tl-border)!important;color:var(--tl-mod-text)!important;}
+    [data-theme="light"] .tl-mod-title,[data-theme="light"] .tl-mod-id,[data-theme="light"] .tl-mod-lbl{color:var(--tl-mod-text)!important;}
     [data-theme="light"] .tl-pill-pending,
     [data-theme="light"] .tl-pill-locked:hover{
-      background:linear-gradient(145deg,#3f4654 0%,#323844 48%,#2a303a 100%)!important;
-      border-color:rgba(160,170,185,.38)!important;
-      color:rgba(210,218,228,.82)!important;
+      background:var(--tl-pending-bg)!important;
+      border-color:var(--tl-border)!important;
+      color:var(--tl-pending-text)!important;
       box-shadow:none!important;
-      filter:saturate(.85);
+      filter:none;
     }
-    [data-theme="light"] .tl-pill-pending:hover{background:linear-gradient(145deg,#4a5262 0%,#383f4c 50%,#303640 100%)!important;color:rgba(230,236,244,.92)!important;}
-    [data-theme="light"] .tl-badge-locked,[data-theme="light"] .tl-badge-pendente{background:rgba(100,116,139,.35);color:#cbd5e1;border-color:rgba(148,163,184,.4);}
-    [data-theme="light"] .tl-pill-done{
-      background:linear-gradient(135deg,#163a7a 0%,#1d4ed8 32%,#2563eb 58%,#3b82f6 82%,#60a5fa 100%)!important;
-      border-color:#7dd3fc!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(125,211,252,.55),0 0 14px rgba(59,130,246,.75),0 0 32px rgba(56,189,248,.45)!important;
-    }
+    [data-theme="light"] .tl-pill-pending:hover{filter:brightness(0.97);}
+    [data-theme="light"] .tl-badge-locked,[data-theme="light"] .tl-badge-pendente{background:#F1F5F9;color:#475569;border-color:#E2E8F0;}
+    [data-theme="light"] .tl-pill-done{background:var(--tl-done-input)!important;border-color:var(--tl-done-input)!important;color:#fff!important;box-shadow:none!important;}
     [data-theme="light"] .tl-pill-done-output{
-      background:linear-gradient(135deg,#0f3d36 0%,#0d9488 40%,#14b8a6 100%)!important;
-      border-color:#5eead4!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(94,234,212,.5),0 0 18px rgba(0,168,157,.45)!important;
+      background:var(--tl-done-output)!important;
+      border-color:var(--tl-done-output)!important;color:#fff!important;
+      box-shadow:none!important;
     }
     [data-theme="light"] .tl-pill-done-review{
-      background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 45%,#8b5cf6 100%)!important;
-      border-color:#d8b4fe!important;color:#fff!important;
-      box-shadow:0 0 0 1px rgba(216,180,254,.5),0 0 18px rgba(139,92,246,.45)!important;
+      background:var(--tl-done-review)!important;
+      border-color:var(--tl-done-review)!important;color:#fff!important;
+      box-shadow:none!important;
     }
-    [data-theme="light"] .tl-lesson-expand{background:linear-gradient(165deg,rgba(12,26,48,.96),rgba(8,16,32,.98));border-color:rgba(125,211,252,.18);box-shadow:0 8px 28px rgba(0,0,0,.35);color:#e8f0f8;}
-    [data-theme="light"] .tl-lesson-expand .detail-label{color:#7dd3fc;}
-    [data-theme="light"] .tl-badge-done{background:rgba(59,130,246,.25);color:#bfdbfe;border-color:#60a5fa;}
-    [data-theme="light"] .tl-badge-done-output{background:rgba(20,184,166,.25);color:#99f6e4;border-color:#5eead4;}
-    [data-theme="light"] .tl-badge-done-review{background:rgba(139,92,246,.25);color:#e9d5ff;border-color:#c4b5fd;}
-    [data-theme="light"] .tl-badge-current{background:rgba(56,189,248,.35);color:#7dd3fc;border-color:rgba(56,189,248,.5);}
-    [data-theme="light"] .tl-hide-btn{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);}
-    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:rgba(200,215,230,.8);}
-    [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:rgba(200,210,220,.75);}
-    [data-theme="light"] .tl-pill-done .tl-lesson-meta,[data-theme="light"] .tl-pill-done .tl-previsao{color:rgba(255,255,255,.85);}
-    [data-theme="light"] .tl-line-track{stroke:rgba(255,255,255,.12)!important;}
-    [data-theme="light"] .tl-arrow{fill:#00d9c0!important;}
-    [data-theme="light"] .tl-node-lesson{background:#6b7280!important;border-color:#9ca3af!important;}
+    [data-theme="light"] .tl-lesson-expand{background:var(--card);border-color:var(--tl-border);box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);}
+    [data-theme="light"] .tl-lesson-expand .detail-label{color:var(--font-muted);}
+    [data-theme="light"] .tl-badge-done,
+    [data-theme="light"] .tl-badge-done-output,
+    [data-theme="light"] .tl-badge-done-review{
+      background:rgba(34,197,94,.22)!important;color:#4ADE80!important;border-color:#4ADE80!important;
+      text-shadow:0 0 8px rgba(74,222,128,1),0 0 18px rgba(34,197,94,.9);
+      box-shadow:0 0 12px rgba(34,197,94,.65)!important;
+    }
+    [data-theme="light"] .tl-badge-current{background:var(--tl-active-bg);color:var(--tl-active-text);border-color:var(--tl-active-border);box-shadow:none;}
+    [data-theme="light"] .tl-pill-done .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done-output .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done-review .tl-lesson-title,
+    [data-theme="light"] .tl-pill-done .tl-lesson-meta,
+    [data-theme="light"] .tl-pill-done-output .tl-lesson-meta,
+    [data-theme="light"] .tl-pill-done-review .tl-lesson-meta{
+      color:#FFFFFF!important;
+      text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),0 0 12px rgba(255,255,255,.2);
+    }
+    [data-theme="light"] .tl-hide-btn{border-color:var(--tl-border);background:var(--tl-mod-bg);color:var(--tl-muted);}
+    [data-theme="light"] .tl-lesson-meta,[data-theme="light"] .tl-previsao{opacity:1;color:var(--tl-muted);}
+    [data-theme="light"] .tl-pill-pending .tl-lesson-meta,[data-theme="light"] .tl-pill-pending .tl-previsao{color:var(--tl-pending-text);}
+    [data-theme="light"] .tl-pill-done .tl-lesson-meta,[data-theme="light"] .tl-pill-done .tl-previsao{color:rgba(255,255,255,.9);}
+    [data-theme="light"] .tl-line-track{stroke:var(--tl-border)!important;}
+    [data-theme="light"] .tl-arrow{fill:var(--tl-node)!important;}
+    [data-theme="light"] .tl-node-lesson{background:#94A3B8!important;border-color:#CBD5E1!important;}
     /* student cards list */
     .student-card{display:flex;flex-direction:column;gap:12px;}
     .student-card-head{display:flex;align-items:flex-start;gap:12px;}
@@ -789,14 +909,14 @@
 .status-pill-all     { background: linear-gradient(135deg,#1e8fa8,#145f7a); color:#fff; border-color: rgba(44,160,180,.4); }
 .status-pill-ativo   { background: rgba(30,160,110,.14); border-color: rgba(30,160,110,.38); color:#60daa8; }
 .status-pill-lead    { background: rgba(42,120,200,.14); border-color: rgba(42,120,200,.35); color:#88c0f8; }
-.status-pill-interesse { background: rgba(220,160,30,.14); border-color: rgba(220,160,30,.38); color:#f0cc60; }
+.status-pill-interesse { background: rgba(30,64,175,.12); border-color: rgba(30,64,175,.35); color:#1e3a8a; }
 .status-pill-trancado { background: rgba(140,100,200,.14); border-color: rgba(140,100,200,.35); color:#c0a0f8; }
 .status-pill-evadido { background: rgba(200,60,80,.14); border-color: rgba(200,60,80,.38); color:#f09090; }
 .status-pill-inactive { background: var(--badge); border-color: var(--divider); color: var(--font-muted); }
 .status-pill-inactive:hover { filter: brightness(1.12); }
 [data-theme="light"] .status-pill-ativo   { color:#0a5c38; }
 [data-theme="light"] .status-pill-lead    { color:#1a3a80; }
-[data-theme="light"] .status-pill-interesse { color:#7a5500; }
+[data-theme="light"] .status-pill-interesse { color:#1e3a8a; }
 [data-theme="light"] .status-pill-trancado { color:#3d1a80; }
 [data-theme="light"] .status-pill-evadido { color:#8a2030; }
 [data-theme="light"] .status-pill-inactive { color:#1a3a52; }
@@ -896,11 +1016,11 @@
     [data-theme="light"] .input:focus,[data-theme="light"] .input-light:focus{border-color:rgba(53,102,182,.55)!important;box-shadow:0 0 0 3px rgba(134,207,255,.35)!important;}
     [data-theme="light"] .fin-hero{background:linear-gradient(145deg,#fff 0%,#E0ECFF 50%,#D4F7F2 100%);border-color:rgba(53,102,182,.18);box-shadow:0 14px 40px rgba(23,64,130,.10);}
     [data-theme="light"] .fin-hero::before{background:radial-gradient(circle,rgba(53,102,182,.12),transparent 70%);}
-    [data-theme="light"] .student-card{background:var(--gradient-surface);border-color:rgba(53,102,182,.14);}
-    [data-theme="light"] .student-card:hover{box-shadow:0 12px 32px rgba(23,64,130,.12);border-color:rgba(53,102,182,.28);}
+    [data-theme="light"] .student-card{background:var(--card,#fff);border:1.5px solid #0f2c5c;box-shadow:0 4px 12px rgba(15,44,92,.08);}
+    [data-theme="light"] .student-card:hover{box-shadow:0 10px 28px rgba(15,44,92,.14);border-color:#0a1f45;}
     [data-theme="light"] .status-pill-ativo{background:linear-gradient(135deg,rgba(163,224,214,.45),rgba(212,247,242,.8));border-color:rgba(0,102,91,.35);color:#00665B;}
     [data-theme="light"] .status-pill-lead{background:linear-gradient(135deg,rgba(202,222,252,.7),rgba(224,236,255,.9));border-color:rgba(53,102,182,.30);color:#174082;}
-    [data-theme="light"] .status-pill-interesse{background:linear-gradient(135deg,rgba(255,236,200,.5),rgba(255,248,230,.8));border-color:rgba(200,140,30,.28);color:#8a5a00;}
+    [data-theme="light"] .status-pill-interesse{background:linear-gradient(135deg,rgba(219,234,254,.9),rgba(239,246,255,1));border-color:rgba(30,58,138,.35);color:#1e3a8a;}
     [data-theme="light"] .modal-box{box-shadow:0 24px 64px rgba(23,64,130,.18);border-color:rgba(53,102,182,.16);}
     [data-theme="light"] .modal-header{background:var(--gradient-cta);}
     [data-theme="light"] .modal-tab-active{color:#174082!important;border-bottom-color:#3566B6!important;background:rgba(134,207,255,.15);}
@@ -920,38 +1040,150 @@
     [data-theme="light"] .fin-pay-card:hover{border-color:rgba(53,102,182,.28);box-shadow:0 8px 24px rgba(23,64,130,.10);}
     [data-theme="light"] .page-back:hover{color:#2252A0;}
     [data-theme="light"] .sd-journey-mod{color:#86CFFF;}
+
+    /* ── APARÊNCIA (painel global) ── */
+    .ap-fab{
+      position:fixed;bottom:22px;left:22px;z-index:950;
+      width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+      background:#0F172A;color:#fff;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 6px 20px rgba(15,23,42,.28);transition:transform .15s,background .15s;
+    }
+    .ap-fab:hover{transform:scale(1.06);background:#4F46E5;}
+    .ap-panel{
+      position:fixed;bottom:84px;left:22px;z-index:950;width:min(420px,calc(100vw - 32px));
+      max-height:min(78vh,640px);overflow:hidden;display:flex;flex-direction:column;
+      background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;
+      box-shadow:0 16px 48px rgba(0,0,0,.18);animation:slideUp .2s ease-out;
+    }
+    .ap-panel-head{
+      padding:14px 16px;background:#1E293B;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .ap-panel-body{padding:14px 16px;overflow-y:auto;flex:1;background:#F8F9FA;}
+    .ap-panel-foot{
+      padding:12px 16px;border-top:1px solid #E2E8F0;background:#fff;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+    }
+    .ap-section{margin-bottom:16px;}
+    .ap-section h4{
+      font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+      color:#475569;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid #E2E8F0;
+    }
+    .ap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .ap-field label{display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:4px;}
+    .ap-color-row{display:flex;align-items:center;gap:8px;}
+    .ap-color-row input[type="color"]{
+      width:40px;height:36px;border:1px solid #E2E8F0;border-radius:8px;padding:2px;background:#fff;cursor:pointer;
+    }
+    .ap-color-row input[type="text"]{
+      flex:1;min-width:0;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:12px;color:#1E1E1E;font-family:ui-monospace,monospace;
+    }
+    .ap-select,.ap-field select{
+      width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff;color:#1E1E1E;
+    }
+    .ap-toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#1E1E1E;cursor:pointer;}
+    .ap-toggle input{width:18px;height:18px;}
+    .ap-preview-card{
+      background:var(--card);border:1px solid var(--divider);border-radius:8px;padding:14px;margin-top:8px;
+      box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);
+    }
+    body{font-family:var(--font-family-ui),var(--ds-font),'Inter',system-ui,sans-serif;}
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
 
   <script>
-  // Carrega tema do Firebase assim que possível e aplica CSS variables (retrocompatibilidade)
+  // Aparência global: CSS vars + localStorage + Firebase config/aparencia
   (function(){
+    var THEME_KEYS=[
+      'bg','font','fontMuted','card','lesson','detail','header','tabbar','badge','btn',
+      'done','doneBorder','doneText','divider','inputBg','inputBorder','accentSolid',
+      'fontFamily',
+      'tlBg','tlBorder','tlText','tlMuted','tlModBg','tlModText','tlNode','tlNodeDone',
+      'tlNodeOutput','tlNodeReview','tlNodeActive','tlPendingBg','tlPendingText',
+      'tlDoneInput','tlDoneOutput','tlDoneReview','tlActiveBg','tlActiveBorder','tlActiveText',
+      'sidebarBg','sidebarText'
+    ];
+    var CSS_MAP={
+      bg:'--bg',font:'--font',fontMuted:'--font-muted',card:'--card',lesson:'--lesson',
+      detail:'--detail',header:'--header',tabbar:'--tabbar',badge:'--badge',btn:'--btn',
+      done:'--done',doneBorder:'--done-border',doneText:'--done-text',
+      divider:'--divider',inputBg:'--input-bg',inputBorder:'--input-border',
+      accentSolid:'--accent-solid',
+      fontFamily:'--font-family-ui',
+      tlBg:'--tl-bg',tlBorder:'--tl-border',tlText:'--tl-text',tlMuted:'--tl-muted',
+      tlModBg:'--tl-mod-bg',tlModText:'--tl-mod-text',
+      tlNode:'--tl-node',tlNodeDone:'--tl-node-done',tlNodeOutput:'--tl-node-output',
+      tlNodeReview:'--tl-node-review',tlNodeActive:'--tl-node-active',
+      tlPendingBg:'--tl-pending-bg',tlPendingText:'--tl-pending-text',
+      tlDoneInput:'--tl-done-input',tlDoneOutput:'--tl-done-output',tlDoneReview:'--tl-done-review',
+      tlActiveBg:'--tl-active-bg',tlActiveBorder:'--tl-active-border',tlActiveText:'--tl-active-text',
+      sidebarBg:'--ds-sidebar',sidebarText:'--ds-sidebar-text'
+    };
+    function stripThemeMode(t){
+      if(!t||typeof t!=='object')return t||{};
+      var out={};
+      Object.keys(t).forEach(function(k){
+        // ignora dark/light/system e campos de metadados de servidor
+        if(k==='mode'||k==='theme'||k==='fs-theme'||k==='updatedAt'||k==='updatedBy')return;
+        out[k]=t[k];
+      });
+      return out;
+    }
     function applyTheme(t){
       if(!t)return;
-      const r=document.documentElement.style;
-      if(t.bg)r.setProperty('--bg',t.bg);
-      if(t.font)r.setProperty('--font',t.font);
-      if(t.card)r.setProperty('--card',t.card);
-      if(t.lesson)r.setProperty('--lesson',t.lesson);
-      if(t.detail)r.setProperty('--detail',t.detail);
-      if(t.header)r.setProperty('--header',t.header);
-      if(t.tabbar)r.setProperty('--tabbar',t.tabbar);
-      if(t.badge)r.setProperty('--badge',t.badge);
-      if(t.btn)r.setProperty('--btn',t.btn);
-      if(t.done)r.setProperty('--done',t.done);
-      if(t.doneBorder)r.setProperty('--done-border',t.doneBorder);
-      if(t.doneText)r.setProperty('--done-text',t.doneText);
+      t=stripThemeMode(t);
+      var r=document.documentElement.style;
+      // Tema único: atributo fixo "light" só para CSS legado; dark/system desligados.
+      // As cores visuais vêm APENAS das variáveis que o usuário salvou.
+      document.documentElement.setAttribute('data-theme','light');
+      try{ localStorage.removeItem('fs-theme'); }catch(e){}
+      THEME_KEYS.forEach(function(k){
+        if(t[k]!=null&&t[k]!==''&&CSS_MAP[k]) r.setProperty(CSS_MAP[k], t[k]);
+      });
+      if(t.fontFamily){
+        document.body && (document.body.style.fontFamily = t.fontFamily + ", system-ui, sans-serif");
+      }
+      try{ window.__fsAppearance = Object.assign({}, window.__fsAppearance||{}, t); }catch(e){}
     }
     window.__applyTheme=applyTheme;
-    // Aplicar tema salvo localmente
-    const saved=localStorage.getItem('fs-theme')||'system';
-    const isDark=saved==='dark'||(saved==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-    // Tenta carregar do Firebase para retrocompatibilidade
+    window.__stripThemeMode=stripThemeMode;
+    window.__THEME_KEYS=THEME_KEYS;
+    window.__THEME_CSS_MAP=CSS_MAP;
+    window.__APPEARANCE_DEFAULTS={
+      bg:'#F8F9FA', font:'#1E1E1E', fontMuted:'#475569', card:'#FFFFFF',
+      lesson:'#FFFFFF', detail:'#F1F5F9', header:'#FFFFFF', tabbar:'#E2E8F0',
+      badge:'#F1F5F9', btn:'#FFFFFF', done:'#F0FDF4', doneBorder:'#15803D', doneText:'#15803D',
+      divider:'#E2E8F0', inputBg:'#FFFFFF', inputBorder:'#CBD5E1', accentSolid:'#0F172A',
+      fontFamily:"'Inter', 'Helvetica Neue', 'Segoe UI'",
+      tlBg:'#F1F5F9', tlBorder:'#E2E8F0', tlText:'#1E1E1E', tlMuted:'#475569',
+      tlModBg:'#FFFFFF', tlModText:'#1E1E1E',
+      tlNode:'#4F46E5', tlNodeDone:'#2563EB', tlNodeOutput:'#0D9488', tlNodeReview:'#7C3AED',
+      tlNodeActive:'#0284C7', tlPendingBg:'#E2E8F0', tlPendingText:'#475569',
+      tlDoneInput:'#1D4ED8', tlDoneOutput:'#0F766E', tlDoneReview:'#6D28D9',
+      tlActiveBg:'#E0F2FE', tlActiveBorder:'#0284C7', tlActiveText:'#0C4A6E',
+      sidebarBg:'#1E293B', sidebarText:'#FFFFFF'
+    };
+    document.documentElement.setAttribute('data-theme','light');
+    try{ localStorage.removeItem('fs-theme'); }catch(e){}
+    // local first (só cores)
     try{
-      firebase.firestore().collection('config').doc('aparencia').get().then(doc=>{
-        if(doc.exists)applyTheme(doc.data());
-      }).catch(()=>{});
+      var local=JSON.parse(localStorage.getItem('fs-appearance')||'null');
+      if(local){
+        local=stripThemeMode(local);
+        applyTheme(local);
+        try{ localStorage.setItem('fs-appearance', JSON.stringify(local)); }catch(e){}
+      }else{
+        applyTheme(window.__APPEARANCE_DEFAULTS);
+      }
+    }catch(e){
+      applyTheme(window.__APPEARANCE_DEFAULTS);
+    }
+    try{
+      firebase.firestore().collection('config').doc('aparencia').get().then(function(doc){
+        if(doc.exists){
+          var data=stripThemeMode(doc.data()||{});
+          applyTheme(data);
+          try{ localStorage.setItem('fs-appearance', JSON.stringify(data)); }catch(e){}
+        }
+      }).catch(function(){});
     }catch(e){}
   })();
   </script>
@@ -960,7 +1192,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.13.4");
+console.info("Fluency Portal v2026.07.25-finance-fix");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1697,11 +1929,11 @@ function getLessonBorderColor(item){
   const isOutput=item.lessonType==="output";
   if(item.status==="andamento")return "#38bdf8";
   if(item.status==="pendente"||(!done&&!item.status))return "#94a3b8"; // cinza pendente
-  if(isReview)return done?"#c4b5fd":"#a78bfa"; // roxo neon
-  if(isOutput)return done?"#2dd4bf":"#00a89d"; // teal neon
-  // input concluída → azul neon
-  if(done)return "#60a5fa";
-  return "#5b9be8";
+  if(isReview)return done?"#6D28D9":"#7C3AED"; // review sólido
+  if(isOutput)return done?"#0F766E":"#0D9488"; // output sólido
+  // input concluída → azul sólido
+  if(done)return "#1D4ED8";
+  return "#2563EB";
 }
 
 function getReflectiveMeta(lessonType, contentNum, reviewNum){
@@ -1824,6 +2056,179 @@ const FIN_STATUS=[
 ];
 const finStatusMap=Object.fromEntries(FIN_STATUS.map(s=>[s.value,s]));
 const FINANCEIRO_DEFAULT={tipo:"mensalidade",creditosTotal:0,creditosUsados:0,parcelas:[]};
+
+/* ── Finance Architecture: invoices (owed) vs transactions (paid) ───────────
+   Collections: invoices, transactions
+   Legacy student.financeiro.parcelas is preserved and mirrored — never deleted.
+   ─────────────────────────────────────────────────────────────────────────── */
+const INVOICE_STATUS={UNPAID:"unpaid",PARTIAL:"partially_paid",PAID:"paid",OVERDUE:"overdue"};
+function mapParcelaToInvoiceStatus(parcela,todayStr){
+  const eff=getEffectiveParcelStatus(parcela,todayStr||getTodayISO());
+  if(eff==="paga")return INVOICE_STATUS.PAID;
+  if(eff==="vencida")return INVOICE_STATUS.OVERDUE;
+  return INVOICE_STATUS.UNPAID;
+}
+function invoiceStatusBadgeClass(status){
+  if(status==="paid")return"status-badge status-badge-paid";
+  if(status==="overdue")return"status-badge status-badge-overdue";
+  if(status==="partially_paid")return"status-badge status-badge-partial";
+  return"status-badge status-badge-pending";
+}
+function invoiceStatusLabel(status){
+  if(status==="paid")return"Pago";
+  if(status==="overdue")return"Vencido";
+  if(status==="partially_paid")return"Parcial";
+  if(status==="unpaid")return"Em aberto";
+  return status||"—";
+}
+function toJsDate(val){
+  if(!val)return null;
+  if(val instanceof Date)return val;
+  if(typeof val.toDate==="function")return val.toDate();
+  if(typeof val==="string"){const d=new Date(val.length===10?val+"T12:00:00":val);return isNaN(d)?null:d;}
+  if(typeof val.seconds==="number")return new Date(val.seconds*1000);
+  return null;
+}
+function invoiceDocId(studentId,parcelaId){return String(studentId||"s")+"__"+String(parcelaId||"p").replace(/[^a-zA-Z0-9_-]/g,"_");}
+/** ID estável da parcela — evita cobranças fantasma (ex.: mesmo aluno várias vezes). */
+function parcelaStableId(studentId,p,idx){
+  if(p&&p.id!=null&&String(p.id).trim()!=="")return String(p.id).trim();
+  const bits=[studentId||"s",p&&p.dataVencimento||"nodate",p&&p.mes||"nomes",String(idx)];
+  return "auto_"+bits.join("_").replace(/\s+/g,"_");
+}
+/**
+ * Fonte de verdade do financeiro: SOMENTE parcelas em students.*.financeiro.parcelas
+ * — valor > 0 (sem cobrança vazia)
+ * — sem duplicar o mesmo id
+ * — ignora docs do sistema
+ */
+function buildFinanceFromStudents(students){
+  const today=getTodayISO();
+  const invoices=[];
+  const transactions=[];
+  const seen=new Set();
+  (students||[]).forEach(s=>{
+    if(!s)return;
+    const sid=s.uid||s.id;
+    if(!sid||sid===COURSES_CATALOG_DOC||String(sid).startsWith("__system"))return;
+    const parcelas=Array.isArray(s.financeiro?.parcelas)?s.financeiro.parcelas:[];
+    parcelas.forEach((p,idx)=>{
+      if(!p||typeof p!=="object")return;
+      const amount=getParcelValor(p);
+      if(!(amount>0))return;
+      const pid=parcelaStableId(sid,p,idx);
+      const invId=invoiceDocId(sid,pid);
+      if(seen.has(invId))return;
+      seen.add(invId);
+      const status=mapParcelaToInvoiceStatus(p,today);
+      const studentName=s.name||s.nome||"Aluno";
+      const description=(p.mes&&String(p.mes).trim())||("Parcela "+(p.dataVencimento?formatDateBR(p.dataVencimento):String(idx+1)));
+      invoices.push({
+        id:invId,studentId:sid,studentName,amount,description,status,
+        dueDate:p.dataVencimento||null,createdAt:p.dataVencimento||null,
+        legacyParcelaId:pid,parcelaIndex:idx,_source:"parcela",
+      });
+      if((p.status==="paga"||status==="paid")&&amount>0){
+        const payDate=p.dataPagamento||p.dataVencimento||today;
+        transactions.push({
+          id:"tx_"+invId,studentId:sid,studentName,invoiceId:invId,amount,
+          type:"payment",method:p.boletoPix?"bank_transfer":"cash",
+          date:payDate,status:"paid",_source:"parcela",description,
+        });
+      }
+    });
+  });
+  return{invoices,transactions};
+}
+/** @deprecated alias */
+function deriveFinanceFromParcelas(students){return buildFinanceFromStudents(students);}
+/** KPIs do MÊS corrente (não 30 dias / não histórico total). */
+function computeFinanceKpis(invoices,transactions,monthKey){
+  const mk=monthKey||getMonthKey(new Date());
+  let revenueMonth=0,outstanding=0,overdue=0;
+  const revenueItems=[],outstandingItems=[],overdueItems=[];
+  (transactions||[]).forEach(t=>{
+    if((t.type||"payment")!=="payment")return;
+    const amt=parseFloat(t.amount)||0;
+    if(!(amt>0))return;
+    const d=toJsDate(t.date);
+    if(!d)return;
+    if(getMonthKey(d)!==mk)return;
+    revenueMonth+=amt;
+    revenueItems.push(t);
+  });
+  (invoices||[]).forEach(inv=>{
+    const amt=parseFloat(inv.amount)||0;
+    if(!(amt>0))return;
+    if(inv.status!=="paid"){outstanding+=amt;outstandingItems.push(inv);}
+    if(inv.status==="overdue"){overdue+=amt;overdueItems.push(inv);}
+  });
+  revenueItems.sort((a,b)=>(toJsDate(b.date)?.getTime()||0)-(toJsDate(a.date)?.getTime()||0));
+  outstandingItems.sort((a,b)=>String(a.dueDate||"").localeCompare(String(b.dueDate||"")));
+  overdueItems.sort((a,b)=>String(a.dueDate||"").localeCompare(String(b.dueDate||"")));
+  return{revenueMonth,outstanding,overdue,revenueItems,outstandingItems,overdueItems,monthKey:mk};
+}
+function computeCashFlowSeries(transactions,expensesByMonth){
+  // Last 6 months revenue (payments) vs expenses
+  const months=[];
+  const now=new Date();
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push(getMonthKey(d));
+  }
+  const revenue=months.map(mk=>{
+    let sum=0;
+    (transactions||[]).forEach(t=>{
+      if((t.type||"payment")!=="payment")return;
+      const d=toJsDate(t.date);
+      if(d&&getMonthKey(d)===mk)sum+=(parseFloat(t.amount)||0);
+    });
+    return sum;
+  });
+  const expenses=months.map(mk=>(expensesByMonth&&expensesByMonth[mk])||0);
+  return{months,revenue,expenses};
+}
+/** Upsert invoice (+ optional payment transaction) from a legacy parcela. Never deletes user data. */
+async function upsertInvoiceFromParcela(studentId,parcela,studentName){
+  if(!studentId||!parcela)return;
+  const amount=getParcelValor(parcela);
+  if(!(amount>0))return; // não cria fatura fantasma sem valor
+  const invId=invoiceDocId(studentId,parcelaStableId(studentId,parcela,0));
+  const status=mapParcelaToInvoiceStatus(parcela);
+  const invPayload={
+    studentId:String(studentId),
+    amount:amount||0,
+    description:parcela.mes||("Parcela "+(parcela.dataVencimento||"")),
+    status,
+    dueDate:parcela.dataVencimento||null,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    legacyParcelaId:parcela.id||null,
+    studentName:studentName||null,
+  };
+  try{
+    await db.collection("invoices").doc(invId).set(invPayload,{merge:true});
+    if(status==="paid"&&amount>0){
+      const txId="tx_"+invId;
+      await db.collection("transactions").doc(txId).set({
+        studentId:String(studentId),
+        invoiceId:invId,
+        amount:amount||0,
+        type:"payment",
+        method:parcela.boletoPix?"bank_transfer":"cash",
+        date:parcela.dataPagamento||parcela.dataVencimento||getTodayISO(),
+        studentName:studentName||null,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      },{merge:true});
+    }
+  }catch(err){
+    console.warn("upsertInvoiceFromParcela (check Firestore rules for invoices/transactions):",err&&err.message);
+  }
+}
+async function syncStudentParcelasToInvoices(studentId,parcelas,studentName){
+  const list=Array.isArray(parcelas)?parcelas:[];
+  for(const p of list){await upsertInvoiceFromParcela(studentId,p,studentName);}
+}
 
 /* ── Helpers de aluno (legado + auth) ─────────────────────────────────────── */
 const STATUS_LEGACY_MAP={
@@ -1988,46 +2393,7 @@ async function linkStudentPortalLogin(studentUid,email,password){
   return{created,alreadyExists:false,studentUid,authUid,email:em};
 }
 
-// ── MODIFICAÇÃO 1c: ThemeSwitcher ──────────────────────────────────────────
-function ThemeSwitcher() {
-  const [mode, setMode] = useState(() => localStorage.getItem('fs-theme') || 'system');
-
-  useEffect(() => {
-    function apply(m) {
-      const isDark = m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    }
-    apply(mode);
-    localStorage.setItem('fs-theme', mode);
-    if (mode === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = () => apply('system');
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
-    }
-  }, [mode]);
-
-  const opts = [
-    { id: 'dark',   icon: 'moon',    label: 'Dark' },
-    { id: 'light',  icon: 'sun',     label: 'Light' },
-    { id: 'system', icon: 'monitor', label: 'Auto' },
-  ];
-
-  return (
-    <div className="theme-switcher">
-      {opts.map(o => (
-        <button
-          key={o.id}
-          title={o.label}
-          onClick={() => setMode(o.id)}
-          className={"theme-btn" + (mode === o.id ? " theme-btn-active" : "")}
-        >
-          <Icon name={o.icon} size={14}/>
-        </button>
-      ))}
-    </div>
-  );
-}
+// ThemeSwitcher removido: o portal usa somente as cores salvas em Aparência (sem dark/light/system).
 
 function BrandLogo({large}){
   const [ok,setOk]=useState(true);
@@ -2056,11 +2422,8 @@ function LogoBar({ onBack, isAdmin, showLogout }) {
       </div>
       <div style={{display:'flex',alignItems:'center',gap:8}}>
         {isAdmin && (
-          <span style={{fontSize:10,fontWeight:700,letterSpacing:'.08em',padding:'3px 8px',borderRadius:20,background:'rgba(255,255,255,.15)',border:'1px solid rgba(255,255,255,.28)',color:'#fff'}}>
-            ADMIN
-          </span>
+          <span className="role-pill role-pill-admin">Admin</span>
         )}
-        <ThemeSwitcher/>
         {showLogout && (
           <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center',gap:6}} onClick={()=>auth.signOut()}>
             <Icon name="log-out" size={14}/>
@@ -2165,8 +2528,11 @@ function AdminLessonPanel({item,uid}){
   useEffect(()=>{setDraft(snapshotFromItem(item));setSaveMsg("");setSaveErr("");},[item.id]);
   function setD(field,val){setDraft(p=>({...p,[field]:val}));setSaveMsg("");setSaveErr("");}
   async function saveLesson(){
-    if(!uid||!item?.id){setSaveErr("Aluno ou lição ausente.");return;}
-    setSaving(true);setSaveErr("");setSaveMsg("");
+    if(!uid||!item?.id){setSaveErr("Acesso negado: Aluno ou lição ausente.");return;}
+    setSaving(true);
+    setSaveErr("");
+    setSaveMsg("");
+    
     try{
       const patch={};
       FIELD_KEYS.forEach(k=>{
@@ -2174,12 +2540,17 @@ function AdminLessonPanel({item,uid}){
         if(v===undefined||v===null)v="";
         patch[`trilha.${item.id}.${k}`]=v;
       });
+      
       await db.collection("students").doc(uid).update(patch);
-      setSaveMsg("Lição salva na trilha.");
-      setTimeout(()=>setSaveMsg(""),2500);
+      
+      setSaveMsg("✓ Alterações salvas com sucesso!");
+      setTimeout(()=>setSaveMsg(""), 3500);
     }catch(e){
-      setSaveErr(e.message||String(e));
-    }finally{setSaving(false);}
+      console.error("Erro no salvamento Firebase:", e);
+      setSaveErr("Falha na conexão. Verifique sua rede e tente novamente.");
+    }finally{
+      setSaving(false);
+    }
   }
   return(
     <div className="space-y-4">
@@ -2806,7 +3177,12 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
   const sorted=[...parcelas].sort((a,b)=>(a.dataVencimento||"").localeCompare(b.dataVencimento||""));
   async function setTipo(t){await db.collection("students").doc(uid).update({"financeiro.tipo":t});}
   async function setCredito(field,val){await db.collection("students").doc(uid).update({[`financeiro.${field}`]:parseInt(val)||0});}
-  async function addParcela(){const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};await db.collection("students").doc(uid).update({"financeiro.parcelas":[...parcelas,nova]});}
+  async function addParcela(){
+    const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};
+    const next=[...parcelas,nova];
+    await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+    await upsertInvoiceFromParcela(uid,nova);
+  }
   async function updateParcela(id,field,val){
     const next=parcelas.map(p=>{
       if(p.id!==id)return p;
@@ -2815,8 +3191,14 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
       return u;
     });
     await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+    const updated=next.find(p=>p.id===id);
+    if(updated)await upsertInvoiceFromParcela(uid,updated);
   }
-  async function deleteParcela(id){if(!confirm("Remover esta parcela?"))return;await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});}
+  async function deleteParcela(id){
+    if(!confirm("Remover esta parcela do contrato do aluno? (faturas legadas no Firestore não são apagadas automaticamente)"))return;
+    await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});
+    // Do NOT delete invoices/transactions collections — preserve financial history
+  }
   return(
     <div className="space-y-4">
       <div className="glass rounded-2xl p-5">
@@ -2869,272 +3251,114 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
 
 function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [monthKey,setMonthKey]=useState(()=>getMonthKey(new Date()));
-  const [despesas,setDespesas]=useState([]); // variáveis do mês
-  const [despesasFixas,setDespesasFixas]=useState([]); // repetem todo mês
-  const [fixasPagasPorMes,setFixasPagasPorMes]=useState({}); // { "2026-07": { id: true } }
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
-  const [showDespesaForm,setShowDespesaForm]=useState(false); // false | "variavel" | "fixa"
-  const [despesaForm,setDespesaForm]=useState({data:"",descricao:"",valor:""});
-  const [savingDespesa,setSavingDespesa]=useState(false);
-  const [despesaError,setDespesaError]=useState("");
-  const [porMesCache,setPorMesCache]=useState({});
-  const [togglingPagaId,setTogglingPagaId]=useState(null);
+  const [kpiDetail,setKpiDetail]=useState(null); // null | 'revenue' | 'outstanding' | 'overdue'
+  const [despesasPorMes,setDespesasPorMes]=useState({});
+  const [despesasFixas,setDespesasFixas]=useState([]);
+  const [fixasPagasPorMes,setFixasPagasPorMes]=useState({});
+  const chartRef=useRef(null);
+  const chartInstance=useRef(null);
 
-  // studio/financeiro é bloqueado pelas regras do Firestore.
-  // Salva em users/{ADMIN_UID} (admin logado) e faz fallback em localStorage.
   const DESPESAS_LS_KEY="fluency_studio_despesasPorMes";
   const FIXAS_LS_KEY="fluency_studio_despesasFixas";
   const FIXAS_PAGAS_LS_KEY="fluency_studio_despesasFixasPagas";
-  function readLocalPorMes(){
-    try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}
-  }
-  function writeLocalPorMes(porMes){
-    try{localStorage.setItem(DESPESAS_LS_KEY,JSON.stringify(porMes||{}));}catch(e){}
-  }
-  function readLocalFixas(){
-    try{const v=JSON.parse(localStorage.getItem(FIXAS_LS_KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return[];}
-  }
-  function writeLocalFixas(list){
-    try{localStorage.setItem(FIXAS_LS_KEY,JSON.stringify(list||[]));}catch(e){}
-  }
+  function readLocalPorMes(){try{return JSON.parse(localStorage.getItem(DESPESAS_LS_KEY)||"{}")||{};}catch(e){return{};}}
+  function readLocalFixas(){try{const v=JSON.parse(localStorage.getItem(FIXAS_LS_KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return[];}}
   function normalizeFixasPagas(raw){
     if(!raw||typeof raw!=="object")return{};
     const out={};
     Object.keys(raw).forEach(mk=>{
       const v=raw[mk];
-      if(Array.isArray(v)){
-        const map={};
-        v.forEach(id=>{if(id)map[id]=true;});
-        out[mk]=map;
-      }else if(v&&typeof v==="object"){
-        out[mk]={...v};
-      }
+      if(Array.isArray(v)){const map={};v.forEach(id=>{if(id)map[id]=true;});out[mk]=map;}
+      else if(v&&typeof v==="object")out[mk]={...v};
     });
     return out;
   }
-  function readLocalFixasPagas(){
-    try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}
-  }
-  function writeLocalFixasPagas(map){
-    try{localStorage.setItem(FIXAS_PAGAS_LS_KEY,JSON.stringify(map||{}));}catch(e){}
-  }
-  function getDespesasCloudRefs(){
-    return[
-      db.collection("users").doc(ADMIN_UID),
-      db.collection("config").doc("financeiro"),
-    ];
-  }
-  function applyFinanceData(porMes,fixas, pagas, mk){
-    setPorMesCache(porMes||{});
-    setDespesas((porMes&&porMes[mk])||[]);
-    setDespesasFixas(Array.isArray(fixas)?fixas:[]);
-    const np=normalizeFixasPagas(pagas||{});
-    setFixasPagasPorMes(np);
-    writeLocalPorMes(porMes||{});
-    writeLocalFixas(Array.isArray(fixas)?fixas:[]);
-    writeLocalFixasPagas(np);
-  }
+  function readLocalFixasPagas(){try{return normalizeFixasPagas(JSON.parse(localStorage.getItem(FIXAS_PAGAS_LS_KEY)||"{}"));}catch(e){return{};}}
 
   useEffect(()=>{
-    let unsub=null;
-    let cancelled=false;
-    const localPm=readLocalPorMes();
-    const localFx=readLocalFixas();
-    const localPg=readLocalFixasPagas();
-    applyFinanceData(localPm,localFx,localPg,monthKey);
-
+    setDespesasPorMes(readLocalPorMes());
+    setDespesasFixas(readLocalFixas());
+    setFixasPagasPorMes(readLocalFixasPagas());
     (async()=>{
-      for(const ref of getDespesasCloudRefs()){
-        try{
-          const snap=await ref.get();
-          if(cancelled)return;
-          const data=snap.exists?snap.data():{};
-          const cloudPm=data.despesasPorMes||{};
-          const cloudFx=Array.isArray(data.despesasFixas)?data.despesasFixas:localFx;
-          const cloudPg=data.despesasFixasPagasPorMes!=null?normalizeFixasPagas(data.despesasFixasPagasPorMes):localPg;
-          const merged={...localPm};
-          Object.keys(cloudPm).forEach(k=>{if(Array.isArray(cloudPm[k]))merged[k]=cloudPm[k];});
-          applyFinanceData(merged,cloudFx,cloudPg,monthKey);
-          unsub=ref.onSnapshot(doc=>{
-            const d=doc.exists?doc.data():{};
-            const pm=d.despesasPorMes||{};
-            const fx=Array.isArray(d.despesasFixas)?d.despesasFixas:null;
-            const pg=d.despesasFixasPagasPorMes!=null?normalizeFixasPagas(d.despesasFixasPagasPorMes):null;
-            setPorMesCache(prev=>{
-              const next={...prev};
-              Object.keys(pm).forEach(k=>{if(Array.isArray(pm[k]))next[k]=pm[k];});
-              writeLocalPorMes(next);
-              return next;
-            });
-            if(Array.isArray(pm[monthKey]))setDespesas(pm[monthKey]);
-            if(fx){setDespesasFixas(fx);writeLocalFixas(fx);}
-            if(pg){setFixasPagasPorMes(pg);writeLocalFixasPagas(pg);}
-          },err=>console.error("Erro ao escutar despesas:",err));
-          return;
-        }catch(err){
-          console.warn("Path despesas indisponível:",ref.path,err&&err.message);
+      try{
+        const snap=await db.collection("users").doc(ADMIN_UID).get();
+        if(snap.exists){
+          const data=snap.data()||{};
+          if(data.despesasPorMes)setDespesasPorMes(prev=>({...prev,...data.despesasPorMes}));
+          if(Array.isArray(data.despesasFixas))setDespesasFixas(data.despesasFixas);
+          if(data.despesasFixasPagasPorMes)setFixasPagasPorMes(normalizeFixasPagas(data.despesasFixasPagasPorMes));
         }
-      }
-      console.warn("Despesas: usando somente armazenamento local deste navegador.");
+      }catch(e){}
     })();
+  },[]);
 
-    return()=>{cancelled=true;if(unsub)unsub();};
-  },[monthKey]);
+  // Fonte única: parcelas reais dos alunos (evita cobranças fantasma da coleção invoices)
+  const built=useMemo(()=>buildFinanceFromStudents(students),[students]);
+  const effectiveInvoices=built.invoices;
+  const effectiveTransactions=built.transactions;
+
+  const kpis=useMemo(()=>computeFinanceKpis(effectiveInvoices,effectiveTransactions,monthKey),[effectiveInvoices,effectiveTransactions,monthKey]);
+  const isCurrentMonth=monthKey===getMonthKey(new Date());
+
+  const expensesByMonth=useMemo(()=>{
+    const out={};
+    Object.keys(despesasPorMes||{}).forEach(mk=>{
+      const arr=despesasPorMes[mk]||[];
+      out[mk]=(out[mk]||0)+arr.reduce((s,d)=>s+(parseFloat(d.valor)||0),0);
+    });
+    Object.keys(fixasPagasPorMes||{}).forEach(mk=>{
+      const map=fixasPagasPorMes[mk]||{};
+      const sum=(despesasFixas||[]).reduce((s,d)=>s+(map[d.id]?parseFloat(d.valor)||0:0),0);
+      out[mk]=(out[mk]||0)+sum;
+    });
+    return out;
+  },[despesasPorMes,despesasFixas,fixasPagasPorMes]);
+
+  const cashFlow=useMemo(()=>computeCashFlowSeries(effectiveTransactions,expensesByMonth),[effectiveTransactions,expensesByMonth]);
+
+  useEffect(()=>{
+    if(!chartRef.current||typeof Chart==="undefined")return;
+    if(chartInstance.current){chartInstance.current.destroy();chartInstance.current=null;}
+    const labels=cashFlow.months.map(mk=>{
+      const[y,m]=mk.split("-");
+      return MESES_CURTOS[parseInt(m,10)-1]+"/"+String(y).slice(2);
+    });
+    chartInstance.current=new Chart(chartRef.current,{
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          {label:"Recebido no mês",data:cashFlow.revenue,backgroundColor:"rgba(21,128,61,0.75)",borderRadius:6},
+          {label:"Despesas",data:cashFlow.expenses,backgroundColor:"rgba(185,28,28,0.65)",borderRadius:6},
+        ],
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{labels:{color:"#1E1E1E",font:{family:"Inter, sans-serif",size:12}}},
+          tooltip:{callbacks:{label:(ctx)=>ctx.dataset.label+": "+formatCurrency(ctx.parsed.y)}},
+        },
+        scales:{
+          x:{ticks:{color:"#475569"},grid:{color:"#E2E8F0"}},
+          y:{ticks:{color:"#475569",callback:(v)=>"R$ "+v},grid:{color:"#E2E8F0"}},
+        },
+      },
+    });
+    return()=>{if(chartInstance.current){chartInstance.current.destroy();chartInstance.current=null;}};
+  },[cashFlow]);
+
+  const recentTx=useMemo(()=>{
+    return[...effectiveTransactions].sort((a,b)=>{
+      const da=toJsDate(a.date)?.getTime()||0;
+      const db=toJsDate(b.date)?.getTime()||0;
+      return db-da;
+    }).slice(0,10);
+  },[effectiveTransactions]);
 
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
-  const {previsto,recebido}=useMemo(()=>computeStudioFinanceMonth(studentsByStatus,monthKey),[studentsByStatus,monthKey]);
-  const fixasPagasMes=fixasPagasPorMes[monthKey]||{};
-  const totalDespesasPrevistas=useMemo(()=>despesasFixas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesasFixas]);
-  const totalDespesasFixasPagas=useMemo(
-    ()=>despesasFixas.reduce((s,d)=>s+(fixasPagasMes[d.id]?parseFloat(d.valor)||0:0),0),
-    [despesasFixas,fixasPagasMes]
-  );
-  const totalDespesasVariaveis=useMemo(()=>despesas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesas]);
-  // Só entra em DESPESAS o que foi marcado como PAGA (fixas) + variáveis do mês
-  const totalDespesas=totalDespesasVariaveis+totalDespesasFixasPagas;
-  const qtdFixasPagas=useMemo(()=>despesasFixas.filter(d=>!!fixasPagasMes[d.id]).length,[despesasFixas,fixasPagasMes]);
-  const saldo=recebido-totalDespesas;
-  const isCurrentMonth=monthKey===getMonthKey(new Date());
-
-  async function persistFinance({porMes,fixas, pagas}){
-    const nextPm=porMes!==undefined?porMes:{...readLocalPorMes(),...porMesCache};
-    const nextFx=fixas!==undefined?fixas:(despesasFixas.length?despesasFixas:readLocalFixas());
-    const nextPg=pagas!==undefined?normalizeFixasPagas(pagas):normalizeFixasPagas({...readLocalFixasPagas(),...fixasPagasPorMes});
-    setPorMesCache(nextPm);
-    writeLocalPorMes(nextPm);
-    setDespesasFixas(nextFx);
-    writeLocalFixas(nextFx);
-    setFixasPagasPorMes(nextPg);
-    writeLocalFixasPagas(nextPg);
-    let lastErr=null;
-    for(const ref of getDespesasCloudRefs()){
-      try{
-        await ref.set({despesasPorMes:nextPm,despesasFixas:nextFx,despesasFixasPagasPorMes:nextPg},{merge:true});
-        return;
-      }catch(err){
-        lastErr=err;
-        console.warn("Falha ao salvar despesas em",ref.path,err&&err.message);
-      }
-    }
-    if(lastErr)console.warn("Despesas salvas localmente; nuvem bloqueada:",lastErr.message||lastErr);
-  }
-
-  async function saveDespesas(next){
-    const porMes={...readLocalPorMes(),...porMesCache,[monthKey]:next};
-    setDespesas(next);
-    await persistFinance({porMes});
-  }
-
-  async function saveDespesasFixas(next){
-    await persistFinance({fixas:next});
-  }
-
-  async function toggleDespesaFixaPaga(id){
-    if(!id||togglingPagaId)return;
-    const prev={...fixasPagasPorMes};
-    const mesMap={...(prev[monthKey]||{})};
-    const willPay=!mesMap[id];
-    if(willPay)mesMap[id]=true;
-    else delete mesMap[id];
-    const next={...prev,[monthKey]:mesMap};
-    setTogglingPagaId(id);
-    setFixasPagasPorMes(next);
-    writeLocalFixasPagas(next);
-    try{
-      await persistFinance({pagas:next});
-    }catch(err){
-      console.error("Erro ao marcar despesa fixa como paga:",err);
-      setFixasPagasPorMes(prev);
-      writeLocalFixasPagas(prev);
-      alert("Não foi possível salvar o status PAGA. Tente de novo.");
-    }finally{
-      setTogglingPagaId(null);
-    }
-  }
-
-  function openDespesaForm(tipo){
-    setDespesaForm({data:getTodayISO(),descricao:"",valor:""});
-    setDespesaError("");
-    setShowDespesaForm(tipo||"variavel");
-  }
-
-  function closeDespesaForm(){
-    if(savingDespesa)return;
-    setShowDespesaForm(false);
-    setDespesaError("");
-  }
-
-  async function handleSaveDespesa(e){
-    if(e&&e.preventDefault)e.preventDefault();
-    setDespesaError("");
-    const isFixa=showDespesaForm==="fixa";
-    const data=(despesaForm.data||"").trim();
-    const descricao=(despesaForm.descricao||"").trim();
-    const valorNum=parseFloat(String(despesaForm.valor).replace(",","."))||0;
-    if(!data){setDespesaError("Informe a data.");return;}
-    if(!descricao){setDespesaError("Informe a descrição.");return;}
-    if(valorNum<=0){setDespesaError("Informe um valor maior que zero.");return;}
-
-    setSavingDespesa(true);
-    try{
-      if(isFixa){
-        const nova={id:Date.now().toString(),data,descricao,valor:valorNum,fixa:true};
-        await saveDespesasFixas([...despesasFixas,nova]);
-      }else{
-        const nova={id:Date.now().toString(),data,descricao,valor:valorNum};
-        await saveDespesas([...despesas,nova]);
-      }
-      setShowDespesaForm(false);
-      setDespesaForm({data:"",descricao:"",valor:""});
-    }catch(err){
-      console.error("Erro ao salvar despesa:",err);
-      setDespesaError("Não foi possível salvar. Tente de novo.");
-    }finally{
-      setSavingDespesa(false);
-    }
-  }
-
-  async function deleteDespesa(id){
-    if(!confirm("Remover esta despesa?"))return;
-    const prev=despesas;
-    const next=despesas.filter(d=>d.id!==id);
-    setDespesas(next);
-    try{
-      await saveDespesas(next);
-    }catch(err){
-      console.error("Erro ao remover despesa:",err);
-      setDespesas(prev);
-      alert("Não foi possível remover a despesa. Tente de novo.");
-    }
-  }
-
-  async function deleteDespesaFixa(id){
-    if(!confirm("Remover esta despesa fixa?\nEla deixa de se repetir em todos os meses."))return;
-    const prevFx=despesasFixas;
-    const prevPg=fixasPagasPorMes;
-    const next=despesasFixas.filter(d=>d.id!==id);
-    const nextPg={...fixasPagasPorMes};
-    Object.keys(nextPg).forEach(mk=>{
-      if(nextPg[mk]&&nextPg[mk][id]){
-        const m={...nextPg[mk]};
-        delete m[id];
-        nextPg[mk]=m;
-      }
-    });
-    setDespesasFixas(next);
-    setFixasPagasPorMes(nextPg);
-    try{
-      await persistFinance({fixas:next,pagas:nextPg});
-    }catch(err){
-      console.error("Erro ao remover despesa fixa:",err);
-      setDespesasFixas(prevFx);
-      setFixasPagasPorMes(prevPg);
-      alert("Não foi possível remover a despesa fixa. Tente de novo.");
-    }
-  }
-
   const alunosFiltrados=useMemo(()=>{
     let list=studentsByStatus;
     if(!busca.trim())return list;
@@ -3142,246 +3366,237 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     return list.filter(s=>(s.name||"").toLowerCase().includes(q)||(s.email||"").toLowerCase().includes(q));
   },[studentsByStatus,busca]);
 
-  const despesasOrdenadas=useMemo(()=>{
-    return[...despesas].sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.id||"").localeCompare(a.id||""));
-  },[despesas]);
-
-  const despesasFixasOrdenadas=useMemo(()=>{
-    return[...despesasFixas].sort((a,b)=>{
-      const da=(a.data||"").slice(8,10); // dia
-      const db=(b.data||"").slice(8,10);
-      return da.localeCompare(db)||(a.descricao||"").localeCompare(b.descricao||"");
-    });
-  },[despesasFixas]);
+  const detailTitle=kpiDetail==="revenue"
+    ?"Recebido em "+formatMonthYear(monthKey)
+    :kpiDetail==="outstanding"?"Saldos em aberto (por quê)"
+    :kpiDetail==="overdue"?"Valores em atraso (por quê)"
+    :"";
+  const detailRows=kpiDetail==="revenue"?kpis.revenueItems
+    :kpiDetail==="outstanding"?kpis.outstandingItems
+    :kpiDetail==="overdue"?kpis.overdueItems
+    :[];
+  const detailTotal=kpiDetail==="revenue"?kpis.revenueMonth
+    :kpiDetail==="outstanding"?kpis.outstanding
+    :kpiDetail==="overdue"?kpis.overdue
+    :0;
 
   return(
     <div>
-      <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2 mb-5" onClick={onBack}>
-        <Icon name="arrow-left" size={14}/> Voltar ao Dashboard
-      </button>
-
-      <div className="fin-hero fin-hero-glow mb-5">
-        <div style={{position:"relative",zIndex:1}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
-            <div style={{width:48,height:48,borderRadius:14,background:"linear-gradient(135deg,#1e8fa8,#145f7a)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 20px rgba(30,143,168,.35)"}}>
-              <Icon name="pie-chart" size={24} style={{color:"#fff"}}/>
-            </div>
-            <div>
-              <div style={{fontSize:11,fontWeight:800,letterSpacing:".12em",opacity:.65}}>PAINEL FINANCEIRO</div>
-              <div style={{fontFamily:"'Sora',sans-serif",fontSize:22,fontWeight:800}}>Fluency Studio</div>
-            </div>
-          </div>
-
-          <div className="fin-month-nav">
-            <button className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,-1))}><Icon name="chevron-left" size={18}/></button>
-            <div className="fin-month-label">{formatMonthYear(monthKey)}{!isCurrentMonth&&<div style={{fontSize:11,fontWeight:600,opacity:.55,marginTop:2}}>Arquivo mensal</div>}</div>
-            <button className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,1))} disabled={isCurrentMonth} style={{opacity:isCurrentMonth?0.4:1}}><Icon name="chevron-right" size={18}/></button>
-          </div>
-
-          <div className="fin-metric-grid">
-            <div className="fin-metric-card fin-metric-previsto">
-              <div className="fin-metric-icon"><Icon name="calendar" size={20} style={{color:"#88c0f8"}}/></div>
-              <div className="fin-metric-label">Total Previsto do Mês</div>
-              <div className="fin-metric-value" style={{color:"#88c0f8"}}>{formatCurrency(previsto)}</div>
-              <div className="fin-metric-sub">Parcelas com vencimento em {formatMonthYear(monthKey)}{filtroStatus==="ativo"?" · alunos ativos":""}</div>
-            </div>
-            <div className="fin-metric-card fin-metric-recebido">
-              <div className="fin-metric-icon"><Icon name="trending-up" size={20} style={{color:"#60daa8"}}/></div>
-              <div className="fin-metric-label">Total Recebido até o Momento</div>
-              <div className="fin-metric-value" style={{color:"#60daa8"}}>{formatCurrency(recebido)}</div>
-              <div className="fin-metric-sub">Pagamentos confirmados no mês{filtroStatus==="ativo"?" · alunos ativos":""}</div>
-            </div>
-            <div className="fin-metric-card fin-metric-despesas-prev">
-              <div className="fin-metric-icon"><Icon name="refresh-cw" size={20} style={{color:"#f0b060"}}/></div>
-              <div className="fin-metric-label">Despesas Previstas</div>
-              <div className="fin-metric-value" style={{color:"#f0b060"}}>{formatCurrency(totalDespesasPrevistas)}</div>
-              <div className="fin-metric-sub">{despesasFixas.length} fixa{despesasFixas.length!==1?"s":""} · todo mês</div>
-            </div>
-            <div className="fin-metric-card fin-metric-despesas">
-              <div className="fin-metric-icon"><Icon name="credit-card" size={20} style={{color:"#f0909a"}}/></div>
-              <div className="fin-metric-label">Despesas</div>
-              <div className="fin-metric-value" style={{color:"#f0909a"}}>{formatCurrency(totalDespesas)}</div>
-              <div className="fin-metric-sub">{qtdFixasPagas} fixa{qtdFixasPagas!==1?"s":""} paga{qtdFixasPagas!==1?"s":""} + {despesas.length} variável{despesas.length!==1?"is":""}</div>
-            </div>
-          </div>
-
-          <div className="fin-saldo-bar">
-            <div>
-              <div style={{fontSize:11,fontWeight:700,opacity:.65,letterSpacing:".06em"}}>SALDO DO MÊS</div>
-              <div style={{fontSize:12,opacity:.55,marginTop:2}}>Recebido − Despesas (fixas pagas + variáveis)</div>
-            </div>
-            <div className={"fin-saldo-val "+(saldo>=0?"fin-saldo-pos":"fin-saldo-neg")}>{formatCurrency(saldo)}</div>
-          </div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12,marginBottom:20}}>
+        <div>
+          <button className="btn rounded-xl px-4 py-2 text-sm inline-flex items-center gap-2 mb-3" onClick={onBack}>
+            <Icon name="arrow-left" size={14}/> Voltar ao Painel
+          </button>
+          <h2 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>Financeiro da Escola</h2>
+          <p style={{fontSize:13,color:"#475569",marginTop:4}}>
+            Fonte: <strong>parcelas cadastradas em cada aluno</strong> (valor &gt; 0). Sem cobranças fantasma.
+          </p>
+        </div>
+        <div className="fin-month-nav" style={{margin:0}}>
+          <button type="button" className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,-1))} aria-label="Mês anterior"><Icon name="chevron-left" size={18}/></button>
+          <div className="fin-month-label" style={{minWidth:160}}>{formatMonthYear(monthKey)}{!isCurrentMonth&&<div style={{fontSize:11,fontWeight:600,opacity:.55}}>outro mês</div>}</div>
+          <button type="button" className="fin-month-btn" onClick={()=>setMonthKey(shiftMonthKey(monthKey,1))} disabled={isCurrentMonth} style={{opacity:isCurrentMonth?0.4:1}} aria-label="Próximo mês"><Icon name="chevron-right" size={18}/></button>
         </div>
       </div>
 
-      <div className="glass rounded-2xl p-5 mb-5">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <h3 className="font-bold text-base flex items-center gap-2">
-            <Icon name="credit-card" size={16} style={{color:"#f0909a"}}/>
-            Despesas — {formatMonthYear(monthKey)}
-          </h3>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            <button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>openDespesaForm("fixa")} style={{borderColor:"rgba(220,140,40,.45)",background:"rgba(220,140,40,.12)",color:"#f0b060"}}>
-              <Icon name="refresh-cw" size={14}/> Despesa Fixa
-            </button>
-            <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>openDespesaForm("variavel")}>
-              <Icon name="plus" size={14}/> Nova Despesa
-            </button>
-          </div>
-        </div>
-
-        {despesasFixasOrdenadas.length>0&&(
-          <div style={{marginBottom:16}}>
-            <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"#f0b060",marginBottom:8,opacity:.9}}>Fixas (todo mês)</div>
-            {despesasFixasOrdenadas.map(d=>{
-              const paga=!!fixasPagasMes[d.id];
-              const busy=togglingPagaId===d.id;
-              return(
-              <div key={d.id} className="fin-despesa-row" style={{borderColor:paga?"rgba(30,160,110,.35)":"rgba(220,140,40,.28)",opacity:paga?1:0.92}}>
-                <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"70px 110px 1fr 120px",gap:10,alignItems:"center"}}>
-                  <span className="fin-badge-fixa">Fixa</span>
-                  <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{d.data?formatDateBR(d.data):"—"}</div>
-                  <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
-                  <div style={{fontSize:14,fontWeight:800,color:paga?"#60daa8":"#f0b060",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
-                </div>
-                <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
-                  <button
-                    type="button"
-                    className="btn rounded-lg"
-                    onClick={()=>toggleDespesaFixaPaga(d.id)}
-                    disabled={busy}
-                    title={paga?"Desmarcar como paga neste mês":"Marcar como paga neste mês (entra em Despesas)"}
-                    style={{
-                      height:32,padding:"0 10px",fontSize:11,fontWeight:800,letterSpacing:".06em",
-                      border:paga?"1px solid rgba(30,160,110,.45)":"1px solid rgba(96,218,168,.35)",
-                      background:paga?"linear-gradient(135deg,rgba(30,160,110,.28),rgba(13,90,72,.14))":"rgba(30,160,110,.10)",
-                      color:paga?"#60daa8":"#86d4b0",
-                      opacity:busy?0.6:1,
-                    }}
-                  >
-                    {busy?"…":(paga?"PAGA ✓":"PAGA")}
-                  </button>
-                  <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesaFixa(d.id)} title="Remover despesa fixa" aria-label="Remover despesa fixa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a"}}>
-                    <Icon name="x" size={16}/>
-                  </button>
-                </div>
-              </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",textTransform:"uppercase",color:"var(--font-muted)",marginBottom:8}}>Variáveis deste mês</div>
-        {despesasOrdenadas.length===0?(
-          <div className="text-center py-6 muted text-sm">Nenhuma despesa variável em {formatMonthYear(monthKey)}.</div>
-        ):(
-          despesasOrdenadas.map(d=>(
-            <div key={d.id} className="fin-despesa-row">
-              <div style={{flex:1,minWidth:0,display:"grid",gridTemplateColumns:"110px 1fr 120px",gap:12,alignItems:"center"}}>
-                <div style={{fontSize:13,fontWeight:700,color:"var(--font-muted)"}}>{formatDateBR(d.data)}</div>
-                <div style={{fontSize:14,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={d.descricao||""}>{d.descricao||"—"}</div>
-                <div style={{fontSize:14,fontWeight:800,color:"#f0909a",textAlign:"right"}}>{formatCurrency(d.valor)}</div>
-              </div>
-              <button type="button" className="btn rounded-lg" onClick={()=>deleteDespesa(d.id)} title="Remover despesa" aria-label="Remover despesa" style={{width:32,height:32,padding:0,display:"flex",alignItems:"center",justifyContent:"center",border:"1px solid rgba(200,60,80,.35)",background:"rgba(200,60,80,.12)",color:"#f0909a",flexShrink:0}}>
-                <Icon name="x" size={16}/>
-              </button>
-            </div>
-          ))
-        )}
+      <div className="premium-card" style={{marginBottom:16,background:"#EFF6FF",borderColor:"#BFDBFE"}}>
+        <p style={{fontSize:13,color:"#1e3a8a",margin:0,lineHeight:1.5}}>
+          <strong>Como editar:</strong> clique no aluno abaixo (ou na linha da fatura) → aba Financeiro → edite/remova parcelas.
+          Os números dos cards vêm só do que está cadastrado ali, com valor maior que zero.
+        </p>
       </div>
 
-      {showDespesaForm&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)closeDespesaForm();}}>
-          <div className="modal-box" style={{maxWidth:440}} onClick={e=>e.stopPropagation()}>
+      {/* KPI cards — clicáveis */}
+      <div className="fin-kpi-grid">
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("revenue")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Recebido no mês</div>
+          <div className="fin-kpi-value" style={{color:"#15803D"}}>{formatCurrency(kpis.revenueMonth)}</div>
+          <div className="fin-kpi-sub">{formatMonthYear(monthKey)} · {kpis.revenueItems.length} pagamento{kpis.revenueItems.length!==1?"s":""} · clique para ver</div>
+        </button>
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("outstanding")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Saldos em aberto</div>
+          <div className="fin-kpi-value" style={{color:"#B45309"}}>{formatCurrency(kpis.outstanding)}</div>
+          <div className="fin-kpi-sub">{kpis.outstandingItems.length} cobrança{kpis.outstandingItems.length!==1?"s":""} · clique para ver o porquê</div>
+        </button>
+        <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("overdue")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
+          <div className="fin-kpi-label">Valor em atraso</div>
+          <div className="fin-kpi-value" style={{color:"#B91C1C"}}>{formatCurrency(kpis.overdue)}</div>
+          <div className="fin-kpi-sub">{kpis.overdueItems.length} vencida{kpis.overdueItems.length!==1?"s":""} · clique para ver o porquê</div>
+        </button>
+      </div>
+
+      {kpiDetail&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setKpiDetail(null);}}>
+          <div className="modal-box" style={{maxWidth:640}} onClick={e=>e.stopPropagation()}>
             <div className="modal-header">
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <Icon name={showDespesaForm==="fixa"?"refresh-cw":"credit-card"} size={20}/>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>
-                    {showDespesaForm==="fixa"?"DESPESA FIXA · TODO MÊS":`DESPESAS · ${formatMonthYear(monthKey).toUpperCase()}`}
-                  </div>
-                  <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>
-                    {showDespesaForm==="fixa"?"Nova Despesa Fixa":"Nova Despesa"}
-                  </div>
-                </div>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>DETALHE DO CARD</div>
+                <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>{detailTitle}</div>
               </div>
-              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={closeDespesaForm} disabled={savingDespesa}>
+              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={()=>setKpiDetail(null)}>
                 <Icon name="x" size={18}/>
               </button>
             </div>
-            <form onSubmit={handleSaveDespesa}>
-              <div className="modal-body" style={{display:"flex",flexDirection:"column",gap:16}}>
-                {showDespesaForm==="fixa"&&(
-                  <div style={{fontSize:13,lineHeight:1.5,opacity:.85,padding:"10px 12px",borderRadius:10,background:"rgba(220,140,40,.12)",border:"1px solid rgba(220,140,40,.28)",color:"#f0b060"}}>
-                    Esta despesa se repete automaticamente em <strong>todos os meses</strong> e entra em Despesas Previstas. A data indica o dia de referência no mês.
-                  </div>
-                )}
-                <div>
-                  <label className="form-label" htmlFor="despesa-data">Data</label>
-                  <input id="despesa-data" type="date" className="input-light w-full" value={despesaForm.data} onChange={e=>setDespesaForm(f=>({...f,data:e.target.value}))} required/>
-                </div>
-                <div>
-                  <label className="form-label" htmlFor="despesa-desc">Descrição</label>
-                  <input id="despesa-desc" type="text" className="input-light w-full" placeholder={showDespesaForm==="fixa"?"Ex: Aluguel, internet, plataforma...":"Ex: Material, taxa, compra..."} value={despesaForm.descricao} onChange={e=>setDespesaForm(f=>({...f,descricao:e.target.value}))} required autoFocus/>
-                </div>
-                <div>
-                  <label className="form-label" htmlFor="despesa-valor">Valor (R$)</label>
-                  <input id="despesa-valor" type="number" step="0.01" min="0.01" className="input-light w-full" placeholder="0,00" value={despesaForm.valor} onChange={e=>setDespesaForm(f=>({...f,valor:e.target.value}))} required/>
-                </div>
-                {despesaError&&(
-                  <div style={{fontSize:13,color:"#f0909a",fontWeight:600,padding:"10px 12px",borderRadius:10,background:"rgba(200,60,80,.12)",border:"1px solid rgba(200,60,80,.28)"}}>{despesaError}</div>
-                )}
+            <div className="modal-body" style={{padding:0}}>
+              <div style={{padding:"12px 16px",background:"#F8F9FA",borderBottom:"1px solid #E2E8F0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{fontSize:13,color:"#475569"}}>{detailRows.length} item(ns)</span>
+                <strong style={{fontSize:16,color:"#1E1E1E"}}>{formatCurrency(detailTotal)}</strong>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={closeDespesaForm} disabled={savingDespesa}>Cancelar</button>
-                <button type="submit" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={savingDespesa}>
-                  <Icon name="check" size={14}/>
-                  {savingDespesa?"Salvando…":"Salvar"}
-                </button>
-              </div>
-            </form>
+              {detailRows.length===0?(
+                <div style={{padding:28,textAlign:"center",color:"#475569",fontSize:14}}>Nenhuma conta entra neste total.</div>
+              ):(
+                <div style={{maxHeight:360,overflowY:"auto"}}>
+                  <table className="fin-table">
+                    <thead>
+                      <tr>
+                        <th>Aluno</th>
+                        <th>Descrição</th>
+                        <th>{kpiDetail==="revenue"?"Data pag.":"Vencimento"}</th>
+                        <th>Valor</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detailRows.map(row=>{
+                        const dateRaw=kpiDetail==="revenue"?row.date:row.dueDate;
+                        const d=typeof dateRaw==="string"?dateRaw:(toJsDate(dateRaw)?toJsDate(dateRaw).toISOString().slice(0,10):"");
+                        return(
+                          <tr key={row.id}>
+                            <td style={{fontWeight:600}}>{row.studentName||"Aluno"}</td>
+                            <td>{row.description||"—"}</td>
+                            <td>{d?formatDateBR(d):"—"}</td>
+                            <td style={{fontWeight:700}}>{formatCurrency(row.amount)}</td>
+                            <td>
+                              {onSelectStudent&&(
+                                <button type="button" className="btn btn-primary rounded-lg px-2 py-1 text-xs" onClick={()=>{setKpiDetail(null);onSelectStudent(row.studentId);}}>
+                                  Editar
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setKpiDetail(null)}>Fechar</button>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="glass rounded-2xl p-5">
+      <div className="fin-chart-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 4px"}}>Fluxo de caixa — 6 meses</h3>
+        <p style={{fontSize:12,color:"#475569",margin:"0 0 16px"}}>Recebido por mês (parcelas pagas) vs Despesas</p>
+        <div style={{height:280,position:"relative"}}>
+          <canvas ref={chartRef} aria-label="Gráfico de fluxo de caixa"/>
+        </div>
+      </div>
+
+      <div className="fin-table-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Pagamentos recentes</h3>
+        <div style={{overflowX:"auto"}}>
+          <table className="fin-table">
+            <thead>
+              <tr><th>Data</th><th>Aluno</th><th>Descrição</th><th>Valor</th><th></th></tr>
+            </thead>
+            <tbody>
+              {recentTx.length===0?(
+                <tr><td colSpan={5} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhum pagamento com valor cadastrado.</td></tr>
+              ):recentTx.map(tx=>{
+                const d=toJsDate(tx.date);
+                const dateStr=d?formatDateBR(d.toISOString().slice(0,10)):"—";
+                return(
+                  <tr key={tx.id}>
+                    <td>{dateStr}</td>
+                    <td style={{fontWeight:600}}>{tx.studentName||"Aluno"}</td>
+                    <td>{tx.description||"—"}</td>
+                    <td style={{fontWeight:700,color:"#15803D"}}>{formatCurrency(tx.amount)}</td>
+                    <td>
+                      {onSelectStudent&&(
+                        <button type="button" className="btn rounded-lg px-2 py-1 text-xs" onClick={()=>onSelectStudent(tx.studentId)}>Editar</button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="fin-table-card">
+        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Cobranças em aberto / atraso</h3>
+        <div style={{overflowX:"auto"}}>
+          <table className="fin-table">
+            <thead>
+              <tr><th>Aluno</th><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              {effectiveInvoices.filter(i=>i.status!=="paid").length===0?(
+                <tr><td colSpan={6} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma cobrança em aberto com valor.</td></tr>
+              ):effectiveInvoices.filter(i=>i.status!=="paid").map(inv=>(
+                <tr key={inv.id}>
+                  <td style={{fontWeight:600}}>{inv.studentName||"Aluno"}</td>
+                  <td>{inv.description||"—"}</td>
+                  <td>{inv.dueDate?formatDateBR(String(inv.dueDate).slice(0,10)):"—"}</td>
+                  <td style={{fontWeight:700}}>{formatCurrency(inv.amount)}</td>
+                  <td><span className={invoiceStatusBadgeClass(inv.status)}>{invoiceStatusLabel(inv.status)}</span></td>
+                  <td>
+                    {onSelectStudent&&(
+                      <button type="button" className="btn btn-primary rounded-lg px-2 py-1 text-xs" onClick={()=>onSelectStudent(inv.studentId)}>Editar</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="premium-card" style={{marginBottom:24}}>
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
-          <h3 className="font-bold text-base flex items-center gap-2">
-            <Icon name="users" size={16} style={{color:"#1e8fa8"}}/>
-            Financeiro por Aluno
+          <h3 className="font-bold text-base flex items-center gap-2" style={{color:"#1E1E1E"}}>
+            <Icon name="users" size={16}/> Editar financeiro por aluno
           </h3>
           <div style={{position:"relative",minWidth:200}}>
             <Icon name="search" size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",opacity:.45}}/>
-            <input className="input-light" style={{paddingLeft:32}} placeholder="Buscar aluno..." value={busca} onChange={e=>setBusca(e.target.value)}/>
+            <input className="input-light" style={{paddingLeft:32}} placeholder="Buscar aluno (ex.: Kaio)..." value={busca} onChange={e=>setBusca(e.target.value)}/>
           </div>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:16}}>
           {ADMIN_STATUS_FILTERS.map(f=>(
             <button key={f.v} className={"status-pill "+(filtroStatus===f.v?f.cls:"status-pill-inactive")} onClick={()=>setFiltroStatus(f.v)} style={{fontSize:11}}>
-              {f.l}{contadores[f.v]!==undefined&&<span style={{marginLeft:5,background:"rgba(255,255,255,.15)",borderRadius:99,padding:"1px 6px",fontSize:10}}>{contadores[f.v]}</span>}
+              {f.l}{contadores[f.v]!==undefined&&<span style={{marginLeft:5,background:"rgba(0,0,0,.06)",borderRadius:99,padding:"1px 6px",fontSize:10}}>{contadores[f.v]}</span>}
             </button>
           ))}
         </div>
         <div className="space-y-2">
           {alunosFiltrados.length===0?(
-            <div className="text-center py-8 muted text-sm">{filtroStatus==="ativo"&&!busca.trim()?"Nenhum aluno ativo no momento.":"Nenhum aluno encontrado com este filtro."}</div>
+            <div className="text-center py-8 text-sm" style={{color:"#475569"}}>Nenhum aluno encontrado.</div>
           ):alunosFiltrados.map(s=>{
+            const parcelas=(s.financeiro?.parcelas||[]).filter(p=>getParcelValor(p)>0);
             const snap=resolveFinanceSnapshot(s.financeiro?.parcelas||[]);
-            const parcelas=s.financeiro?.parcelas||[];
-            const pagas=parcelas.filter(p=>p.status==="paga").length;
+            const late=snap.isLate;
+            const openSum=parcelas.filter(p=>getEffectiveParcelStatus(p,getTodayISO())!=="paga").reduce((a,p)=>a+getParcelValor(p),0);
             return(
-              <button key={s.uid} className="fin-student-pick w-full text-left" onClick={()=>onSelectStudent(s.uid)}>
+              <button key={s.uid} className="fin-student-pick w-full text-left" style={late?{borderColor:"#FECACA",background:"#FEF2F2"}:{}} onClick={()=>onSelectStudent(s.uid)}>
                 {s.foto
-                  ?<img src={s.foto} alt="" style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)"}}/>
-                  :<div style={{width:40,height:40,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
+                  ?<img src={s.foto} alt="" style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid #E2E8F0"}}/>
+                  :<div style={{width:40,height:40,borderRadius:"50%",background:"#F8F9FA",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
                 }
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:14}}>{s.name||"Aluno"}</div>
-                  <div style={{fontSize:11,color:"var(--font-muted)"}}>{parcelas.length} parcela{parcelas.length!==1?"s":""} · {pagas} paga{pagas!==1?"s":""}</div>
+                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E"}}>{s.name||"Aluno"}</div>
+                  <div style={{fontSize:11,color:"#475569"}}>
+                    {parcelas.length} cobrança{parcelas.length!==1?"s":""} com valor
+                    {openSum>0?<> · aberto {formatCurrency(openSum)}</>:null}
+                  </div>
                 </div>
-                <StatusBadge status={s.status||"lead"}/>
-                {snap.isLate&&<span className="fin-badge fin-vencida">Atrasado</span>}
+                <span className={late?"status-badge status-badge-overdue":"status-badge status-badge-paid"}>{late?"Em atraso":"Em dia"}</span>
+                <span style={{fontSize:12,fontWeight:700,color:"#0f2c5c"}}>Editar</span>
                 <Icon name="arrow-right" size={16} style={{opacity:.45}}/>
               </button>
             );
@@ -3391,6 +3606,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
     </div>
   );
 }
+
 
 function computeDiarioStats(entries){
   const now=new Date();
@@ -4177,6 +4393,12 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   return(
     <div className="min-h-screen pb-20">
       <LogoBar onBack={isAdmin&&onBack?onBack:null} isAdmin={isAdmin} showLogout={true}/>
+      {isAdmin&&(
+        <div style={{background:"#1E293B",color:"#CBD5E1",padding:"10px 16px",fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:10,justifyContent:"center"}}>
+          <span className="role-pill role-pill-admin">Admin</span>
+          <span>Você está na visão de ficha do aluno — não é o portal do estudante</span>
+        </div>
+      )}
       {isAdmin&&showFullProfile&&fullStudent&&(
         <ModalEdicao
           student={fullStudent}
@@ -4186,6 +4408,11 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       )}
 
       <main className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")}>
+        {!isAdmin&&(
+          <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px"}}>
+            <span className="role-pill role-pill-student">Portal do aluno</span>
+          </div>
+        )}
         {isAdmin?(
           <>
             <div className="glass rounded-2xl p-5 mb-5">
@@ -5882,12 +6109,14 @@ const dashCSS=`
 [data-theme="light"] .gcal-embed-head{background:linear-gradient(135deg,rgba(224,236,255,.5),rgba(255,255,255,.9));}
 .fc-side{padding:14px 16px;border-top:1px solid var(--divider);max-height:180px;overflow-y:auto;}
 .fc-side-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--font-muted);margin-bottom:8px;}
-[data-theme="light"] .dash-nav-btn{background:linear-gradient(145deg,#fff,rgba(224,236,255,.85));border-color:rgba(53,102,182,.16);}
-[data-theme="light"] .dash-nav-btn::before{background:linear-gradient(135deg,transparent,rgba(134,207,255,.18));}
-[data-theme="light"] .dash-nav-btn:hover{border-color:rgba(53,102,182,.38);box-shadow:0 12px 32px rgba(23,64,130,.12);}
-[data-theme="light"] .dash-stat-card{background:linear-gradient(145deg,#fff 0%,#f4f9ff 100%);border-color:rgba(53,102,182,.14);position:relative;overflow:hidden;}
-[data-theme="light"] .dash-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3566B6,#86CFFF,#187E74);opacity:.75;}
-[data-theme="light"] .dash-stat-num{background:linear-gradient(135deg,#174082,#3566B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+[data-theme="light"] .dash-nav-btn{background:#fff;border:1.5px solid #0f2c5c;color:#0f172a;}
+[data-theme="light"] .dash-nav-btn::before{background:linear-gradient(135deg,transparent,rgba(15,44,92,.06));}
+[data-theme="light"] .dash-nav-btn:hover{border-color:#0a1f45;box-shadow:0 8px 24px rgba(15,44,92,.12);color:#0a1f45;}
+/* Cards do painel admin: borda navy escura, sem cores quentes */
+[data-theme="light"] .dash-stat-card{background:linear-gradient(145deg,#ffffff 0%,#eef4fb 100%);border:2px solid #0f2c5c;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(15,44,92,.08);}
+[data-theme="light"] .dash-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0a1f45,#0f2c5c,#1e3a8a);opacity:1;}
+[data-theme="light"] .dash-stat-num{background:none;-webkit-background-clip:unset;-webkit-text-fill-color:unset;background-clip:unset;color:#0f172a!important;}
+[data-theme="light"] .dash-stat-label{color:#1e3a5f!important;}
 [data-theme="light"] .aula-hoje-item{background:rgba(255,255,255,.85);border-color:rgba(53,102,182,.12);}
 [data-theme="light"] .aula-hoje-item:hover{background:rgba(134,207,255,.12);border-color:rgba(53,102,182,.28);}
 [data-theme="light"] .fc-wrap{background:linear-gradient(145deg,#fff,rgba(224,236,255,.5));border-color:rgba(53,102,182,.16);box-shadow:0 12px 36px rgba(23,64,130,.08);}
@@ -6079,9 +6308,9 @@ function AdminAgendaDashboard({students,onBack}){
       <button className="btn rounded-xl px-3 py-2 text-sm mb-4 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Voltar ao Dashboard</button>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#f0cc60",fontSize:18}}>{proxima?formatDateBR(proxima.date).slice(0,5):"—"}</div><div className="dash-stat-label">Próxima Aula</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e8fa8"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#c0a0f8"}}>{todosPendentes}</div><div className="dash-stat-label">Tarefas Pendentes</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c",fontSize:18}}>{proxima?formatDateBR(proxima.date).slice(0,5):"—"}</div><div className="dash-stat-label">Próxima Aula</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{todosPendentes}</div><div className="dash-stat-label">Tarefas Pendentes</div></div>
       </div>
 
       <div className="agenda-grid mb-5">
@@ -6538,10 +6767,271 @@ function AdminCursos({students}){
   );
 }
 
+
+/* ── APARÊNCIA: painel de cores global (todas as páginas) ─────────────────── */
+const APPEARANCE_DEFAULTS = (typeof window !== "undefined" && window.__APPEARANCE_DEFAULTS) || {
+  bg:"#F8F9FA", font:"#1E1E1E", fontMuted:"#475569", card:"#FFFFFF",
+  lesson:"#FFFFFF", detail:"#F1F5F9", header:"#FFFFFF", tabbar:"#E2E8F0", badge:"#F1F5F9",
+  btn:"#FFFFFF", done:"#F0FDF4", doneBorder:"#15803D", doneText:"#15803D",
+  divider:"#E2E8F0", inputBg:"#FFFFFF", inputBorder:"#CBD5E1", accentSolid:"#0F172A",
+  fontFamily:"'Inter', 'Helvetica Neue', 'Segoe UI'",
+  tlBg:"#F1F5F9", tlBorder:"#E2E8F0", tlText:"#1E1E1E", tlMuted:"#475569",
+  tlModBg:"#FFFFFF", tlModText:"#1E1E1E",
+  tlNode:"#4F46E5", tlNodeDone:"#2563EB", tlNodeOutput:"#0D9488", tlNodeReview:"#7C3AED",
+  tlNodeActive:"#0284C7", tlPendingBg:"#E2E8F0", tlPendingText:"#475569",
+  tlDoneInput:"#1D4ED8", tlDoneOutput:"#0F766E", tlDoneReview:"#6D28D9",
+  tlActiveBg:"#E0F2FE", tlActiveBorder:"#0284C7", tlActiveText:"#0C4A6E",
+  sidebarBg:"#1E293B", sidebarText:"#FFFFFF"
+};
+function stripAppearanceMode(obj){
+  if(!obj||typeof obj!=="object")return{};
+  if(typeof window!=="undefined"&&window.__stripThemeMode)return window.__stripThemeMode(obj);
+  const out={...obj};
+  delete out.mode; delete out.theme; delete out["fs-theme"]; delete out.updatedAt; delete out.updatedBy;
+  return out;
+}
+const APPEARANCE_FIELDS = [
+  { group:"Fonte", items:[
+    {key:"fontFamily", label:"Família da fonte", type:"select", options:[
+      {v:"'Inter', 'Helvetica Neue', 'Segoe UI'", l:"Inter (premium)"},
+      {v:"'Outfit', system-ui, sans-serif", l:"Outfit"},
+      {v:"'Segoe UI', system-ui, sans-serif", l:"Segoe UI"},
+      {v:"'Helvetica Neue', Helvetica, Arial, sans-serif", l:"Helvetica Neue"},
+      {v:"Georgia, 'Times New Roman', serif", l:"Georgia (serif)"},
+    ]},
+  ]},
+  { group:"Páginas & layout", items:[
+    {key:"bg", label:"Background da página"},
+    {key:"card", label:"Cards / containers"},
+    {key:"font", label:"Texto principal"},
+    {key:"fontMuted", label:"Texto secundário"},
+    {key:"detail", label:"Áreas de detalhe"},
+    {key:"header", label:"Header"},
+    {key:"divider", label:"Bordas / divisores"},
+    {key:"btn", label:"Botões secundários"},
+    {key:"accentSolid", label:"Botão primário / acento"},
+    {key:"inputBg", label:"Fundo dos inputs"},
+    {key:"inputBorder", label:"Borda dos inputs"},
+    {key:"sidebarBg", label:"Sidebar admin"},
+    {key:"sidebarText", label:"Texto sidebar"},
+  ]},
+  { group:"Trilha (sem neon)", items:[
+    {key:"tlBg", label:"Fundo da trilha"},
+    {key:"tlBorder", label:"Borda da trilha"},
+    {key:"tlText", label:"Texto da trilha"},
+    {key:"tlMuted", label:"Texto secundário trilha"},
+    {key:"tlModBg", label:"Card do módulo"},
+    {key:"tlModText", label:"Texto do módulo"},
+    {key:"tlNode", label:"Nó / linha da trilha"},
+    {key:"tlPendingBg", label:"Lição pendente (fundo)"},
+    {key:"tlPendingText", label:"Lição pendente (texto)"},
+    {key:"tlDoneInput", label:"Input concluída"},
+    {key:"tlDoneOutput", label:"Output concluída"},
+    {key:"tlDoneReview", label:"Review concluída"},
+    {key:"tlActiveBg", label:"Lição atual (fundo)"},
+    {key:"tlActiveBorder", label:"Lição atual (borda)"},
+    {key:"tlActiveText", label:"Lição atual (texto)"},
+    {key:"tlNodeDone", label:"Ponto input feito"},
+    {key:"tlNodeOutput", label:"Ponto output feito"},
+    {key:"tlNodeReview", label:"Ponto review feito"},
+    {key:"tlNodeActive", label:"Ponto lição atual"},
+  ]},
+];
+
+function loadAppearanceState(){
+  try{
+    const local=JSON.parse(localStorage.getItem("fs-appearance")||"null");
+    if(local&&typeof local==="object")return{...APPEARANCE_DEFAULTS,...stripAppearanceMode(local)};
+  }catch(e){}
+  if(typeof window!=="undefined"&&window.__fsAppearance)return{...APPEARANCE_DEFAULTS,...stripAppearanceMode(window.__fsAppearance)};
+  return{...APPEARANCE_DEFAULTS};
+}
+
+function ColorField({label,value,onChange}){
+  const hex=(value&&String(value).startsWith("#"))?value:"#000000";
+  return(
+    <div className="ap-field">
+      <label>{label}</label>
+      <div className="ap-color-row">
+        <input type="color" value={hex.length===7?hex:"#000000"} onChange={e=>onChange(e.target.value)} title={label}/>
+        <input type="text" value={value||""} onChange={e=>onChange(e.target.value)} placeholder="#000000" spellCheck={false}/>
+      </div>
+    </div>
+  );
+}
+
+function AppearanceEditor({embedded,onClose}){
+  const [form,setForm]=useState(loadAppearanceState);
+  const [saving,setSaving]=useState(false);
+  const [msg,setMsg]=useState("");
+  const [err,setErr]=useState("");
+  const isAdminUser=auth.currentUser&&auth.currentUser.uid===ADMIN_UID;
+
+  useEffect(()=>{
+    // live cloud sync load
+    let unsub=null;
+    try{
+      unsub=db.collection("config").doc("aparencia").onSnapshot(doc=>{
+        if(doc.exists){
+          const data={...APPEARANCE_DEFAULTS,...stripAppearanceMode(doc.data()||{})};
+          setForm(data);
+          if(window.__applyTheme)window.__applyTheme(data);
+        }
+      },()=>{});
+    }catch(e){}
+    try{ localStorage.removeItem("fs-theme"); }catch(e){}
+    return()=>{if(unsub)unsub();};
+  },[]);
+
+  function setKey(k,v){
+    if(k==="mode"||k==="theme")return;
+    setForm(prev=>{
+      const next=stripAppearanceMode({...prev,[k]:v});
+      if(window.__applyTheme)window.__applyTheme(next);
+      return next;
+    });
+    setMsg("");setErr("");
+  }
+
+  async function save(){
+    setSaving(true);setMsg("");setErr("");
+    try{
+      const colorsOnly=stripAppearanceMode(form);
+      const payload={...colorsOnly,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser?auth.currentUser.uid:null};
+      // Remove mode legado do doc (se existir)
+      payload.mode=firebase.firestore.FieldValue.delete();
+      payload.theme=firebase.firestore.FieldValue.delete();
+      localStorage.setItem("fs-appearance",JSON.stringify(colorsOnly));
+      try{ localStorage.removeItem("fs-theme"); }catch(e){}
+      if(window.__applyTheme)window.__applyTheme(colorsOnly);
+      setForm(colorsOnly);
+      if(isAdminUser){
+        await db.collection("config").doc("aparencia").set(payload,{merge:true});
+        setMsg("Cores salvas para todo o portal. Sem dark/light — só o que você escolheu.");
+      }else{
+        try{
+          await db.collection("users").doc(auth.currentUser.uid).set({appearance:colorsOnly},{merge:true});
+          setMsg("Cores salvas neste navegador e no seu perfil.");
+        }catch(e){
+          setMsg("Cores salvas neste navegador.");
+        }
+      }
+    }catch(e){
+      console.error(e);
+      setErr("Não foi possível salvar no Firebase. As cores ficaram aplicadas localmente. Verifique regras de config/aparencia.");
+      try{localStorage.setItem("fs-appearance",JSON.stringify(stripAppearanceMode(form)));}catch(x){}
+    }finally{
+      setSaving(false);
+    }
+  }
+
+  function resetDefaults(){
+    const d=stripAppearanceMode({...APPEARANCE_DEFAULTS});
+    setForm(d);
+    if(window.__applyTheme)window.__applyTheme(d);
+    setMsg("Cores padrão aplicadas — clique em Salvar para gravar.");
+  }
+
+  const body=(
+    <>
+      <div className={embedded?"":"ap-panel-body"}>
+        <p style={{fontSize:12,color:"#475569",margin:"0 0 14px",lineHeight:1.5}}>
+          Só as <strong>cores e a fonte</strong> que você escolher — sem dark, light ou system.
+          {isAdminUser?" Admin: ao salvar, vale para todo o portal.":" Preferências neste dispositivo."}
+        </p>
+        {APPEARANCE_FIELDS.map(sec=>(
+          <div className="ap-section" key={sec.group}>
+            <h4>{sec.group}</h4>
+            <div className="ap-grid">
+              {sec.items.map(item=>{
+                if(item.type==="select"){
+                  return(
+                    <div className="ap-field" key={item.key} style={{gridColumn:item.key==="fontFamily"?"1 / -1":undefined}}>
+                      <label>{item.label}</label>
+                      <select className="ap-select" value={form[item.key]||""} onChange={e=>setKey(item.key,e.target.value)}>
+                        {item.options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+                      </select>
+                    </div>
+                  );
+                }
+                return <ColorField key={item.key} label={item.label} value={form[item.key]} onChange={v=>setKey(item.key,v)}/>;
+              })}
+            </div>
+          </div>
+        ))}
+        <div className="ap-preview-card">
+          <div style={{fontSize:11,fontWeight:700,color:"var(--font-muted)",marginBottom:6}}>PRÉVIA</div>
+          <div style={{fontWeight:800,fontSize:16,marginBottom:4}}>Card de exemplo</div>
+          <div style={{fontSize:13,color:"var(--font-muted)"}}>Texto secundário · trilha e páginas usam estas cores.</div>
+          <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-input)"}}>Input</span>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-output)"}}>Output</span>
+            <span className="tl-badge-done" style={{background:"var(--tl-done-review)"}}>Review</span>
+          </div>
+        </div>
+        {msg&&<p style={{fontSize:12,color:"#15803D",marginTop:12,background:"#F0FDF4",padding:"8px 10px",borderRadius:8}}>{msg}</p>}
+        {err&&<p style={{fontSize:12,color:"#B91C1C",marginTop:12,background:"#FEF2F2",padding:"8px 10px",borderRadius:8}}>{err}</p>}
+      </div>
+      <div className={embedded?"flex gap-2 flex-wrap mt-4":"ap-panel-foot"}>
+        <button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={resetDefaults}>Restaurar padrão</button>
+        {onClose&&<button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={onClose}>Fechar</button>}
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={save} disabled={saving}>
+          {saving?"Salvando…":"Salvar aparência"}
+        </button>
+      </div>
+    </>
+  );
+
+  if(embedded){
+    return(
+      <div className="premium-card" style={{marginBottom:24}}>
+        <h3 style={{fontSize:18,fontWeight:800,color:"#1E1E1E",margin:"0 0 4px"}}>Aparência do portal</h3>
+        <p style={{fontSize:13,color:"#475569",margin:"0 0 16px"}}>Background, cards, fontes e trilha — você decide e salva.</p>
+        {body}
+      </div>
+    );
+  }
+
+  return(
+    <div className="ap-panel" role="dialog" aria-label="Aparência">
+      <div className="ap-panel-head">
+        <div>
+          <div style={{fontSize:11,opacity:.75,fontWeight:700,letterSpacing:".08em"}}>PERSONALIZAR</div>
+          <div style={{fontWeight:800,fontSize:16}}>Aparência</div>
+        </div>
+        <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.12)",border:"none",color:"#fff"}} onClick={onClose} aria-label="Fechar">
+          <Icon name="x" size={18}/>
+        </button>
+      </div>
+      {body}
+    </div>
+  );
+}
+
+function AppearanceFab(){
+  const [open,setOpen]=useState(false);
+  // disponível em todas as páginas quando logado
+  if(!auth.currentUser)return null;
+  return(
+    <>
+      <button type="button" className="ap-fab" title="Aparência — cores e fontes" aria-label="Abrir aparência" onClick={()=>setOpen(o=>!o)}>
+        <Icon name="palette" size={22}/>
+      </button>
+      {open&&<AppearanceEditor onClose={()=>setOpen(false)}/>}
+    </>
+  );
+}
+
+
 function AdminConfig({students}){
+  const [tab,setTab]=useState("aparencia");
   return(
     <div>
-      <AdminCursos students={students}/>
+      <div className="tab-bar mb-5" style={{maxWidth:420}}>
+        <button type="button" className={"tab-btn"+(tab==="aparencia"?" tab-btn-active":"")} onClick={()=>setTab("aparencia")}>Aparência</button>
+        <button type="button" className={"tab-btn"+(tab==="cursos"?" tab-btn-active":"")} onClick={()=>setTab("cursos")}>Cursos</button>
+      </div>
+      {tab==="aparencia"?<AppearanceEditor embedded/>:<AdminCursos students={students}/>}
     </div>
   );
 }
@@ -6557,28 +7047,29 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
 
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO]);
 
+  // Ícones: só cores frias/escuras (proibido laranja/dourado/quente)
   const navBtns=[
-    {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#1e8fa8", ativo:true},
-    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#f0a060", ativo:true},
-    {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#60daa8", ativo:true},
-    {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#f0cc60", ativo:true},
-    {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#c0a0f8", ativo:false},
-    {id:"config",    icon:"settings",     label:"Config.",     cor:"#f09090", ativo:true},
+    {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#0f2c5c", ativo:true},
+    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#1e3a8a", ativo:true},
+    {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#0f766e", ativo:true},
+    {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#0e4d6e", ativo:true},
+    {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#334155", ativo:false},
+    {id:"config",    icon:"settings",     label:"Config.",     cor:"#1e293b", ativo:true},
   ];
 
   return(
     <div>
       {/* STATS — 3 cards (sem Total Alunos; ativos bastam) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e8fa8"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#60daa8",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
-        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#f0cc60"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
       </div>
 
       {/* AULAS DO DIA */}
       <div className="glass rounded-2xl p-5 mb-5">
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-          <Icon name="calendar-check" size={16} style={{color:"#1e8fa8"}}/>
+          <Icon name="calendar-check" size={16} style={{color:"#0f2c5c"}}/>
           <span style={{fontWeight:700,fontSize:14}}>Aulas de Hoje</span>
           <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:4}}>
             {hoje.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})}
@@ -6608,7 +7099,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
           <button key={b.id} className="dash-nav-btn" onClick={()=>b.ativo&&onNavigate(b.id)} style={{opacity:b.ativo?1:.6,cursor:b.ativo?"pointer":"default",position:"relative"}}>
             <Icon name={b.icon} size={22} style={{color:b.cor}}/>
             <span>{b.label}</span>
-            {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#e8a94c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
+            {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#0f2c5c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
             {!b.ativo&&<span style={{fontSize:9,color:"var(--font-muted)",marginTop:-4}}>Em breve</span>}
           </button>
         ))}
@@ -6740,7 +7231,7 @@ function AdminAlunos({students,onSelectUid}){
                       <div className="student-card-actions">
                         {!(s.hasPortalLogin||s.authUid)&&(
                           <button type="button" onClick={e=>{e.stopPropagation();setRepairTarget(s);setRepairPass("");setRepairMsg("");setRepairErr("");}}
-                            style={{background:"rgba(232,169,76,.18)",border:"1px solid rgba(232,169,76,.45)",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#c8860a",whiteSpace:"nowrap"}}
+                            style={{background:"rgba(15,118,110,.12)",border:"1.5px solid #0f766e",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#0f766e",whiteSpace:"nowrap"}}
                             title="Criar/vincular login do portal">
                             <Icon name="log-in" size={11}/>Acesso
                           </button>
@@ -6839,66 +7330,90 @@ function AdminApp({user}){
   if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
 
   const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
-  const showBack=adminView!=="dashboard";
 
+  const adminNav=[
+    {id:"dashboard",icon:"layout-dashboard",label:"Painel"},
+    {id:"alunos",icon:"users",label:"Alunos"},
+    {id:"cadastros",icon:"clipboard-check",label:"Cadastros"},
+    {id:"financeiro",icon:"wallet",label:"Financeiro"},
+    {id:"agenda",icon:"calendar",label:"Agenda"},
+    {id:"config",icon:"settings",label:"Configurações"},
+  ];
   return(
-    <div className="min-h-screen">
+    <div className="admin-shell" data-admin-view="true">
       {showModal&&<ModalCadastro onClose={()=>setShowModal(false)} onSaved={()=>setShowModal(false)}/>}
-      <LogoBar isAdmin={true} showLogout={true}/>
-      <div className="admin-toolbar px-4 py-4 sticky top-[49px] z-40" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid var(--divider)"}}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            {showBack&&(
-              <button className="btn" style={{padding:"6px 10px",borderRadius:8,display:"flex",alignItems:"center",gap:6}} onClick={()=>setAdminView("dashboard")}>
-                <Icon name="arrow-left" size={14}/><span style={{fontSize:12}}>Dashboard</span>
-              </button>
-            )}
-            <div>
-              <h1 className="text-xl font-bold">{viewTitles[adminView]||"Painel"}</h1>
-              <p style={{fontSize:12,color:"var(--font-muted)"}}>Fluency Studio · Área Administrativa</p>
-            </div>
-          </div>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            {pendentesCount>0&&(
-              <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
-                style={{background:"linear-gradient(135deg,rgba(232,169,76,.25),rgba(240,204,96,.15))",border:"1px solid rgba(232,169,76,.45)",color:"#c8860a"}}>
-                <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
-              </button>
-            )}
-            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
-              <Icon name="user-plus" size={16}/> Novo Aluno
-            </button>
+      <aside className="admin-sidebar" aria-label="Navegação administrativa">
+        <div className="admin-sidebar-brand">
+          <BrandLogo/>
+          <div style={{marginTop:12,display:"flex",alignItems:"center",gap:8}}>
+            <span className="role-pill role-pill-admin">Admin</span>
+            <span style={{fontSize:11,color:"#CBD5E1"}}>Área restrita</span>
           </div>
         </div>
-      </div>
-      <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
-        {studentsErr&&(
-          <div className="err-box mb-4" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <span>{studentsErr}</span>
-            <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
+        <div className="admin-sidebar-label">Gestão da escola</div>
+        {adminNav.map(n=>(
+          <button key={n.id} type="button" className={"admin-nav-item"+(adminView===n.id?" active":"")} onClick={()=>setAdminView(n.id)}>
+            <Icon name={n.icon} size={18}/>
+            <span>{n.label}</span>
+            {n.id==="cadastros"&&pendentesCount>0&&<span className="nav-badge">{pendentesCount}</span>}
+          </button>
+        ))}
+        <div style={{marginTop:"auto",padding:"16px 20px",borderTop:"1px solid rgba(203,213,225,.12)"}}>
+          <button type="button" className="admin-nav-item" style={{padding:"10px 0"}} onClick={()=>auth.signOut()}>
+            <Icon name="log-out" size={18}/><span>Sair</span>
+          </button>
+        </div>
+      </aside>
+      <div className="admin-main">
+        <header className="admin-main-header">
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
+            <div>
+              <div className="view-separator" style={{marginBottom:4,border:"none",padding:0}}>Área administrativa · não visível ao aluno</div>
+              <h1 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>{viewTitles[adminView]||"Painel"}</h1>
+              <p style={{fontSize:13,color:"#475569",margin:"4px 0 0"}}>Fluency Studio · Gestão premium</p>
+            </div>
+            <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+              {pendentesCount>0&&(
+                <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
+                  style={{background:"#E0F2FE",border:"1.5px solid #0f2c5c",color:"#0f2c5c"}}>
+                  <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
+                </button>
+              )}
+              <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
+                <Icon name="user-plus" size={16}/> Novo Aluno
+              </button>
+            </div>
           </div>
-        )}
-        {!students
-          ?<LoadingScreen/>
-          :adminView==="dashboard"
-          ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
-              if(id==="alunos")setAdminView("alunos");
-              if(id==="cadastros")setAdminView("cadastros");
-              if(id==="financeiro")setAdminView("financeiro");
-              if(id==="agenda")setAdminView("agenda");
-              if(id==="config")setAdminView("config");
-            }}/>
-          :adminView==="cadastros"
-          ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
-          :adminView==="financeiro"
-          ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
-          :adminView==="agenda"
-          ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
-          :adminView==="config"
-          ?<AdminConfig students={students}/>
-          :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
-        }
-      </main>
+        </header>
+        <main className="admin-main-body">
+          {studentsErr&&(
+            <div className="err-box mb-4" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,color:"#B91C1C",background:"#FEF2F2",border:"1px solid #FECACA"}}>
+              <span>{studentsErr}</span>
+              <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
+            </div>
+          )}
+          {!students
+            ?<LoadingScreen/>
+            :adminView==="dashboard"
+            ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
+                if(id==="alunos")setAdminView("alunos");
+                if(id==="cadastros")setAdminView("cadastros");
+                if(id==="financeiro")setAdminView("financeiro");
+                if(id==="agenda")setAdminView("agenda");
+                if(id==="config")setAdminView("config");
+              }}/>
+            :adminView==="cadastros"
+            ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+            :adminView==="financeiro"
+            ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
+            :adminView==="agenda"
+            ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
+            :adminView==="config"
+            ?<AdminConfig students={students}/>
+            :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+          }
+        </main>
+      </div>
       <IVi mode="admin"/>
     </div>
   );
@@ -7032,8 +7547,8 @@ function App(){
     </div>
   );
   if(!user)return <Login/>;
-  if(user.uid===ADMIN_UID)return <AdminApp user={user}/>;
-  return <StudentSession user={user}/>;
+  if(user.uid===ADMIN_UID)return <><AdminApp user={user}/><AppearanceFab/></>;
+  return <><StudentSession user={user}/><AppearanceFab/></>;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
