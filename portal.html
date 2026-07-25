@@ -156,74 +156,45 @@
     .fin-table tr:hover td { background: #F8F9FA; }
 
 
-    /* ── TEMA: Dark (Estilo Deep Blue Glassmorphism) ── */
-    :root, [data-theme="dark"] {
-      --bg: radial-gradient(circle at 50% 40%, #1e40af 0%, #0f172a 65%, #020617 100%);
-      --font: #f8fafc;
-      --font-muted: #CBD5E1;
-      --card: rgba(15, 23, 42, 0.45);
-      --lesson: rgba(255, 255, 255, 0.03);
-      --detail: rgba(0, 0, 0, 0.2);
-      --header: rgba(15, 23, 42, 0.5);
-      --tabbar: rgba(255, 255, 255, 0.05);
-      --badge: rgba(255, 255, 255, 0.08);
-      --btn: rgba(255, 255, 255, 0.08);
-      --done: rgba(56, 189, 248, 0.15);
-      --done-border: rgba(56, 189, 248, 0.3);
-      --done-text: #7dd3fc;
-      --divider: rgba(255, 255, 255, 0.12);
-      --input-bg: rgba(0, 0, 0, 0.25);
-      --input-border: rgba(255, 255, 255, 0.15);
-      --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-      --sd-page-bg: #0b1220;
-      --sd-surface: #ffffff;
-      --sd-surface-text: #0f172a;
-      --sd-surface-muted: #475569;
-      --sd-surface-border: rgba(15,23,42,.10);
-      --sd-dark-card: #152238;
-      --sd-dark-card-2: #1a2d4a;
-      --sd-dark-text: #e8f0f8;
-      --sd-dark-muted: rgba(200,215,230,.75);
-      --sd-donut-track: #2a3f5c;
-    }
-
-    /* ── TEMA: Light (High-End Premium — design system) ── */
-    [data-theme="light"] {
+    /* ── TEMA ÚNICO: só cores salvas (sem dark/light/system) ──
+       :root e [data-theme] usam o mesmo base. applyTheme sobrescreve com as cores escolhidas. */
+    :root, [data-theme], [data-theme="light"], [data-theme="dark"] {
       --bg: #F8F9FA;
       --font: #1E1E1E;
       --font-muted: #475569;
       --card: #FFFFFF;
-      --lesson: #ffffff;
-      --detail: #f1f5f9;
-      --header: rgba(255, 255, 255, 0.95);
-      --tabbar: #e2e8f0;
-      --badge: #f1f5f9;
-      --btn: #ffffff;
-      --done: rgba(13, 148, 136, 0.1);
-      --done-border: #0d9488;
-      --done-text: #0f4a46;
-      --divider: #e2e8f0;
-      --input-bg: #ffffff;
-      --input-border: #cbd5e1;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --lesson: #FFFFFF;
+      --detail: #F1F5F9;
+      --header: #FFFFFF;
+      --tabbar: #E2E8F0;
+      --badge: #F1F5F9;
+      --btn: #FFFFFF;
+      --done: #F0FDF4;
+      --done-border: #15803D;
+      --done-text: #15803D;
+      --divider: #E2E8F0;
+      --input-bg: #FFFFFF;
+      --input-border: #CBD5E1;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       --sd-page-bg: transparent;
       --sd-surface: #FFFFFF;
       --sd-surface-text: #1E1E1E;
       --sd-surface-muted: #475569;
-      --sd-surface-border: rgba(53,102,182,.18);
-      --sd-dark-card: #174082;
-      --sd-dark-card-2: #2252A0;
-      --sd-dark-text: #f8fbff;
-      --sd-dark-muted: rgba(202,222,252,.92);
-      --sd-donut-track: #CADEFC;
-      --accent-primary: #2252A0;
-      --accent-bright: #3566B6;
-      --accent-cyan: #86CFFF;
-      --accent-teal: #187E74;
-      --accent-teal-deep: #00665B;
-      --gradient-cta: linear-gradient(135deg, #3566B6 0%, #2252A0 45%, #187E74 100%);
-      --gradient-surface: linear-gradient(145deg, rgba(255,255,255,.98), rgba(224,236,255,.72));
-      --gradient-bar: linear-gradient(90deg, #3566B6, #86CFFF, #187E74);
+      --sd-surface-border: #E2E8F0;
+      --sd-dark-card: #1E293B;
+      --sd-dark-card-2: #334155;
+      --sd-dark-text: #F8FAFC;
+      --sd-dark-muted: #CBD5E1;
+      --sd-donut-track: #E2E8F0;
+      --accent-primary: #0F172A;
+      --accent-bright: #4F46E5;
+      --accent-cyan: #0284C7;
+      --accent-teal: #0D9488;
+      --accent-teal-deep: #0F766E;
+      --gradient-cta: linear-gradient(135deg, #0F172A 0%, #4F46E5 100%);
+      --gradient-surface: #FFFFFF;
+      --gradient-bar: linear-gradient(90deg, #0F172A, #4F46E5);
+      --accent-solid: #0F172A;
     }
 
     /* Transição suave entre temas */
@@ -245,9 +216,9 @@
     }
     .glass.rounded-2xl{transition:box-shadow .25s,border-color .25s,transform .2s;}
     .glass.rounded-2xl:hover{box-shadow:0 12px 40px rgba(0,0,0,.30);}
-    [data-theme="light"] .glass{background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 4px 12px rgba(0,0,0,0.05);border-radius:8px;backdrop-filter:none;-webkit-backdrop-filter:none;}
+    [data-theme="light"] .glass{background:var(--card);border:1px solid var(--divider);box-shadow:var(--shadow);border-radius:8px;backdrop-filter:none;-webkit-backdrop-filter:none;}
     [data-theme="light"] .glass.rounded-2xl{border-radius:8px;}
-    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 6px 16px rgba(0,0,0,0.08);border-color:#CBD5E1;transform:none;}
+    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 6px 16px rgba(0,0,0,0.08);border-color:var(--divider);transform:none;}
     .muted{color:var(--font-muted);}
     .chip{background:var(--badge);border:1.5px solid var(--divider);}
     .btn{border:1.5px solid var(--divider);background:var(--btn);transition:transform .08s,background .12s,border-color 280ms ease,color 280ms ease;cursor:pointer;color:var(--font);}
@@ -255,8 +226,8 @@
     .btn:active{transform:translateY(1px);}
     .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
     .btn-primary:hover{filter:brightness(1.10);}
-    [data-theme="light"] .btn-primary{background:#0F172A!important;border:1px solid #0F172A!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
-    [data-theme="light"] .btn-primary:hover{filter:none;background:#4F46E5!important;border-color:#4F46E5!important;box-shadow:0 4px 14px rgba(79,70,229,.28);transform:translateY(-1px);color:#fff!important;}
+    [data-theme="light"] .btn-primary{background:var(--accent-solid,#0F172A)!important;border:1px solid var(--accent-solid,#0F172A)!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
+    [data-theme="light"] .btn-primary:hover{filter:none;background:var(--accent-bright,#4F46E5)!important;border-color:var(--accent-bright,#4F46E5)!important;box-shadow:0 4px 14px rgba(79,70,229,.28);transform:translateY(-1px);color:#fff!important;}
     [data-theme="light"] .btn-primary svg{color:#fff!important;}
     [data-theme="light"] .admin-toolbar .btn:not(.btn-primary){color:var(--font);background:var(--btn);}
     .btn-danger{border:1px solid rgba(200,60,80,.35);background:rgba(200,60,80,.10);color:#e07080;}
@@ -1103,25 +1074,37 @@
       tlActiveBg:'--tl-active-bg',tlActiveBorder:'--tl-active-border',tlActiveText:'--tl-active-text',
       sidebarBg:'--ds-sidebar',sidebarText:'--ds-sidebar-text'
     };
+    function stripThemeMode(t){
+      if(!t||typeof t!=='object')return t||{};
+      var out={};
+      Object.keys(t).forEach(function(k){
+        // ignora dark/light/system e campos de metadados de servidor
+        if(k==='mode'||k==='theme'||k==='fs-theme'||k==='updatedAt'||k==='updatedBy')return;
+        out[k]=t[k];
+      });
+      return out;
+    }
     function applyTheme(t){
       if(!t)return;
+      t=stripThemeMode(t);
       var r=document.documentElement.style;
+      // Tema único: atributo fixo "light" só para CSS legado; dark/system desligados.
+      // As cores visuais vêm APENAS das variáveis que o usuário salvou.
+      document.documentElement.setAttribute('data-theme','light');
+      try{ localStorage.removeItem('fs-theme'); }catch(e){}
       THEME_KEYS.forEach(function(k){
         if(t[k]!=null&&t[k]!==''&&CSS_MAP[k]) r.setProperty(CSS_MAP[k], t[k]);
       });
       if(t.fontFamily){
         document.body && (document.body.style.fontFamily = t.fontFamily + ", system-ui, sans-serif");
       }
-      if(t.mode==='light'||t.mode==='dark'){
-        document.documentElement.setAttribute('data-theme', t.mode);
-      }
       try{ window.__fsAppearance = Object.assign({}, window.__fsAppearance||{}, t); }catch(e){}
     }
     window.__applyTheme=applyTheme;
+    window.__stripThemeMode=stripThemeMode;
     window.__THEME_KEYS=THEME_KEYS;
     window.__THEME_CSS_MAP=CSS_MAP;
     window.__APPEARANCE_DEFAULTS={
-      mode:'light',
       bg:'#F8F9FA', font:'#1E1E1E', fontMuted:'#475569', card:'#FFFFFF',
       lesson:'#FFFFFF', detail:'#F1F5F9', header:'#FFFFFF', tabbar:'#E2E8F0',
       badge:'#F1F5F9', btn:'#FFFFFF', done:'#F0FDF4', doneBorder:'#15803D', doneText:'#15803D',
@@ -1135,20 +1118,25 @@
       tlActiveBg:'#E0F2FE', tlActiveBorder:'#0284C7', tlActiveText:'#0C4A6E',
       sidebarBg:'#1E293B', sidebarText:'#FFFFFF'
     };
-    // local first
+    document.documentElement.setAttribute('data-theme','light');
+    try{ localStorage.removeItem('fs-theme'); }catch(e){}
+    // local first (só cores)
     try{
       var local=JSON.parse(localStorage.getItem('fs-appearance')||'null');
-      if(local) applyTheme(local);
-    }catch(e){}
-    var saved=localStorage.getItem('fs-theme')||'light';
-    var isDark=saved==='dark'||(saved==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if(!document.documentElement.getAttribute('data-theme')){
-      document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+      if(local){
+        local=stripThemeMode(local);
+        applyTheme(local);
+        try{ localStorage.setItem('fs-appearance', JSON.stringify(local)); }catch(e){}
+      }else{
+        applyTheme(window.__APPEARANCE_DEFAULTS);
+      }
+    }catch(e){
+      applyTheme(window.__APPEARANCE_DEFAULTS);
     }
     try{
       firebase.firestore().collection('config').doc('aparencia').get().then(function(doc){
         if(doc.exists){
-          var data=doc.data()||{};
+          var data=stripThemeMode(doc.data()||{});
           applyTheme(data);
           try{ localStorage.setItem('fs-appearance', JSON.stringify(data)); }catch(e){}
         }
@@ -1161,7 +1149,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-appearance-studio");
+console.info("Fluency Portal v2026.07.25-colors-only");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -2328,46 +2316,7 @@ async function linkStudentPortalLogin(studentUid,email,password){
   return{created,alreadyExists:false,studentUid,authUid,email:em};
 }
 
-// ── MODIFICAÇÃO 1c: ThemeSwitcher ──────────────────────────────────────────
-function ThemeSwitcher() {
-  const [mode, setMode] = useState(() => localStorage.getItem('fs-theme') || 'light');
-
-  useEffect(() => {
-    function apply(m) {
-      const isDark = m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    }
-    apply(mode);
-    localStorage.setItem('fs-theme', mode);
-    if (mode === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = () => apply('system');
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
-    }
-  }, [mode]);
-
-  const opts = [
-    { id: 'dark',   icon: 'moon',    label: 'Dark' },
-    { id: 'light',  icon: 'sun',     label: 'Light' },
-    { id: 'system', icon: 'monitor', label: 'Auto' },
-  ];
-
-  return (
-    <div className="theme-switcher">
-      {opts.map(o => (
-        <button
-          key={o.id}
-          title={o.label}
-          onClick={() => setMode(o.id)}
-          className={"theme-btn" + (mode === o.id ? " theme-btn-active" : "")}
-        >
-          <Icon name={o.icon} size={14}/>
-        </button>
-      ))}
-    </div>
-  );
-}
+// ThemeSwitcher removido: o portal usa somente as cores salvas em Aparência (sem dark/light/system).
 
 function BrandLogo({large}){
   const [ok,setOk]=useState(true);
@@ -2398,7 +2347,6 @@ function LogoBar({ onBack, isAdmin, showLogout }) {
         {isAdmin && (
           <span className="role-pill role-pill-admin">Admin</span>
         )}
-        <ThemeSwitcher/>
         {showLogout && (
           <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center',gap:6}} onClick={()=>auth.signOut()}>
             <Icon name="log-out" size={14}/>
@@ -6727,7 +6675,7 @@ function AdminCursos({students}){
 
 /* ── APARÊNCIA: painel de cores global (todas as páginas) ─────────────────── */
 const APPEARANCE_DEFAULTS = (typeof window !== "undefined" && window.__APPEARANCE_DEFAULTS) || {
-  mode:"light", bg:"#F8F9FA", font:"#1E1E1E", fontMuted:"#475569", card:"#FFFFFF",
+  bg:"#F8F9FA", font:"#1E1E1E", fontMuted:"#475569", card:"#FFFFFF",
   lesson:"#FFFFFF", detail:"#F1F5F9", header:"#FFFFFF", tabbar:"#E2E8F0", badge:"#F1F5F9",
   btn:"#FFFFFF", done:"#F0FDF4", doneBorder:"#15803D", doneText:"#15803D",
   divider:"#E2E8F0", inputBg:"#FFFFFF", inputBorder:"#CBD5E1", accentSolid:"#0F172A",
@@ -6740,9 +6688,15 @@ const APPEARANCE_DEFAULTS = (typeof window !== "undefined" && window.__APPEARANC
   tlActiveBg:"#E0F2FE", tlActiveBorder:"#0284C7", tlActiveText:"#0C4A6E",
   sidebarBg:"#1E293B", sidebarText:"#FFFFFF"
 };
+function stripAppearanceMode(obj){
+  if(!obj||typeof obj!=="object")return{};
+  if(typeof window!=="undefined"&&window.__stripThemeMode)return window.__stripThemeMode(obj);
+  const out={...obj};
+  delete out.mode; delete out.theme; delete out["fs-theme"]; delete out.updatedAt; delete out.updatedBy;
+  return out;
+}
 const APPEARANCE_FIELDS = [
-  { group:"Geral", items:[
-    {key:"mode", label:"Modo base", type:"select", options:[{v:"light",l:"Claro"},{v:"dark",l:"Escuro"}]},
+  { group:"Fonte", items:[
     {key:"fontFamily", label:"Família da fonte", type:"select", options:[
       {v:"'Inter', 'Helvetica Neue', 'Segoe UI'", l:"Inter (premium)"},
       {v:"'Outfit', system-ui, sans-serif", l:"Outfit"},
@@ -6792,9 +6746,9 @@ const APPEARANCE_FIELDS = [
 function loadAppearanceState(){
   try{
     const local=JSON.parse(localStorage.getItem("fs-appearance")||"null");
-    if(local&&typeof local==="object")return{...APPEARANCE_DEFAULTS,...local};
+    if(local&&typeof local==="object")return{...APPEARANCE_DEFAULTS,...stripAppearanceMode(local)};
   }catch(e){}
-  if(typeof window!=="undefined"&&window.__fsAppearance)return{...APPEARANCE_DEFAULTS,...window.__fsAppearance};
+  if(typeof window!=="undefined"&&window.__fsAppearance)return{...APPEARANCE_DEFAULTS,...stripAppearanceMode(window.__fsAppearance)};
   return{...APPEARANCE_DEFAULTS};
 }
 
@@ -6824,18 +6778,20 @@ function AppearanceEditor({embedded,onClose}){
     try{
       unsub=db.collection("config").doc("aparencia").onSnapshot(doc=>{
         if(doc.exists){
-          const data={...APPEARANCE_DEFAULTS,...doc.data()};
+          const data={...APPEARANCE_DEFAULTS,...stripAppearanceMode(doc.data()||{})};
           setForm(data);
           if(window.__applyTheme)window.__applyTheme(data);
         }
       },()=>{});
     }catch(e){}
+    try{ localStorage.removeItem("fs-theme"); }catch(e){}
     return()=>{if(unsub)unsub();};
   },[]);
 
   function setKey(k,v){
+    if(k==="mode"||k==="theme")return;
     setForm(prev=>{
-      const next={...prev,[k]:v};
+      const next=stripAppearanceMode({...prev,[k]:v});
       if(window.__applyTheme)window.__applyTheme(next);
       return next;
     });
@@ -6845,46 +6801,48 @@ function AppearanceEditor({embedded,onClose}){
   async function save(){
     setSaving(true);setMsg("");setErr("");
     try{
-      const payload={...form,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser?auth.currentUser.uid:null};
-      // strip serverTimestamp for local
-      const localPayload={...form};
-      localStorage.setItem("fs-appearance",JSON.stringify(localPayload));
-      if(form.mode)localStorage.setItem("fs-theme",form.mode);
-      if(window.__applyTheme)window.__applyTheme(form);
+      const colorsOnly=stripAppearanceMode(form);
+      const payload={...colorsOnly,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser?auth.currentUser.uid:null};
+      // Remove mode legado do doc (se existir)
+      payload.mode=firebase.firestore.FieldValue.delete();
+      payload.theme=firebase.firestore.FieldValue.delete();
+      localStorage.setItem("fs-appearance",JSON.stringify(colorsOnly));
+      try{ localStorage.removeItem("fs-theme"); }catch(e){}
+      if(window.__applyTheme)window.__applyTheme(colorsOnly);
+      setForm(colorsOnly);
       if(isAdminUser){
         await db.collection("config").doc("aparencia").set(payload,{merge:true});
-        setMsg("Aparência salva para todo o portal (Firebase + este navegador).");
+        setMsg("Cores salvas para todo o portal. Sem dark/light — só o que você escolheu.");
       }else{
-        // aluno: salva só local + tenta user prefs (sem apagar dados)
         try{
-          await db.collection("users").doc(auth.currentUser.uid).set({appearance:localPayload},{merge:true});
-          setMsg("Preferências salvas neste navegador e no seu perfil.");
+          await db.collection("users").doc(auth.currentUser.uid).set({appearance:colorsOnly},{merge:true});
+          setMsg("Cores salvas neste navegador e no seu perfil.");
         }catch(e){
-          setMsg("Preferências salvas neste navegador.");
+          setMsg("Cores salvas neste navegador.");
         }
       }
     }catch(e){
       console.error(e);
       setErr("Não foi possível salvar no Firebase. As cores ficaram aplicadas localmente. Verifique regras de config/aparencia.");
-      try{localStorage.setItem("fs-appearance",JSON.stringify(form));}catch(x){}
+      try{localStorage.setItem("fs-appearance",JSON.stringify(stripAppearanceMode(form)));}catch(x){}
     }finally{
       setSaving(false);
     }
   }
 
   function resetDefaults(){
-    const d={...APPEARANCE_DEFAULTS};
+    const d=stripAppearanceMode({...APPEARANCE_DEFAULTS});
     setForm(d);
     if(window.__applyTheme)window.__applyTheme(d);
-    setMsg("Padrão premium (sem neon) aplicado — clique em Salvar para gravar.");
+    setMsg("Cores padrão aplicadas — clique em Salvar para gravar.");
   }
 
   const body=(
     <>
       <div className={embedded?"":"ap-panel-body"}>
         <p style={{fontSize:12,color:"#475569",margin:"0 0 14px",lineHeight:1.5}}>
-          Altere cores e fontes com prévia ao vivo. <strong>Trilha sem neon</strong> por padrão.
-          {isAdminUser?" Admin: salvar aplica para todos os alunos.":" Suas preferências ficam neste dispositivo."}
+          Só as <strong>cores e a fonte</strong> que você escolher — sem dark, light ou system.
+          {isAdminUser?" Admin: ao salvar, vale para todo o portal.":" Preferências neste dispositivo."}
         </p>
         {APPEARANCE_FIELDS.map(sec=>(
           <div className="ap-section" key={sec.group}>
@@ -7305,9 +7263,6 @@ function AdminApp({user}){
           </button>
         ))}
         <div style={{marginTop:"auto",padding:"16px 20px",borderTop:"1px solid rgba(203,213,225,.12)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-            <ThemeSwitcher/>
-          </div>
           <button type="button" className="admin-nav-item" style={{padding:"10px 0"}} onClick={()=>auth.signOut()}>
             <Icon name="log-out" size={18}/><span>Sair</span>
           </button>
