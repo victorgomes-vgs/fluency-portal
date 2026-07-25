@@ -1090,6 +1090,29 @@
       box-shadow:0 4px 12px rgba(0,0,0,.05);color:var(--font);
     }
     body{font-family:var(--font-family-ui),var(--ds-font),'Inter',system-ui,sans-serif;}
+
+    /* ── TOAST / SAVE FEEDBACK ── */
+    .fs-toast-host{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:min(380px,calc(100vw - 24px));}
+    .fs-toast{
+      pointer-events:auto;background:#0F172A;color:#fff;border-radius:12px;padding:14px 16px;
+      box-shadow:0 12px 40px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.08);
+      font-size:13px;font-weight:600;line-height:1.4;display:flex;align-items:flex-start;gap:10px;
+      animation:fsToastIn .25s ease-out;
+    }
+    .fs-toast-ok{background:linear-gradient(135deg,#0f766e,#0F172A);}
+    .fs-toast-err{background:linear-gradient(135deg,#B91C1C,#0F172A);}
+    .fs-toast-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.8;margin-bottom:2px;}
+    @keyframes fsToastIn{from{opacity:0;transform:translateY(-10px) scale(.98);}to{opacity:1;transform:none;}}
+    .profile-sheet{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 8px 32px rgba(15,23,42,.08);overflow:hidden;}
+    .profile-sheet-banner{background:linear-gradient(135deg,#0f2c5c,#1e3a8a);color:#fff;padding:20px 24px;}
+    .profile-sheet-body{padding:20px 24px;max-height:55vh;overflow-y:auto;}
+    .profile-sheet-row{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:14px;}
+    .profile-sheet-row:last-child{border-bottom:none;}
+    @media(max-width:520px){.profile-sheet-row{grid-template-columns:1fr;}}
+    .profile-sheet-k{color:#475569;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+    .profile-sheet-v{color:#1E1E1E;font-weight:600;word-break:break-word;}
+    .save-bar{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
 
@@ -1196,7 +1219,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-names-appearance");
+console.info("Fluency Portal v2026.07.25-profile-sheet-save");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1851,6 +1874,66 @@ function getFirstName(name){
   if(full==="Aluno")return full;
   return full.split(/\s+/)[0]||full;
 }
+
+/** Feedback de salvamento: som + toast + notificação do sistema (quando permitido) */
+function playSaveChime(){
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return;
+    const ctx=new Ctx();
+    const now=ctx.currentTime;
+    [[880,.0,.12],[1174.66,.11,.14],[1567.98,.24,.18]].forEach(([freq,start,dur])=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type="sine";o.frequency.value=freq;
+      g.gain.setValueAtTime(0.0001,now+start);
+      g.gain.exponentialRampToValueAtTime(0.12,now+start+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,now+start+dur);
+      o.connect(g);g.connect(ctx.destination);
+      o.start(now+start);o.stop(now+start+dur+0.02);
+    });
+    setTimeout(()=>{try{ctx.close();}catch(e){}},600);
+  }catch(e){}
+}
+function ensureToastHost(){
+  let host=document.getElementById("fs-toast-host");
+  if(!host){
+    host=document.createElement("div");
+    host.id="fs-toast-host";
+    host.className="fs-toast-host";
+    document.body.appendChild(host);
+  }
+  return host;
+}
+function showFsToast(message,kind){
+  const host=ensureToastHost();
+  const el=document.createElement("div");
+  el.className="fs-toast "+(kind==="err"?"fs-toast-err":"fs-toast-ok");
+  const title=kind==="err"?"Atenção":"Salvo";
+  el.innerHTML="<div><div class=\"fs-toast-title\">"+title+"</div><div></div></div>";
+  el.querySelector("div > div:last-child").textContent=String(message||"Alterações salvas");
+  host.appendChild(el);
+  setTimeout(()=>{try{el.remove();}catch(e){}},4200);
+}
+function notifySaveSuccess(message){
+  playSaveChime();
+  showFsToast(message||"Alterações salvas com sucesso!","ok");
+  try{
+    if(typeof Notification!=="undefined"){
+      if(Notification.permission==="granted"){
+        new Notification("Fluency Studio",{body:message||"Alterações salvas com sucesso!",icon:"https://thefluency.studio/logo.png"});
+      }else if(Notification.permission!=="denied"){
+        Notification.requestPermission().then(p=>{
+          if(p==="granted")new Notification("Fluency Studio",{body:message||"Alterações salvas com sucesso!"});
+        }).catch(()=>{});
+      }
+    }
+  }catch(e){}
+  try{if(document.hidden&&typeof window.focus==="function")window.focus();}catch(e){}
+}
+function notifySaveError(message){
+  showFsToast(message||"Erro ao salvar","err");
+}
+
 const MESES_CURTOS=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 const MESES_LONGOS=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 function getParcelValor(p){const v=p?.valorDesconto>0?p.valorDesconto:p?.valor;return v>0?v:0;}
@@ -2559,6 +2642,7 @@ function AdminLessonPanel({item,uid}){
       await db.collection("students").doc(uid).update(patch);
       
       setSaveMsg("✓ Alterações salvas com sucesso!");
+      notifySaveSuccess("Lição salva com sucesso!");
       setTimeout(()=>setSaveMsg(""), 3500);
     }catch(e){
       console.error("Erro no salvamento Firebase:", e);
@@ -2942,7 +3026,7 @@ function RecursosSection({uid,isAdmin,links}){
   function updateLink(idx,field,val){setLocalLinks(prev=>prev.map((l,i)=>i===idx?{...l,[field]:val}:l));}
   function addLink(){setLocalLinks(prev=>[...prev,{id:Date.now(),label:"Novo link",url:""}]);}
   function removeLink(idx){setLocalLinks(prev=>prev.filter((_,i)=>i!==idx));}
-  async function saveLinks(){await db.collection("students").doc(uid).update({links:localLinks});setEditLinks(false);}
+  async function saveLinks(){try{await db.collection("students").doc(uid).update({links:localLinks});setEditLinks(false);notifySaveSuccess("Links/recursos salvos!");}catch(e){notifySaveError(e.message||"Erro ao salvar links");}}
   return(
     <div className="max-w-lg mx-auto"><div className="glass rounded-2xl p-5">
       <div className="flex items-center justify-between mb-4">
@@ -3187,32 +3271,65 @@ function StudentFinanceView({financeiro}){
 
 function FinanceiroSection({uid,isAdmin,financeiro}){
   if(!isAdmin)return <StudentFinanceView financeiro={financeiro}/>;
-  const tipo=financeiro?.tipo||"mensalidade";const parcelas=financeiro?.parcelas||[];
-  const creditosTotal=financeiro?.creditosTotal||0;const creditosUsados=financeiro?.creditosUsados||0;const creditosRestantes=creditosTotal-creditosUsados;
+  const [tipo,setTipoLocal]=useState(financeiro?.tipo||"mensalidade");
+  const [creditosTotal,setCredTotal]=useState(financeiro?.creditosTotal||0);
+  const [creditosUsados,setCredUsados]=useState(financeiro?.creditosUsados||0);
+  const [parcelas,setParcelas]=useState(()=>Array.isArray(financeiro?.parcelas)?financeiro.parcelas.map(p=>({...p})):[]);
+  const [savingKey,setSavingKey]=useState("");
+  useEffect(()=>{
+    setTipoLocal(financeiro?.tipo||"mensalidade");
+    setCredTotal(financeiro?.creditosTotal||0);
+    setCredUsados(financeiro?.creditosUsados||0);
+    setParcelas(Array.isArray(financeiro?.parcelas)?financeiro.parcelas.map(p=>({...p})):[]);
+  },[financeiro]);
+  const creditosRestantes=creditosTotal-creditosUsados;
   const sorted=[...parcelas].sort((a,b)=>(a.dataVencimento||"").localeCompare(b.dataVencimento||""));
-  async function setTipo(t){await db.collection("students").doc(uid).update({"financeiro.tipo":t});}
-  async function setCredito(field,val){await db.collection("students").doc(uid).update({[`financeiro.${field}`]:parseInt(val)||0});}
-  async function addParcela(){
-    const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};
-    const next=[...parcelas,nova];
-    await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
-    await upsertInvoiceFromParcela(uid,nova);
-  }
-  async function updateParcela(id,field,val){
-    const next=parcelas.map(p=>{
+  function patchLocal(id,field,val){
+    setParcelas(prev=>prev.map(p=>{
       if(p.id!==id)return p;
       const u={...p,[field]:val};
       if(field==="status"&&val==="paga"&&!u.dataPagamento)u.dataPagamento=getTodayISO();
       return u;
-    });
-    await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
-    const updated=next.find(p=>p.id===id);
-    if(updated)await upsertInvoiceFromParcela(uid,updated);
+    }));
+  }
+  async function saveContratoTipo(){
+    setSavingKey("tipo");
+    try{
+      await db.collection("students").doc(uid).update({
+        "financeiro.tipo":tipo,
+        "financeiro.creditosTotal":parseInt(creditosTotal)||0,
+        "financeiro.creditosUsados":parseInt(creditosUsados)||0,
+      });
+      notifySaveSuccess("Tipo de contrato / créditos salvos!");
+    }catch(e){notifySaveError(e.message||"Erro ao salvar");}
+    finally{setSavingKey("");}
+  }
+  async function addParcela(){
+    const nova={id:Date.now().toString(),mes:"",valor:0,valorDesconto:0,status:"em_aberto",dataVencimento:"",comprovante:"",boletoPix:"",dataPagamento:""};
+    setParcelas(prev=>[...prev,nova]);
+  }
+  async function saveParcela(id){
+    const p=parcelas.find(x=>x.id===id);
+    if(!p)return;
+    setSavingKey("p_"+id);
+    try{
+      const next=parcelas.map(x=>x.id===id?p:x);
+      await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+      await upsertInvoiceFromParcela(uid,p);
+      notifySaveSuccess("Parcela salva!");
+    }catch(e){notifySaveError(e.message||"Erro ao salvar parcela");}
+    finally{setSavingKey("");}
   }
   async function deleteParcela(id){
-    if(!confirm("Remover esta parcela do contrato do aluno? (faturas legadas no Firestore não são apagadas automaticamente)"))return;
-    await db.collection("students").doc(uid).update({"financeiro.parcelas":parcelas.filter(p=>p.id!==id)});
-    // Do NOT delete invoices/transactions collections — preserve financial history
+    if(!confirm("Remover esta parcela do contrato do aluno?"))return;
+    setSavingKey("del_"+id);
+    try{
+      const next=parcelas.filter(p=>p.id!==id);
+      setParcelas(next);
+      await db.collection("students").doc(uid).update({"financeiro.parcelas":next});
+      notifySaveSuccess("Parcela removida.");
+    }catch(e){notifySaveError(e.message||"Erro ao remover");}
+    finally{setSavingKey("");}
   }
   return(
     <div className="space-y-4">
@@ -3222,13 +3339,18 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
           Tipo de Contrato
         </h3>
         <div className="flex gap-2 mb-4">
-          <button onClick={()=>setTipo("mensalidade")} className={"sbtn "+(tipo==="mensalidade"?"sbtn-concluida":"sbtn-off")}>Mensalidade</button>
-          <button onClick={()=>setTipo("creditos")} className={"sbtn "+(tipo==="creditos"?"sbtn-andamento":"sbtn-off")}>Créditos</button>
+          <button type="button" onClick={()=>setTipoLocal("mensalidade")} className={"sbtn "+(tipo==="mensalidade"?"sbtn-concluida":"sbtn-off")}>Mensalidade</button>
+          <button type="button" onClick={()=>setTipoLocal("creditos")} className={"sbtn "+(tipo==="creditos"?"sbtn-andamento":"sbtn-off")}>Créditos</button>
         </div>
-        {tipo==="creditos"&&<div className="grid grid-cols-2 gap-4">
-          <div><div className="detail-label">Total de Créditos</div><input type="number" min={0} className="input-light mt-1" value={creditosTotal} onChange={e=>setCredito("creditosTotal",e.target.value)}/></div>
-          <div><div className="detail-label">Créditos Usados</div><input type="number" min={0} className="input-light mt-1" value={creditosUsados} onChange={e=>setCredito("creditosUsados",e.target.value)}/></div>
+        {tipo==="creditos"&&<div className="grid grid-cols-2 gap-4 mb-3">
+          <div><div className="detail-label">Total de Créditos</div><input type="number" min={0} className="input-light mt-1" value={creditosTotal} onChange={e=>setCredTotal(parseInt(e.target.value)||0)}/></div>
+          <div><div className="detail-label">Créditos Usados</div><input type="number" min={0} className="input-light mt-1" value={creditosUsados} onChange={e=>setCredUsados(parseInt(e.target.value)||0)}/></div>
         </div>}
+        <div className="save-bar">
+          <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={saveContratoTipo} disabled={savingKey==="tipo"}>
+            <Icon name="save" size={14}/>{savingKey==="tipo"?"Salvando…":"Salvar tipo / créditos"}
+          </button>
+        </div>
       </div>
       {tipo==="creditos"&&creditosTotal>0&&<div className="chip rounded-2xl p-4 flex items-center justify-between"><span className="text-sm font-semibold">Créditos Restantes</span><span className="fin-badge fin-creditos" style={{fontSize:13}}>{creditosRestantes} de {creditosTotal}</span></div>}
       <div className="glass rounded-2xl p-5">
@@ -3237,24 +3359,29 @@ function FinanceiroSection({uid,isAdmin,financeiro}){
             <Icon name="credit-card" size={16} style={{color:'rgba(44,122,142,1)'}}/>
             {tipo==="creditos"?"Lançamentos":"Parcelas do Contrato"}
           </h3>
-          <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={addParcela}><Icon name="plus" size={14}/> Adicionar</button>
+          <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={addParcela}><Icon name="plus" size={14}/> Adicionar</button>
         </div>
         {sorted.length===0?<div className="text-center py-8 muted"><Icon name="credit-card" size={28} className="mx-auto mb-2 opacity-30"/><p className="text-sm">Nenhum lançamento cadastrado ainda.</p></div>:(
           <div className="space-y-3">{sorted.map(p=>{const fs=finStatusMap[p.status]||FIN_STATUS[3];return(
             <div key={p.id} className="chip rounded-2xl p-4" style={{borderColor:fs.cls.includes("fin-")?"":undefined}}>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <span className={"fin-badge "+fs.cls}>{fs.label}</span>
-                <button className="btn btn-danger rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>deleteParcela(p.id)}><Icon name="trash-2" size={12}/> Remover</button>
+                <div style={{display:"flex",gap:8}}>
+                  <button type="button" className="btn btn-primary rounded-lg px-3 py-1.5 text-xs font-semibold inline-flex items-center gap-1.5" onClick={()=>saveParcela(p.id)} disabled={savingKey==="p_"+p.id}>
+                    <Icon name="save" size={12}/>{savingKey==="p_"+p.id?"Salvando…":"Salvar"}
+                  </button>
+                  <button type="button" className="btn btn-danger rounded-lg px-3 py-1.5 text-xs inline-flex items-center gap-1.5" onClick={()=>deleteParcela(p.id)}><Icon name="trash-2" size={12}/> Remover</button>
+                </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div><div className="detail-label">Mês / Referência</div><input className="input-light mt-1" placeholder="Ex: Abril 2026" value={p.mes||""} onChange={e=>updateParcela(p.id,"mes",e.target.value)}/></div>
-                <div><div className="detail-label">Vencimento</div><input type="date" className="input-light mt-1" value={p.dataVencimento||""} onChange={e=>updateParcela(p.id,"dataVencimento",e.target.value)}/></div>
-                <div><div className="detail-label">Status</div><select className="ds-select mt-1" value={p.status||"em_aberto"} onChange={e=>updateParcela(p.id,"status",e.target.value)}>{FIN_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-                <div><div className="detail-label">Valor (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valor||0} onChange={e=>updateParcela(p.id,"valor",parseFloat(e.target.value)||0)}/></div>
-                <div><div className="detail-label">Com Desconto (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valorDesconto||0} onChange={e=>updateParcela(p.id,"valorDesconto",parseFloat(e.target.value)||0)}/></div>
-                <div><div className="detail-label">Data Pagamento</div><input type="date" className="input-light mt-1" value={p.dataPagamento||""} onChange={e=>updateParcela(p.id,"dataPagamento",e.target.value)}/></div>
-                <div className="sm:col-span-2"><div className="detail-label">Boleto ou Pix (Link)</div><input type="url" className="input-light mt-1" placeholder="https://..." value={p.boletoPix||""} onChange={e=>updateParcela(p.id,"boletoPix",e.target.value)}/></div>
-                <div className="sm:col-span-2"><div className="detail-label">Comprovante (Link)</div><input type="url" className="input-light mt-1" placeholder="https://drive.google.com/..." value={p.comprovante||""} onChange={e=>updateParcela(p.id,"comprovante",e.target.value)}/></div>
+                <div><div className="detail-label">Mês / Referência</div><input className="input-light mt-1" placeholder="Ex: Abril 2026" value={p.mes||""} onChange={e=>patchLocal(p.id,"mes",e.target.value)}/></div>
+                <div><div className="detail-label">Vencimento</div><input type="date" className="input-light mt-1" value={p.dataVencimento||""} onChange={e=>patchLocal(p.id,"dataVencimento",e.target.value)}/></div>
+                <div><div className="detail-label">Status</div><select className="ds-select mt-1" value={p.status||"em_aberto"} onChange={e=>patchLocal(p.id,"status",e.target.value)}>{FIN_STATUS.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
+                <div><div className="detail-label">Valor (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valor||0} onChange={e=>patchLocal(p.id,"valor",parseFloat(e.target.value)||0)}/></div>
+                <div><div className="detail-label">Com Desconto (R$)</div><input type="number" step="0.01" min="0" className="input-light mt-1" value={p.valorDesconto||0} onChange={e=>patchLocal(p.id,"valorDesconto",parseFloat(e.target.value)||0)}/></div>
+                <div><div className="detail-label">Data Pagamento</div><input type="date" className="input-light mt-1" value={p.dataPagamento||""} onChange={e=>patchLocal(p.id,"dataPagamento",e.target.value)}/></div>
+                <div className="sm:col-span-2"><div className="detail-label">Boleto ou Pix (Link)</div><input type="url" className="input-light mt-1" placeholder="https://..." value={p.boletoPix||""} onChange={e=>patchLocal(p.id,"boletoPix",e.target.value)}/></div>
+                <div className="sm:col-span-2"><div className="detail-label">Comprovante (Link)</div><input type="url" className="input-light mt-1" placeholder="https://drive.google.com/..." value={p.comprovante||""} onChange={e=>patchLocal(p.id,"comprovante",e.target.value)}/></div>
               </div>
             </div>);
           })}</div>
@@ -4440,10 +4567,11 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                   :<div style={{width:64,height:64,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,border:"2px solid var(--divider)"}}><Icon name="user" size={28}/></div>
                 }
                 <div className="flex-1 min-w-0">
-                  <div className="sd-hello" style={{marginBottom:2}}>Perfil do aluno</div>
-                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",wordBreak:"break-word",color:"var(--font,#1E1E1E)",lineHeight:1.25}} title={getFullName(profile.name)}>
-                    {getFullName(profile.name)}
+                  <div className="sd-hello" style={{marginBottom:2}}>Visão do aluno</div>
+                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--font,#1E1E1E)",lineHeight:1.25}} title="Nome completo só no cadastro (Perfil completo)">
+                    {getFirstName(profile.name)}
                   </h1>
+                  <p style={{fontSize:11,color:"#475569",marginTop:4}}>Nome completo: abra <strong>Perfil completo</strong></p>
                   <div className="student-card-meta" style={{marginTop:12}}>
                     <div><span className="meta-label">Curso</span><span className="meta-val">{courseName||"—"}</span></div>
                     <div><span className="meta-label">Módulo</span><span className="meta-val">{currentMod} · {currentModMeta?.name||"—"}</span></div>
@@ -5731,6 +5859,8 @@ function findProximaAulaUnified(students,agendaExtra={}){
 function ModalEdicao({student,onClose,onSaved}){
   const courses=useCourses();
   const contratosAtivos=useMemo(()=>getActiveContratos(),[courses]);
+  // Folha de perfil (leitura) primeiro; edição só com botão EDITAR
+  const [editing,setEditing]=useState(false);
   const [tab,setTab]=useState(0);
   const [dados,setDados]=useState({
     nome:student.name||student.nome||"",cpf:student.cpf||"",rg:student.rg||"",
@@ -5845,13 +5975,20 @@ function ModalEdicao({student,onClose,onSaved}){
       });
       if(fotoPreview&&String(fotoPreview).indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
       setFotoFile(null);
-      onSaved();onClose();
+      notifySaveSuccess("Cadastro de "+(dados.nome||"aluno")+" salvo!");
+      setEditing(false);
+      if(onSaved)onSaved();
     }catch(e){
       console.error("ModalEdicao save:",e);
       setErr("Erro: "+(e.message||e.code||"desconhecido"));
+      notifySaveError("Erro ao salvar cadastro");
     }finally{
       setSaving(false);
     }
+  }
+
+  function sheetRow(k,v){
+    return <div className="profile-sheet-row" key={k}><div className="profile-sheet-k">{k}</div><div className="profile-sheet-v">{v||"—"}</div></div>;
   }
 
   async function handleDelete(){
@@ -5869,14 +6006,81 @@ function ModalEdicao({student,onClose,onSaved}){
     }
   }
 
+  // ── Folha de perfil (somente leitura) ──
+  if(!editing){
+    const full=getFullName(student.name||student.nome||dados.nome);
+    const dias=(dados.diasAulas||[]).join(", ")||"—";
+    return(
+      <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+        <div className="modal-box" style={{maxWidth:640}}>
+          <div className="modal-header" style={{background:"linear-gradient(135deg,#0f2c5c,#1e3a8a)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <Icon name="file-text" size={18}/>
+              <div>
+                <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Perfil do aluno</div>
+                <div style={{fontSize:11,opacity:.8}}>Somente leitura · use Editar para alterar</div>
+              </div>
+            </div>
+            <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
+          </div>
+          <div className="modal-body" style={{padding:16,background:"#F8F9FA"}}>
+            <div className="profile-sheet">
+              <div className="profile-sheet-banner">
+                <div style={{display:"flex",alignItems:"center",gap:16}}>
+                  {(fotoPreview||dados.foto)
+                    ?<img src={fotoPreview||dados.foto} alt="" style={{width:72,height:72,borderRadius:"50%",objectFit:"cover",border:"3px solid rgba(255,255,255,.35)"}}/>
+                    :<div style={{width:72,height:72,borderRadius:"50%",background:"rgba(255,255,255,.15)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={32}/></div>
+                  }
+                  <div style={{minWidth:0}}>
+                    <div style={{fontSize:11,opacity:.75,letterSpacing:".08em",textTransform:"uppercase",fontWeight:700}}>Cadastro completo</div>
+                    <div style={{fontSize:22,fontWeight:800,fontFamily:"'Sora',sans-serif",lineHeight:1.2,wordBreak:"break-word"}}>{full}</div>
+                    <div style={{marginTop:8}}><StatusBadge status={dados.status||"lead"}/></div>
+                  </div>
+                </div>
+              </div>
+              <div className="profile-sheet-body">
+                <div style={{fontSize:12,fontWeight:800,color:"#0f2c5c",marginBottom:8,letterSpacing:".06em"}}>DADOS PESSOAIS</div>
+                {sheetRow("Nome completo",full)}
+                {sheetRow("Email",dados.email)}
+                {sheetRow("Telefone",dados.telefone)}
+                {sheetRow("Telefone 2",dados.telefone2)}
+                {sheetRow("CPF",dados.cpf)}
+                {sheetRow("RG",dados.rg)}
+                {sheetRow("Nascimento",dados.dataNasc?formatDateBR(dados.dataNasc):"")}
+                {sheetRow("Estado civil",dados.estadoCivil)}
+                {sheetRow("Profissão",dados.profissao)}
+                {sheetRow("Nacionalidade",dados.nacionalidade)}
+                {sheetRow("Endereço",dados.endereco)}
+                <div style={{fontSize:12,fontWeight:800,color:"#0f2c5c",margin:"18px 0 8px",letterSpacing:".06em"}}>CONTRATO & AULAS</div>
+                {sheetRow("Curso",getCourseLabel(dados.contrato))}
+                {sheetRow("Status",dados.status)}
+                {sheetRow("Início",dados.dataInicio?formatDateBR(dados.dataInicio):"")}
+                {sheetRow("Dias",dias)}
+                {sheetRow("Horário",dados.horarioAulas)}
+                {sheetRow("Valor final",dados.valorFinal?formatCurrency(parseFloat(dados.valorFinal)||0):"")}
+                {sheetRow("Vencimento",dados.diaVencimento?"Dia "+dados.diaVencimento:"")}
+              </div>
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Fechar</button>
+            <button type="button" className="btn btn-primary rounded-xl px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>setEditing(true)}>
+              <Icon name="pencil" size={15}/> Editar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return(
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
       <div className="modal-box">
         <div className="modal-header">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Icon name="pencil" size={18}/>
-            <div><div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Perfil completo</div>
-            <div style={{fontSize:11,opacity:.75}}>{student.name||student.nome}</div></div>
+            <div><div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar cadastro</div>
+            <div style={{fontSize:11,opacity:.75}}>{getFullName(student.name||student.nome)}</div></div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
         </div>
@@ -5988,7 +6192,7 @@ function ModalEdicao({student,onClose,onSaved}){
                           if(!confirm(`Gerar ${novas.length} parcelas para ${student.name}?`))return;
                           try{
                             await db.collection("students").doc(student.uid).update({"financeiro.parcelas":novas});
-                            alert("Parcelas geradas com sucesso!");
+                            notifySaveSuccess("Parcelas geradas com sucesso!");
                           }catch(e){alert("Erro: "+e.message);}
                         }}
                         className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2">
@@ -6067,11 +6271,11 @@ function ModalEdicao({student,onClose,onSaved}){
           </button>
           <div style={{flex:1}}/>
           {tab===1&&<button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
-          {tab===0&&<button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil →</button>}
-          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
+          {tab===0&&<button className="btn rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil →</button>}
+          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setEditing(false)}>Voltar à folha</button>
           <button className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
             {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="check-circle" size={15}/>}
-            {saving?"Salvando...":"Salvar"}
+            {saving?"Salvando...":"Salvar alterações"}
           </button>
         </div>
       </div>
@@ -6929,6 +7133,7 @@ function AppearanceEditor({embedded,onClose}){
       if(isAdminUser){
         await db.collection("config").doc("aparencia").set(payload,{merge:true});
         setMsg("Cores salvas para todo o portal. Sem dark/light — só o que você escolheu.");
+        notifySaveSuccess("Aparência salva para todo o portal!");
       }else{
         try{
           await db.collection("users").doc(auth.currentUser.uid).set({appearance:colorsOnly},{merge:true});
