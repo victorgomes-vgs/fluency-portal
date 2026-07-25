@@ -227,7 +227,8 @@
     .btn:active{transform:translateY(1px);}
     .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
     .btn-primary:hover{filter:brightness(1.10);}
-    [data-theme="light"] .btn-primary{background:var(--accent-solid,#0F172A)!important;border:1px solid var(--accent-solid,#0F172A)!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
+    /* gradient-aware primary btn */
+    [data-theme="light"] .btn-primary{background:var(--accent-solid,var(--gradient-cta,#0F172A))!important;border:1px solid transparent!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
     [data-theme="light"] .btn-primary:hover{filter:none;background:var(--accent-bright,#4F46E5)!important;border-color:var(--accent-bright,#4F46E5)!important;box-shadow:0 4px 14px rgba(79,70,229,.28);transform:translateY(-1px);color:#fff!important;}
     [data-theme="light"] .btn-primary svg{color:#fff!important;}
     [data-theme="light"] .admin-toolbar .btn:not(.btn-primary){color:var(--font);background:var(--btn);}
@@ -1113,6 +1114,26 @@
     .profile-sheet-v{color:#1E1E1E;font-weight:600;word-break:break-word;}
     .save-bar{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;}
 
+
+    .ap-mode-toggle{display:flex;gap:4px;margin-bottom:6px;}
+    .ap-mode-btn{
+      flex:1;border:1px solid #E2E8F0;background:#fff;color:#475569;font-size:11px;font-weight:700;
+      padding:5px 8px;border-radius:8px;cursor:pointer;font-family:inherit;
+    }
+    .ap-mode-btn.active{background:#0F172A;color:#fff;border-color:#0F172A;}
+    .ap-grad-preview{
+      height:28px;border-radius:8px;border:1px solid #E2E8F0;margin-top:6px;
+    }
+    .ap-grad-presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+    .ap-grad-preset{
+      width:28px;height:28px;border-radius:8px;border:2px solid #fff;box-shadow:0 0 0 1px #CBD5E1;
+      cursor:pointer;padding:0;
+    }
+    .ap-grad-preset:hover{transform:scale(1.08);}
+    .ap-field.ap-field-wide{grid-column:1 / -1;}
+    .ap-angle-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:11px;color:#475569;}
+    .ap-angle-row input[type="range"]{flex:1;}
+
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
 
@@ -1126,7 +1147,8 @@
       'tlBg','tlBorder','tlText','tlMuted','tlModBg','tlModText','tlNode','tlNodeDone',
       'tlNodeOutput','tlNodeReview','tlNodeActive','tlPendingBg','tlPendingText',
       'tlDoneInput','tlDoneOutput','tlDoneReview','tlActiveBg','tlActiveBorder','tlActiveText',
-      'sidebarBg','sidebarText'
+      'sidebarBg','sidebarText',
+      'gradientBar','gradientCta','gradientSurface'
     ];
     var CSS_MAP={
       bg:'--bg',font:'--font',fontMuted:'--font-muted',card:'--card',lesson:'--lesson',
@@ -1142,7 +1164,8 @@
       tlPendingBg:'--tl-pending-bg',tlPendingText:'--tl-pending-text',
       tlDoneInput:'--tl-done-input',tlDoneOutput:'--tl-done-output',tlDoneReview:'--tl-done-review',
       tlActiveBg:'--tl-active-bg',tlActiveBorder:'--tl-active-border',tlActiveText:'--tl-active-text',
-      sidebarBg:'--ds-sidebar',sidebarText:'--ds-sidebar-text'
+      sidebarBg:'--ds-sidebar',sidebarText:'--ds-sidebar-text',
+      gradientBar:'--gradient-bar',gradientCta:'--gradient-cta',gradientSurface:'--gradient-surface'
     };
     function stripThemeMode(t){
       if(!t||typeof t!=='object')return t||{};
@@ -1154,19 +1177,42 @@
       });
       return out;
     }
+    var TEXT_COLOR_KEYS={
+      font:1,fontMuted:1,doneText:1,tlText:1,tlMuted:1,tlModText:1,tlPendingText:1,
+      tlActiveText:1,sidebarText:1,doneBorder:1,divider:1,inputBorder:1,tlBorder:1,tlActiveBorder:1,
+      tlNode:1,tlNodeDone:1,tlNodeOutput:1,tlNodeReview:1,tlNodeActive:1
+    };
+    function firstHexFromValue(v){
+      if(!v)return '#1E1E1E';
+      var m=String(v).match(/#([0-9a-fA-F]{3,8})\b/);
+      return m?m[0]:'#1E1E1E';
+    }
     function applyTheme(t){
       if(!t)return;
       t=stripThemeMode(t);
       var r=document.documentElement.style;
-      // Tema único: atributo fixo "light" só para CSS legado; dark/system desligados.
-      // As cores visuais vêm APENAS das variáveis que o usuário salvou.
       document.documentElement.setAttribute('data-theme','light');
       try{ localStorage.removeItem('fs-theme'); }catch(e){}
       THEME_KEYS.forEach(function(k){
-        if(t[k]!=null&&t[k]!==''&&CSS_MAP[k]) r.setProperty(CSS_MAP[k], t[k]);
+        if(t[k]==null||t[k]===''||!CSS_MAP[k])return;
+        var val=t[k];
+        // color: não aceita gradient — usa a 1ª cor do gradiente
+        if(TEXT_COLOR_KEYS[k] && String(val).indexOf('gradient')!==-1){
+          val=firstHexFromValue(val);
+        }
+        r.setProperty(CSS_MAP[k], val);
       });
+      // extras de gradiente de marca
+      if(t.gradientBar) r.setProperty('--gradient-bar', t.gradientBar);
+      if(t.gradientCta) r.setProperty('--gradient-cta', t.gradientCta);
+      if(t.gradientSurface) r.setProperty('--gradient-surface', t.gradientSurface);
       if(t.fontFamily){
         document.body && (document.body.style.fontFamily = t.fontFamily + ", system-ui, sans-serif");
+      }
+      // body background pode ser gradiente
+      if(t.bg){
+        document.body && (document.body.style.background = t.bg);
+        document.body && (document.body.style.backgroundAttachment = 'fixed');
       }
       try{ window.__fsAppearance = Object.assign({}, window.__fsAppearance||{}, t); }catch(e){}
     }
@@ -1186,7 +1232,10 @@
       tlNodeActive:'#0284C7', tlPendingBg:'#E2E8F0', tlPendingText:'#475569',
       tlDoneInput:'#1D4ED8', tlDoneOutput:'#0F766E', tlDoneReview:'#6D28D9',
       tlActiveBg:'#E0F2FE', tlActiveBorder:'#0284C7', tlActiveText:'#0C4A6E',
-      sidebarBg:'#1E293B', sidebarText:'#FFFFFF'
+      sidebarBg:'#1E293B', sidebarText:'#FFFFFF',
+      gradientBar:'linear-gradient(90deg, #0F172A, #4F46E5)',
+      gradientCta:'linear-gradient(135deg, #0F172A 0%, #4F46E5 100%)',
+      gradientSurface:'linear-gradient(145deg, #FFFFFF 0%, #F1F5F9 100%)'
     };
     document.documentElement.setAttribute('data-theme','light');
     try{ localStorage.removeItem('fs-theme'); }catch(e){}
@@ -1219,7 +1268,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-profile-sheet-save");
+console.info("Fluency Portal v2026.07.25-gradients");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -7006,7 +7055,10 @@ const APPEARANCE_DEFAULTS = (typeof window !== "undefined" && window.__APPEARANC
   tlNodeActive:"#0284C7", tlPendingBg:"#E2E8F0", tlPendingText:"#475569",
   tlDoneInput:"#1D4ED8", tlDoneOutput:"#0F766E", tlDoneReview:"#6D28D9",
   tlActiveBg:"#E0F2FE", tlActiveBorder:"#0284C7", tlActiveText:"#0C4A6E",
-  sidebarBg:"#1E293B", sidebarText:"#FFFFFF"
+  sidebarBg:"#1E293B", sidebarText:"#FFFFFF",
+  gradientBar:"linear-gradient(90deg, #0F172A, #4F46E5)",
+  gradientCta:"linear-gradient(135deg, #0F172A 0%, #4F46E5 100%)",
+  gradientSurface:"linear-gradient(145deg, #FFFFFF 0%, #F1F5F9 100%)"
 };
 function stripAppearanceMode(obj){
   if(!obj||typeof obj!=="object")return{};
@@ -7015,6 +7067,16 @@ function stripAppearanceMode(obj){
   delete out.mode; delete out.theme; delete out["fs-theme"]; delete out.updatedAt; delete out.updatedBy;
   return out;
 }
+const GRADIENT_PRESETS=[
+  {label:"Navy → Indigo", v:"linear-gradient(135deg, #0F172A 0%, #4F46E5 100%)"},
+  {label:"Teal profundo", v:"linear-gradient(135deg, #0F766E 0%, #14B8A6 100%)"},
+  {label:"Azul gelo", v:"linear-gradient(145deg, #FFFFFF 0%, #DBEAFE 55%, #BFDBFE 100%)"},
+  {label:"Slate suave", v:"linear-gradient(160deg, #F8FAFC 0%, #E2E8F0 100%)"},
+  {label:"Midnight", v:"linear-gradient(160deg, #0B1220 0%, #1E293B 50%, #334155 100%)"},
+  {label:"Ocean", v:"linear-gradient(120deg, #0C4A6E 0%, #0284C7 50%, #38BDF8 100%)"},
+  {label:"Violeta", v:"linear-gradient(135deg, #4C1D95 0%, #7C3AED 55%, #A78BFA 100%)"},
+  {label:"Esmeralda", v:"linear-gradient(135deg, #064E3B 0%, #059669 55%, #34D399 100%)"},
+];
 const APPEARANCE_FIELDS = [
   { group:"Fonte", items:[
     {key:"fontFamily", label:"Família da fonte", type:"select", options:[
@@ -7026,40 +7088,45 @@ const APPEARANCE_FIELDS = [
     ]},
   ]},
   { group:"Páginas & layout", items:[
-    {key:"bg", label:"Background da página"},
-    {key:"card", label:"Cards / containers"},
-    {key:"font", label:"Texto principal"},
-    {key:"fontMuted", label:"Texto secundário"},
-    {key:"detail", label:"Áreas de detalhe"},
-    {key:"header", label:"Header"},
-    {key:"divider", label:"Bordas / divisores"},
-    {key:"btn", label:"Botões secundários"},
-    {key:"accentSolid", label:"Botão primário / acento"},
-    {key:"inputBg", label:"Fundo dos inputs"},
-    {key:"inputBorder", label:"Borda dos inputs"},
-    {key:"sidebarBg", label:"Sidebar admin"},
-    {key:"sidebarText", label:"Texto sidebar"},
+    {key:"bg", label:"Background da página", gradient:true, wide:true},
+    {key:"card", label:"Cards / containers", gradient:true},
+    {key:"font", label:"Texto principal", gradient:false},
+    {key:"fontMuted", label:"Texto secundário", gradient:false},
+    {key:"detail", label:"Áreas de detalhe", gradient:true},
+    {key:"header", label:"Header", gradient:true},
+    {key:"divider", label:"Bordas / divisores", gradient:false},
+    {key:"btn", label:"Botões secundários", gradient:true},
+    {key:"accentSolid", label:"Botão primário / acento", gradient:true},
+    {key:"inputBg", label:"Fundo dos inputs", gradient:true},
+    {key:"inputBorder", label:"Borda dos inputs", gradient:false},
+    {key:"sidebarBg", label:"Sidebar admin", gradient:true},
+    {key:"sidebarText", label:"Texto sidebar", gradient:false},
   ]},
-  { group:"Trilha (sem neon)", items:[
-    {key:"tlBg", label:"Fundo da trilha"},
-    {key:"tlBorder", label:"Borda da trilha"},
-    {key:"tlText", label:"Texto da trilha"},
-    {key:"tlMuted", label:"Texto secundário trilha"},
-    {key:"tlModBg", label:"Card do módulo"},
-    {key:"tlModText", label:"Texto do módulo"},
-    {key:"tlNode", label:"Nó / linha da trilha"},
-    {key:"tlPendingBg", label:"Lição pendente (fundo)"},
-    {key:"tlPendingText", label:"Lição pendente (texto)"},
-    {key:"tlDoneInput", label:"Input concluída"},
-    {key:"tlDoneOutput", label:"Output concluída"},
-    {key:"tlDoneReview", label:"Review concluída"},
-    {key:"tlActiveBg", label:"Lição atual (fundo)"},
-    {key:"tlActiveBorder", label:"Lição atual (borda)"},
-    {key:"tlActiveText", label:"Lição atual (texto)"},
-    {key:"tlNodeDone", label:"Ponto input feito"},
-    {key:"tlNodeOutput", label:"Ponto output feito"},
-    {key:"tlNodeReview", label:"Ponto review feito"},
-    {key:"tlNodeActive", label:"Ponto lição atual"},
+  { group:"Gradientes de marca", items:[
+    {key:"gradientBar", label:"Barra superior / acentos", gradient:true, wide:true, forceGradient:true},
+    {key:"gradientCta", label:"Botões CTA / destaques", gradient:true, wide:true, forceGradient:true},
+    {key:"gradientSurface", label:"Superfície suave (cards light)", gradient:true, wide:true, forceGradient:true},
+  ]},
+  { group:"Trilha", items:[
+    {key:"tlBg", label:"Fundo da trilha", gradient:true, wide:true},
+    {key:"tlBorder", label:"Borda da trilha", gradient:false},
+    {key:"tlText", label:"Texto da trilha", gradient:false},
+    {key:"tlMuted", label:"Texto secundário trilha", gradient:false},
+    {key:"tlModBg", label:"Card do módulo", gradient:true},
+    {key:"tlModText", label:"Texto do módulo", gradient:false},
+    {key:"tlNode", label:"Nó / linha da trilha", gradient:false},
+    {key:"tlPendingBg", label:"Lição pendente (fundo)", gradient:true},
+    {key:"tlPendingText", label:"Lição pendente (texto)", gradient:false},
+    {key:"tlDoneInput", label:"Input concluída", gradient:true},
+    {key:"tlDoneOutput", label:"Output concluída", gradient:true},
+    {key:"tlDoneReview", label:"Review concluída", gradient:true},
+    {key:"tlActiveBg", label:"Lição atual (fundo)", gradient:true},
+    {key:"tlActiveBorder", label:"Lição atual (borda)", gradient:false},
+    {key:"tlActiveText", label:"Lição atual (texto)", gradient:false},
+    {key:"tlNodeDone", label:"Ponto input feito", gradient:false},
+    {key:"tlNodeOutput", label:"Ponto output feito", gradient:false},
+    {key:"tlNodeReview", label:"Ponto review feito", gradient:false},
+    {key:"tlNodeActive", label:"Ponto lição atual", gradient:false},
   ]},
 ];
 
@@ -7072,15 +7139,108 @@ function loadAppearanceState(){
   return{...APPEARANCE_DEFAULTS};
 }
 
-function ColorField({label,value,onChange}){
-  const hex=(value&&String(value).startsWith("#"))?value:"#000000";
+function parsePaintValue(value){
+  const v=String(value||"").trim();
+  const isGrad=/gradient\(/i.test(v);
+  if(!isGrad){
+    const hex=/^#([0-9a-fA-F]{3,8})$/.test(v)?v:"#000000";
+    return{mode:"solid",c1:hex.length===4||hex.length===7||hex.length===9?hex:"#000000",c2:"#4F46E5",angle:135,raw:v};
+  }
+  // linear-gradient(135deg, #aaa 0%, #bbb 100%) or linear-gradient(135deg, #aaa, #bbb)
+  let angle=135;
+  const am=v.match(/(\d+(?:\.\d+)?)deg/);
+  if(am)angle=parseFloat(am[1])||135;
+  const colors=[...v.matchAll(/#([0-9a-fA-F]{3,8})\b/g)].map(m=>m[0]);
+  const c1=colors[0]||"#0F172A";
+  const c2=colors[1]||colors[0]||"#4F46E5";
+  return{mode:"gradient",c1,c2,angle,raw:v};
+}
+function buildGradient(angle,c1,c2){
+  return "linear-gradient("+angle+"deg, "+c1+" 0%, "+c2+" 100%)";
+}
+function normalizeColorInput(hex){
+  if(!hex)return"#000000";
+  let h=String(hex).trim();
+  if(/^#[0-9a-fA-F]{3}$/.test(h)){
+    h="#"+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];
+  }
+  if(!/^#[0-9a-fA-F]{6}$/.test(h))return"#000000";
+  return h;
+}
+
+/** Campo de cor com opção Sólida | Gradiente (em todos os lugares com gradient:true). */
+function ColorField({label,value,onChange,allowGradient=true,forceGradient=false,wide=false}){
+  const parsed=parsePaintValue(value);
+  const [mode,setMode]=useState(forceGradient?"gradient":(parsed.mode==="gradient"?"gradient":"solid"));
+  const [c1,setC1]=useState(normalizeColorInput(parsed.c1));
+  const [c2,setC2]=useState(normalizeColorInput(parsed.c2));
+  const [angle,setAngle]=useState(parsed.angle||135);
+
+  // Sync when external value changes (load from firebase)
+  useEffect(()=>{
+    const p=parsePaintValue(value);
+    if(forceGradient)setMode("gradient");
+    else if(p.mode==="gradient")setMode("gradient");
+    setC1(normalizeColorInput(p.c1));
+    setC2(normalizeColorInput(p.c2));
+    setAngle(p.angle||135);
+  },[value,forceGradient]);
+
+  function emitSolid(hex){
+    const h=normalizeColorInput(hex);
+    setC1(h);
+    onChange(h);
+  }
+  function emitGrad(a,a1,a2){
+    const g=buildGradient(a,normalizeColorInput(a1),normalizeColorInput(a2));
+    onChange(g);
+  }
+  function switchMode(m){
+    if(forceGradient&&m==="solid")return;
+    setMode(m);
+    if(m==="solid")onChange(normalizeColorInput(c1));
+    else emitGrad(angle,c1,c2);
+  }
+
+  const showGrad=allowGradient||forceGradient;
+  const preview=mode==="gradient"?buildGradient(angle,c1,c2):c1;
+
   return(
-    <div className="ap-field">
+    <div className={"ap-field"+(wide?" ap-field-wide":"")}>
       <label>{label}</label>
-      <div className="ap-color-row">
-        <input type="color" value={hex.length===7?hex:"#000000"} onChange={e=>onChange(e.target.value)} title={label}/>
-        <input type="text" value={value||""} onChange={e=>onChange(e.target.value)} placeholder="#000000" spellCheck={false}/>
-      </div>
+      {showGrad&&(
+        <div className="ap-mode-toggle">
+          {!forceGradient&&(
+            <button type="button" className={"ap-mode-btn"+(mode==="solid"?" active":"")} onClick={()=>switchMode("solid")}>Sólida</button>
+          )}
+          <button type="button" className={"ap-mode-btn"+(mode==="gradient"?" active":"")} onClick={()=>switchMode("gradient")}>Gradiente</button>
+        </div>
+      )}
+      {mode==="solid"?(
+        <div className="ap-color-row">
+          <input type="color" value={normalizeColorInput(c1)} onChange={e=>emitSolid(e.target.value)} title={label}/>
+          <input type="text" value={value&&!String(value).includes("gradient")?value:c1} onChange={e=>onChange(e.target.value)} placeholder="#000000" spellCheck={false}/>
+        </div>
+      ):(
+        <>
+          <div className="ap-color-row" style={{marginBottom:6}}>
+            <input type="color" value={normalizeColorInput(c1)} onChange={e=>{const n=e.target.value;setC1(n);emitGrad(angle,n,c2);}} title="Cor 1"/>
+            <input type="color" value={normalizeColorInput(c2)} onChange={e=>{const n=e.target.value;setC2(n);emitGrad(angle,c1,n);}} title="Cor 2"/>
+            <input type="text" value={value||""} onChange={e=>onChange(e.target.value)} placeholder="linear-gradient(...)" spellCheck={false} style={{flex:1}}/>
+          </div>
+          <div className="ap-angle-row">
+            <span>Ângulo</span>
+            <input type="range" min={0} max={360} value={angle} onChange={e=>{const a=parseInt(e.target.value,10)||0;setAngle(a);emitGrad(a,c1,c2);}}/>
+            <span style={{minWidth:36,textAlign:"right",fontWeight:700}}>{angle}°</span>
+          </div>
+          <div className="ap-grad-presets">
+            {GRADIENT_PRESETS.map(p=>(
+              <button key={p.v} type="button" className="ap-grad-preset" title={p.label} style={{background:p.v}} onClick={()=>onChange(p.v)}/>
+            ))}
+          </div>
+        </>
+      )}
+      <div className="ap-grad-preview" style={{background:preview}} title="Prévia"/>
     </div>
   );
 }
@@ -7163,7 +7323,7 @@ function AppearanceEditor({embedded,onClose}){
       <div className={embedded?"":"ap-panel-body"}>
         <p style={{fontSize:12,color:"#475569",margin:"0 0 14px",lineHeight:1.5}}>
           {isAdminUser
-            ?<>Ao clicar em <strong>Salvar aparência</strong>, as cores vão para o Firebase (<code>config/aparencia</code>) e passam a valer para <strong>todos os alunos e o admin</strong> no portal.</>
+            ?<>Escolha <strong>Sólida</strong> ou <strong>Gradiente</strong> em cada campo (ângulo + 2 cores + presets). Ao <strong>Salvar</strong>, vale para <strong>todo o portal</strong>.</>
             :<>As cores do portal são definidas pelo professor. Você não altera o tema global.</>}
         </p>
         {APPEARANCE_FIELDS.map(sec=>(
@@ -7181,15 +7341,17 @@ function AppearanceEditor({embedded,onClose}){
                     </div>
                   );
                 }
-                return <ColorField key={item.key} label={item.label} value={form[item.key]} onChange={v=>setKey(item.key,v)}/>;
+                return <ColorField key={item.key} label={item.label} value={form[item.key]} onChange={v=>setKey(item.key,v)} allowGradient={item.gradient!==false} forceGradient={!!item.forceGradient} wide={!!item.wide||!!item.forceGradient||item.gradient===true}/>;
               })}
             </div>
           </div>
         ))}
-        <div className="ap-preview-card">
+        <div className="ap-preview-card" style={{background:form.card||"var(--card)"}}>
+          <div style={{height:6,borderRadius:99,background:form.gradientBar||"var(--gradient-bar)",marginBottom:12}}/>
           <div style={{fontSize:11,fontWeight:700,color:"var(--font-muted)",marginBottom:6}}>PRÉVIA</div>
-          <div style={{fontWeight:800,fontSize:16,marginBottom:4}}>Card de exemplo</div>
-          <div style={{fontSize:13,color:"var(--font-muted)"}}>Texto secundário · trilha e páginas usam estas cores.</div>
+          <div style={{fontWeight:800,fontSize:16,marginBottom:4,color:form.font||"var(--font)"}}>Card de exemplo</div>
+          <div style={{fontSize:13,color:form.fontMuted||"var(--font-muted)"}}>Sólida ou gradiente em fundo, cards e trilha.</div>
+          <div style={{marginTop:10,height:36,borderRadius:10,background:form.accentSolid||form.gradientCta||"var(--accent-solid)"}}/>
           <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
             <span className="tl-badge-done" style={{background:"var(--tl-done-input)"}}>Input</span>
             <span className="tl-badge-done" style={{background:"var(--tl-done-output)"}}>Output</span>
