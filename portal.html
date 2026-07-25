@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="https://thefluency.studio/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -34,25 +34,146 @@
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;padding:0;}
 
-    /* ── TEMA: Dark (padrão) — bordas e textos mais visíveis ── */
+    /* ═══════════════════════════════════════════════════════════
+       DESIGN SYSTEM — High-End Premium (WCAG 4.5:1+)
+       Palette locked per platform overhaul directive
+       ═══════════════════════════════════════════════════════════ */
+    :root {
+      --ds-bg: #F8F9FA;
+      --ds-card: #FFFFFF;
+      --ds-sidebar: #1E293B;
+      --ds-text: #1E1E1E;
+      --ds-text-secondary: #475569;
+      --ds-sidebar-text: #FFFFFF;
+      --ds-sidebar-muted: #CBD5E1;
+      --ds-accent: #0F172A;
+      --ds-accent-indigo: #4F46E5;
+      --ds-border: #E2E8F0;
+      --ds-card-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      --ds-card-radius: 8px;
+      --ds-card-pad: 24px;
+      --ds-font: 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+      --ds-status-paid-fg: #15803D;
+      --ds-status-paid-bg: #F0FDF4;
+      --ds-status-pending-fg: #B45309;
+      --ds-status-pending-bg: #FFFBEB;
+      --ds-status-overdue-fg: #B91C1C;
+      --ds-status-overdue-bg: #FEF2F2;
+    }
+    .premium-card {
+      background: var(--ds-card);
+      border-radius: var(--ds-card-radius);
+      box-shadow: var(--ds-card-shadow);
+      border: 1px solid var(--ds-border);
+      padding: var(--ds-card-pad);
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700; letter-spacing: .04em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+      white-space: nowrap;
+    }
+    .status-badge-paid { color: var(--ds-status-paid-fg); background: var(--ds-status-paid-bg); }
+    .status-badge-pending, .status-badge-unpaid { color: var(--ds-status-pending-fg); background: var(--ds-status-pending-bg); }
+    .status-badge-overdue { color: var(--ds-status-overdue-fg); background: var(--ds-status-overdue-bg); }
+    .status-badge-partial { color: #1D4ED8; background: #EFF6FF; }
+
+    /* Admin shell: deep slate sidebar + light main */
+    .admin-shell { display: flex; min-height: 100vh; background: var(--ds-bg); }
+    .admin-sidebar {
+      width: 260px; flex-shrink: 0; background: var(--ds-sidebar);
+      color: var(--ds-sidebar-text); display: flex; flex-direction: column;
+      padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      border-right: 1px solid rgba(203,213,225,.12);
+    }
+    .admin-sidebar-brand { padding: 0 20px 28px; border-bottom: 1px solid rgba(203,213,225,.12); margin-bottom: 16px; }
+    .admin-sidebar-brand .brand-byline { color: var(--ds-sidebar-muted) !important; }
+    .admin-sidebar-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ds-sidebar-muted); padding: 8px 20px 10px;
+    }
+    .admin-nav-item {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      padding: 12px 20px; border: none; background: transparent; cursor: pointer;
+      color: var(--ds-sidebar-muted); font-size: 14px; font-weight: 500;
+      font-family: var(--ds-font); text-align: left; transition: background .15s, color .15s;
+    }
+    .admin-nav-item:hover { background: rgba(255,255,255,.06); color: var(--ds-sidebar-text); }
+    .admin-nav-item.active { background: rgba(79,70,229,.28); color: #FFFFFF; font-weight: 600; }
+    .admin-nav-item .nav-badge {
+      margin-left: auto; background: #F59E0B; color: #1E1E1E; font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 99px;
+    }
+    .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--ds-bg); }
+    .admin-main-header {
+      background: #FFFFFF; border-bottom: 1px solid var(--ds-border);
+      padding: 16px 28px; position: sticky; top: 0; z-index: 40;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    .admin-main-body { padding: 28px; max-width: 1200px; width: 100%; margin: 0 auto; }
+    .role-pill {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em; padding: 3px 10px;
+      border-radius: 99px; text-transform: uppercase;
+    }
+    .role-pill-admin { background: #1E293B; color: #FFFFFF; }
+    .role-pill-student { background: #EEF2FF; color: #3730A3; border: 1px solid #C7D2FE; }
+    .view-separator {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ds-text-secondary); margin: 0 0 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--ds-border);
+    }
+    @media (max-width: 900px) {
+      .admin-shell { flex-direction: column; }
+      .admin-sidebar {
+        width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap;
+        padding: 12px; gap: 4px; align-items: center;
+      }
+      .admin-sidebar-brand { border: none; margin: 0; padding: 8px 12px; }
+      .admin-sidebar-label { display: none; }
+      .admin-nav-item { width: auto; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
+      .admin-main-body { padding: 16px; }
+    }
+
+    /* Finance KPI grid */
+    .fin-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 800px) { .fin-kpi-grid { grid-template-columns: 1fr; } }
+    .fin-kpi-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; }
+    .fin-kpi-label { font-size: 12px; font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .fin-kpi-value { font-size: 28px; font-weight: 800; color: #1E1E1E; letter-spacing: -0.5px; font-family: var(--ds-font); }
+    .fin-kpi-sub { font-size: 12px; color: #475569; margin-top: 6px; }
+    .fin-chart-card, .fin-table-card {
+      background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 24px; margin-bottom: 24px;
+    }
+    .fin-table { width: 100%; border-collapse: collapse; font-size: 14px; color: #1E1E1E; }
+    .fin-table th {
+      text-align: left; padding: 12px 14px; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em; color: #475569;
+      border-bottom: 2px solid #E2E8F0; background: #F8F9FA;
+    }
+    .fin-table td { padding: 14px; border-bottom: 1px solid #E2E8F0; color: #1E1E1E; vertical-align: middle; }
+    .fin-table tr:hover td { background: #F8F9FA; }
+
+
+    /* ── TEMA: Dark (Estilo Deep Blue Glassmorphism) ── */
     :root, [data-theme="dark"] {
-      --bg: linear-gradient(160deg,#05080f 0%,#080e1c 35%,#0b1328 60%,#0d1a35 80%,#0a1528 100%);
-      --font: #eef4f8;
-      --font-muted: rgba(196,212,228,.82);
-      --card: #1e2d45;
-      --lesson: #1a2740;
-      --detail: #141f33;
-      --header: rgba(10,18,38,.94);
-      --tabbar: rgba(255,255,255,.08);
-      --badge: rgba(255,255,255,.12);
-      --btn: rgba(255,255,255,.10);
-      --done: rgba(6,78,59,.42);
-      --done-border: rgba(134,239,172,.55);
-      --done-text: #a7f3d0;
-      --divider: rgba(255,255,255,.18);
-      --input-bg: rgba(0,0,0,.30);
-      --input-border: rgba(255,255,255,.24);
-      --shadow: 0 8px 32px rgba(0,0,0,.42);
+      --bg: radial-gradient(circle at 50% 40%, #1e40af 0%, #0f172a 65%, #020617 100%);
+      --font: #f8fafc;
+      --font-muted: #CBD5E1;
+      --card: rgba(15, 23, 42, 0.45);
+      --lesson: rgba(255, 255, 255, 0.03);
+      --detail: rgba(0, 0, 0, 0.2);
+      --header: rgba(15, 23, 42, 0.5);
+      --tabbar: rgba(255, 255, 255, 0.05);
+      --badge: rgba(255, 255, 255, 0.08);
+      --btn: rgba(255, 255, 255, 0.08);
+      --done: rgba(56, 189, 248, 0.15);
+      --done-border: rgba(56, 189, 248, 0.3);
+      --done-text: #7dd3fc;
+      --divider: rgba(255, 255, 255, 0.12);
+      --input-bg: rgba(0, 0, 0, 0.25);
+      --input-border: rgba(255, 255, 255, 0.15);
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
       --sd-page-bg: #0b1220;
       --sd-surface: #ffffff;
       --sd-surface-text: #0f172a;
@@ -65,28 +186,29 @@
       --sd-donut-track: #2a3f5c;
     }
 
+    /* ── TEMA: Light (High-End Premium — design system) ── */
     [data-theme="light"] {
-      --bg: linear-gradient(152deg, #E0ECFF 0%, #f6faff 38%, #eef6ff 62%, #D4F7F2 100%);
-      --font: #174082;
-      --font-muted: #2252A0;
-      --card: rgba(255,255,255,.94);
-      --lesson: rgba(255,255,255,.88);
-      --detail: rgba(224,236,255,.72);
-      --header: rgba(255,255,255,.92);
-      --tabbar: rgba(202,222,252,.55);
-      --badge: rgba(53,102,182,.10);
-      --btn: rgba(255,255,255,.90);
-      --done: rgba(53,102,182,.14);
-      --done-border: rgba(53,102,182,.45);
-      --done-text: #174082;
-      --divider: rgba(34,82,160,.22);
-      --input-bg: rgba(255,255,255,.94);
-      --input-border: rgba(53,102,182,.30);
-      --shadow: 0 10px 36px rgba(23,64,130,.11), 0 2px 8px rgba(53,102,182,.07);
+      --bg: #F8F9FA;
+      --font: #1E1E1E;
+      --font-muted: #475569;
+      --card: #FFFFFF;
+      --lesson: #ffffff;
+      --detail: #f1f5f9;
+      --header: rgba(255, 255, 255, 0.95);
+      --tabbar: #e2e8f0;
+      --badge: #f1f5f9;
+      --btn: #ffffff;
+      --done: rgba(13, 148, 136, 0.1);
+      --done-border: #0d9488;
+      --done-text: #0f4a46;
+      --divider: #e2e8f0;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
       --sd-page-bg: transparent;
-      --sd-surface: rgba(255,255,255,.96);
-      --sd-surface-text: #174082;
-      --sd-surface-muted: #3566B6;
+      --sd-surface: #FFFFFF;
+      --sd-surface-text: #1E1E1E;
+      --sd-surface-muted: #475569;
       --sd-surface-border: rgba(53,102,182,.18);
       --sd-dark-card: #174082;
       --sd-dark-card-2: #2252A0;
@@ -109,38 +231,22 @@
     }
     .animate-spin { transition: none !important; }
 
-    body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:radial-gradient(ellipse 900px 600px at 10% 0%,rgba(32,120,150,.07),transparent 65%),
-                 radial-gradient(ellipse 700px 500px at 90% 95%,rgba(20,60,110,.09),transparent 65%);}
-    [data-theme="light"] body::before{
-      display:block;
-      background:
-        radial-gradient(ellipse 720px 480px at 8% 5%, rgba(53,102,182,.22), transparent 68%),
-        radial-gradient(ellipse 560px 420px at 92% 88%, rgba(24,126,116,.16), transparent 70%),
-        radial-gradient(ellipse 480px 360px at 55% 42%, rgba(134,207,255,.20), transparent 72%);
-      animation:lightMesh 14s ease-in-out infinite alternate;
-    }
-    [data-theme="light"] body::after{
-      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(circle 140px at 12% 22%, rgba(53,102,182,.10), transparent),
-        radial-gradient(circle 100px at 88% 18%, rgba(134,207,255,.14), transparent),
-        radial-gradient(circle 120px at 78% 72%, rgba(0,102,91,.09), transparent);
-      animation:lightOrbs 20s ease-in-out infinite;
-    }
-    @keyframes lightMesh{0%{opacity:.85;transform:scale(1);}100%{opacity:1;transform:scale(1.03);}}
-    @keyframes lightOrbs{0%,100%{transform:translate(0,0);}33%{transform:translate(12px,-8px);}66%{transform:translate(-8px,10px);}}
-    @keyframes lightShimmer{0%{background-position:200% center;}100%{background-position:-200% center;}}
-    @keyframes lightPulse{0%,100%{box-shadow:0 4px 20px rgba(53,102,182,.18);}50%{box-shadow:0 8px 32px rgba(53,102,182,.28);}}
+    body{font-family:var(--ds-font),'Inter','Outfit',system-ui,sans-serif;font-size:16px;line-height:1.5;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
     #root{position:relative;z-index:1;}
 
-    /* ── CARDS ── */
-    .glass{background:var(--card);border:1.5px solid var(--divider);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);}
+    /* ── CARDS (Efeito Vidro) ── */
+    .glass{
+      background: var(--card);
+      border: 1px solid var(--divider);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: var(--shadow);
+    }
     .glass.rounded-2xl{transition:box-shadow .25s,border-color .25s,transform .2s;}
     .glass.rounded-2xl:hover{box-shadow:0 12px 40px rgba(0,0,0,.30);}
-    [data-theme="light"] .glass{background:var(--gradient-surface);border-color:rgba(53,102,182,.18);box-shadow:0 10px 36px rgba(23,64,130,.10), inset 0 1px 0 rgba(255,255,255,.95);}
-    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 18px 48px rgba(23,64,130,.14), 0 0 0 1px rgba(134,207,255,.35);border-color:rgba(53,102,182,.30);transform:translateY(-2px);}
+    [data-theme="light"] .glass{background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 4px 12px rgba(0,0,0,0.05);border-radius:8px;backdrop-filter:none;-webkit-backdrop-filter:none;}
+    [data-theme="light"] .glass.rounded-2xl{border-radius:8px;}
+    [data-theme="light"] .glass.rounded-2xl:hover{box-shadow:0 6px 16px rgba(0,0,0,0.08);border-color:#CBD5E1;transform:none;}
     .muted{color:var(--font-muted);}
     .chip{background:var(--badge);border:1.5px solid var(--divider);}
     .btn{border:1.5px solid var(--divider);background:var(--btn);transition:transform .08s,background .12s,border-color 280ms ease,color 280ms ease;cursor:pointer;color:var(--font);}
@@ -148,8 +254,8 @@
     .btn:active{transform:translateY(1px);}
     .btn-primary{border:1px solid rgba(44,160,180,.55);background:linear-gradient(135deg,#1e8fa8,#145f7a);color:#fff;}
     .btn-primary:hover{filter:brightness(1.10);}
-    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#3566B6 0%,#2252A0 45%,#187E74 100%)!important;border:1px solid rgba(53,102,182,.35)!important;box-shadow:0 4px 18px rgba(34,82,160,.32);color:#fff!important;}
-    [data-theme="light"] .btn-primary:hover{filter:none;background:linear-gradient(135deg,#2252A0,#174082,#00665B)!important;box-shadow:0 8px 28px rgba(23,64,130,.38);transform:translateY(-1px);color:#fff!important;}
+    [data-theme="light"] .btn-primary{background:#0F172A!important;border:1px solid #0F172A!important;box-shadow:0 2px 8px rgba(15,23,42,.18);color:#fff!important;}
+    [data-theme="light"] .btn-primary:hover{filter:none;background:#4F46E5!important;border-color:#4F46E5!important;box-shadow:0 4px 14px rgba(79,70,229,.28);transform:translateY(-1px);color:#fff!important;}
     [data-theme="light"] .btn-primary svg{color:#fff!important;}
     [data-theme="light"] .admin-toolbar .btn:not(.btn-primary){color:var(--font);background:var(--btn);}
     .btn-danger{border:1px solid rgba(200,60,80,.35);background:rgba(200,60,80,.10);color:#e07080;}
@@ -351,17 +457,20 @@
     textarea.obs-input:focus{border-color:rgba(30,143,168,.7);}
 
     /* ── FINANCEIRO ── */
-    .fin-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;}
-    .fin-paga{background:rgba(30,160,110,.18);border:1px solid rgba(30,160,110,.40);color:#60daa8;}
-    .fin-avencer{background:rgba(220,160,30,.14);border:1px solid rgba(220,160,30,.38);color:#f0cc60;}
-    .fin-vencida{background:rgba(200,60,80,.16);border:1px solid rgba(200,60,80,.40);color:#f0909a;}
-    .fin-aberto{background:rgba(42,120,200,.14);border:1px solid rgba(42,120,200,.33);color:#88c0f8;}
-    .fin-creditos{background:rgba(110,80,200,.14);border:1px solid rgba(110,80,200,.33);color:#c0a8f8;}
-    [data-theme="light"] .fin-paga{color:#0a5c38;background:rgba(20,140,90,.10);}
-    [data-theme="light"] .fin-vencida{color:#8a2030;background:rgba(200,60,80,.08);}
-    [data-theme="light"] .fin-avencer{color:#7a5500;background:rgba(220,160,30,.08);}
-    [data-theme="light"] .fin-aberto{color:#1a3a80;background:rgba(42,120,200,.08);}
-    [data-theme="light"] .fin-creditos{color:#3d1a80;background:rgba(110,80,200,.08);}
+    .fin-badge{font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;white-space:nowrap;display:inline-block;border:none;}
+    .fin-paga{background:#F0FDF4;color:#15803D;}
+    .fin-avencer{background:#FFFBEB;color:#B45309;}
+    .fin-vencida{background:#FEF2F2;color:#B91C1C;}
+    .fin-aberto{background:#FFFBEB;color:#B45309;}
+    .fin-creditos{background:#EEF2FF;color:#3730A3;}
+    [data-theme="light"] .fin-paga{color:#15803D;background:#F0FDF4;}
+    [data-theme="light"] .fin-vencida{color:#B91C1C;background:#FEF2F2;}
+    [data-theme="light"] .fin-avencer{color:#B45309;background:#FFFBEB;}
+    [data-theme="light"] .fin-aberto{color:#B45309;background:#FFFBEB;}
+    [data-theme="light"] .fin-creditos{color:#3730A3;background:#EEF2FF;}
+    [data-theme="dark"] .fin-paga{background:rgba(21,128,61,.22);color:#86EFAC;border:1px solid rgba(134,239,172,.35);}
+    [data-theme="dark"] .fin-vencida{background:rgba(185,28,28,.22);color:#FCA5A5;border:1px solid rgba(252,165,165,.35);}
+    [data-theme="dark"] .fin-avencer,[data-theme="dark"] .fin-aberto{background:rgba(180,83,9,.22);color:#FCD34D;border:1px solid rgba(252,211,77,.35);}
 
     /* ── FINANCEIRO DASHBOARD & PAYMENT CARDS ── */
     .fin-hero{background:linear-gradient(145deg,rgba(18,36,58,.98),rgba(10,24,44,.95));border:1.5px solid rgba(30,143,168,.28);border-radius:22px;padding:22px 24px;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.06);}
@@ -478,7 +587,7 @@
     /* ── STUDENT DASHBOARD (referência visual) ── */
     .student-dash-wrap{background:var(--sd-page-bg);min-height:calc(100vh - 52px);padding-bottom:28px;margin:0 -16px;padding-left:16px;padding-right:16px;}
     .student-dash{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto;padding-top:8px;}
-    .sd-card-light{background:var(--sd-surface);border:1.5px solid var(--sd-surface-border);border-radius:20px;padding:18px 20px;box-shadow:0 10px 30px rgba(0,0,0,.18);color:var(--sd-surface-text);}
+    .sd-card-light{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);color:#1E1E1E;}
     [data-theme="light"] .sd-card-light{
       background:linear-gradient(145deg,#fff 0%,#f2f8ff 55%,#e8f4fc 100%);
       border-color:rgba(53,102,182,.16);
@@ -944,7 +1053,7 @@
     }
     window.__applyTheme=applyTheme;
     // Aplicar tema salvo localmente
-    const saved=localStorage.getItem('fs-theme')||'system';
+    const saved=localStorage.getItem('fs-theme')||'light';
     const isDark=saved==='dark'||(saved==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
     // Tenta carregar do Firebase para retrocompatibilidade
@@ -960,7 +1069,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.13.4");
+console.info("Fluency Portal v2026.07.25-overhaul-ui");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1990,7 +2099,7 @@ async function linkStudentPortalLogin(studentUid,email,password){
 
 // ── MODIFICAÇÃO 1c: ThemeSwitcher ──────────────────────────────────────────
 function ThemeSwitcher() {
-  const [mode, setMode] = useState(() => localStorage.getItem('fs-theme') || 'system');
+  const [mode, setMode] = useState(() => localStorage.getItem('fs-theme') || 'light');
 
   useEffect(() => {
     function apply(m) {
@@ -2056,9 +2165,7 @@ function LogoBar({ onBack, isAdmin, showLogout }) {
       </div>
       <div style={{display:'flex',alignItems:'center',gap:8}}>
         {isAdmin && (
-          <span style={{fontSize:10,fontWeight:700,letterSpacing:'.08em',padding:'3px 8px',borderRadius:20,background:'rgba(255,255,255,.15)',border:'1px solid rgba(255,255,255,.28)',color:'#fff'}}>
-            ADMIN
-          </span>
+          <span className="role-pill role-pill-admin">Admin</span>
         )}
         <ThemeSwitcher/>
         {showLogout && (
@@ -2165,8 +2272,11 @@ function AdminLessonPanel({item,uid}){
   useEffect(()=>{setDraft(snapshotFromItem(item));setSaveMsg("");setSaveErr("");},[item.id]);
   function setD(field,val){setDraft(p=>({...p,[field]:val}));setSaveMsg("");setSaveErr("");}
   async function saveLesson(){
-    if(!uid||!item?.id){setSaveErr("Aluno ou lição ausente.");return;}
-    setSaving(true);setSaveErr("");setSaveMsg("");
+    if(!uid||!item?.id){setSaveErr("Acesso negado: Aluno ou lição ausente.");return;}
+    setSaving(true);
+    setSaveErr("");
+    setSaveMsg("");
+    
     try{
       const patch={};
       FIELD_KEYS.forEach(k=>{
@@ -2174,12 +2284,17 @@ function AdminLessonPanel({item,uid}){
         if(v===undefined||v===null)v="";
         patch[`trilha.${item.id}.${k}`]=v;
       });
+      
       await db.collection("students").doc(uid).update(patch);
-      setSaveMsg("Lição salva na trilha.");
-      setTimeout(()=>setSaveMsg(""),2500);
+      
+      setSaveMsg("✓ Alterações salvas com sucesso!");
+      setTimeout(()=>setSaveMsg(""), 3500);
     }catch(e){
-      setSaveErr(e.message||String(e));
-    }finally{setSaving(false);}
+      console.error("Erro no salvamento Firebase:", e);
+      setSaveErr("Falha na conexão. Verifique sua rede e tente novamente.");
+    }finally{
+      setSaving(false);
+    }
   }
   return(
     <div className="space-y-4">
@@ -2984,7 +3099,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
 
   const studentsByStatus=useMemo(()=>filterStudentsByStatus(students,filtroStatus),[students,filtroStatus]);
   const contadores=useMemo(()=>getAdminStatusCounts(students),[students]);
-  const {previsto,recebido}=useMemo(()=>computeStudioFinanceMonth(studentsByStatus,monthKey),[studentsByStatus,monthKey]);
+  const {previsto,recebido}=useMemo(()=>computeStudioFinanceMonth(students,monthKey),[students,monthKey]);
   const fixasPagasMes=fixasPagasPorMes[monthKey]||{};
   const totalDespesasPrevistas=useMemo(()=>despesasFixas.reduce((s,d)=>s+(parseFloat(d.valor)||0),0),[despesasFixas]);
   const totalDespesasFixasPagas=useMemo(
@@ -3363,29 +3478,70 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
             </button>
           ))}
         </div>
-        <div className="space-y-2">
-          {alunosFiltrados.length===0?(
-            <div className="text-center py-8 muted text-sm">{filtroStatus==="ativo"&&!busca.trim()?"Nenhum aluno ativo no momento.":"Nenhum aluno encontrado com este filtro."}</div>
-          ):alunosFiltrados.map(s=>{
-            const snap=resolveFinanceSnapshot(s.financeiro?.parcelas||[]);
-            const parcelas=s.financeiro?.parcelas||[];
-            const pagas=parcelas.filter(p=>p.status==="paga").length;
-            return(
-              <button key={s.uid} className="fin-student-pick w-full text-left" onClick={()=>onSelectStudent(s.uid)}>
-                {s.foto
-                  ?<img src={s.foto} alt="" style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)"}}/>
-                  :<div style={{width:40,height:40,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
-                }
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:14}}>{s.name||"Aluno"}</div>
-                  <div style={{fontSize:11,color:"var(--font-muted)"}}>{parcelas.length} parcela{parcelas.length!==1?"s":""} · {pagas} paga{pagas!==1?"s":""}</div>
+        <div>
+          {alunosFiltrados.length === 0 ? (
+            <div className="text-center py-8 muted text-sm">
+              {filtroStatus === "ativo" && !busca.trim() ? "Nenhum aluno ativo no momento." : "Nenhum aluno encontrado com este filtro."}
+            </div>
+          ) : (
+            <>
+              {alunosFiltrados.filter(s => resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate).length > 0 && (
+                <div style={{marginBottom: 20}}>
+                  <div style={{fontSize: 12, fontWeight: 800, color: "#f87171", textTransform: "uppercase", marginBottom: 8, paddingLeft: 4}}>
+                    Atenção: Pagamentos em Atraso
+                  </div>
+                  <div className="space-y-2">
+                    {alunosFiltrados
+                      .filter(s => resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate)
+                      .map(s => {
+                        const parcelas = s.financeiro?.parcelas || [];
+                        const pagas = parcelas.filter(p => p.status === "paga").length;
+                        return (
+                          <button key={s.uid} className="fin-student-pick w-full text-left" style={{borderColor: "rgba(248, 113, 113, 0.4)", background: "rgba(248, 113, 113, 0.05)"}} onClick={() => onSelectStudent(s.uid)}>
+                            {s.foto
+                              ? <img src={s.foto} alt="" style={{width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--divider)"}}/>
+                              : <div style={{width: 40, height: 40, borderRadius: "50%", background: "var(--badge)", display: "flex", alignItems: "center", justifyContent: "center"}}><Icon name="user" size={18}/></div>
+                            }
+                            <div style={{flex: 1, minWidth: 0}}>
+                              <div style={{fontWeight: 700, fontSize: 14}}>{s.name || "Aluno"}</div>
+                              <div style={{fontSize: 11, color: "var(--font-muted)"}}>{parcelas.length} parcelas · {pagas} pagas</div>
+                            </div>
+                            <span className="fin-badge fin-vencida">Atrasado</span>
+                            <Icon name="arrow-right" size={16} style={{opacity: .45}}/>
+                          </button>
+                        );
+                      })}
+                  </div>
                 </div>
-                <StatusBadge status={s.status||"lead"}/>
-                {snap.isLate&&<span className="fin-badge fin-vencida">Atrasado</span>}
-                <Icon name="arrow-right" size={16} style={{opacity:.45}}/>
-              </button>
-            );
-          })}
+              )}
+
+              <div style={{fontSize: 12, fontWeight: 800, color: "var(--font-muted)", textTransform: "uppercase", marginBottom: 8, paddingLeft: 4}}>
+                Situação Regular
+              </div>
+              <div className="space-y-2">
+                {alunosFiltrados
+                  .filter(s => !resolveFinanceSnapshot(s.financeiro?.parcelas || []).isLate)
+                  .map(s => {
+                    const parcelas = s.financeiro?.parcelas || [];
+                    const pagas = parcelas.filter(p => p.status === "paga").length;
+                    return (
+                      <button key={s.uid} className="fin-student-pick w-full text-left" onClick={() => onSelectStudent(s.uid)}>
+                        {s.foto
+                          ? <img src={s.foto} alt="" style={{width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--divider)"}}/>
+                          : <div style={{width: 40, height: 40, borderRadius: "50%", background: "var(--badge)", display: "flex", alignItems: "center", justifyContent: "center"}}><Icon name="user" size={18}/></div>
+                        }
+                        <div style={{flex: 1, minWidth: 0}}>
+                          <div style={{fontWeight: 700, fontSize: 14}}>{s.name || "Aluno"}</div>
+                          <div style={{fontSize: 11, color: "var(--font-muted)"}}>{parcelas.length} parcelas · {pagas} pagas</div>
+                        </div>
+                        <StatusBadge status={s.status || "lead"}/>
+                        <Icon name="arrow-right" size={16} style={{opacity: .45}}/>
+                      </button>
+                    );
+                  })}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -4177,6 +4333,12 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   return(
     <div className="min-h-screen pb-20">
       <LogoBar onBack={isAdmin&&onBack?onBack:null} isAdmin={isAdmin} showLogout={true}/>
+      {isAdmin&&(
+        <div style={{background:"#1E293B",color:"#CBD5E1",padding:"10px 16px",fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:10,justifyContent:"center"}}>
+          <span className="role-pill role-pill-admin">Admin</span>
+          <span>Você está na visão de ficha do aluno — não é o portal do estudante</span>
+        </div>
+      )}
       {isAdmin&&showFullProfile&&fullStudent&&(
         <ModalEdicao
           student={fullStudent}
@@ -4186,6 +4348,11 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       )}
 
       <main className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")}>
+        {!isAdmin&&(
+          <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px"}}>
+            <span className="role-pill role-pill-student">Portal do aluno</span>
+          </div>
+        )}
         {isAdmin?(
           <>
             <div className="glass rounded-2xl p-5 mb-5">
@@ -6841,64 +7008,92 @@ function AdminApp({user}){
   const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
   const showBack=adminView!=="dashboard";
 
+  const adminNav=[
+    {id:"dashboard",icon:"layout-dashboard",label:"Painel"},
+    {id:"alunos",icon:"users",label:"Alunos"},
+    {id:"cadastros",icon:"clipboard-check",label:"Cadastros"},
+    {id:"financeiro",icon:"wallet",label:"Financeiro"},
+    {id:"agenda",icon:"calendar",label:"Agenda"},
+    {id:"config",icon:"settings",label:"Configurações"},
+  ];
   return(
-    <div className="min-h-screen">
+    <div className="admin-shell" data-admin-view="true">
       {showModal&&<ModalCadastro onClose={()=>setShowModal(false)} onSaved={()=>setShowModal(false)}/>}
-      <LogoBar isAdmin={true} showLogout={true}/>
-      <div className="admin-toolbar px-4 py-4 sticky top-[49px] z-40" style={{background:"var(--header)",backdropFilter:"blur(14px)",borderBottom:"1px solid var(--divider)"}}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            {showBack&&(
-              <button className="btn" style={{padding:"6px 10px",borderRadius:8,display:"flex",alignItems:"center",gap:6}} onClick={()=>setAdminView("dashboard")}>
-                <Icon name="arrow-left" size={14}/><span style={{fontSize:12}}>Dashboard</span>
-              </button>
-            )}
-            <div>
-              <h1 className="text-xl font-bold">{viewTitles[adminView]||"Painel"}</h1>
-              <p style={{fontSize:12,color:"var(--font-muted)"}}>Fluency Studio · Área Administrativa</p>
-            </div>
-          </div>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            {pendentesCount>0&&(
-              <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
-                style={{background:"linear-gradient(135deg,rgba(232,169,76,.25),rgba(240,204,96,.15))",border:"1px solid rgba(232,169,76,.45)",color:"#c8860a"}}>
-                <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
-              </button>
-            )}
-            <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
-              <Icon name="user-plus" size={16}/> Novo Aluno
-            </button>
+      <aside className="admin-sidebar" aria-label="Navegação administrativa">
+        <div className="admin-sidebar-brand">
+          <BrandLogo/>
+          <div style={{marginTop:12,display:"flex",alignItems:"center",gap:8}}>
+            <span className="role-pill role-pill-admin">Admin</span>
+            <span style={{fontSize:11,color:"#CBD5E1"}}>Área restrita</span>
           </div>
         </div>
-      </div>
-      <main className="px-5 pb-10 max-w-6xl mx-auto pt-6">
-        {studentsErr&&(
-          <div className="err-box mb-4" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <span>{studentsErr}</span>
-            <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
+        <div className="admin-sidebar-label">Gestão da escola</div>
+        {adminNav.map(n=>(
+          <button key={n.id} type="button" className={"admin-nav-item"+(adminView===n.id?" active":"")} onClick={()=>setAdminView(n.id)}>
+            <Icon name={n.icon} size={18}/>
+            <span>{n.label}</span>
+            {n.id==="cadastros"&&pendentesCount>0&&<span className="nav-badge">{pendentesCount}</span>}
+          </button>
+        ))}
+        <div style={{marginTop:"auto",padding:"16px 20px",borderTop:"1px solid rgba(203,213,225,.12)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+            <ThemeSwitcher/>
           </div>
-        )}
-        {!students
-          ?<LoadingScreen/>
-          :adminView==="dashboard"
-          ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
-              if(id==="alunos")setAdminView("alunos");
-              if(id==="cadastros")setAdminView("cadastros");
-              if(id==="financeiro")setAdminView("financeiro");
-              if(id==="agenda")setAdminView("agenda");
-              if(id==="config")setAdminView("config");
-            }}/>
-          :adminView==="cadastros"
-          ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
-          :adminView==="financeiro"
-          ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
-          :adminView==="agenda"
-          ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
-          :adminView==="config"
-          ?<AdminConfig students={students}/>
-          :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
-        }
-      </main>
+          <button type="button" className="admin-nav-item" style={{padding:"10px 0"}} onClick={()=>auth.signOut()}>
+            <Icon name="log-out" size={18}/><span>Sair</span>
+          </button>
+        </div>
+      </aside>
+      <div className="admin-main">
+        <header className="admin-main-header">
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
+            <div>
+              <div className="view-separator" style={{marginBottom:4,border:"none",padding:0}}>Área administrativa · não visível ao aluno</div>
+              <h1 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>{viewTitles[adminView]||"Painel"}</h1>
+              <p style={{fontSize:13,color:"#475569",margin:"4px 0 0"}}>Fluency Studio · Gestão premium</p>
+            </div>
+            <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+              {pendentesCount>0&&(
+                <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
+                  style={{background:"#FFFBEB",border:"1px solid #FCD34D",color:"#B45309"}}>
+                  <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
+                </button>
+              )}
+              <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
+                <Icon name="user-plus" size={16}/> Novo Aluno
+              </button>
+            </div>
+          </div>
+        </header>
+        <main className="admin-main-body">
+          {studentsErr&&(
+            <div className="err-box mb-4" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,color:"#B91C1C",background:"#FEF2F2",border:"1px solid #FECACA"}}>
+              <span>{studentsErr}</span>
+              <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
+            </div>
+          )}
+          {!students
+            ?<LoadingScreen/>
+            :adminView==="dashboard"
+            ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
+                if(id==="alunos")setAdminView("alunos");
+                if(id==="cadastros")setAdminView("cadastros");
+                if(id==="financeiro")setAdminView("financeiro");
+                if(id==="agenda")setAdminView("agenda");
+                if(id==="config")setAdminView("config");
+              }}/>
+            :adminView==="cadastros"
+            ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+            :adminView==="financeiro"
+            ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
+            :adminView==="agenda"
+            ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
+            :adminView==="config"
+            ?<AdminConfig students={students}/>
+            :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+          }
+        </main>
+      </div>
       <IVi mode="admin"/>
     </div>
   );
