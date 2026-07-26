@@ -348,13 +348,101 @@
     .num-light{background:var(--badge);border:1px solid var(--input-border);color:var(--font);min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     .num-dark{background:rgba(139,92,246,.22);border:1px solid rgba(167,139,250,.45);color:#c4b5fd;min-width:2.6rem;text-align:center;border-radius:9px;padding:5px 7px;font-weight:700;font-size:13px;flex-shrink:0;}
     [data-theme="light"] .num-dark{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);color:#6d28d9;}
-    /* INPUT / OUTPUT — teal claro luminoso (sempre legível na trilha) */
-    .tag-input{background:rgba(45,212,191,.28)!important;color:#99F6E4!important;border:1px solid #5EEAD4!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(94,234,212,.95),0 0 16px rgba(45,212,191,.65);box-shadow:0 0 12px rgba(45,212,191,.45);}
-    .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border:1px solid #2DD4BF!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(45,212,191,.95),0 0 16px rgba(20,184,166,.7);box-shadow:0 0 12px rgba(20,184,166,.5);}
-    .tag-review{background:rgba(167,139,250,.28)!important;color:#DDD6FE!important;border:1px solid #C4B5FD!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 8px rgba(196,181,253,.85);box-shadow:0 0 10px rgba(139,92,246,.4);}
-    [data-theme="light"] .tag-input{background:rgba(45,212,191,.28)!important;color:#5EEAD4!important;border-color:#2DD4BF!important;}
-    [data-theme="light"] .tag-output{background:rgba(20,184,166,.30)!important;color:#5EEAD4!important;border-color:#14B8A6!important;}
-    [data-theme="light"] .tag-review{background:rgba(167,139,250,.25)!important;color:#A78BFA!important;border-color:#8B5CF6!important;}
+    /* INPUT / OUTPUT / REVIEW — sólido legível (sem neon) */
+    .tag-input{background:#E0F2FE!important;color:#0C4A6E!important;border:1px solid #7DD3FC!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:none!important;box-shadow:none!important;}
+    .tag-output{background:#CCFBF1!important;color:#115E59!important;border:1px solid #5EEAD4!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:none!important;box-shadow:none!important;}
+    .tag-review{background:#EDE9FE!important;color:#5B21B6!important;border:1px solid #C4B5FD!important;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:99px;text-transform:uppercase;white-space:nowrap;text-shadow:none!important;box-shadow:none!important;}
+    [data-theme="light"] .tag-input{background:#E0F2FE!important;color:#0C4A6E!important;border-color:#38BDF8!important;}
+    [data-theme="light"] .tag-output{background:#CCFBF1!important;color:#0F766E!important;border-color:#2DD4BF!important;}
+    [data-theme="light"] .tag-review{background:#EDE9FE!important;color:#5B21B6!important;border-color:#A78BFA!important;}
+    /* Em fundo escuro da trilha journey */
+    .tj-stage .tag-input,.tj-lesson-circle .tag-input{background:#0C4A6E!important;color:#E0F2FE!important;border-color:#38BDF8!important;}
+    .tj-stage .tag-output{background:#115E59!important;color:#CCFBF1!important;border-color:#5EEAD4!important;}
+    .tj-stage .tag-review{background:#4C1D95!important;color:#EDE9FE!important;border-color:#C4B5FD!important;}
+    /* Botões da lição do aluno */
+    .slv-btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      background:linear-gradient(159deg,#0F172A 0%,#4899e5 100%)!important;
+      color:#fff!important;border:none!important;border-radius:14px;
+      font-weight:800;font-size:13px;letter-spacing:.02em;text-decoration:none;
+      box-shadow:0 8px 22px rgba(15,23,42,.22);transition:transform .15s,filter .15s;
+      font-family:var(--font-family-ui);padding:14px 16px;min-height:48px;
+    }
+    .slv-btn:hover{filter:brightness(1.08);transform:translateY(-1px);color:#fff!important;}
+    .slv-btn-live{width:100%;max-width:100%;font-size:15px;padding:16px 18px;min-height:56px;border-radius:16px;}
+    .slv-btn-pair{flex:1;min-width:0;font-size:12px;padding:12px 10px;min-height:46px;}
+    .slv-btn-row{display:flex;gap:10px;width:100%;}
+    .slv-btn-row-center{display:flex;justify-content:center;width:100%;margin-bottom:10px;}
+    .slv-theme-card{
+      margin-top:18px;padding:18px 16px;border-radius:16px;
+      background:
+        linear-gradient(#fff,#fff) padding-box,
+        linear-gradient(159deg,#0F172A,#4899e5) border-box;
+      border:2px solid transparent;
+      box-shadow:0 10px 28px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.9);
+      position:relative;
+    }
+    .slv-theme-card::before{
+      content:'';position:absolute;top:0;left:16px;right:16px;height:3px;border-radius:0 0 8px 8px;
+      background:linear-gradient(159deg,#0F172A 0%,#4899e5 100%);
+    }
+    .slv-theme-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#475569;margin-bottom:4px;}
+    .slv-theme-text{font-size:14px;font-weight:600;color:#1E1E1E;line-height:1.55;margin:0 0 12px;}
+    .slv-theme-text:last-child{margin-bottom:0;}
+    .slv-perf-line{height:1px;background:linear-gradient(90deg,transparent,#CBD5E1,transparent);margin:20px 0 14px;}
+    .slv-perf-title{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#0F172A;margin-bottom:12px;}
+    .slv-skill-row{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 12px;border-radius:12px;background:#F8FAFC;border:1px solid #E2E8F0;margin-bottom:8px;
+    }
+    .slv-skill-name{font-size:13px;font-weight:800;color:#1E1E1E;letter-spacing:.04em;}
+    .slv-skill-note{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;}
+    /* Dashboard trilha horizontal (mesma linguagem da timeline) */
+    .tj-h-stage{
+      background:linear-gradient(165deg,#070b14 0%,#0c1526 40%,#101c30 100%);
+      border-radius:20px;padding:18px 14px 20px;position:relative;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 16px 40px rgba(0,0,0,.28);
+    }
+    .tj-h-stage::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(ellipse 70% 50% at 20% 0%,rgba(79,70,229,.16),transparent 55%);
+    }
+    .tj-h-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;position:relative;z-index:1;}
+    .tj-h-title{font-size:14px;font-weight:800;color:#E2E8F0;display:flex;align-items:center;gap:8px;}
+    .tj-h-mod{font-size:11px;font-weight:800;letter-spacing:.08em;color:#7DD3FC;}
+    .tj-h-scroll{
+      display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 4px 12px;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;z-index:1;
+    }
+    .tj-h-scroll::-webkit-scrollbar{display:none;}
+    .tj-h-item{display:flex;align-items:center;flex-shrink:0;}
+    .tj-h-circle{
+      width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-family:var(--font-family-ui);color:#F1F5F9;transition:transform .2s;
+    }
+    .tj-h-circle:active{transform:scale(.94);}
+    .tj-h-circle.pending{background:linear-gradient(145deg,#3f4654,#2a303a);box-shadow:0 0 0 2px rgba(148,163,184,.35);}
+    .tj-h-circle.locked{opacity:.65;cursor:not-allowed;}
+    .tj-h-circle.done{background:linear-gradient(145deg,#1D4ED8,#2563EB);box-shadow:0 0 0 2px rgba(125,211,252,.45);}
+    .tj-h-circle.done-output{background:linear-gradient(145deg,#0F766E,#14B8A6);}
+    .tj-h-circle.done-review{background:linear-gradient(145deg,#6D28D9,#8B5CF6);}
+    .tj-h-circle.active{background:linear-gradient(145deg,#0284C7,#38BDF8);box-shadow:0 0 0 3px rgba(56,189,248,.5);}
+    .tj-h-num{font-size:15px;font-weight:800;line-height:1;}
+    .tj-h-st{font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-top:3px;opacity:.9;}
+    .tj-h-type{font-size:7px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.75;margin-top:1px;}
+    .tj-h-conn{
+      width:28px;height:3px;flex-shrink:0;margin:0 2px;border-radius:99px;overflow:hidden;
+      background:rgba(148,163,184,.15);position:relative;
+    }
+    .tj-h-conn::after{
+      content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:repeating-linear-gradient(90deg,transparent 0 5px,#6366F1 5px 10px);
+      animation:tjHDash 1s linear infinite;
+    }
+    @keyframes tjHDash{to{transform:translateX(100%);}}
+
     .lesson-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid transparent;transition:all .15s;text-align:center;line-height:1.25;}
     .lesson-link-btn-gravacao{background:linear-gradient(135deg,rgba(53,102,182,.22),rgba(34,82,160,.12));border-color:rgba(91,155,232,.45);color:#93c5fd;}
     .lesson-link-btn-relatorio{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(109,40,217,.12));border-color:rgba(167,139,250,.45);color:#c4b5fd;}
@@ -1379,7 +1467,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-trilha-journey");
+console.info("Fluency Portal v2026.07.25-lesson-layout");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -2010,7 +2098,7 @@ const ICONS = {
   "rocket":        <><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></>,
   "clipboard-check":<><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></>,
   "info":          <><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>,
-  "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
+  "video":        <><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></>,\n  "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
   "settings":      <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
   "lock":          <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
 };
@@ -2874,70 +2962,117 @@ function AdminLessonPanel({item,uid}){
 }
 
 function StudentLessonView({item}){
-  const EL={revisao:"A rever",atingiu:"Atingiu",superou:"Superou"};
+  const EL={revisao:"Precisa de revisão",atingiu:"Atingiu",superou:"Superou"};
   const ES={revisao:"eval-revisao",atingiu:"eval-atingiu",superou:"eval-superou"};
+  const SKILL_FULL={
+    evalF:"FALA",
+    evalA:"ESCUTA",
+    evalL:"LEITURA",
+    evalE:"ESCRITA",
+  };
   const concluida=item.status==="concluida"||item.status==="realizada";
+  const isReview=item.type==="review"||item.lessonType==="review";
+  const isOutput=item.lessonType==="output";
+  const typeTag=isReview?"tag-review":isOutput?"tag-output":"tag-input";
+  const typeLabel=isReview?"Review":isOutput?"Output":"Input";
+  const statusMap={pendente:"Pendente",andamento:"Em andamento",concluida:"Concluída",realizada:"Concluída"};
+  const statusLabel=statusMap[item.status]||item.status||"Pendente";
+
   const urlLicao=item.linkAula||"";
   const urlMaterial=item.linkMaterial||item.link||"";
   const urlTarefa=item.linkTarefa||"";
   const urlAoVivo=item.linkChamada||"";
   const urlGravacao=item.linkGravacao||"";
   const urlRelatorio=item.linkRelatorio||"";
-  const showAoVivo=urlAoVivo&&!concluida;
+  const urlExtra=item.linkExtra||"";
+  // Aula ao vivo: mostra se houver link (mesmo após concluída, se o professor deixar)
+  const showAoVivo=!!urlAoVivo;
   const hasEval=EVAL_SKILLS.some(sk=>item[sk.f]);
-  const hasLinks=urlLicao||urlMaterial||urlTarefa||showAoVivo||urlGravacao||urlRelatorio;
-  const hasAnyInfo=item.tema||item.objetivos||(concluida&&item.feedback)||hasEval||hasLinks;
-  if(!hasAnyInfo)return <p className="text-xs muted">Nenhuma informação disponível ainda.</p>;
+  const pairBtns=[
+    urlLicao&&{href:urlLicao,icon:"zap",label:"Lição Online"},
+    urlTarefa&&{href:urlTarefa,icon:"check-square",label:"Tarefa Online"},
+    urlMaterial&&{href:urlMaterial,icon:"file-text",label:"Lição PDF"},
+    urlExtra&&{href:urlExtra,icon:"sparkles",label:"Extra"},
+    urlGravacao&&{href:urlGravacao,icon:"camera",label:"Aulas Gravadas"},
+    urlRelatorio&&{href:urlRelatorio,icon:"clipboard-list",label:"Relatório"},
+  ].filter(Boolean);
+  // pairs of 2
+  const pairs=[];
+  for(let i=0;i<pairBtns.length;i+=2)pairs.push(pairBtns.slice(i,i+2));
+
+  const hasTheme=item.tema||item.objetivos;
+  const hasPerf=(concluida&&item.feedback)||(concluida&&hasEval);
+  const hasAny=showAoVivo||pairBtns.length||hasTheme||hasPerf;
+  if(!hasAny)return <p className="text-xs muted">Nenhuma informação disponível ainda. Quando o professor liberar links e conteúdo, eles aparecem aqui.</p>;
+
   return(
-    <div className="space-y-4">
-      {item.tema&&(
-        <div>
-          <div className="detail-label">Tema</div>
-          <p className="text-sm mt-1" style={{color:"var(--font)",lineHeight:1.55}}>{item.tema}</p>
+    <div className="space-y-1">
+      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:14}}>
+        <span className={typeTag}>{typeLabel}</span>
+        <LessonBadge status={item.status==="realizada"?"concluida":(item.status||"pendente")}/>
+        <span style={{fontSize:12,color:"var(--font-muted)",fontWeight:600}}>{statusLabel}</span>
+      </div>
+
+      {showAoVivo&&(
+        <div className="slv-btn-row-center">
+          <a href={urlAoVivo} target="_blank" rel="noreferrer" className="slv-btn slv-btn-live">
+            <Icon name="video" size={18}/> Aula ao Vivo
+          </a>
         </div>
       )}
-      {item.objetivos&&(
-        <div>
-          <div className="detail-label">Objetivo</div>
-          <p className="text-sm mt-1" style={{color:"var(--font)",lineHeight:1.55}}>{item.objetivos}</p>
+
+      {pairs.map((row,ri)=>(
+        <div key={ri} className="slv-btn-row" style={{marginBottom:10}}>
+          {row.map(b=>(
+            <a key={b.label} href={b.href} target="_blank" rel="noreferrer" className="slv-btn slv-btn-pair">
+              <Icon name={b.icon} size={14}/> {b.label}
+            </a>
+          ))}
+          {row.length===1&&<div style={{flex:1}}/>}
+        </div>
+      ))}
+
+      {hasTheme&&(
+        <div className="slv-theme-card">
+          {item.tema&&(
+            <>
+              <div className="slv-theme-label">Tema</div>
+              <p className="slv-theme-text">{item.tema}</p>
+            </>
+          )}
+          {item.objetivos&&(
+            <>
+              <div className="slv-theme-label">Objetivo</div>
+              <p className="slv-theme-text">{item.objetivos}</p>
+            </>
+          )}
         </div>
       )}
-      {concluida&&item.feedback&&(
-        <div>
-          <div className="detail-label">Feedback</div>
-          <p className="text-sm mt-1" style={{color:"var(--font)",lineHeight:1.6}}>{item.feedback}</p>
-        </div>
-      )}
-      {concluida&&hasEval&&(
-        <div>
-          <div className="detail-label">Notas</div>
-          <div className="grid grid-cols-4 gap-2 mt-1">
-            {EVAL_SKILLS.map(sk=>item[sk.f]?(
-              <div key={sk.f} className="chip rounded-lg p-2 text-center">
-                <div className="text-xs font-bold">{sk.l}</div>
-                <div className={"text-xs mt-1 eval-btn "+ES[item[sk.f]]} style={{display:"inline-block",padding:"2px 6px"}}>{EL[item[sk.f]]}</div>
-              </div>
-            ):null)}
-          </div>
-        </div>
-      )}
-      {hasLinks&&(
-        <div>
-          <div className="detail-label">Links</div>
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            {urlLicao&&<a href={urlLicao} target="_blank" rel="noreferrer" className="btn rounded-xl py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold"><Icon name="zap" size={13}/> Lição Online</a>}
-            {urlTarefa&&<a href={urlTarefa} target="_blank" rel="noreferrer" className="btn rounded-xl py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold"><Icon name="check-square" size={13}/> Tarefa Online</a>}
-            {urlMaterial&&<a href={urlMaterial} target="_blank" rel="noreferrer" className="btn rounded-xl py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold"><Icon name="file-text" size={13}/> Lição PDF</a>}
-            {showAoVivo&&<a href={urlAoVivo} target="_blank" rel="noreferrer" className="btn btn-primary rounded-xl py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold col-span-2"><Icon name="zap" size={13}/> Aula ao Vivo</a>}
-            {urlGravacao&&<a href={urlGravacao} target="_blank" rel="noreferrer" className="lesson-link-btn lesson-link-btn-gravacao col-span-2"><Icon name="camera" size={14}/> Aulas Gravadas</a>}
-            {urlRelatorio&&<a href={urlRelatorio} target="_blank" rel="noreferrer" className="lesson-link-btn lesson-link-btn-relatorio col-span-2"><Icon name="clipboard-list" size={14}/> Relatório da Reunião</a>}
-          </div>
-        </div>
+
+      {hasPerf&&(
+        <>
+          <div className="slv-perf-line"/>
+          <div className="slv-perf-title">Sua performance</div>
+          {concluida&&item.feedback&&(
+            <p style={{fontSize:14,lineHeight:1.6,color:"#1E1E1E",margin:"0 0 14px",fontWeight:500}}>{item.feedback}</p>
+          )}
+          {concluida&&hasEval&&(
+            <div>
+              {EVAL_SKILLS.map(sk=>item[sk.f]?(
+                <div key={sk.f} className="slv-skill-row">
+                  <span className="slv-skill-name">{SKILL_FULL[sk.f]||sk.name}</span>
+                  <span className={"slv-skill-note eval-btn "+ES[item[sk.f]]}>{EL[item[sk.f]]||item[sk.f]}</span>
+                </div>
+              ):null)}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 }
 
+// ── MODIFICAÇÃO 3: LessonItem com botão Tarefa Feita
 // ── MODIFICAÇÃO 3: LessonItem com botão Tarefa Feita ───────────────────────
 function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=false}){
   const [open,setOpen]=useState(embedMode||false);
@@ -3234,7 +3369,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
                       const locked=isPending&&!isAdmin;
                       const sc=statusClassForLesson(item);
                       const label=isReview?("R"+item.num):String(item.num);
-                      const typeLabel=isReview?"Review":isOutput?"Out":"In";
+                      const typeLabel=isReview?"Review":isOutput?"Output":"Input";
                       return(
                         <div key={item.id} className="tj-lesson-row" style={{animationDelay:(li*0.04)+"s"}}>
                           <button
@@ -3245,7 +3380,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
                           >
                             <span className="tj-l-num">{label}</span>
                             <span className="tj-l-st">{statusLabelShort(item)}</span>
-                            <span className="tj-l-type">{typeLabel}</span>
+                            <span className={"tj-l-type "+(isReview?"tag-review":isOutput?"tag-output":"tag-input")} style={{fontSize:7,padding:"1px 5px",marginTop:2}}>{typeLabel}</span>
                           </button>
                           {li<items.length-1&&<div className="tj-lesson-connector"/>}
                         </div>
@@ -3275,9 +3410,11 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
           <div className="tj-sheet-panel" onClick={e=>e.stopPropagation()}>
             <div className="tj-sheet-head">
               <div style={{minWidth:0}}>
-                <div style={{fontSize:11,fontWeight:700,color:"var(--font-muted)",letterSpacing:".06em",textTransform:"uppercase"}}>
-                  {sheetItem.lessonType==="review"||sheetItem.type==="review"?"Review":sheetItem.lessonType==="output"?"Output":"Input"}
-                  {" · "}{sheetItem.status||"pendente"}
+                <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                  <span className={(sheetItem.lessonType==="review"||sheetItem.type==="review")?"tag-review":sheetItem.lessonType==="output"?"tag-output":"tag-input"}>
+                    {(sheetItem.lessonType==="review"||sheetItem.type==="review")?"Review":sheetItem.lessonType==="output"?"Output":"Input"}
+                  </span>
+                  <LessonBadge status={sheetItem.status==="realizada"?"concluida":(sheetItem.status||"pendente")}/>
                 </div>
                 <div style={{fontSize:18,fontWeight:800,fontFamily:"'Sora',sans-serif",lineHeight:1.2}}>
                   {(sheetItem.type==="review"||sheetItem.lessonType==="review")?("R"+sheetItem.num):("Lesson "+sheetItem.num)}
@@ -4265,33 +4402,47 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
         </div>
       </div>
 
-      {/* Card 5 — Trilha resumida (carrossel horizontal, módulo atual) */}
-      {currentBook&&<div className="sd-card-dark">
-        <div className="sd-journey-head">
-          <div className="sd-journey-title"><Icon name="mountain" size={16} style={{color:"#5eead4"}}/> Sua Trilha</div>
-          <div className="sd-journey-mod">MÓDULO {currentMod} · atual</div>
+      {/* Card 5 — Trilha horizontal (mesma linguagem da página Trilha) */}
+      {currentBook&&(
+        <div className="tj-h-stage">
+          <div className="tj-h-head">
+            <div className="tj-h-title"><Icon name="route" size={16} style={{color:"#818CF8"}}/> Sua Trilha</div>
+            <div className="tj-h-mod">MÓDULO {currentMod}</div>
+          </div>
+          <div className="tj-h-scroll">
+            {currentBook.items.map((item,idx)=>{
+              const isReview=item.type==="review"||item.lessonType==="review";
+              const isOutput=item.lessonType==="output";
+              const sc=statusClassForLesson(item);
+              const locked=!(item.status==="concluida"||item.status==="realizada"||item.status==="andamento");
+              const label=isReview?("R"+item.num):String(item.num);
+              const typeLabel=isReview?"Review":isOutput?"Output":"Input";
+              return(
+                <div key={item.id} className="tj-h-item">
+                  <button
+                    type="button"
+                    className={"tj-h-circle "+sc+(locked?" locked":"")}
+                    onClick={()=>{playClickSound("open");onNavigate("trilha",item.id);}}
+                    title={locked?"Lição bloqueada":typeLabel+" "+label}
+                  >
+                    <span className="tj-h-num">{label}</span>
+                    <span className="tj-h-st">{statusLabelShort(item)}</span>
+                    <span className="tj-h-type">{typeLabel}</span>
+                  </button>
+                  {idx<currentBook.items.length-1&&<div className="tj-h-conn"/>}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8,position:"relative",zIndex:1,padding:"0 4px"}}>
+            <span style={{fontSize:11,color:"#94A3B8"}}>Progresso geral</span>
+            <strong style={{fontSize:12,color:"#E2E8F0"}}>{progressGeral}%</strong>
+          </div>
+          <div className="tj-progress-bar" style={{marginTop:6,position:"relative",zIndex:1}}>
+            <div className="tj-progress-fill" style={{width:progressGeral+"%"}}/>
+          </div>
         </div>
-        <div className="sd-scroll">
-          {currentBook.items.map(item=>{
-            const isCurrent=item.status==="andamento";
-            const lbl=isCurrent?"atual":item.lessonType==="review"?"Review":item.lessonType==="output"?"Output":"Input";
-            return(
-              <button key={item.id} type="button" className={"sd-chip"+(isCurrent?" sd-chip-current":"")} style={{
-                borderLeft:`3px solid ${getLessonBorderColor(item)}`,
-                opacity:item.status==="pendente"?0.55:1,
-              }} onClick={()=>onNavigate("trilha",item.id)}>
-                <div className="sd-chip-num">{item.num}</div>
-                <div className="sd-chip-lbl">{lbl}</div>
-              </button>
-            );
-          })}
-        </div>
-        <div className="sd-progress-lbl">
-          <span>Progresso geral:</span>
-          <strong>{progressGeral}%</strong>
-        </div>
-        <div className="sd-progress-bar"><div className="sd-progress-fill" style={{width:progressGeral+"%"}}/></div>
-      </div>}
+      )}
     </div>
   );
 }
