@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Fluency Studio | Student Portal</title>
   <meta name="description" content="Portal do aluno Fluency Studio — acompanhe sua jornada rumo à fluência em inglês." />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -126,13 +126,28 @@
     @media (max-width: 900px) {
       .admin-shell { flex-direction: column; }
       .admin-sidebar {
-        width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap;
-        padding: 12px; gap: 4px; align-items: center;
+        width: 100%; height: auto; position: sticky; top: 0; z-index: 55;
+        flex-direction: row; flex-wrap: nowrap; align-items: center;
+        padding: 10px 12px; gap: 6px;
+        overflow-x: auto; overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,.18);
       }
-      .admin-sidebar-brand { border: none; margin: 0; padding: 8px 12px; }
+      .admin-sidebar::-webkit-scrollbar { display: none; }
+      .admin-sidebar-brand { border: none; margin: 0; padding: 4px 8px 4px 0; flex-shrink: 0; }
+      .admin-sidebar-brand .brand-logo-name { max-height: 22px; }
       .admin-sidebar-label { display: none; }
-      .admin-nav-item { width: auto; padding: 8px 12px; border-radius: 8px; font-size: 12px; }
-      .admin-main-body { padding: 16px; }
+      .admin-nav-item {
+        width: auto; flex-shrink: 0; padding: 10px 14px; border-radius: 10px; font-size: 12px;
+        min-height: 44px; white-space: nowrap;
+      }
+      .admin-sidebar > div[style*="margin-top:auto"] {
+        margin-top: 0 !important; margin-left: auto; padding: 0 0 0 8px !important;
+        border-top: none !important; border-left: 1px solid rgba(203,213,225,.12); flex-shrink: 0;
+      }
+      .admin-main-body { padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+      .admin-main-header { padding: 12px 16px; }
     }
 
     /* Finance KPI grid */
@@ -1328,10 +1343,116 @@
     }
     .tj-sheet-body{overflow-y:auto;padding:12px 14px 28px;-webkit-overflow-scrolling:touch;flex:1;}
     .tj-sheet-close{
-      width:40px;height:40px;border-radius:12px;border:1px solid var(--divider);background:var(--badge);
+      width:44px;height:44px;border-radius:12px;border:1px solid var(--divider);background:var(--badge);
       cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--font);
+      flex-shrink:0;touch-action:manipulation;
     }
     .tj-admin-note{font-size:11px;color:#94A3B8;text-align:center;margin-top:12px;position:relative;z-index:1;}
+
+    /* ═══ UX / MOBILE POLISH ═══ */
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto;}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+    }
+    body{
+      min-height:100vh;min-height:100dvh;
+      overscroll-behavior-y:contain;
+      padding-left:env(safe-area-inset-left,0px);
+      padding-right:env(safe-area-inset-right,0px);
+    }
+    body.portal-scroll-lock{
+      overflow:hidden!important;
+      touch-action:none;
+      overscroll-behavior:none;
+    }
+    /* iOS: inputs <16px forçam zoom — manter legível e sem zoom indesejado */
+    @media (max-width: 768px){
+      .input,.input-light,textarea.obs-input,select.ds-select,
+      input[type="text"],input[type="email"],input[type="password"],input[type="tel"],
+      input[type="url"],input[type="number"],input[type="date"],input[type="search"],
+      select,textarea{
+        font-size:16px!important;
+      }
+      .input-light{padding:10px 12px;}
+    }
+    /* Foco visível para teclado (não atrapalha mouse) */
+    :focus{outline:none;}
+    :focus-visible{
+      outline:2px solid #4F46E5;
+      outline-offset:2px;
+    }
+    .btn:focus-visible,.tab-btn:focus-visible,.admin-nav-item:focus-visible,
+    .page-back:focus-visible,.sd-nav-carousel:focus-visible,.tj-mod-circle:focus-visible,
+    .tj-lesson-circle:focus-visible{
+      outline:2px solid #4F46E5;
+      outline-offset:2px;
+    }
+    /* Áreas de toque e safe-area */
+    .btn,.tab-btn,.page-back,.admin-nav-item,.sd-nav-carousel,.ivi-chip{
+      touch-action:manipulation;
+    }
+    .logo-bar{
+      padding-top:calc(10px + env(safe-area-inset-top,0px));
+      padding-left:calc(16px + env(safe-area-inset-left,0px));
+      padding-right:calc(16px + env(safe-area-inset-right,0px));
+    }
+    .ivictor-btn{
+      bottom:calc(22px + env(safe-area-inset-bottom,0px));
+      right:calc(22px + env(safe-area-inset-right,0px));
+    }
+    .ivictor-panel{
+      bottom:calc(92px + env(safe-area-inset-bottom,0px));
+      right:calc(16px + env(safe-area-inset-right,0px));
+      max-width:calc(100vw - 32px);
+    }
+    .appearance-fab,.ap-fab{
+      bottom:calc(22px + env(safe-area-inset-bottom,0px))!important;
+      left:calc(22px + env(safe-area-inset-left,0px))!important;
+    }
+    .modal-overlay{
+      padding:max(16px, env(safe-area-inset-top,0px)) 16px max(16px, env(safe-area-inset-bottom,0px));
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
+    }
+    .modal-box{max-height:min(92dvh,920px);display:flex;flex-direction:column;}
+    .modal-body{max-height:none;flex:1;min-height:0;-webkit-overflow-scrolling:touch;}
+    .modal-header,.modal-footer{flex-shrink:0;}
+    .tj-sheet-panel{
+      padding-bottom:env(safe-area-inset-bottom,0px);
+      max-height:min(92dvh,92vh);
+    }
+    .tj-sheet-body{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));}
+    /* Tabs: scroll horizontal suave + active em vista */
+    .tab-bar{
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      scroll-snap-type:x proximity;
+      gap:4px;
+    }
+    .tab-bar::-webkit-scrollbar{display:none;}
+    .tab-btn{scroll-snap-align:center;flex:0 0 auto;min-width:72px;touch-action:manipulation;}
+    /* Sticky voltar em páginas internas no mobile */
+    .page-back{
+      position:sticky;top:52px;z-index:30;
+      background:linear-gradient(180deg,var(--bg) 70%,transparent);
+      margin:0 -4px;padding:10px 4px 14px;min-height:44px;
+    }
+    .student-dash-wrap .page-back{top:calc(52px + env(safe-area-inset-top,0px));}
+    #portal-main{scroll-margin-top:72px;}
+    .err-box[role="alert"]{scroll-margin-top:88px;}
+    /* Carrosséis: indício de mais conteúdo */
+    .sd-scroll,.tj-h-scroll{
+      scroll-snap-type:x proximity;
+      mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 28px),transparent 100%);
+      -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 28px),transparent 100%);
+    }
+    .sd-scroll > *,.tj-h-scroll > *{scroll-snap-align:start;}
+    @media (min-width: 900px){
+      .sd-scroll,.tj-h-scroll{mask-image:none;-webkit-mask-image:none;}
+    }
+    /* Busca admin: área confortável no toque */
+    .admin-search-wrap input{min-height:44px;}
 
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
@@ -1467,7 +1588,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
-console.info("Fluency Portal v2026.07.26-spa-history");
+console.info("Fluency Portal v2026.07.26-ux-polish");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1618,6 +1739,115 @@ function usePortalRouteListener(handler){
       window.removeEventListener("pageshow",onPageShow);
     };
   },[handler]);
+}
+
+/** Trava o scroll do body (modais / sheet) — evita “página por baixo” no mobile. */
+function useBodyScrollLock(locked){
+  useEffect(()=>{
+    if(!locked)return;
+    const body=document.body;
+    const html=document.documentElement;
+    const scrollY=window.scrollY||window.pageYOffset||0;
+    const prev={
+      overflow:body.style.overflow,
+      position:body.style.position,
+      top:body.style.top,
+      width:body.style.width,
+      htmlOverflow:html.style.overflow,
+    };
+    body.classList.add("portal-scroll-lock");
+    body.style.overflow="hidden";
+    body.style.position="fixed";
+    body.style.top=(-scrollY)+"px";
+    body.style.width="100%";
+    html.style.overflow="hidden";
+    return()=>{
+      body.classList.remove("portal-scroll-lock");
+      body.style.overflow=prev.overflow;
+      body.style.position=prev.position;
+      body.style.top=prev.top;
+      body.style.width=prev.width;
+      html.style.overflow=prev.htmlOverflow;
+      try{window.scrollTo(0,scrollY);}catch(e){}
+    };
+  },[locked]);
+}
+
+/** Fecha com tecla Escape (modais, sheets, painéis). */
+function useEscapeKey(onEscape,enabled){
+  useEffect(()=>{
+    if(enabled===false||typeof onEscape!=="function")return;
+    const h=(e)=>{
+      if(e.key==="Escape"||e.key==="Esc"){
+        e.preventDefault();
+        onEscape();
+      }
+    };
+    window.addEventListener("keydown",h);
+    return()=>window.removeEventListener("keydown",h);
+  },[onEscape,enabled]);
+}
+
+/** Scrolla o erro / campo para a área visível (teclado virtual no celular). */
+function scrollElIntoView(el,offset){
+  if(!el)return;
+  try{
+    el.scrollIntoView({behavior:"smooth",block:"center"});
+    if(offset&&typeof window.scrollBy==="function"){
+      setTimeout(()=>window.scrollBy(0,-(offset||0)),80);
+    }
+  }catch(e){
+    try{el.scrollIntoView(true);}catch(e2){}
+  }
+}
+
+/** Overlay de modal com lock de scroll, Escape e foco inicial. */
+function ModalOverlay({onClose,children,className,style,labelledBy}){
+  const ref=useRef(null);
+  useBodyScrollLock(true);
+  useEscapeKey(onClose,!!onClose);
+  useEffect(()=>{
+    const root=ref.current;
+    if(!root)return;
+    const prevActive=document.activeElement;
+    const focusable=root.querySelector(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if(focusable){
+      try{focusable.focus({preventScroll:true});}catch(e){try{focusable.focus();}catch(e2){}}
+    }
+    return()=>{
+      if(prevActive&&typeof prevActive.focus==="function"){
+        try{prevActive.focus({preventScroll:true});}catch(e){}
+      }
+    };
+  },[]);
+  return(
+    <div
+      ref={ref}
+      className={"modal-overlay"+(className?" "+className:"")}
+      style={style}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={labelledBy||undefined}
+      onClick={e=>{if(e.target===e.currentTarget&&onClose)onClose();}}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** Mantém a aba ativa visível no scroll horizontal da tab-bar. */
+function useScrollActiveTab(activeId,containerSelector){
+  useEffect(()=>{
+    if(!activeId)return;
+    const root=document.querySelector(containerSelector||".tab-bar");
+    if(!root)return;
+    const btn=root.querySelector(".tab-btn-active")||root.querySelector('[data-tab-id="'+activeId+'"]');
+    if(btn&&btn.scrollIntoView){
+      try{btn.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});}catch(e){}
+    }
+  },[activeId,containerSelector]);
 }
 
 function withTimeout(promise, ms, label){
@@ -2916,7 +3146,7 @@ function LogoBar({ onBack, isAdmin, showLogout }) {
     <div className="logo-bar">
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         {onBack && (
-          <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center'}} onClick={onBack}>
+          <button type="button" className="btn btn-bar" style={{padding:'8px 12px',borderRadius:8,display:'flex',alignItems:'center',minHeight:44,minWidth:44}} onClick={onBack} aria-label="Voltar">
             <Icon name="arrow-left" size={15}/>
           </button>
         )}
@@ -2927,7 +3157,7 @@ function LogoBar({ onBack, isAdmin, showLogout }) {
           <span className="role-pill role-pill-admin">Admin</span>
         )}
         {showLogout && (
-          <button className="btn btn-bar" style={{padding:'6px 10px',borderRadius:8,display:'flex',alignItems:'center',gap:6}} onClick={()=>auth.signOut()}>
+          <button type="button" className="btn btn-bar" style={{padding:'8px 12px',borderRadius:8,display:'flex',alignItems:'center',gap:6,minHeight:44}} onClick={()=>auth.signOut()} aria-label="Sair da conta">
             <Icon name="log-out" size={14}/>
             <span className="btn-bar-label">Sair</span>
           </button>
@@ -2944,8 +3174,25 @@ function LoadingScreen(){
 function Login(){
   const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
   const [info,setInfo]=useState("");
-  async function handleLogin(){
-    if(!email||!pass){setErr("Preencha email e senha.");return;}
+  const emailRef=useRef(null);
+  const passRef=useRef(null);
+  const errRef=useRef(null);
+  useEffect(()=>{
+    // Foco inicial no email (melhor usabilidade teclado/celular)
+    const t=setTimeout(()=>{try{emailRef.current&&emailRef.current.focus({preventScroll:true});}catch(e){}},120);
+    return()=>clearTimeout(t);
+  },[]);
+  useEffect(()=>{
+    if(err&&errRef.current)scrollElIntoView(errRef.current,24);
+  },[err]);
+  async function handleLogin(e){
+    if(e&&e.preventDefault)e.preventDefault();
+    if(!email||!pass){
+      setErr("Preencha email e senha.");
+      if(!email){try{emailRef.current&&emailRef.current.focus();}catch(x){}}
+      else{try{passRef.current&&passRef.current.focus();}catch(x){}}
+      return;
+    }
     setLoading(true);setErr("");setInfo("");
     try{
       await auth.signInWithEmailAndPassword(email.trim().toLowerCase(),pass);
@@ -2956,11 +3203,12 @@ function Login(){
       else if(e.code==="auth/too-many-requests")msg="Muitas tentativas. Aguarde um pouco e tente de novo.";
       else if(e.code==="auth/network-request-failed")msg="Sem conexão com a internet.";
       setErr(msg);setLoading(false);
+      try{passRef.current&&passRef.current.focus();}catch(x){}
     }
   }
   async function handleReset(){
     const em=email.trim().toLowerCase();
-    if(!em){setErr("Digite seu email para recuperar a senha.");return;}
+    if(!em){setErr("Digite seu email para recuperar a senha.");try{emailRef.current&&emailRef.current.focus();}catch(x){}return;}
     setLoading(true);setErr("");setInfo("");
     try{
       await auth.sendPasswordResetEmail(em);
@@ -2972,7 +3220,7 @@ function Login(){
     setLoading(false);
   }
   return(
-    <div className="min-h-screen flex flex-col items-center justify-center px-5">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5" style={{paddingBottom:"calc(24px + env(safe-area-inset-bottom,0px))"}}>
       <div className="login-logo-wrap" style={{filter:'drop-shadow(0 4px 12px rgba(0,0,0,.25))'}}>
         <BrandLogo large/>
       </div>
@@ -2981,16 +3229,49 @@ function Login(){
             <h1 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Bem-vindo ao Portal</h1>
             <p className="muted text-sm mt-1">Student Portal · Fluency Studio</p>
           </div>
-          <div className="space-y-3">
-            <div><label className="block text-sm muted mb-1">Email</label><input className="w-full input rounded-xl px-4 py-3" placeholder="seuemail@exemplo.com" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/></div>
-            <div><label className="block text-sm muted mb-1">Senha</label><input type="password" className="w-full input rounded-xl px-4 py-3" placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} autoComplete="current-password" onKeyDown={e=>e.key==="Enter"&&handleLogin()}/></div>
-            {err&&<div className="err-box">{err}</div>}
-            {info&&<div style={{background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.35)",borderRadius:12,padding:"10px 14px",fontSize:13,color:"#60daa8"}}>{info}</div>}
-            <button className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" onClick={handleLogin} disabled={loading}>
+          <form className="space-y-3" onSubmit={handleLogin} noValidate>
+            <div>
+              <label className="block text-sm muted mb-1" htmlFor="login-email">Email</label>
+              <input
+                id="login-email"
+                ref={emailRef}
+                type="email"
+                inputMode="email"
+                enterKeyHint="next"
+                className="w-full input rounded-xl px-4 py-3"
+                placeholder="seuemail@exemplo.com"
+                value={email}
+                onChange={e=>setEmail(e.target.value)}
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                disabled={loading}
+                onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();try{passRef.current&&passRef.current.focus();}catch(x){}}}}
+              />
+            </div>
+            <div>
+              <label className="block text-sm muted mb-1" htmlFor="login-pass">Senha</label>
+              <input
+                id="login-pass"
+                ref={passRef}
+                type="password"
+                enterKeyHint="go"
+                className="w-full input rounded-xl px-4 py-3"
+                placeholder="••••••••"
+                value={pass}
+                onChange={e=>setPass(e.target.value)}
+                autoComplete="current-password"
+                disabled={loading}
+              />
+            </div>
+            {err&&<div ref={errRef} className="err-box" role="alert" aria-live="assertive">{err}</div>}
+            {info&&<div role="status" aria-live="polite" style={{background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.35)",borderRadius:12,padding:"10px 14px",fontSize:13,color:"#60daa8"}}>{info}</div>}
+            <button type="submit" className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" disabled={loading}>
               {loading?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="log-in" size={16}/>}{loading?"Entrando...":"Entrar"}
             </button>
             <button type="button" className="w-full btn rounded-xl px-4 py-2.5 text-sm" onClick={handleReset} disabled={loading}>Esqueci a senha</button>
-          </div>
+          </form>
       </div>
     </div>
   );
@@ -3474,6 +3755,10 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
     onLessonFocused?.();
   }
 
+  // Sheet aberta: trava scroll de fundo + Escape fecha (igual botão X / voltar)
+  useBodyScrollLock(!!sheetItem);
+  useEscapeKey(closeSheet,!!sheetItem);
+
   return(
     <div>
       <div className="tj-stage">
@@ -3554,7 +3839,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
       </div>
 
       {sheetItem&&(
-        <div className="tj-sheet" role="dialog" aria-modal="true" onClick={e=>{if(e.target===e.currentTarget)closeSheet();}}>
+        <div className="tj-sheet" role="dialog" aria-modal="true" aria-label={"Lição "+((sheetItem.type==="review"||sheetItem.lessonType==="review")?("R"+sheetItem.num):sheetItem.num)} onClick={e=>{if(e.target===e.currentTarget)closeSheet();}}>
           <div className="tj-sheet-panel" onClick={e=>e.stopPropagation()}>
             <div className="tj-sheet-head">
               <div style={{minWidth:0}}>
@@ -3568,7 +3853,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
                   {(sheetItem.type==="review"||sheetItem.lessonType==="review")?("R"+sheetItem.num):("Lesson "+sheetItem.num)}
                 </div>
               </div>
-              <button type="button" className="tj-sheet-close" onClick={closeSheet} aria-label="Fechar"><Icon name="x" size={20}/></button>
+              <button type="button" className="tj-sheet-close" onClick={closeSheet} aria-label="Fechar lição"><Icon name="x" size={20}/></button>
             </div>
             <div className="tj-sheet-body">
               <LessonItem item={sheetItem} uid={uid} isAdmin={isAdmin} embedMode={true}/>
@@ -4210,7 +4495,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
       </div>
 
       {kpiDetail&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setKpiDetail(null);}}>
+        <ModalOverlay onClose={()=>setKpiDetail(null)}>
           <div className="modal-box" style={{maxWidth:640}} onClick={e=>e.stopPropagation()}>
             <div className="modal-header">
               <div>
@@ -4269,7 +4554,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
               <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setKpiDetail(null)}>Fechar</button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
 
       <div className="fin-chart-card">
@@ -4864,13 +5149,18 @@ function WhatsAppFloat(){
   return(
     <a href={WPP_VICTOR} target="_blank" rel="noreferrer"
       style={{
-        position:"fixed",bottom:82,right:18,width:46,height:46,
+        position:"fixed",
+        bottom:"calc(82px + env(safe-area-inset-bottom, 0px))",
+        right:"calc(18px + env(safe-area-inset-right, 0px))",
+        width:48,height:48,
         borderRadius:"50%",background:"rgba(37,211,102,.90)",
         display:"flex",alignItems:"center",justifyContent:"center",
         boxShadow:"0 4px 16px rgba(37,211,102,.40)",zIndex:998,
         textDecoration:"none",transition:"transform .15s,box-shadow .15s",
+        touchAction:"manipulation",
       }}
       title="WhatsApp — Falar com o Professor"
+      aria-label="WhatsApp — falar com o professor Victor"
       onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.10)";e.currentTarget.style.boxShadow="0 6px 22px rgba(37,211,102,.55)";}}
       onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 16px rgba(37,211,102,.40)";}}
     >
@@ -4966,11 +5256,19 @@ function IVi({mode="student"}){
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
   const messagesEndRef=useRef(null);
+  const inputRef=useRef(null);
   const chips=iviQuickChips(mode);
+  const closeIvi=useCallback(()=>setOpen(false),[]);
+  useEscapeKey(closeIvi,open);
 
   useEffect(()=>{
     if(open&&messagesEndRef.current)messagesEndRef.current.scrollIntoView({behavior:"smooth"});
   },[messages,open]);
+  useEffect(()=>{
+    if(open&&inputRef.current){
+      try{inputRef.current.focus({preventScroll:true});}catch(e){}
+    }
+  },[open]);
 
   useEffect(()=>{
     if(mode==="student"&&!localStorage.getItem("fs-ivi-hint")){
@@ -5013,7 +5311,7 @@ function IVi({mode="student"}){
               <div style={{fontWeight:700,fontSize:14}}>iVi</div>
               <div style={{fontSize:11,color:"rgba(234,242,247,.75)"}}>Assistente · Fluency Studio</div>
             </div>
-            <button className="btn btn-bar" style={{marginLeft:"auto",padding:"6px",borderRadius:8}} onClick={()=>setOpen(false)}>
+            <button type="button" className="btn btn-bar" style={{marginLeft:"auto",padding:"8px",borderRadius:8,minWidth:40,minHeight:40}} onClick={closeIvi} aria-label="Fechar iVi">
               <Icon name="x" size={14}/>
             </button>
           </div>
@@ -5042,14 +5340,14 @@ function IVi({mode="student"}){
             <div ref={messagesEndRef}/>
           </div>
           <div className="ivictor-footer">
-            <input className="input" style={{flex:1,borderRadius:10,padding:"8px 12px",fontSize:13}} placeholder="Pergunte à iVi..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={handleKey} disabled={loading}/>
-            <button className="btn btn-primary" style={{padding:"8px 12px",borderRadius:10,flexShrink:0}} onClick={()=>sendMessage()} disabled={loading||!input.trim()}>
+            <input ref={inputRef} className="input" style={{flex:1,borderRadius:10,padding:"10px 12px"}} placeholder="Pergunte à iVi..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={handleKey} disabled={loading} enterKeyHint="send" aria-label="Mensagem para iVi"/>
+            <button type="button" className="btn btn-primary" style={{padding:"10px 12px",borderRadius:10,flexShrink:0,minWidth:44,minHeight:44}} onClick={()=>sendMessage()} disabled={loading||!input.trim()} aria-label="Enviar">
               <Icon name="send" size={14}/>
             </button>
           </div>
         </div>
       )}
-      <button className="ivictor-btn" onClick={()=>setOpen(o=>!o)} title="iVi — Assistente">
+      <button type="button" className="ivictor-btn" onClick={()=>setOpen(o=>!o)} title="iVi — Assistente" aria-label="Abrir assistente iVi" aria-expanded={open}>
         {imgOk
           ?<img src={IVI_PHOTO} alt="iVi" className="w-full h-full object-cover" loading="lazy" decoding="async" onError={()=>setImgOk(false)}/>
           :<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:13,color:"#fff",fontFamily:"'Sora',sans-serif"}}>iVi</div>
@@ -5166,6 +5464,16 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       portalGo({role:"admin",view:"student",studentUid:uid,tab:tab||"overview",page:null,lessonId:null},{});
     }
   },[isAdmin,uid]);
+  useScrollActiveTab(isAdmin?activeTab:null);
+
+  // Após troca de página interna, sobe e foca o main (leitores de tela + teclado)
+  useEffect(()=>{
+    if(isAdmin)return;
+    const main=document.getElementById("portal-main");
+    if(main){
+      try{main.focus({preventScroll:true});}catch(e){}
+    }
+  },[studentPage,isAdmin]);
 
   const [showFullProfile,setShowFullProfile]=useState(false);
   const [profileErr,setProfileErr]=useState("");
@@ -5308,7 +5616,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         />
       )}
 
-      <main className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")}>
+      <main id="portal-main" className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")} tabIndex={-1}>
         {!isAdmin&&(
           <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px"}}>
             <span className="role-pill role-pill-student">Portal do aluno</span>
@@ -5340,9 +5648,9 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                 </button>
               </div>
             </div>
-            <div className="tab-bar mb-5">
+            <div className="tab-bar mb-5" role="tablist" aria-label="Seções do aluno">
               {adminTabs.map(t=>(
-                <button key={t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTabNav(t.id)}>
+                <button key={t.id} type="button" data-tab-id={t.id} role="tab" aria-selected={activeTab===t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTabNav(t.id)}>
                   <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2}}>
                     <Icon name={t.icon} size={15}/><span style={{fontSize:10}}>{t.label}</span>
                   </div>
@@ -5557,18 +5865,19 @@ function ModalCadastro({onClose,onSaved}){
   }
 
   const tabLabels=["Dados Pessoais","Perfil do Aluno"];
+  useEffect(()=>{if(err){const el=document.querySelector(".modal-box .err-box");if(el)scrollElIntoView(el,40);}},[err]);
   return(
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+    <ModalOverlay onClose={onClose} labelledBy="modal-cadastro-title">
       <div className="modal-box">
         <div className="modal-header">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Icon name="user-plus" size={18}/>
             <div>
-              <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Cadastrar Aluno</div>
+              <div id="modal-cadastro-title" style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Cadastrar Aluno</div>
               <div style={{fontSize:11,opacity:.75}}>Fluency Studio · Novo Cadastro</div>
             </div>
           </div>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}>
+          <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}>
             <Icon name="x" size={16}/>
           </button>
         </div>
@@ -5797,18 +6106,18 @@ function ModalCadastro({onClose,onSaved}){
           )}
         </div>
 
-        {err&&<div className="err-box" style={{margin:"0 20px 12px"}}>{err}</div>}
+        {err&&<div className="err-box" role="alert" style={{margin:"0 20px 12px"}}>{err}</div>}
         <div className="modal-footer">
-          {tab===1&&<button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
-          {tab===0&&<button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil do Aluno →</button>}
-          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
+          {tab===1&&<button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
+          {tab===0&&<button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil do Aluno →</button>}
+          <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
+          <button type="button" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
             {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="check-circle" size={15}/>}
             {saving?"Salvando...":"Salvar Aluno"}
           </button>
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }
 
@@ -5915,17 +6224,17 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
 
   const tabLabels=["Respostas do Aluno","Contrato & Financeiro","Autorizar"];
   return(
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+    <ModalOverlay onClose={onClose} labelledBy="modal-autorizar-title">
       <div className="modal-box" style={{maxWidth:800}}>
         <div className="modal-header">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Icon name="clipboard-check" size={18}/>
             <div>
-              <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Revisar Cadastro</div>
+              <div id="modal-autorizar-title" style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Revisar Cadastro</div>
               <div style={{fontSize:11,opacity:.75}}>{dados.nome||pendente.name} · {origemLabel}</div>
             </div>
           </div>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
+          <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
         </div>
         <div className="modal-tab-bar">
           {tabLabels.map((l,i)=><button key={i} className={"modal-tab"+(tab===i?" modal-tab-active":"")} onClick={()=>setTab(i)}>{l}</button>)}
@@ -6033,12 +6342,12 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
             </div>
           )}
         </div>
-        {err&&<div className="err-box" style={{margin:"0 20px 12px"}}>{err}</div>}
+        {err&&<div className="err-box" role="alert" style={{margin:"0 20px 12px"}}>{err}</div>}
         <div className="modal-footer">
-          <button className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={handleRejeitar} disabled={saving}>Rejeitar</button>
+          <button type="button" className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={handleRejeitar} disabled={saving}>Rejeitar</button>
           <div style={{flex:1}}/>
-          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose} disabled={saving}>Fechar</button>
-          <button className="btn btn-primary rounded-xl px-6 py-2.5 text-sm font-bold inline-flex items-center gap-2"
+          <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose} disabled={saving}>Fechar</button>
+          <button type="button" className="btn btn-primary rounded-xl px-6 py-2.5 text-sm font-bold inline-flex items-center gap-2"
             style={{background:"linear-gradient(135deg,#60daa8,#187E74)",border:"none",boxShadow:"0 4px 20px rgba(30,160,110,.35)"}}
             onClick={handleLancar} disabled={saving}>
             {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="rocket" size={16}/>}
@@ -6046,7 +6355,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
           </button>
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }
 
@@ -6767,17 +7076,17 @@ function ModalEdicao({student,onClose,onSaved}){
     const full=getFullName(student.name||student.nome||dados.nome);
     const dias=(dados.diasAulas||[]).join(", ")||"—";
     return(
-      <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <ModalOverlay onClose={onClose} labelledBy="modal-perfil-title">
         <div className="modal-box" style={{maxWidth:640}}>
           <div className="modal-header" style={{background:"linear-gradient(135deg,#0f2c5c,#1e3a8a)"}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <Icon name="file-text" size={18}/>
               <div>
-                <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Perfil do aluno</div>
+                <div id="modal-perfil-title" style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Perfil do aluno</div>
                 <div style={{fontSize:11,opacity:.8}}>Somente leitura · use Editar para alterar</div>
               </div>
             </div>
-            <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
+            <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
           </div>
           <div className="modal-body" style={{padding:16,background:"#F8F9FA"}}>
             <div className="profile-sheet">
@@ -6825,20 +7134,20 @@ function ModalEdicao({student,onClose,onSaved}){
             </button>
           </div>
         </div>
-      </div>
+      </ModalOverlay>
     );
   }
 
   return(
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+    <ModalOverlay onClose={onClose} labelledBy="modal-editar-title">
       <div className="modal-box">
         <div className="modal-header">
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Icon name="pencil" size={18}/>
-            <div><div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar cadastro</div>
+            <div><div id="modal-editar-title" style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar cadastro</div>
             <div style={{fontSize:11,opacity:.75}}>{getFullName(student.name||student.nome)}</div></div>
           </div>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
+          <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center"}}><Icon name="x" size={16}/></button>
         </div>
         <div className="modal-tab-bar">
           {["Dados Pessoais","Perfil do Aluno"].map((l,i)=><button key={i} className={"modal-tab"+(tab===i?" modal-tab-active":"")} onClick={()=>setTab(i)}>{l}</button>)}
@@ -7020,22 +7329,22 @@ function ModalEdicao({student,onClose,onSaved}){
             </div>
           )}
         </div>
-        {err&&<div className="err-box" style={{margin:"0 20px 12px"}}>{err}</div>}
+        {err&&<div className="err-box" role="alert" style={{margin:"0 20px 12px"}}>{err}</div>}
         <div className="modal-footer" style={{flexWrap:"wrap",gap:8}}>
           <button type="button" className="btn btn-danger rounded-xl px-4 py-2 text-sm inline-flex items-center gap-1.5" onClick={handleDelete} disabled={saving}>
             <Icon name="trash-2" size={14}/> Excluir
           </button>
           <div style={{flex:1}}/>
-          {tab===1&&<button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
-          {tab===0&&<button className="btn rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil →</button>}
-          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setEditing(false)}>Voltar à folha</button>
-          <button className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
+          {tab===1&&<button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setTab(0)}>← Dados Pessoais</button>}
+          {tab===0&&<button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>setTab(1)}>Perfil →</button>}
+          <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setEditing(false)}>Voltar à folha</button>
+          <button type="button" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={handleSave} disabled={saving}>
             {saving?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="check-circle" size={15}/>}
             {saving?"Salvando...":"Salvar alterações"}
           </button>
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }
 
@@ -7194,14 +7503,14 @@ function ModalAgendar({onClose,onSave}){
   const [hora,setHora]=useState("10:00");
   const [notas,setNotas]=useState("");
   return(
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+    <ModalOverlay onClose={onClose} labelledBy="modal-agendar-title">
       <div className="modal-box" style={{maxWidth:480}}>
         <div className="modal-header">
-          <div style={{display:"flex",alignItems:"center",gap:10}}><Icon name="calendar-plus" size={18}/><div style={{fontWeight:800,fontSize:15}}>Agendar</div></div>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><Icon name="calendar-plus" size={18}/><div id="modal-agendar-title" style={{fontWeight:800,fontSize:15}}>Agendar</div></div>
+          <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
         </div>
         <div className="modal-body space-y-3">
-          <div><label className="form-label">Título</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={titulo} onChange={e=>setTitulo(e.target.value)} placeholder="Ex: Reunião, avaliação..."/></div>
+          <div><label className="form-label" htmlFor="agendar-titulo">Título</label><input id="agendar-titulo" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={titulo} onChange={e=>setTitulo(e.target.value)} placeholder="Ex: Reunião, avaliação..." autoFocus/></div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className="form-label">Data</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={data} onChange={e=>setData(e.target.value)}/></div>
             <div><label className="form-label">Horário</label><input type="time" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={hora} onChange={e=>setHora(e.target.value)}/></div>
@@ -7209,15 +7518,15 @@ function ModalAgendar({onClose,onSave}){
           <div><label className="form-label">Notas</label><textarea className="w-full input rounded-xl px-3 py-2 text-sm" rows={2} value={notas} onChange={e=>setNotas(e.target.value)}/></div>
         </div>
         <div className="modal-footer">
-          <button className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>{
+          <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
+          <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>{
             if(!titulo.trim()){alert("Informe um título.");return;}
             onSave({id:Date.now().toString(),titulo:titulo.trim(),data,hora,notas:notas.trim(),type:"agenda"});
             onClose();
           }}>Salvar</button>
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }
 
@@ -7659,14 +7968,14 @@ function AdminCursos({students}){
 
       {/* Painel de edição */}
       {editId&&draft&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget){setEditId(null);setDraft(null);}}}>
+        <ModalOverlay onClose={()=>{setEditId(null);setDraft(null);}}>
           <div className="modal-box" style={{maxWidth:560}}>
             <div className="modal-header">
               <div>
                 <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar curso</div>
                 <div style={{fontSize:11,opacity:.75}}>{editId}</div>
               </div>
-              <button onClick={()=>{setEditId(null);setDraft(null);}} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+              <button type="button" onClick={()=>{setEditId(null);setDraft(null);}} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
             </div>
             <div className="modal-body">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -7703,22 +8012,22 @@ function AdminCursos({students}){
               {err&&<div className="err-box" style={{marginTop:12}}>{err}</div>}
             </div>
             <div className="modal-footer" style={{flexWrap:"wrap",gap:8}}>
-              <button className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={()=>deleteCourse(editing||{id:editId,nome:draft.nome})} disabled={busy}>Excluir</button>
+              <button type="button" className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={()=>deleteCourse(editing||{id:editId,nome:draft.nome})} disabled={busy}>Excluir</button>
               <div style={{flex:1}}/>
-              <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setEditId(null);setDraft(null);}}>Cancelar</button>
-              <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveEdit} disabled={busy}>{busy?"Salvando…":"Salvar"}</button>
+              <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setEditId(null);setDraft(null);}}>Cancelar</button>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveEdit} disabled={busy}>{busy?"Salvando…":"Salvar"}</button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
 
       {/* Novo curso */}
       {showNew&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowNew(false);}}>
+        <ModalOverlay onClose={()=>setShowNew(false)}>
           <div className="modal-box" style={{maxWidth:480}}>
             <div className="modal-header">
               <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Novo curso</div>
-              <button onClick={()=>setShowNew(false)} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+              <button type="button" onClick={()=>setShowNew(false)} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
             </div>
             <div className="modal-body">
               <label className="form-label">Nome</label>
@@ -7742,7 +8051,7 @@ function AdminCursos({students}){
               <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={createCourse} disabled={busy}>{busy?"Criando…":"Criar curso"}</button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
     </div>
   );
@@ -8274,36 +8583,36 @@ function AdminAlunos({students,onSelectUid}){
     <div>
       {editStudent&&<ModalEdicao student={editStudent} onClose={()=>setEditStudent(null)} onSaved={()=>setEditStudent(null)}/>}
       {repairTarget&&(
-        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget){setRepairTarget(null);setRepairMsg("");setRepairErr("");}}}>
+        <ModalOverlay onClose={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}}>
           <div className="modal-box" style={{maxWidth:440}}>
             <div className="modal-header">
               <div>
                 <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Reparar acesso ao portal</div>
                 <div style={{fontSize:11,opacity:.75}}>{repairTarget.name} · {repairTarget.email||"sem email"}</div>
               </div>
-              <button onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
+              <button type="button" onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",color:"#fff"}}><Icon name="x" size={16}/></button>
             </div>
             <div className="modal-body">
               <p style={{fontSize:13,color:"var(--font-muted)",marginBottom:12,lineHeight:1.55}}>
                 Cria ou vincula o login Firebase a este cadastro (necessário para alunos antigos).
               </p>
-              <label className="form-label">Senha temporária (mín. 6)</label>
-              <input type="text" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="ex: fluency2026" value={repairPass} onChange={e=>setRepairPass(e.target.value)} autoComplete="new-password"/>
-              {repairErr&&<div className="err-box" style={{marginTop:12}}>{repairErr}</div>}
-              {repairMsg&&<div style={{marginTop:12,padding:"10px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)",fontSize:13,color:"#60daa8"}}>{repairMsg}</div>}
+              <label className="form-label" htmlFor="repair-pass">Senha temporária (mín. 6)</label>
+              <input id="repair-pass" type="text" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="ex: fluency2026" value={repairPass} onChange={e=>setRepairPass(e.target.value)} autoComplete="new-password" enterKeyHint="done" onKeyDown={e=>{if(e.key==="Enter"&&repairPass.trim()&&!repairBusy)runRepair();}}/>
+              {repairErr&&<div className="err-box" role="alert" style={{marginTop:12}}>{repairErr}</div>}
+              {repairMsg&&<div role="status" style={{marginTop:12,padding:"10px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)",fontSize:13,color:"#60daa8"}}>{repairMsg}</div>}
             </div>
             <div className="modal-footer">
-              <button className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}}>Fechar</button>
-              <button className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={runRepair} disabled={repairBusy||!repairPass.trim()}>
+              <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setRepairTarget(null);setRepairMsg("");setRepairErr("");}}>Fechar</button>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={runRepair} disabled={repairBusy||!repairPass.trim()}>
                 {repairBusy?"Salvando...":"Criar / vincular login"}
               </button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
-      <div style={{marginBottom:14,position:"relative"}}>
-        <Icon name="search" size={14} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",opacity:.5}}/>
-        <input className="input-light" style={{paddingLeft:34,width:"100%"}} placeholder="Buscar por nome, email ou telefone... (ex: lorrayne)" value={busca} onChange={e=>setBusca(e.target.value)}/>
+      <div className="admin-search-wrap" style={{marginBottom:14,position:"relative"}}>
+        <Icon name="search" size={14} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",opacity:.5,pointerEvents:"none"}}/>
+        <input className="input-light" type="search" inputMode="search" enterKeyHint="search" style={{paddingLeft:34,width:"100%"}} placeholder="Buscar por nome, email ou telefone... (ex: lorrayne)" value={busca} onChange={e=>setBusca(e.target.value)} aria-label="Buscar alunos"/>
       </div>
       <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:20}}>
         {ADMIN_STATUS_FILTERS.map(f=>(
