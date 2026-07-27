@@ -1466,8 +1466,8 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useMemo, useRef } = React;
-console.info("Fluency Portal v2026.07.25-lesson-layout");
+const { useState, useEffect, useMemo, useRef, useCallback } = React;
+console.info("Fluency Portal v2026.07.26-spa-history");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -1479,6 +1479,146 @@ const COURSES_LS_KEY = "fs_courses_catalog_v1";
 const FOTO_MAX_MB = 12;
 const FOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPA ROUTER (hash) — botão voltar do browser/celular + refresh
+   Mantém a navegação interna no histórico do navegador e restaura
+   a tela atual após F5 / pull-to-refresh no mobile.
+   ═══════════════════════════════════════════════════════════════════ */
+const STUDENT_PAGES=["dashboard","trilha","materiais","diario","financeiro","calendario","contato","agendamento"];
+const ADMIN_VIEWS=["dashboard","alunos","cadastros","financeiro","agenda","config"];
+const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","financeiro","recursos"];
+const PORTAL_ROUTE_SS_KEY="fs-portal-route-v1";
+
+function _normHash(h){
+  let s=String(h||"").trim();
+  if(!s||s==="#")return "#/";
+  if(s.charAt(0)!=="#")s="#"+s;
+  if(s==="#")return "#/";
+  // "#foo" -> "#/foo" ; keep "#/..."
+  if(s.length>1&&s.charAt(1)!=="/")s="#/"+s.slice(1);
+  // strip trailing slash except root
+  if(s.length>2&&s.endsWith("/"))s=s.slice(0,-1);
+  return s;
+}
+
+function parsePortalRoute(){
+  const fullHash=location.hash||"";
+  // Só usa sessionStorage quando NÃO há hash (WebView/edge). "#/" é home legítima.
+  if(!fullHash||fullHash==="#"){
+    try{
+      const saved=sessionStorage.getItem(PORTAL_ROUTE_SS_KEY);
+      if(saved){
+        const o=JSON.parse(saved);
+        if(o&&typeof o==="object"&&(o.role||o.page||o.view))return o;
+      }
+    }catch(e){}
+    return{role:null,page:"dashboard",view:"dashboard",studentUid:null,tab:null,lessonId:null};
+  }
+  let raw=fullHash.replace(/^#/,"");
+  if(raw.charAt(0)==="/")raw=raw.slice(1);
+  const q=raw.indexOf("?");
+  if(q>=0)raw=raw.slice(0,q);
+  const parts=raw.split("/").filter(Boolean).map(p=>{try{return decodeURIComponent(p);}catch(e){return p;}});
+
+  if(parts[0]==="admin"){
+    if(parts[1]==="student"&&parts[2]){
+      const tab=ADMIN_STUDENT_TABS.includes(parts[3])?parts[3]:"overview";
+      return{role:"admin",page:null,view:"student",studentUid:parts[2],tab,lessonId:null};
+    }
+    const view=ADMIN_VIEWS.includes(parts[1])?parts[1]:"dashboard";
+    return{role:"admin",page:null,view,studentUid:null,tab:null,lessonId:null};
+  }
+
+  // student routes: / , /trilha , /trilha/:lessonId , /materiais , ...
+  if(!parts.length||parts[0]==="dashboard"){
+    return{role:"student",page:"dashboard",view:null,studentUid:null,tab:null,lessonId:null};
+  }
+  const page=STUDENT_PAGES.includes(parts[0])?parts[0]:"dashboard";
+  const lessonId=(page==="trilha"&&parts[1])?parts[1]:null;
+  return{role:"student",page,view:null,studentUid:null,tab:null,lessonId};
+}
+
+function buildPortalHash(route){
+  if(!route)return "#/";
+  if(route.role==="admin"){
+    if(route.view==="student"&&route.studentUid){
+      const tab=route.tab&&route.tab!=="overview"?"/"+encodeURIComponent(route.tab):"";
+      return "#/admin/student/"+encodeURIComponent(route.studentUid)+tab;
+    }
+    if(route.view&&route.view!=="dashboard")return "#/admin/"+encodeURIComponent(route.view);
+    return "#/admin";
+  }
+  // student
+  const page=route.page||"dashboard";
+  if(page==="dashboard")return "#/";
+  if(page==="trilha"&&route.lessonId)return "#/trilha/"+encodeURIComponent(route.lessonId);
+  return "#/"+encodeURIComponent(page);
+}
+
+function routesEqual(a,b){
+  if(!a||!b)return false;
+  return a.role===b.role&&a.page===b.page&&a.view===b.view&&a.studentUid===b.studentUid&&a.tab===b.tab&&a.lessonId===b.lessonId;
+}
+
+function persistPortalRoute(route){
+  try{sessionStorage.setItem(PORTAL_ROUTE_SS_KEY,JSON.stringify(route));}catch(e){}
+}
+
+/** Navega no histórico do browser (push/replace) e dispara sync da UI. */
+function portalGo(route,opts){
+  opts=opts||{};
+  const hash=buildPortalHash(route);
+  const state={portal:1,route};
+  persistPortalRoute(route);
+  const curHash=_normHash(location.hash);
+  const nextHash=_normHash(hash);
+  if(opts.replace||curHash===nextHash){
+    history.replaceState(state,"",nextHash);
+  }else{
+    history.pushState(state,"",nextHash);
+  }
+  try{if(!opts.keepScroll)window.scrollTo(0,0);}catch(e){}
+  try{window.dispatchEvent(new CustomEvent("portal-route",{detail:route}));}catch(e){}
+}
+
+/** Garante uma entrada base no histórico ao entrar no app (login → home). */
+function portalEnsureBase(route){
+  const r=route||{role:"student",page:"dashboard",view:null,studentUid:null,tab:null,lessonId:null};
+  const hash=buildPortalHash(r);
+  persistPortalRoute(r);
+  history.replaceState({portal:1,route:r},"",_normHash(hash));
+}
+
+/** Hook: escuta voltar do browser, hashchange e bfcache (pageshow). */
+function usePortalRouteListener(handler){
+  useEffect(()=>{
+    const apply=(fromEvent)=>{
+      try{if(fromEvent!=="custom")window.scrollTo(0,0);}catch(e){}
+      try{handler(parsePortalRoute());}catch(e){console.error("portal route:",e);}
+    };
+    const onPop=()=>apply("pop");
+    const onHash=()=>apply("hash");
+    const onCustom=(e)=>{
+      // portalGo já fez scroll; só aplica o detail se existir
+      try{
+        if(e&&e.detail)handler(e.detail);
+        else apply("custom");
+      }catch(err){console.error("portal route:",err);}
+    };
+    const onPageShow=(e)=>{if(e.persisted)apply("pageshow");};
+    window.addEventListener("popstate",onPop);
+    window.addEventListener("hashchange",onHash);
+    window.addEventListener("portal-route",onCustom);
+    window.addEventListener("pageshow",onPageShow);
+    return()=>{
+      window.removeEventListener("popstate",onPop);
+      window.removeEventListener("hashchange",onHash);
+      window.removeEventListener("portal-route",onCustom);
+      window.removeEventListener("pageshow",onPageShow);
+    };
+  },[handler]);
+}
 
 function withTimeout(promise, ms, label){
   let timer;
@@ -3294,12 +3434,16 @@ function statusLabelShort(item){
 }
 
 /** Timeline vertical mobile: módulos em círculos + lições em círculos + sheet fullscreen */
-function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,focusLessonId,onLessonFocused,progress,course,onToggleHidden}){
+function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,focusLessonId,onLessonFocused,onOpenLesson,progress,course,onToggleHidden}){
   const [openMod,setOpenMod]=useState(null);
   const [sheetItem,setSheetItem]=useState(null);
 
+  // URL / focusLessonId é a fonte da verdade do sheet (voltar do browser fecha a lição)
   useEffect(()=>{
-    if(!focusLessonId)return;
+    if(!focusLessonId){
+      setSheetItem(null);
+      return;
+    }
     const modId=parseInt((focusLessonId.split("-")[0]||"").slice(1),10);
     if(modId)setOpenMod(modId);
     const book=books.find(b=>b.bookIdx===modId);
@@ -3307,6 +3451,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
     if(item){
       const locked=!(item.status==="concluida"||item.status==="realizada"||item.status==="andamento")&&!isAdmin;
       if(!locked)setSheetItem(item);
+      else setSheetItem(null);
     }
   },[focusLessonId,books,isAdmin]);
 
@@ -3319,7 +3464,9 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
     const locked=isPending&&!isAdmin;
     if(locked)return;
     playClickSound("open");
-    setSheetItem(item);
+    // Navega via URL para empilhar no histórico do browser
+    if(onOpenLesson)onOpenLesson(item.id);
+    else setSheetItem(item);
   }
   function closeSheet(){
     playClickSound("mod");
@@ -3433,7 +3580,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
   );
 }
 
-function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,contrato}){
+function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,onOpenLesson,contrato}){
   const courses=useCourses();
   const [trilhaData,setTrilhaData]=useState(null);
   const [modulosOcultos,setModulosOcultos]=useState([]);
@@ -3476,6 +3623,7 @@ function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,contrato}){
         isAdmin={false}
         focusLessonId={focusLessonId}
         onLessonFocused={onLessonFocused}
+        onOpenLesson={onOpenLesson}
         progress={progress}
         course={course}
         onToggleHidden={toggleModuleHidden}
@@ -4921,13 +5069,104 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   const [financeiro,setFinanceiro]=useState(null);
   const [modulosOcultos,setModulosOcultos]=useState([]);
   const [studentSchedule,setStudentSchedule]=useState(null);
-  const [activeTab,setActiveTab]=useState(initialTab||"overview");
-  const [studentPage,setStudentPage]=useState("dashboard");
-  const [focusLessonId,setFocusLessonId]=useState(null);
-  function navigateStudent(page,lessonId){
+  // Estado inicial a partir da URL (refresh / deep link / botão voltar)
+  const [activeTab,setActiveTab]=useState(()=>{
+    if(isAdmin){
+      const r=parsePortalRoute();
+      if(r.role==="admin"&&r.view==="student"&&r.studentUid===uid&&r.tab)return r.tab;
+      return initialTab||"overview";
+    }
+    return initialTab||"overview";
+  });
+  const [studentPage,setStudentPage]=useState(()=>{
+    if(isAdmin)return"dashboard";
+    const r=parsePortalRoute();
+    if(r.role==="student"&&STUDENT_PAGES.includes(r.page))return r.page;
+    return"dashboard";
+  });
+  const [focusLessonId,setFocusLessonId]=useState(()=>{
+    if(isAdmin)return null;
+    const r=parsePortalRoute();
+    return(r.role==="student"&&r.page==="trilha"&&r.lessonId)?r.lessonId:null;
+  });
+
+  const navigateStudent=useCallback((page,lessonId,opts)=>{
+    const p=STUDENT_PAGES.includes(page)?page:"dashboard";
+    const lid=(p==="trilha"&&lessonId)?lessonId:null;
+    setStudentPage(p);
+    setFocusLessonId(lid);
+    if(!isAdmin){
+      portalGo({role:"student",page:p,view:null,studentUid:null,tab:null,lessonId:lid},opts||{});
+    }
+  },[isAdmin]);
+
+  const goStudentBack=useCallback(()=>{
+    // Mesmo comportamento do botão voltar do browser/SO: usa a pilha de histórico
+    if(studentPage==="dashboard"&&!focusLessonId)return;
+    try{
+      if(window.history.state&&window.history.state.portal){
+        history.back();
+        return;
+      }
+    }catch(e){}
+    // Fallback (refresh mid-navegação sem state): sobe na hierarquia
+    if(studentPage==="trilha"&&focusLessonId){
+      navigateStudent("trilha",null,{replace:true});
+      return;
+    }
+    navigateStudent("dashboard",null,{replace:true});
+  },[studentPage,focusLessonId,navigateStudent]);
+
+  // Sync com botão voltar do browser / refresh / bfcache
+  const onPortalRoute=useCallback((route)=>{
+    if(isAdmin){
+      if(route.role==="admin"&&route.view==="student"){
+        if(route.studentUid&&route.studentUid!==uid){
+          // Outro aluno no histórico — devolve ao admin shell
+          if(onBack)onBack(route);
+          return;
+        }
+        if(route.tab&&ADMIN_STUDENT_TABS.includes(route.tab))setActiveTab(route.tab);
+      }else if(route.role==="admin"&&route.view!=="student"){
+        if(onBack)onBack(route);
+      }
+      return;
+    }
+    // aluno
+    if(route.role==="admin")return; // ignora rotas admin no portal do aluno
+    const page=STUDENT_PAGES.includes(route.page)?route.page:"dashboard";
     setStudentPage(page);
-    setFocusLessonId(lessonId||null);
-  }
+    setFocusLessonId((page==="trilha"&&route.lessonId)?route.lessonId:null);
+  },[isAdmin,uid,onBack]);
+  usePortalRouteListener(onPortalRoute);
+
+  // Garante URL base ao montar (aluno) e restaura se vazio
+  useEffect(()=>{
+    if(isAdmin){
+      // Admin ficha do aluno: sincroniza URL se ainda não estiver nela
+      const r=parsePortalRoute();
+      if(!(r.role==="admin"&&r.view==="student"&&r.studentUid===uid)){
+        portalGo({role:"admin",view:"student",studentUid:uid,tab:activeTab||initialTab||"overview",page:null,lessonId:null},{replace:true});
+      }
+      return;
+    }
+    const r=parsePortalRoute();
+    if(!location.hash||location.hash==="#"||r.role==="admin"){
+      portalEnsureBase({role:"student",page:studentPage||"dashboard",view:null,studentUid:null,tab:null,lessonId:focusLessonId});
+    }else if(r.role==="student"||!r.role){
+      // alinha sessionStorage
+      persistPortalRoute({role:"student",page:studentPage,view:null,studentUid:null,tab:null,lessonId:focusLessonId});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[uid,isAdmin]);
+
+  const setActiveTabNav=useCallback((tab)=>{
+    setActiveTab(tab);
+    if(isAdmin){
+      portalGo({role:"admin",view:"student",studentUid:uid,tab:tab||"overview",page:null,lessonId:null},{});
+    }
+  },[isAdmin,uid]);
+
   const [showFullProfile,setShowFullProfile]=useState(false);
   const [profileErr,setProfileErr]=useState("");
   const [fullStudent,setFullStudent]=useState(null);
@@ -5020,9 +5259,18 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     if(studentPage==="dashboard")return <StudentDashboard uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onNavigate={navigateStudent} modulosOcultos={modulosOcultos}/>;
     return(
       <div>
-        <button className="page-back" onClick={()=>{setStudentPage("dashboard");setFocusLessonId(null);}}><Icon name="arrow-left" size={16}/> Voltar</button>
+        <button type="button" className="page-back" onClick={goStudentBack}><Icon name="arrow-left" size={16}/> Voltar</button>
         {studentPage!=="trilha"&&<h2 className="text-xl font-bold mb-4" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]}</h2>}
-        {studentPage==="trilha"&&<TrilhaSection uid={uid} isAdmin={false} focusLessonId={focusLessonId} onLessonFocused={()=>setFocusLessonId(null)} contrato={profile.contrato}/>}
+        {studentPage==="trilha"&&(
+          <TrilhaSection
+            uid={uid}
+            isAdmin={false}
+            focusLessonId={focusLessonId}
+            onLessonFocused={()=>navigateStudent("trilha",null,{replace:true})}
+            onOpenLesson={(lessonId)=>navigateStudent("trilha",lessonId,{})}
+            contrato={profile.contrato}
+          />
+        )}
         {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
         {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
@@ -5094,14 +5342,14 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             </div>
             <div className="tab-bar mb-5">
               {adminTabs.map(t=>(
-                <button key={t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTab(t.id)}>
+                <button key={t.id} className={"tab-btn"+(activeTab===t.id?" tab-btn-active":"")} onClick={()=>setActiveTabNav(t.id)}>
                   <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2}}>
                     <Icon name={t.icon} size={15}/><span style={{fontSize:10}}>{t.label}</span>
                   </div>
                 </button>
               ))}
             </div>
-            {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTab} hideGreeting/>}
+            {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTabNav} hideGreeting/>}
             {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={true} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
             {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
             {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
@@ -8145,10 +8393,92 @@ function AdminApp({user}){
   const [students,setStudents]=useState(null);
   const [studentsErr,setStudentsErr]=useState("");
   const [pendentesCount,setPendentesCount]=useState(0);
-  const [selectedUid,setSelectedUid]=useState(null);
-  const [selectedInitialTab,setSelectedInitialTab]=useState(null);
   const [showModal,setShowModal]=useState(false);
-  const [adminView,setAdminView]=useState("dashboard");
+
+  // Estado inicial a partir da URL (refresh / deep link / botão voltar)
+  const [selectedUid,setSelectedUid]=useState(()=>{
+    const r=parsePortalRoute();
+    return(r.role==="admin"&&r.view==="student"&&r.studentUid)?r.studentUid:null;
+  });
+  const [selectedInitialTab,setSelectedInitialTab]=useState(()=>{
+    const r=parsePortalRoute();
+    return(r.role==="admin"&&r.view==="student"&&r.tab)?r.tab:null;
+  });
+  const [adminView,setAdminView]=useState(()=>{
+    const r=parsePortalRoute();
+    if(r.role==="admin"){
+      if(r.view==="student")return"alunos";
+      if(ADMIN_VIEWS.includes(r.view))return r.view;
+    }
+    return"dashboard";
+  });
+
+  const goAdminView=useCallback((id,opts)=>{
+    const view=ADMIN_VIEWS.includes(id)?id:"dashboard";
+    setSelectedUid(null);
+    setSelectedInitialTab(null);
+    setAdminView(view);
+    portalGo({role:"admin",view,page:null,studentUid:null,tab:null,lessonId:null},opts||{});
+  },[]);
+
+  const openStudent=useCallback((uid,tab,opts)=>{
+    if(!uid)return;
+    const t=tab&&ADMIN_STUDENT_TABS.includes(tab)?tab:"overview";
+    setSelectedUid(uid);
+    setSelectedInitialTab(t);
+    portalGo({role:"admin",view:"student",studentUid:uid,tab:t,page:null,lessonId:null},opts||{});
+  },[]);
+
+  const closeStudent=useCallback((routeHint)=>{
+    // Se o histórico trouxe uma view admin (popstate), só atualiza estado — URL já está certa
+    if(routeHint&&routeHint.role==="admin"&&routeHint.view&&routeHint.view!=="student"){
+      setSelectedUid(null);
+      setSelectedInitialTab(null);
+      setAdminView(ADMIN_VIEWS.includes(routeHint.view)?routeHint.view:"dashboard");
+      return;
+    }
+    // Botão Voltar da UI: usa a pilha do browser (igual ao retornar do celular)
+    try{
+      if(window.history.state&&window.history.state.portal){
+        history.back();
+        return;
+      }
+    }catch(e){}
+    const backView=selectedInitialTab==="financeiro"?"financeiro":"alunos";
+    setSelectedUid(null);
+    setSelectedInitialTab(null);
+    setAdminView(backView);
+    portalGo({role:"admin",view:backView,page:null,studentUid:null,tab:null,lessonId:null},{replace:true});
+  },[selectedInitialTab]);
+
+  const onPortalRoute=useCallback((route)=>{
+    if(route.role!=="admin"&&route.role!==null)return;
+    if(route.view==="student"&&route.studentUid){
+      setSelectedUid(route.studentUid);
+      setSelectedInitialTab(route.tab||"overview");
+      return;
+    }
+    // saiu da ficha do aluno
+    setSelectedUid(null);
+    setSelectedInitialTab(null);
+    const view=ADMIN_VIEWS.includes(route.view)?route.view:"dashboard";
+    setAdminView(view);
+  },[]);
+  usePortalRouteListener(onPortalRoute);
+
+  useEffect(()=>{
+    // Garante hash admin na entrada (evita voltar “sair do site” no primeiro back)
+    const r=parsePortalRoute();
+    if(!location.hash||location.hash==="#"||r.role!=="admin"){
+      if(selectedUid){
+        portalEnsureBase({role:"admin",view:"student",studentUid:selectedUid,tab:selectedInitialTab||"overview",page:null,lessonId:null});
+      }else{
+        portalEnsureBase({role:"admin",view:adminView||"dashboard",page:null,studentUid:null,tab:null,lessonId:null});
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
   useCourses(); // mantém cache de cursos atualizado para todo o admin
 
   useEffect(()=>{
@@ -8194,7 +8524,7 @@ function AdminApp({user}){
   },[]);
   useEffect(()=>db.collection("students").where("status","==","pendente_aprovacao").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
 
-  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={()=>{setSelectedUid(null);setSelectedInitialTab(null);if(selectedInitialTab)setAdminView("financeiro");}}/>;
+  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={closeStudent}/>;
 
   const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
 
@@ -8219,7 +8549,7 @@ function AdminApp({user}){
         </div>
         <div className="admin-sidebar-label">Gestão da escola</div>
         {adminNav.map(n=>(
-          <button key={n.id} type="button" className={"admin-nav-item"+(adminView===n.id?" active":"")} onClick={()=>setAdminView(n.id)}>
+          <button key={n.id} type="button" className={"admin-nav-item"+(adminView===n.id?" active":"")} onClick={()=>goAdminView(n.id)}>
             <Icon name={n.icon} size={18}/>
             <span>{n.label}</span>
             {n.id==="cadastros"&&pendentesCount>0&&<span className="nav-badge">{pendentesCount}</span>}
@@ -8241,7 +8571,7 @@ function AdminApp({user}){
             </div>
             <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
               {pendentesCount>0&&(
-                <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setAdminView("cadastros")}
+                <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>goAdminView("cadastros")}
                   style={{background:"#E0F2FE",border:"1.5px solid #0f2c5c",color:"#0f2c5c"}}>
                   <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
                 </button>
@@ -8262,22 +8592,16 @@ function AdminApp({user}){
           {!students
             ?<LoadingScreen/>
             :adminView==="dashboard"
-            ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>{
-                if(id==="alunos")setAdminView("alunos");
-                if(id==="cadastros")setAdminView("cadastros");
-                if(id==="financeiro")setAdminView("financeiro");
-                if(id==="agenda")setAdminView("agenda");
-                if(id==="config")setAdminView("config");
-              }}/>
+            ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>goAdminView(id)}/>
             :adminView==="cadastros"
-            ?<AdminCadastrosPendentes onBack={()=>setAdminView("dashboard")} onLaunched={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+            ?<AdminCadastrosPendentes onBack={()=>goAdminView("dashboard")} onLaunched={uid=>openStudent(uid,"overview")}/>
             :adminView==="financeiro"
-            ?<AdminFinanceiroDashboard students={students} onBack={()=>setAdminView("dashboard")} onSelectStudent={uid=>{setSelectedUid(uid);setSelectedInitialTab("financeiro");}}/>
+            ?<AdminFinanceiroDashboard students={students} onBack={()=>goAdminView("dashboard")} onSelectStudent={uid=>openStudent(uid,"financeiro")}/>
             :adminView==="agenda"
-            ?<AdminAgendaDashboard students={students} onBack={()=>setAdminView("dashboard")}/>
+            ?<AdminAgendaDashboard students={students} onBack={()=>goAdminView("dashboard")}/>
             :adminView==="config"
             ?<AdminConfig students={students}/>
-            :<AdminAlunos students={students} onSelectUid={uid=>{setSelectedUid(uid);setSelectedInitialTab(null);}}/>
+            :<AdminAlunos students={students} onSelectUid={uid=>openStudent(uid,"overview")}/>
           }
         </main>
       </div>
@@ -8393,7 +8717,14 @@ function App(){
   // Cores salvas pelo admin (config/aparencia) chegam em tempo real para todo mundo
   useGlobalAppearanceSync();
   useEffect(()=>{
-    const unsub=auth.onAuthStateChanged(u=>setUser(u||null),err=>{
+    const unsub=auth.onAuthStateChanged(u=>{
+      const next=u||null;
+      // Logout: limpa rota da sessão para o próximo login não herdar tela errada
+      if(!next){
+        try{sessionStorage.removeItem(PORTAL_ROUTE_SS_KEY);}catch(e){}
+      }
+      setUser(next);
+    },err=>{
       console.error("onAuthStateChanged:",err);
       setUser(null);
       setAuthErr("Falha na autenticação. Recarregue a página.");
@@ -8406,6 +8737,10 @@ function App(){
   useEffect(()=>{
     if(user!==undefined)setAuthErr("");
   },[user]);
+  // Evita que o browser restaure scroll antigo ao voltar no histórico (SPA)
+  useEffect(()=>{
+    try{if("scrollRestoration" in history)history.scrollRestoration="manual";}catch(e){}
+  },[]);
   if(user===undefined)return(
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="chip rounded-2xl px-8 py-6 text-center glass max-w-sm">
