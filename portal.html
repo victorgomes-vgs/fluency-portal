@@ -1454,6 +1454,43 @@
     /* Busca admin: área confortável no toque */
     .admin-search-wrap input{min-height:44px;}
 
+    /* Admin: pré-visualização como o aluno vê */
+    .view-as-banner{
+      position:sticky;top:0;z-index:60;
+      display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+      padding:12px 16px;
+      padding-left:calc(16px + env(safe-area-inset-left,0px));
+      padding-right:calc(16px + env(safe-area-inset-right,0px));
+      background:linear-gradient(90deg,#F59E0B 0%,#FBBF24 45%,#F59E0B 100%);
+      color:#1E1E1E;
+      border-bottom:2px solid #B45309;
+      box-shadow:0 4px 18px rgba(180,83,9,.28);
+      font-size:13px;font-weight:700;text-align:center;
+    }
+    .view-as-banner strong{
+      font-family:'Sora',sans-serif;font-weight:800;letter-spacing:.02em;
+      text-transform:uppercase;font-size:13px;
+    }
+    .view-as-banner .view-as-label{
+      font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85;
+    }
+    .view-as-banner-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      margin-left:8px;padding:8px 14px;min-height:40px;
+      border-radius:10px;border:1.5px solid rgba(30,30,30,.2);
+      background:#1E293B;color:#fff;font-size:12px;font-weight:700;
+      cursor:pointer;font-family:inherit;touch-action:manipulation;
+    }
+    .view-as-banner-btn:hover{filter:brightness(1.08);}
+    .btn-view-as-student{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:10px 14px;min-height:44px;border-radius:12px;
+      border:1.5px solid #4F46E5;background:#EEF2FF;color:#3730A3;
+      font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+      touch-action:manipulation;white-space:nowrap;
+    }
+    .btn-view-as-student:hover{background:#E0E7FF;border-color:#4338CA;color:#312E81;}
+
   </style>
   <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','ui-sans-serif']}}}}</script>
 
@@ -1588,7 +1625,7 @@
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
-console.info("Fluency Portal v2026.07.26-ux-polish");
+console.info("Fluency Portal v2026.07.26-view-as-student");
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let storage=null;
@@ -5466,14 +5503,31 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   },[isAdmin,uid]);
   useScrollActiveTab(isAdmin?activeTab:null);
 
+  // Admin: pré-visualizar portal exatamente como o aluno vê
+  const [viewAsStudent,setViewAsStudent]=useState(false);
+  useEffect(()=>{setViewAsStudent(false);},[uid]);
+  const showStudentUi=!isAdmin||viewAsStudent;
+  function enterViewAsStudent(){
+    setStudentPage("dashboard");
+    setFocusLessonId(null);
+    setViewAsStudent(true);
+    try{window.scrollTo(0,0);}catch(e){}
+  }
+  function exitViewAsStudent(){
+    setViewAsStudent(false);
+    setStudentPage("dashboard");
+    setFocusLessonId(null);
+    try{window.scrollTo(0,0);}catch(e){}
+  }
+
   // Após troca de página interna, sobe e foca o main (leitores de tela + teclado)
   useEffect(()=>{
-    if(isAdmin)return;
+    if(isAdmin&&!viewAsStudent)return;
     const main=document.getElementById("portal-main");
     if(main){
       try{main.focus({preventScroll:true});}catch(e){}
     }
-  },[studentPage,isAdmin]);
+  },[studentPage,isAdmin,viewAsStudent]);
 
   const [showFullProfile,setShowFullProfile]=useState(false);
   const [profileErr,setProfileErr]=useState("");
@@ -5599,11 +5653,27 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     );
   }
 
+  const studentDisplayName=getFullName(profile.name||profile.nome||"Aluno");
+
   return(
     <div className="min-h-screen pb-20">
-      <LogoBar onBack={isAdmin&&onBack?onBack:null} isAdmin={isAdmin} showLogout={true}/>
-      {isAdmin&&(
-        <div style={{background:"#1E293B",color:"#CBD5E1",padding:"10px 16px",fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:10,justifyContent:"center"}}>
+      <LogoBar
+        onBack={isAdmin?(viewAsStudent?exitViewAsStudent:(onBack||null)):null}
+        isAdmin={isAdmin&&!viewAsStudent}
+        showLogout={true}
+      />
+      {isAdmin&&viewAsStudent&&(
+        <div className="view-as-banner" role="status" aria-live="polite">
+          <Icon name="eye" size={18}/>
+          <span className="view-as-label">Vendo como</span>
+          <strong title={studentDisplayName}>{studentDisplayName}</strong>
+          <button type="button" className="view-as-banner-btn" onClick={exitViewAsStudent}>
+            <Icon name="x" size={14}/> Sair da visão do aluno
+          </button>
+        </div>
+      )}
+      {isAdmin&&!viewAsStudent&&(
+        <div style={{background:"#1E293B",color:"#CBD5E1",padding:"10px 16px",fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
           <span className="role-pill role-pill-admin">Admin</span>
           <span>Você está na visão de ficha do aluno — não é o portal do estudante</span>
         </div>
@@ -5616,13 +5686,16 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         />
       )}
 
-      <main id="portal-main" className={"max-w-3xl mx-auto "+(isAdmin?"px-4 pt-6":"student-dash-wrap")} tabIndex={-1}>
-        {!isAdmin&&(
-          <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px"}}>
+      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")} tabIndex={-1}>
+        {showStudentUi&&(
+          <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
             <span className="role-pill role-pill-student">Portal do aluno</span>
+            {isAdmin&&viewAsStudent&&(
+              <span style={{fontSize:11,color:"#B45309",fontWeight:700}}>Pré-visualização · o que o aluno vê</span>
+            )}
           </div>
         )}
-        {isAdmin?(
+        {isAdmin&&!viewAsStudent?(
           <>
             <div className="glass rounded-2xl p-5 mb-5">
               <div className="flex items-start gap-4 flex-wrap">
@@ -5643,9 +5716,14 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                     <div><span className="meta-label">Status</span><span className="meta-val" style={{display:"inline-flex",marginTop:2}}><StatusBadge status={profile.status||"lead"}/></span></div>
                   </div>
                 </div>
-                <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold inline-flex items-center gap-2 shrink-0" onClick={()=>setShowFullProfile(true)}>
-                  <Icon name="user" size={14}/> Perfil completo
-                </button>
+                <div style={{display:"flex",flexDirection:"column",gap:8,flexShrink:0,alignItems:"stretch"}}>
+                  <button type="button" className="btn btn-primary rounded-xl px-4 py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2" onClick={()=>setShowFullProfile(true)}>
+                    <Icon name="user" size={14}/> Perfil completo
+                  </button>
+                  <button type="button" className="btn-view-as-student" onClick={enterViewAsStudent} title="Abre o portal exatamente como o aluno enxerga">
+                    <Icon name="eye" size={16}/> Ver como aluno
+                  </button>
+                </div>
               </div>
             </div>
             <div className="tab-bar mb-5" role="tablist" aria-label="Seções do aluno">
@@ -5666,8 +5744,8 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
           </>
         ):renderStudentPage()}
       </main>
-      {!isAdmin&&<WhatsAppFloat/>}
-      {!isAdmin&&<IVi mode="student"/>}
+      {showStudentUi&&<WhatsAppFloat/>}
+      {showStudentUi&&<IVi mode="student"/>}
     </div>
   );
 }
