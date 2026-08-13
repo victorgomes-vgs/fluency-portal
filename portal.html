@@ -2109,6 +2109,21 @@ function makeSpeechModulos(names){
   }));
 }
 
+/** Estrutura livre para cursos criados pelo admin: até 50 lições por módulo. */
+function makeBlankCourseModulos(totalLicoes){
+  const total=Math.max(1,Math.min(150,parseInt(totalLicoes,10)||150));
+  const modulos=[];
+  let restante=total;
+  let id=1;
+  while(restante>0){
+    const qtd=Math.min(50,restante);
+    modulos.push({id,nome:"Módulo "+id,totalLicoes:qtd,semBlocos:true,tipoLivre:true});
+    restante-=qtd;
+    id++;
+  }
+  return modulos;
+}
+
 /**
  * Cores oficiais = cards do landing (thefluency.studio / Portal landing index.html)
  * e referência visual "cores dos cards.jpg":
@@ -2677,6 +2692,7 @@ function playClickSound(kind){
 function playLessonSound(){playClickSound("lesson");}
 
 function getLessonTypeFromModule(mod,posInModule){
+  if(mod&&mod.tipoLivre)return"";
   if(!mod||mod.semBlocos)return"input";
   if(!mod.blocos||!mod.blocos.length)return FOUNDATION_BLOCK[(posInModule-1)%10];
   let remaining=posInModule;
@@ -2717,7 +2733,9 @@ function getReflectiveMeta(lessonType, contentNum, reviewNum){
   return m?{tema:m.tema,objetivos:m.objetivos}:{tema:"",objetivos:""};
 }
 
-/** Gera estrutura de livros/lições a partir do documento do curso (mesmos campos de antes). */
+const COURSE_SHARED_LESSON_FIELDS=["lessonType","title","tema","objetivos","linkAula","linkTarefa","linkMaterial","linkChamada","linkExtra","linkGravacao","linkRelatorio"];
+
+/** Gera estrutura de livros/lições e aplica a programação compartilhada do curso. */
 function generateBooks(course){
   const c=course||DEFAULT_COURSES[0];
   const books=[];
@@ -2732,7 +2750,9 @@ function generateBooks(course){
     const items=[];
     for(let li=1;li<=total;li++){
       globalIdx++;
-      const lt=getLessonTypeFromModule(mod,li);
+      const lessonId=`b${bi}-l${globalIdx}`;
+      const shared=(c.lessonContent&&c.lessonContent[lessonId])||{};
+      const lt=Object.prototype.hasOwnProperty.call(shared,"lessonType")?shared.lessonType:getLessonTypeFromModule(mod,li);
       const isReview=lt==="review";
       let num, pos, title, tema="", objetivos="";
       if(isReview){
@@ -2754,15 +2774,23 @@ function generateBooks(course){
           tema=meta.tema;objetivos=meta.objetivos;
         }
       }
-      items.push({
-        id:`b${bi}-l${globalIdx}`,pos:pos,type:isReview?"review":"lesson",lessonType:lt,num:num,
+      const lesson={
+        id:lessonId,pos:pos,type:isReview?"review":"lesson",lessonType:lt,num:num,
         title:title,status:"pendente",
         date:"",dataPrevista:"",tema:tema,objetivos:objetivos,feedback:"",obs:"",link:"",
         evalF:"",evalA:"",evalL:"",evalE:"",
         linkMaterial:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",
         linkGravacao:"",linkRelatorio:"",tarefaFeita:false,
-        materiaisModuloPdf:"",
+        materiaisModuloPdf:"",courseManaged:!!c.sharedContentEnabled,
+      };
+      COURSE_SHARED_LESSON_FIELDS.forEach(k=>{
+        if(Object.prototype.hasOwnProperty.call(shared,k)){
+          if(k==="title"&&!String(shared[k]||"").trim())return;
+          lesson[k]=shared[k];
+        }
       });
+      lesson.type=lesson.lessonType==="review"?"review":"lesson";
+      items.push(lesson);
     }
     books.push({bookIdx:bi,items});
   });
@@ -2776,6 +2804,15 @@ function mergeBooks(trilhaData,course){
     items:b.items.map(i=>{
       const saved=(trilhaData&&trilhaData[i.id])||{};
       const merged={...i,...saved};
+      // A programação do curso prevalece e chega automaticamente a todos os alunos vinculados.
+      const shared=(course&&course.lessonContent&&course.lessonContent[i.id])||{};
+      COURSE_SHARED_LESSON_FIELDS.forEach(k=>{
+        if(Object.prototype.hasOwnProperty.call(shared,k)){
+          if(k==="title"&&!String(shared[k]||"").trim())return;
+          merged[k]=shared[k];
+        }
+      });
+      merged.type=merged.lessonType==="review"?"review":"lesson";
       // Preenche tema/objetivos oficiais se o aluno ainda não tiver valor salvo
       if(!merged.tema&&i.tema)merged.tema=i.tema;
       if(!merged.objetivos&&i.objetivos)merged.objetivos=i.objetivos;
@@ -3331,7 +3368,9 @@ function AdminLessonPanel({item,uid}){
     {f:"linkGravacao",l:"Aulas Gravadas (Recorded Classes)"},
     {f:"linkRelatorio",l:"Relatório da Reunião"},
   ];
-  const FIELD_KEYS=["status","dataPrevista","date","evalF","evalA","evalL","evalE","tema","objetivos","feedback","obs","linkAula","linkTarefa","linkMaterial","linkChamada","linkExtra","linkGravacao","linkRelatorio"];
+  const STUDENT_FIELD_KEYS=["status","dataPrevista","date","evalF","evalA","evalL","evalE","feedback","obs"];
+  const LEGACY_CONTENT_KEYS=["tema","objetivos","linkAula","linkTarefa","linkMaterial","linkChamada","linkExtra","linkGravacao","linkRelatorio"];
+  const FIELD_KEYS=item.courseManaged?STUDENT_FIELD_KEYS:[...STUDENT_FIELD_KEYS,...LEGACY_CONTENT_KEYS];
   function snapshotFromItem(it){
     const s={};
     FIELD_KEYS.forEach(k=>{
@@ -3375,6 +3414,9 @@ function AdminLessonPanel({item,uid}){
   }
   return(
     <div className="space-y-4">
+      {item.courseManaged&&<div style={{padding:"10px 12px",borderRadius:10,background:"rgba(30,143,168,.10)",border:"1px solid rgba(30,143,168,.28)",fontSize:12,lineHeight:1.5,color:"var(--font-muted)"}}>
+        Tipo, tema, objetivos e links são compartilhados pelo curso. Edite essa programação em <strong>Configurações → Cursos → Editar</strong>; aqui ficam apenas os dados individuais do aluno.
+      </div>}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><div className="detail-label">Status</div><div className="flex gap-2 flex-wrap mt-1">{ST.map(s=><button key={s.v} type="button" onClick={()=>setD("status",s.v)} className={"sbtn "+(draft.status===s.v?"sbtn-"+s.v:"sbtn-off")}>{s.l}</button>)}</div></div>
         <div className="grid grid-cols-2 gap-2">
@@ -3393,7 +3435,7 @@ function AdminLessonPanel({item,uid}){
           ))}
         </div>
       </div>
-      <div>
+      {!item.courseManaged&&<div>
         <div className="detail-label mb-2">Links</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {LK.map(lk=>(
@@ -3403,9 +3445,9 @@ function AdminLessonPanel({item,uid}){
             </div>
           ))}
         </div>
-      </div>
-      <div><div className="detail-label">Tema</div><input className="input-light mt-1" placeholder="Tema da lição (sem parênteses)" value={draft.tema||""} onChange={e=>setD("tema",e.target.value)}/></div>
-      <div><div className="detail-label">Objetivos da Aula</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="O que será aprendido nesta aula..." value={draft.objetivos||""} onChange={e=>setD("objetivos",e.target.value)}/></div>
+      </div>}
+      {!item.courseManaged&&<div><div className="detail-label">Tema</div><input className="input-light mt-1" placeholder="Tema da lição (sem parênteses)" value={draft.tema||""} onChange={e=>setD("tema",e.target.value)}/></div>}
+      {!item.courseManaged&&<div><div className="detail-label">Objetivos da Aula</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="O que será aprendido nesta aula..." value={draft.objetivos||""} onChange={e=>setD("objetivos",e.target.value)}/></div>}
       <div><div className="detail-label">Feedback para o Aluno</div><textarea className="input-light mt-1" rows={3} style={{resize:"vertical"}} placeholder="Retorno personalizado para o aluno..." value={draft.feedback||""} onChange={e=>setD("feedback",e.target.value)}/></div>
       <div><div className="detail-label">Observações Internas</div><textarea className="input-light mt-1" rows={2} style={{resize:"vertical"}} placeholder="Notas do professor (não visíveis ao aluno)..." value={draft.obs||""} onChange={e=>setD("obs",e.target.value)}/></div>
       <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap",paddingTop:4,borderTop:"1px solid var(--divider)"}}>
@@ -7802,13 +7844,110 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName}){
   );
 }
 
+function CourseLessonProgramEditor({item,value,onApply,onClose}){
+  const LINKS=[
+    ["linkAula","Lição Online"],["linkTarefa","Tarefa Online"],["linkMaterial","Lição PDF"],
+    ["linkChamada","Aula ao Vivo"],["linkExtra","Extra (Materiais)"],["linkGravacao","Aulas Gravadas"],["linkRelatorio","Relatório da Reunião"],
+  ];
+  const empty=()=>({lessonType:"",title:"",tema:"",objetivos:"",linkAula:"",linkTarefa:"",linkMaterial:"",linkChamada:"",linkExtra:"",linkGravacao:"",linkRelatorio:""});
+  const [form,setForm]=useState(()=>({...empty(),...(value||{})}));
+  useEffect(()=>setForm({...empty(),...(value||{})}),[item.id]);
+  function setF(k,v){setForm(p=>({...p,[k]:v}));}
+  return(
+    <div className="tj-sheet" role="dialog" aria-modal="true" aria-label={"Programar lição "+item.pos} onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="tj-sheet-panel" onClick={e=>e.stopPropagation()} style={{maxWidth:760}}>
+        <div className="tj-sheet-head">
+          <div>
+            <div style={{fontSize:11,opacity:.72,textTransform:"uppercase",letterSpacing:".08em"}}>Programação compartilhada</div>
+            <div style={{fontSize:18,fontWeight:800,fontFamily:"'Sora',sans-serif"}}>Lição {item.pos}</div>
+          </div>
+          <button type="button" className="tj-sheet-close" onClick={onClose} aria-label="Fechar"><Icon name="x" size={20}/></button>
+        </div>
+        <div className="tj-sheet-body space-y-4">
+          <div style={{padding:"10px 12px",borderRadius:10,background:"rgba(30,143,168,.10)",border:"1px solid rgba(30,143,168,.28)",fontSize:12,lineHeight:1.5,color:"var(--font-muted)"}}>
+            Tudo o que for preenchido aqui será exibido para todos os alunos vinculados a este curso.
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="form-label">Tipo de lição</label>
+              <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={form.lessonType||""} onChange={e=>setF("lessonType",e.target.value)}>
+                <option value="">Escolher tipo…</option><option value="input">Input</option><option value="output">Output</option><option value="review">Review</option>
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Título opcional</label>
+              <input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Em branco mantém Lesson + número" value={form.title||""} onChange={e=>setF("title",e.target.value)}/>
+            </div>
+          </div>
+          <div><label className="form-label">Tema</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Tema da lição" value={form.tema||""} onChange={e=>setF("tema",e.target.value)}/></div>
+          <div><label className="form-label">Objetivos da aula</label><textarea className="w-full input rounded-xl px-3 py-2.5 text-sm" rows={3} style={{resize:"vertical"}} placeholder="Conteúdo e objetivos da programação" value={form.objetivos||""} onChange={e=>setF("objetivos",e.target.value)}/></div>
+          <div>
+            <div className="form-section-title">Links e materiais</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {LINKS.map(([k,label])=><div key={k}><label className="form-label">{label}</label><input type="url" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="https://" value={form[k]||""} onChange={e=>setF(k,e.target.value)}/></div>)}
+            </div>
+          </div>
+          <div style={{display:"flex",justifyContent:"flex-end",gap:8,paddingTop:8,borderTop:"1px solid var(--divider)"}}>
+            <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Cancelar</button>
+            <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={()=>{onApply(form);onClose();}}>Aplicar à trilha do curso</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CourseTrailEditor({courseDraft,onLessonChange}){
+  const books=useMemo(()=>generateBooks(courseDraft),[courseDraft]);
+  const [openMods,setOpenMods]=useState(()=>Object.fromEntries((courseDraft.modulos||[]).map(m=>[m.id,true])));
+  const [activeId,setActiveId]=useState(null);
+  const activeItem=useMemo(()=>books.flatMap(b=>b.items).find(i=>i.id===activeId)||null,[books,activeId]);
+  function toggleMod(id){setOpenMods(p=>({...p,[id]:p[id]===false?true:false}));}
+  return(
+    <div style={{marginTop:18}}>
+      <div className="form-section-title">Trilha e programação do curso</div>
+      <p className="text-xs muted mb-3" style={{lineHeight:1.55}}>A trilha fica totalmente liberada para edição. Toque em qualquer lição para definir Input, Output ou Review e preencher o conteúdo que será entregue a todos os alunos deste curso.</p>
+      <div className="tj-stage" style={{padding:"22px 14px"}}>
+        <div className="tj-title"><h2>{courseDraft.nome||"Novo curso"}</h2><p>{getTotalLicoes(courseDraft)} lições · programação compartilhada</p></div>
+        <div className="tj-list">
+          {(courseDraft.modulos||[]).map((mod,idx)=>{
+            const items=books.find(b=>b.bookIdx===mod.id)?.items||[];
+            const isOpen=openMods[mod.id]!==false;
+            return <div key={mod.id} className="tj-mod">
+              <button type="button" className={"tj-mod-circle"+(isOpen?" open":"")} onClick={()=>toggleMod(mod.id)} aria-expanded={isOpen}>
+                <span className="tj-mod-num">Módulo</span><span className="tj-mod-id">{mod.id}</span><span className="tj-mod-name">{(mod.nome||"").split(" ").slice(0,2).join(" ")}</span>
+              </button>
+              {isOpen&&<div className="tj-lessons">
+                <div className="tj-connector open-gap"/>
+                {items.map((item,li)=>{
+                  const type=item.lessonType||"";
+                  const typeLabel=type==="review"?"Review":type==="output"?"Output":type==="input"?"Input":"Definir";
+                  const tag=type==="review"?"tag-review":type==="output"?"tag-output":"tag-input";
+                  return <div key={item.id} className="tj-lesson-row">
+                    <button type="button" className="tj-lesson-circle pending" onClick={()=>setActiveId(item.id)} title={"Editar lição "+item.pos}>
+                      <span className="tj-l-num">{item.pos}</span><span className="tj-l-st">editar</span><span className={"tj-l-type "+tag} style={{fontSize:7,padding:"1px 5px",marginTop:2}}>{typeLabel}</span>
+                    </button>
+                    {li<items.length-1&&<div className="tj-lesson-connector"/>}
+                  </div>;
+                })}
+              </div>}
+              {idx<(courseDraft.modulos||[]).length-1&&<div className="tj-connector"/>}
+            </div>;
+          })}
+        </div>
+      </div>
+      {activeItem&&<CourseLessonProgramEditor item={activeItem} value={(courseDraft.lessonContent||{})[activeItem.id]} onClose={()=>setActiveId(null)} onApply={data=>onLessonChange(activeItem.id,data)}/>} 
+    </div>
+  );
+}
+
 /* ── CONFIGURAÇÕES → CURSOS (controle total do admin) ── */
 function AdminCursos({students}){
   const courses=useCourses();
   const [editId,setEditId]=useState(null);
   const [draft,setDraft]=useState(null);
   const [showNew,setShowNew]=useState(false);
-  const [newForm,setNewForm]=useState({nome:"",corBase:"#00BFA5",template:"foundation",ativo:true});
+  const [newForm,setNewForm]=useState({nome:"",totalLicoes:150,corBase:"#00BFA5",ativo:true});
   const [busy,setBusy]=useState(false);
   const [msg,setMsg]=useState("");
   const [err,setErr]=useState("");
@@ -7824,8 +7963,15 @@ function AdminCursos({students}){
       ativo:c.ativo!==false,
       ordem:c.ordem||1,
       modulos:(c.modulos||[]).map(m=>({...m,nome:m.nome||""})),
+      lessonContent:JSON.parse(JSON.stringify(c.lessonContent||{})),
+      sharedContentEnabled:!!c.sharedContentEnabled,
     });
     setErr("");setMsg("");
+  }
+
+  function setCourseLesson(lessonId,data){
+    setDraft(p=>({...p,sharedContentEnabled:true,lessonContent:{...(p.lessonContent||{}),[lessonId]:{...((p.lessonContent||{})[lessonId]||{}),...data}}}));
+    setMsg("Programação alterada. Clique em Salvar curso para publicar para os alunos.");
   }
 
   function setModNome(idx,nome){
@@ -7849,6 +7995,8 @@ function AdminCursos({students}){
         corBase:draft.corBase||"#00BFA5",
         ativo:!!draft.ativo,
         ordem:parseInt(draft.ordem,10)||1,
+        sharedContentEnabled:!!draft.sharedContentEnabled,
+        lessonContent:JSON.parse(JSON.stringify(draft.lessonContent||{})),
         modulos:(draft.modulos||[]).map((m,i)=>({
           ...m,
           id:m.id!=null?m.id:i+1,
@@ -7897,23 +8045,8 @@ function AdminCursos({students}){
       let id=slugifyCourseId(newForm.nome);
       if(!id||id.indexOf("/")>=0)id="curso_"+Date.now().toString(36);
       if((courses||[]).some(c=>c.id===id)||id===COURSES_CATALOG_DOC)id=id+"_"+Date.now().toString(36).slice(-4);
-      const tpl=COURSE_TEMPLATES.find(t=>t.id===newForm.template);
-      let built=null;
-      if(tpl&&typeof tpl.builder==="function"){
-        built=tpl.builder();
-      }
-      let modulos=null;
-      let numeroInicio=null;
-      if(Array.isArray(built)){
-        modulos=built;
-      }else if(built&&typeof built==="object"){
-        modulos=Array.isArray(built.modulos)?built.modulos:null;
-        if(built.numeroInicio!=null)numeroInicio=built.numeroInicio;
-      }
-      if(!Array.isArray(modulos)||!modulos.length){
-        modulos=makeFoundationModulos(["Módulo 1","Módulo 2","Módulo 3"]);
-      }
-      if(newForm.template==="reflective"&&numeroInicio==null)numeroInicio=121;
+      const totalLicoes=Math.max(1,Math.min(150,parseInt(newForm.totalLicoes,10)||150));
+      const modulos=makeBlankCourseModulos(totalLicoes);
       const maxOrdem=(courses||[]).reduce((m,c)=>Math.max(m,Number(c.ordem)||0),0);
       const corRaw=String(newForm.corBase||"#00BFA5").trim();
       const corBase=/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(corRaw)?corRaw:"#00BFA5";
@@ -7924,16 +8057,17 @@ function AdminCursos({students}){
         ativo:newForm.ativo!==false,
         ordem:maxOrdem+1,
         modulos,
-        ...(numeroInicio!=null?{numeroInicio}:{}),
-        ...(newForm.template==="reflective"?{grupo:"special",padraoVisual:"orange"}:{}),
+        totalLicoes,
+        sharedContentEnabled:true,
+        lessonContent:{},
       }));
       if(!payload.modulos||!payload.modulos.length){
         throw new Error("Falha ao montar a estrutura do curso (módulos vazios). Tente outro template.");
       }
       await upsertCourseDoc(payload);
       setShowNew(false);
-      setNewForm({nome:"",corBase:"#00BFA5",template:"foundation",ativo:true});
-      setMsg("Curso criado. Edite os nomes dos módulos e preencha as lições na Trilha de cada aluno.");
+      setNewForm({nome:"",totalLicoes:150,corBase:"#00BFA5",ativo:true});
+      setMsg("Curso gerado. Abra Editar para programar a trilha compartilhada.");
     }catch(e){
       const code=e&&e.code?String(e.code):"";
       const raw=e&&e.message?String(e.message):String(e);
@@ -7981,8 +8115,8 @@ function AdminCursos({students}){
               <Icon name="book-open" size={18} style={{color:"#1e8fa8"}}/> Cursos
             </h2>
             <p className="text-xs muted mt-1" style={{maxWidth:480,lineHeight:1.5}}>
-              Controle total: renomear, cor, ativar/desativar, editar módulos, criar e excluir.
-              Cores e nomes iguais aos cards do site. Alunos veem só o curso do contrato; conteúdo das lições se preenche na Trilha.
+              Crie cursos de 1 a 150 lições e programe uma trilha única para todos os alunos vinculados.
+              O curso ativo aparece automaticamente nas opções de Contrato do aluno.
             </p>
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -8047,7 +8181,7 @@ function AdminCursos({students}){
       {/* Painel de edição */}
       {editId&&draft&&(
         <ModalOverlay onClose={()=>{setEditId(null);setDraft(null);}}>
-          <div className="modal-box" style={{maxWidth:560}}>
+          <div className="modal-box" style={{maxWidth:1040}}>
             <div className="modal-header">
               <div>
                 <div style={{fontWeight:800,fontSize:15,fontFamily:"'Sora',sans-serif"}}>Editar curso</div>
@@ -8080,20 +8214,22 @@ function AdminCursos({students}){
                 </div>
               </div>
               <div className="form-section-title" style={{marginTop:16}}>Módulos</div>
-              <p className="text-xs muted mb-2">A estrutura (qtd. de lições/blocos) é fixa por template. Você edita os nomes aqui; o conteúdo de cada lição fica nos cards da Trilha.</p>
+              <p className="text-xs muted mb-2">Renomeie os módulos e edite abaixo a programação compartilhada das lições.</p>
               {(draft.modulos||[]).map((m,idx)=>(
                 <div key={idx} style={{marginBottom:8}}>
                   <label className="form-label">Módulo {m.id||idx+1} · {getModuleLessonCount(m)} lições{m.semBlocos?" (sem blocos)":""}</label>
                   <input className="w-full input rounded-xl px-3 py-2 text-sm" value={m.nome||""} onChange={e=>setModNome(idx,e.target.value)}/>
                 </div>
               ))}
+              <CourseTrailEditor courseDraft={{...draft,id:editId}} onLessonChange={setCourseLesson}/>
+              {msg&&<div style={{marginTop:12,padding:"10px 12px",borderRadius:10,background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.3)",fontSize:13,color:"#15803D"}}>{msg}</div>}
               {err&&<div className="err-box" style={{marginTop:12}}>{err}</div>}
             </div>
             <div className="modal-footer" style={{flexWrap:"wrap",gap:8}}>
               <button type="button" className="btn btn-danger rounded-xl px-4 py-2 text-sm" onClick={()=>deleteCourse(editing||{id:editId,nome:draft.nome})} disabled={busy}>Excluir</button>
               <div style={{flex:1}}/>
               <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>{setEditId(null);setDraft(null);}}>Cancelar</button>
-              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveEdit} disabled={busy}>{busy?"Salvando…":"Salvar"}</button>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={saveEdit} disabled={busy}>{busy?"Salvando…":"Salvar curso"}</button>
             </div>
           </div>
         </ModalOverlay>
@@ -8115,9 +8251,9 @@ function AdminCursos({students}){
                 <input type="color" value={/^#([0-9a-fA-F]{6})$/.test(newForm.corBase||"")?newForm.corBase:"#00BFA5"} onChange={e=>setNewForm(p=>({...p,corBase:e.target.value}))} style={{width:44,height:36,border:"none",background:"transparent",cursor:"pointer"}}/>
                 <input className="flex-1 input rounded-xl px-3 py-2 text-sm" value={newForm.corBase} onChange={e=>setNewForm(p=>({...p,corBase:e.target.value}))} placeholder="#00BFA5"/>
               </div>
-              <label className="form-label">Estrutura (template)</label>
-              <select className="w-full input rounded-xl px-3 py-2.5 text-sm mb-3" value={newForm.template} onChange={e=>setNewForm(p=>({...p,template:e.target.value}))}>
-                {COURSE_TEMPLATES.filter(t=>typeof t.builder==="function").map(t=><option key={t.id} value={t.id}>{t.label}</option>)}
+              <label className="form-label">Quantidade de lições</label>
+              <select className="w-full input rounded-xl px-3 py-2.5 text-sm mb-3" value={newForm.totalLicoes} onChange={e=>setNewForm(p=>({...p,totalLicoes:parseInt(e.target.value,10)}))}>
+                {Array.from({length:150},(_,i)=>i+1).map(n=><option key={n} value={n}>{n} {n===1?"lição":"lições"}</option>)}
               </select>
               <label style={{display:"flex",alignItems:"center",gap:8,fontSize:13,cursor:"pointer"}}>
                 <input type="checkbox" checked={!!newForm.ativo} onChange={e=>setNewForm(p=>({...p,ativo:e.target.checked}))}/> Ativo no cadastro
@@ -8126,7 +8262,7 @@ function AdminCursos({students}){
             </div>
             <div className="modal-footer">
               <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setShowNew(false)}>Cancelar</button>
-              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={createCourse} disabled={busy}>{busy?"Criando…":"Criar curso"}</button>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={createCourse} disabled={busy}>{busy?"Gerando…":"Gerar curso"}</button>
             </div>
           </div>
         </ModalOverlay>
