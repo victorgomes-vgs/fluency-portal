@@ -7936,7 +7936,7 @@ function CourseTrailEditor({courseDraft,onLessonChange}){
           })}
         </div>
       </div>
-      {activeItem&&<CourseLessonProgramEditor item={activeItem} value={(courseDraft.lessonContent||{})[activeItem.id]} onClose={()=>setActiveId(null)} onApply={data=>onLessonChange(activeItem.id,data)}/>} 
+      {activeItem&&<CourseLessonProgramEditor item={activeItem} value={(courseDraft.lessonContent||{})[activeItem.id]} onClose={()=>setActiveId(null)} onApply={data=>onLessonChange(activeItem.id,data)}/>}
     </div>
   );
 }
