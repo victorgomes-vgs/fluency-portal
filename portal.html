@@ -1349,6 +1349,197 @@
     }
     .tj-admin-note{font-size:11px;color:#94A3B8;text-align:center;margin-top:12px;position:relative;z-index:1;}
 
+    /* ═══ CONSTELLATION JOURNEY — trilha espacial do aluno ═══ */
+    .cosmic-stage,
+    .cosmic-card{
+      --cosmic-blue:#179BFF;
+      --cosmic-cyan:#25D9F2;
+      --cosmic-green:#22D3A7;
+      --cosmic-ink:#020814;
+      position:relative;
+      overflow:hidden;
+      color:#F8FBFF;
+      font-family:var(--font-family-ui);
+      background-color:var(--cosmic-ink);
+      background-image:url('assets/constellation/space-background.webp');
+      background-size:cover;
+      background-position:center;
+      border:1px solid rgba(77,176,255,.2);
+      box-shadow:0 24px 62px rgba(1,8,24,.42),inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .cosmic-stage{border-radius:28px;min-height:690px;padding:22px 24px 32px;}
+    .cosmic-stage::after,
+    .cosmic-card::after{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      box-shadow:inset 0 -110px 100px rgba(1,6,16,.38);
+    }
+    .cosmic-meta{
+      position:relative;z-index:4;display:flex;align-items:center;gap:18px;
+      min-height:58px;padding:9px 18px;border-radius:18px;
+      background:rgba(4,39,82,.78);border:1px solid rgba(92,195,255,.2);
+      box-shadow:0 12px 30px rgba(0,10,32,.34);backdrop-filter:blur(12px);
+    }
+    .cosmic-meta-brand,.cosmic-meta-item,.cosmic-meta-progress,.cosmic-meta-trail{
+      display:flex;align-items:center;gap:10px;min-width:0;font-size:13px;font-weight:800;
+    }
+    .cosmic-meta-brand{color:#EAF7FF;}
+    .cosmic-meta-item{padding-left:18px;border-left:1px solid rgba(255,255,255,.22);color:#DCEEFF;}
+    .cosmic-meta-trail{margin-left:auto;color:#FFFFFF;}
+    .cosmic-meta-icon{color:var(--cosmic-cyan);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+    .cosmic-meta-ring{
+      width:24px;height:24px;border-radius:50%;border:3px solid rgba(45,212,242,.28);
+      border-top-color:var(--cosmic-cyan);border-right-color:var(--cosmic-green);flex:0 0 auto;
+    }
+    .cosmic-meta-underline{position:absolute;right:18px;bottom:0;width:92px;height:2px;background:#22D3EE;box-shadow:0 0 12px rgba(34,211,238,.75);}
+    .cosmic-intro{position:relative;z-index:3;margin:56px 0 12px 36px;max-width:470px;}
+    .cosmic-intro h2{
+      margin:0 0 12px;font-size:clamp(28px,4vw,43px);font-weight:800;letter-spacing:-.045em;line-height:1.06;
+      color:#27B8FF;
+    }
+    .cosmic-intro p{margin:0;color:#CBD5E1;font-size:15px;line-height:1.55;max-width:360px;}
+    .cosmic-module-tabs{
+      position:relative;z-index:4;display:flex;gap:8px;margin:22px 36px 4px;overflow-x:auto;
+      scrollbar-width:none;padding:2px 2px 8px;
+    }
+    .cosmic-module-tabs::-webkit-scrollbar{display:none;}
+    .cosmic-module-tab{
+      flex:0 0 auto;border:1px solid rgba(148,193,229,.28);background:rgba(3,22,47,.78);color:#9FB8D0;
+      border-radius:99px;padding:8px 14px;min-height:36px;font:800 11px/1 var(--font-family-ui);cursor:pointer;
+      letter-spacing:.04em;text-transform:uppercase;transition:background .2s,color .2s,border-color .2s,transform .2s;
+    }
+    .cosmic-module-tab:hover{transform:translateY(-1px);color:#F8FAFC;border-color:rgba(56,189,248,.55);}
+    .cosmic-module-tab.active{background:#0B55A8;color:#FFFFFF;border-color:#33C8FF;box-shadow:0 0 18px rgba(37,153,255,.3);}
+    .cosmic-route-scroll{
+      position:relative;z-index:2;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+      margin:2px -10px 0;padding:28px 10px 16px;scroll-snap-type:x proximity;
+    }
+    .cosmic-route-scroll::-webkit-scrollbar{display:none;}
+    .cosmic-route{
+      position:relative;display:flex;align-items:center;gap:6px;min-height:326px;padding:16px 24px 30px;
+      isolation:auto;
+    }
+    .cosmic-energy-route{
+      position:absolute;z-index:-1;left:0;right:0;top:41%;height:42%;
+      background-image:url('assets/constellation/energy-route.webp');background-repeat:no-repeat;
+      background-size:100% 100%;background-position:center;opacity:.78;
+      filter:saturate(1.18) drop-shadow(0 0 10px rgba(46,150,255,.5));
+      transform:rotate(3deg);transform-origin:center;
+      animation:cosmicRouteGlow 4.8s ease-in-out infinite;
+    }
+    .cosmic-node-wrap{
+      position:relative;display:flex;flex:0 0 154px;min-width:0;align-items:center;justify-content:center;
+      scroll-snap-align:center;transform:translateY(var(--cosmic-shift,0px));
+    }
+    .cosmic-node-wrap.active{flex-basis:260px;z-index:3;}
+    .cosmic-orb{
+      position:relative;width:145px;height:145px;padding:0;border:0;background:transparent;color:#FFFFFF;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;
+      transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s;isolation:isolate;
+    }
+    .cosmic-orb:hover:not(.locked){transform:scale(1.055);filter:brightness(1.12);}
+    .cosmic-orb:active:not(.locked){transform:scale(.98);}
+    .cosmic-orb.locked{cursor:not-allowed;}
+    .cosmic-orb.active{width:250px;height:250px;animation:cosmicOrbFloat 4.4s ease-in-out infinite;}
+    .cosmic-orb-asset{position:absolute;inset:-10%;z-index:-1;background-size:contain;background-position:center;background-repeat:no-repeat;}
+    .cosmic-orb.done .cosmic-orb-asset,
+    .cosmic-orb.done-output .cosmic-orb-asset,
+    .cosmic-orb.done-review .cosmic-orb-asset{background-image:url('assets/constellation/orb-completed.webp');}
+    .cosmic-orb.active .cosmic-orb-asset{background-image:url('assets/constellation/orb-current.webp');animation:cosmicCurrentPulse 2.7s ease-in-out infinite;}
+    .cosmic-orb.pending .cosmic-orb-asset{background-image:url('assets/constellation/orb-pending.webp');opacity:.78;}
+    .cosmic-orb-copy{display:flex;flex-direction:column;align-items:center;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.9);transform:translateY(1px);}
+    .cosmic-orb-kicker{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;}
+    .cosmic-orb-num{font-size:34px;font-weight:800;line-height:.95;letter-spacing:-.05em;margin:3px 0;}
+    .cosmic-orb-status{font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#D7E6F5;}
+    .cosmic-orb.active .cosmic-orb-kicker{font-size:14px;}
+    .cosmic-orb.active .cosmic-orb-num{font-size:70px;margin:5px 0;}
+    .cosmic-orb.active .cosmic-orb-status{font-size:13px;color:#22D9FF;}
+    .cosmic-orb.done .cosmic-orb-status,
+    .cosmic-orb.done-output .cosmic-orb-status,
+    .cosmic-orb.done-review .cosmic-orb-status{color:#36F0C0;}
+    .cosmic-orb-check{
+      position:absolute;top:9px;right:8px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      color:#FFFFFF;background:#0BB995;border:2px solid rgba(255,255,255,.45);box-shadow:0 0 18px rgba(34,211,167,.62);
+    }
+    .cosmic-continue{
+      position:absolute;top:calc(100% - 6px);left:50%;transform:translateX(-50%);z-index:5;
+      display:flex;align-items:center;justify-content:center;gap:10px;white-space:nowrap;
+      min-height:46px;padding:0 22px;border-radius:99px;border:1px solid #33C8FF;
+      background:#0758BA;color:#FFFFFF;font:800 13px/1 var(--font-family-ui);cursor:pointer;
+      box-shadow:0 0 26px rgba(15,122,255,.54),inset 0 1px 0 rgba(255,255,255,.24);
+      transition:transform .2s,background .2s;
+    }
+    .cosmic-continue:hover{background:#0A6DDF;transform:translateX(-50%) translateY(-2px);}
+    .cosmic-encouragement{
+      position:relative;z-index:3;display:flex;align-items:center;gap:14px;margin:14px 0 0 36px;max-width:410px;
+    }
+    .cosmic-encouragement-icon{
+      width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+      color:#42DDFB;background:rgba(0,31,61,.72);border:1px solid #168BC2;box-shadow:0 0 20px rgba(27,169,224,.16);
+    }
+    .cosmic-encouragement strong{display:block;font-size:14px;color:#FFFFFF;margin-bottom:3px;}
+    .cosmic-encouragement span{display:block;font-size:12px;line-height:1.45;color:#AEBED0;}
+    @keyframes cosmicCurrentPulse{0%,100%{filter:brightness(1) saturate(1);transform:scale(1);}50%{filter:brightness(1.16) saturate(1.12);transform:scale(1.025);}}
+    @keyframes cosmicOrbFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+    @keyframes cosmicRouteGlow{0%,100%{opacity:.62;filter:saturate(1.05) brightness(.9) drop-shadow(0 0 8px rgba(46,150,255,.35));}50%{opacity:.94;filter:saturate(1.3) brightness(1.18) drop-shadow(0 0 17px rgba(46,150,255,.72));}}
+
+    /* Card-resumo: a mesma constelação em versão compacta */
+    .cosmic-card{border-radius:22px;padding:16px 16px 18px;min-height:245px;}
+    .cosmic-card-head{position:relative;z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px;}
+    .cosmic-card-title{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:900;color:#F7FBFF;}
+    .cosmic-card-title span{color:#32C9F4;display:flex;}
+    .cosmic-card-course{margin-top:3px;font-size:11px;color:#94AFC8;}
+    .cosmic-card-progress{text-align:right;color:#DDF7FF;font-size:11px;font-weight:800;white-space:nowrap;}
+    .cosmic-card-progress strong{display:block;font-size:18px;color:#28D5EE;letter-spacing:-.03em;}
+    .cosmic-card-route{position:relative;z-index:2;display:flex;align-items:center;gap:3px;min-height:142px;overflow-x:auto;scrollbar-width:none;padding:10px 10px 22px;scroll-snap-type:x proximity;}
+    .cosmic-card-route::-webkit-scrollbar{display:none;}
+    .cosmic-card-route::before{content:'';position:absolute;z-index:-1;left:0;right:0;top:34%;height:54%;background:url('assets/constellation/energy-route.webp') center/100% 100% no-repeat;opacity:.65;animation:cosmicRouteGlow 4.8s ease-in-out infinite;}
+    .cosmic-card-node{position:relative;flex:0 0 84px;height:94px;display:flex;align-items:center;justify-content:center;transform:translateY(var(--cosmic-card-shift,0px));scroll-snap-align:center;}
+    .cosmic-card-node.active{flex-basis:112px;z-index:3;}
+    .cosmic-card-orb{position:relative;width:76px;height:76px;border:0;border-radius:50%;background:transparent;color:#FFFFFF;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,filter .2s;}
+    .cosmic-card-orb:hover:not(.locked){transform:scale(1.06);filter:brightness(1.12);}
+    .cosmic-card-orb.locked{cursor:not-allowed;}
+    .cosmic-card-orb.active{width:105px;height:105px;animation:cosmicOrbFloat 4.4s ease-in-out infinite;}
+    .cosmic-card-orb .cosmic-orb-asset{inset:-12%;}
+    .cosmic-card-orb.done .cosmic-orb-asset,
+    .cosmic-card-orb.done-output .cosmic-orb-asset,
+    .cosmic-card-orb.done-review .cosmic-orb-asset{background-image:url('assets/constellation/orb-completed.webp');}
+    .cosmic-card-orb.active .cosmic-orb-asset{background-image:url('assets/constellation/orb-current.webp');animation:cosmicCurrentPulse 2.7s ease-in-out infinite;}
+    .cosmic-card-orb.pending .cosmic-orb-asset{background-image:url('assets/constellation/orb-pending.webp');opacity:.78;}
+    .cosmic-card-orb .cosmic-orb-kicker{font-size:6px;}
+    .cosmic-card-orb .cosmic-orb-num{font-size:22px;margin:2px 0;}
+    .cosmic-card-orb .cosmic-orb-status{font-size:6px;}
+    .cosmic-card-orb.active .cosmic-orb-num{font-size:34px;}
+    .cosmic-card-orb.active .cosmic-orb-status{color:#24D7FA;}
+    .cosmic-card-foot{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px;}
+    .cosmic-card-note{font-size:11px;color:#A7BCD0;line-height:1.35;}
+    .cosmic-card-open{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:#41DDF5;font:900 11px/1 var(--font-family-ui);cursor:pointer;white-space:nowrap;padding:8px 0;}
+    .cosmic-card-open:hover{color:#FFFFFF;}
+
+    @media (max-width:720px){
+      .cosmic-stage{border-radius:22px;padding:14px 12px 24px;min-height:620px;}
+      .cosmic-meta{min-height:50px;padding:8px 12px;gap:10px;border-radius:15px;}
+      .cosmic-meta-brand span,.cosmic-meta-trail span{display:none;}
+      .cosmic-meta-item{padding-left:10px;font-size:11px;}
+      .cosmic-meta-progress{font-size:11px;}
+      .cosmic-meta-underline{right:12px;width:34px;}
+      .cosmic-intro{margin:34px 12px 10px;}
+      .cosmic-intro h2{font-size:29px;}
+      .cosmic-intro p{font-size:13px;max-width:290px;}
+      .cosmic-module-tabs{margin:18px 10px 0;}
+      .cosmic-route-scroll{margin:0 -12px;padding:14px 0 22px;}
+      .cosmic-route{min-height:300px;padding-left:18px;padding-right:18px;}
+      .cosmic-node-wrap{flex-basis:108px;--cosmic-shift:0px!important;}
+      .cosmic-node-wrap.active{flex-basis:180px;}
+      .cosmic-orb{width:96px;height:96px;}
+      .cosmic-orb.active{width:174px;height:174px;}
+      .cosmic-orb.active .cosmic-orb-num{font-size:55px;}
+      .cosmic-continue{min-height:44px;padding:0 18px;font-size:12px;}
+      .cosmic-encouragement{margin:4px 12px 0;}
+      .cosmic-encouragement-icon{width:44px;height:44px;}
+      .cosmic-card{padding:15px 14px 16px;}
+      .cosmic-card-node{flex-basis:78px;--cosmic-card-shift:0px!important;}
+    }
+
     /* ═══ UX / MOBILE POLISH ═══ */
     html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
     @media (prefers-reduced-motion: reduce){
@@ -3797,6 +3988,17 @@ function statusLabelShort(item){
 function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,focusLessonId,onLessonFocused,onOpenLesson,progress,course,onToggleHidden}){
   const [openMod,setOpenMod]=useState(null);
   const [sheetItem,setSheetItem]=useState(null);
+  const allLessons=useMemo(()=>books.flatMap(book=>book.items||[]),[books]);
+  const suggestedMod=useMemo(()=>{
+    const activeBook=books.find(book=>(book.items||[]).some(item=>item.status==="andamento"));
+    const firstPendingBook=books.find(book=>(book.items||[]).some(item=>!(item.status==="concluida"||item.status==="realizada")));
+    const candidate=activeBook?.bookIdx||firstPendingBook?.bookIdx||visibleModules[0]?.id||null;
+    return visibleModules.some(mod=>mod.id===candidate)?candidate:(visibleModules[0]?.id||null);
+  },[books,visibleModules]);
+
+  useEffect(()=>{
+    if(!openMod||!visibleModules.some(mod=>mod.id===openMod))setOpenMod(suggestedMod);
+  },[openMod,suggestedMod,visibleModules]);
 
   // URL / focusLessonId é a fonte da verdade do sheet (voltar do browser fecha a lição)
   useEffect(()=>{
@@ -3838,83 +4040,85 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,isAdmin,f
   useBodyScrollLock(!!sheetItem);
   useEscapeKey(closeSheet,!!sheetItem);
 
+  const selectedModule=visibleModules.find(mod=>mod.id===openMod)||visibleModules[0];
+  const selectedItems=books.find(book=>book.bookIdx===selectedModule?.id)?.items||[];
+  const completedCount=allLessons.filter(item=>item.status==="concluida"||item.status==="realizada").length;
+  const totalCount=allLessons.length||1;
+  const currentOrdinal=Math.min(completedCount+1,totalCount);
+
   return(
     <div>
-      <div className="tj-stage">
-        <div className="tj-title">
-          <h2>Sua Trilha</h2>
-          <p>{course?.nome||"Curso"} · toque no módulo, depois na lição</p>
-        </div>
-        <div className="tj-progress">
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"#94A3B8",marginBottom:6}}>
-            <span>Progresso</span><strong style={{color:"#E2E8F0"}}>{progress}%</strong>
-          </div>
-          <div className="tj-progress-bar"><div className="tj-progress-fill" style={{width:progress+"%"}}/></div>
+      <div className="cosmic-stage">
+        <div className="cosmic-meta">
+          <div className="cosmic-meta-brand"><span className="cosmic-meta-icon"><Icon name="zap" size={20}/></span><span>Fluency Studio</span></div>
+          <div className="cosmic-meta-item"><span className="cosmic-meta-icon"><Icon name="book-open" size={19}/></span><span>{course?.nome||"Seu curso"}</span></div>
+          <div className="cosmic-meta-progress"><span className="cosmic-meta-ring"/><span>{currentOrdinal} de {totalCount}</span></div>
+          <div className="cosmic-meta-trail"><span className="cosmic-meta-icon"><Icon name="route" size={20}/></span><span>Sua Trilha</span></div>
+          <span className="cosmic-meta-underline"/>
         </div>
 
-        <div className="tj-list">
-          {visibleModules.map((mod,idx)=>{
-            const items=books.find(b=>b.bookIdx===mod.id)?.items||[];
-            const isOpen=openMod===mod.id;
-            const isLast=idx===visibleModules.length-1;
-            return(
-              <div key={mod.id} className="tj-mod" style={{animationDelay:(idx*0.06)+"s"}}>
-                <button type="button" className={"tj-mod-circle"+(isOpen?" open":"")} onClick={()=>toggleMod(mod.id)} aria-expanded={isOpen}>
-                  <span className="tj-mod-num">Módulo</span>
-                  <span className="tj-mod-id">{mod.id}</span>
-                  <span className="tj-mod-name">{(mod.name||"").split(" ").slice(0,2).join(" ")}</span>
-                </button>
-                {isAdmin&&(
-                  <button type="button" className={"tl-hide-btn"+(isModuleHidden(modulosOcultos,mod.id)?" tl-hidden-active":"")} style={{marginTop:8}} onClick={()=>onToggleHidden(mod.id)}>
-                    <Icon name={isModuleHidden(modulosOcultos,mod.id)?"eye-off":"eye"} size={14}/>
-                    <span>{isModuleHidden(modulosOcultos,mod.id)?"Oculto":"Visível"}</span>
-                  </button>
-                )}
+        <div className="cosmic-intro">
+          <h2>Constellation Journey</h2>
+          <p>Sua jornada de aprendizado em inglês, uma constelação de conquistas.</p>
+        </div>
 
-                {isOpen&&(
-                  <div className="tj-lessons">
-                    <div className="tj-connector open-gap"/>
-                    {items.map((item,li)=>{
-                      const isReview=item.type==="review"||item.lessonType==="review";
-                      const isOutput=item.lessonType==="output";
-                      const isPending=!(item.status==="concluida"||item.status==="realizada"||item.status==="andamento");
-                      const locked=isPending&&!isAdmin;
-                      const sc=statusClassForLesson(item);
-                      const label=isReview?("R"+item.num):String(item.num);
-                      const typeLabel=isReview?"Review":isOutput?"Output":"Input";
-                      return(
-                        <div key={item.id} className="tj-lesson-row" style={{animationDelay:(li*0.04)+"s"}}>
-                          <button
-                            type="button"
-                            className={"tj-lesson-circle "+sc+(locked?" locked":"")}
-                            onClick={()=>openLesson(item)}
-                            title={locked?"Lição bloqueada":("Lição "+label)}
-                          >
-                            <span className="tj-l-num">{label}</span>
-                            <span className="tj-l-st">{statusLabelShort(item)}</span>
-                            <span className={"tj-l-type "+(isReview?"tag-review":isOutput?"tag-output":"tag-input")} style={{fontSize:7,padding:"1px 5px",marginTop:2}}>{typeLabel}</span>
-                          </button>
-                          {li<items.length-1&&<div className="tj-lesson-connector"/>}
-                        </div>
-                      );
-                    })}
-                    {items.length===0&&<p className="tj-admin-note">Sem lições neste módulo.</p>}
-                  </div>
-                )}
-
-                {!isLast&&!isOpen&&<div className="tj-connector"/>}
-                {!isLast&&isOpen&&<div className="tj-connector"/>}
-              </div>
-            );
-          })}
-          {visibleModules.length===0&&(
-            <div className="text-center py-10" style={{color:"rgba(255,255,255,.45)"}}>
-              <Icon name="eye-off" size={28} className="mx-auto mb-2 opacity-40"/>
-              <p className="text-sm">Nenhum módulo visível.</p>
-            </div>
+        <div className="cosmic-module-tabs" role="tablist" aria-label="Módulos do curso">
+          {visibleModules.map(mod=>(
+            <button key={mod.id} type="button" role="tab" aria-selected={openMod===mod.id} className={"cosmic-module-tab"+(openMod===mod.id?" active":"")} onClick={()=>toggleMod(mod.id)}>
+              Módulo {mod.id} · {mod.name||"Trilha"}
+            </button>
+          ))}
+          {isAdmin&&selectedModule&&(
+            <button type="button" className={"tl-hide-btn"+(isModuleHidden(modulosOcultos,selectedModule.id)?" tl-hidden-active":"")} onClick={()=>onToggleHidden(selectedModule.id)}>
+              <Icon name={isModuleHidden(modulosOcultos,selectedModule.id)?"eye-off":"eye"} size={14}/>
+              <span>{isModuleHidden(modulosOcultos,selectedModule.id)?"Oculto":"Visível"}</span>
+            </button>
           )}
         </div>
-        <p className="tj-admin-note">Linha do tempo · toque para expandir</p>
+
+        {selectedItems.length>0?(
+          <div className="cosmic-route-scroll">
+            <div className="cosmic-route" style={{minWidth:Math.max(920,selectedItems.length*160+220)}}>
+              <div className="cosmic-energy-route" aria-hidden="true"/>
+              {selectedItems.map((item,idx)=>{
+                const isReview=item.type==="review"||item.lessonType==="review";
+                const isOutput=item.lessonType==="output";
+                const isPending=!(item.status==="concluida"||item.status==="realizada"||item.status==="andamento");
+                const locked=isPending&&!isAdmin;
+                const sc=statusClassForLesson(item);
+                const label=isReview?("R"+item.num):String(item.num);
+                const statusText=sc==="active"?"Atual":sc.indexOf("done")===0?"Concluída":"Pendente";
+                const activeIdx=selectedItems.findIndex(lesson=>statusClassForLesson(lesson)==="active");
+                const effectiveActiveIdx=activeIdx>=0?activeIdx:Math.min(completedCount,selectedItems.length-1);
+                const shift=idx===effectiveActiveIdx?-18:idx<effectiveActiveIdx?18:Math.min(112,18+(idx-effectiveActiveIdx)*19);
+                return(
+                  <div key={item.id} className={"cosmic-node-wrap "+(sc==="active"?"active":"")} style={{"--cosmic-shift":shift+"px"}}>
+                    <button type="button" className={"cosmic-orb "+sc+(locked?" locked":"")} onClick={()=>openLesson(item)} title={locked?"Lição bloqueada":("Lição "+label)} aria-label={(isReview?"Review ":isOutput?"Output ":"Input ")+label+", "+statusText}>
+                      <span className="cosmic-orb-asset" aria-hidden="true"/>
+                      <span className="cosmic-orb-copy">
+                        <span className="cosmic-orb-kicker">Lição</span>
+                        <span className="cosmic-orb-num">{label}</span>
+                        <span className="cosmic-orb-status">{statusText}</span>
+                      </span>
+                      {sc.indexOf("done")===0&&<span className="cosmic-orb-check" aria-hidden="true"><Icon name="check" size={16}/></span>}
+                    </button>
+                    {sc==="active"&&<button type="button" className="cosmic-continue" onClick={()=>openLesson(item)}>Continuar lição <Icon name="arrow-right" size={17}/></button>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ):(
+          <div className="text-center py-10" style={{position:"relative",zIndex:3,color:"rgba(255,255,255,.58)"}}>
+            <Icon name="eye-off" size={28} className="mx-auto mb-2 opacity-50"/>
+            <p className="text-sm">Nenhuma lição disponível neste módulo.</p>
+          </div>
+        )}
+
+        <div className="cosmic-encouragement">
+          <div className="cosmic-encouragement-icon"><Icon name="zap" size={22}/></div>
+          <div><strong>Você está no caminho certo!</strong><span>Cada lição concluída te aproxima dos seus objetivos.</span></div>
+        </div>
       </div>
 
       {sheetItem&&(
@@ -4915,44 +5119,47 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
         </div>
       </div>
 
-      {/* Card 5 — Trilha horizontal (mesma linguagem da página Trilha) */}
+      {/* Card 5 — resumo compacto da Constellation Journey */}
       {currentBook&&(
-        <div className="tj-h-stage">
-          <div className="tj-h-head">
-            <div className="tj-h-title"><Icon name="route" size={16} style={{color:"#818CF8"}}/> Sua Trilha</div>
-            <div className="tj-h-mod">MÓDULO {currentMod}</div>
+        <div className="cosmic-card">
+          <div className="cosmic-card-head">
+            <div>
+              <div className="cosmic-card-title"><span><Icon name="route" size={17}/></span>Sua Trilha</div>
+              <div className="cosmic-card-course">{course?.nome||"Seu curso"} · Módulo {currentMod}</div>
+            </div>
+            <div className="cosmic-card-progress"><strong>{progressGeral}%</strong>concluído</div>
           </div>
-          <div className="tj-h-scroll">
+          <div className="cosmic-card-route">
             {currentBook.items.map((item,idx)=>{
               const isReview=item.type==="review"||item.lessonType==="review";
               const isOutput=item.lessonType==="output";
               const sc=statusClassForLesson(item);
               const locked=!(item.status==="concluida"||item.status==="realizada"||item.status==="andamento");
               const label=isReview?("R"+item.num):String(item.num);
-              const typeLabel=isReview?"Review":isOutput?"Output":"Input";
+              const statusText=sc==="active"?"Atual":sc.indexOf("done")===0?"Concluída":"Pendente";
+              const shiftPattern=[9,-7,11,-2,12,3];
               return(
-                <div key={item.id} className="tj-h-item">
+                <div key={item.id} className={"cosmic-card-node "+(sc==="active"?"active":"")} style={{"--cosmic-card-shift":shiftPattern[idx%shiftPattern.length]+"px"}}>
                   <button
                     type="button"
-                    className={"tj-h-circle "+sc+(locked?" locked":"")}
-                    onClick={()=>{playClickSound("open");onNavigate("trilha",item.id);}}
-                    title={locked?"Lição bloqueada":typeLabel+" "+label}
+                    className={"cosmic-card-orb "+sc+(locked?" locked":"")}
+                    onClick={()=>{if(locked)return;playClickSound("open");onNavigate("trilha",item.id);}}
+                    title={locked?"Lição bloqueada":("Lição "+label+", "+statusText)}
                   >
-                    <span className="tj-h-num">{label}</span>
-                    <span className="tj-h-st">{statusLabelShort(item)}</span>
-                    <span className="tj-h-type">{typeLabel}</span>
+                    <span className="cosmic-orb-asset" aria-hidden="true"/>
+                    <span className="cosmic-orb-copy">
+                      <span className="cosmic-orb-kicker">Lição</span>
+                      <span className="cosmic-orb-num">{label}</span>
+                      <span className="cosmic-orb-status">{statusText}</span>
+                    </span>
                   </button>
-                  {idx<currentBook.items.length-1&&<div className="tj-h-conn"/>}
                 </div>
               );
             })}
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8,position:"relative",zIndex:1,padding:"0 4px"}}>
-            <span style={{fontSize:11,color:"#94A3B8"}}>Progresso geral</span>
-            <strong style={{fontSize:12,color:"#E2E8F0"}}>{progressGeral}%</strong>
-          </div>
-          <div className="tj-progress-bar" style={{marginTop:6,position:"relative",zIndex:1}}>
-            <div className="tj-progress-fill" style={{width:progressGeral+"%"}}/>
+          <div className="cosmic-card-foot">
+            <span className="cosmic-card-note">Cada lição acende um novo ponto da sua jornada.</span>
+            <button type="button" className="cosmic-card-open" onClick={()=>onNavigate("trilha")}>Ver trilha <Icon name="arrow-right" size={15}/></button>
           </div>
         </div>
       )}
