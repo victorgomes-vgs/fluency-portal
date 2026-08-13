@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Pocket Fluency — Módulo 2 · Lições 61–98 | Fluency Studio</title>
+<link rel="icon" href="logo.png" />
+<script src="page-flip.browser.js"></script>
+<style>
+  :root{
+    --bg:#070b12;
+    --panel:rgba(12,20,32,.88);
+    --panel-solid:#0e1624;
+    --teal:#2dd4bf;
+    --teal-2:#14b8a6;
+    --teal-deep:#0e7a72;
+    --navy:#163a52;
+    --ink:#e8eef4;
+    --muted:#8fa6bd;
+    --line:rgba(255,255,255,.08);
+    --comic:#c084fc;
+    --gold:#f5c16c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 640px at 50% -12%, rgba(20,184,166,.16), transparent 58%),
+      radial-gradient(800px 520px at 100% 110%, rgba(91,42,110,.16), transparent 58%),
+      linear-gradient(180deg,#0b1220 0%,#06080e 100%);
+    overflow:hidden;user-select:none;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  img{display:block}
+  ::-webkit-scrollbar{height:8px;width:8px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  .flipbook-container{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
+
+  /* splash */
+  .splash-screen{
+    position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+    background:
+      linear-gradient(180deg,rgba(6,10,16,.35),rgba(6,10,16,.82)),
+      url("pages/page-01.jpg") center/cover no-repeat;
+    transition:opacity .8s ease,transform .8s ease;
+  }
+  .splash-screen.hide{opacity:0;transform:scale(1.04);pointer-events:none}
+  .splash-content{
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    padding:28px 26px 24px;max-width:520px;width:min(520px,92vw);
+    background:rgba(7,12,20,.62);border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;backdrop-filter:blur(16px);
+    box-shadow:0 24px 60px rgba(0,0,0,.45);
+  }
+  .splash-logo{filter:drop-shadow(0 10px 28px rgba(45,212,191,.35));animation:splashPop .7s cubic-bezier(.16,1,.3,1) both}
+  .splash-logo-img{width:84px;height:84px;border-radius:20px}
+  .splash-title-group{margin-top:16px;animation:fadeUp .45s ease .15s both}
+  .splash-kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+  .splash-title{font-size:clamp(36px,7vw,58px);font-weight:800;letter-spacing:.01em;line-height:1;
+    background:linear-gradient(120deg,#fff 0%,var(--teal) 58%,#67e8f9 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .splash-subtitle{margin-top:10px;color:#c5d4e0;font-size:15px;line-height:1.45}
+  .splash-loader{margin-top:22px;width:280px;max-width:72vw;animation:fadeIn .3s ease .2s both}
+  .splash-loader-bar{height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+  .splash-loader-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--teal-deep),var(--teal));transition:width .25s ease}
+  .splash-loader-text{margin-top:10px;font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .splash-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .splash-btn{
+    padding:11px 18px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.02em;
+    background:linear-gradient(135deg,var(--teal-2),var(--teal-deep));color:#04211e;
+    box-shadow:0 8px 22px rgba(20,184,166,.35);
+  }
+  .splash-btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);box-shadow:none}
+  @keyframes splashPop{0%{transform:scale(0) rotate(-160deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+  @keyframes fadeUp{0%{opacity:0;transform:translateY(18px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+
+  /* header */
+  .flipbook-header{
+    position:relative;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    padding:10px 16px;background:linear-gradient(180deg,rgba(7,11,18,.92),rgba(7,11,18,0));
+    backdrop-filter:blur(10px);transition:transform .4s ease,opacity .4s ease;gap:10px;
+  }
+  .header-left{display:flex;align-items:center;gap:11px;min-width:0}
+  .header-logo{width:36px;height:36px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .header-title{font-size:15px;font-weight:700;letter-spacing:.04em;line-height:1.1}
+  .header-subtitle{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+  .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .lesson-chip{
+    display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
+    background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.28);font-size:12px;font-weight:600;
+    max-width:min(340px,42vw);min-width:0;
+  }
+  .lesson-chip .chip-n{color:var(--teal);font-variant-numeric:tabular-nums}
+  .lesson-chip .chip-t{color:#d7e6ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .header-page-indicator{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;
+    padding:7px 12px;border-radius:99px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+  .icon-btn{
+    width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.05);transition:background .15s,transform .1s;color:#d7e6ef;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.12)}
+  .icon-btn.active{background:rgba(245,193,108,.18);color:var(--gold);border:1px solid rgba(245,193,108,.35)}
+
+  /* main */
+  .flipbook-main{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:6px 14px;min-height:0;overflow:hidden}
+  .flipbook-wrapper{position:relative;display:inline-block;width:460px;transform-origin:center center;transition:transform .25s ease}
+  .flipbook-element{width:100%;box-shadow:0 30px 80px rgba(0,0,0,.62),0 10px 30px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.05)}
+  @media (min-width:1100px){ .flipbook-wrapper{width:920px} }
+  .flip-page{position:relative;overflow:hidden;background:#101820}
+  .flip-page-img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .page-texture{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(0,0,0,.16) 0,transparent 4%,transparent 96%,rgba(0,0,0,.1) 100%);mix-blend-mode:multiply}
+  .page-edge-shadow{position:absolute;inset:0;pointer-events:none;box-shadow:inset 7px 0 14px -7px rgba(0,0,0,.45)}
+  .flip-page[data-page-side="right"] .page-edge-shadow{box-shadow:inset -7px 0 14px -7px rgba(0,0,0,.45)}
+  .comic-ribbon{
+    position:absolute;top:10px;right:10px;z-index:4;font-size:10px;font-weight:800;letter-spacing:.12em;
+    padding:4px 8px;border-radius:6px;background:rgba(192,132,252,.92);color:#1a0b28;
+  }
+
+  /* index drawer */
+  .drawer-scrim{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.46);opacity:0;pointer-events:none;transition:opacity .25s}
+  .drawer-scrim.open{opacity:1;pointer-events:auto}
+  .index-drawer{
+    position:fixed;z-index:80;top:0;left:0;bottom:0;width:min(420px,92vw);
+    background:var(--panel-solid);border-right:1px solid var(--line);
+    transform:translateX(-104%);transition:transform .32s cubic-bezier(.16,1,.3,1);
+    display:flex;flex-direction:column;box-shadow:20px 0 50px rgba(0,0,0,.35);
+  }
+  .index-drawer.open{transform:translateX(0)}
+  .drawer-head{padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+  .drawer-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .drawer-title h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+  .drawer-search{width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);
+    border:1px solid var(--line);color:#fff;font:inherit;font-size:13px;outline:none}
+  .drawer-search:focus{border-color:rgba(45,212,191,.5)}
+  .drawer-filters{display:flex;gap:6px;margin-top:10px}
+  .pill{padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.04em;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted)}
+  .pill.on{background:rgba(45,212,191,.16);border-color:rgba(45,212,191,.4);color:#fff}
+  .drawer-stats{display:flex;gap:14px;margin-top:12px;color:var(--muted);font-size:11px}
+  .drawer-stats b{color:var(--teal);font-variant-numeric:tabular-nums}
+  .drawer-list{flex:1;overflow:auto;padding:10px}
+  .lesson-row{
+    width:100%;display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;
+    text-align:left;padding:10px;border-radius:12px;margin-bottom:6px;
+    background:rgba(255,255,255,.03);border:1px solid transparent;
+  }
+  .lesson-row:hover{background:rgba(255,255,255,.06)}
+  .lesson-row.current{border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.08)}
+  .lesson-row .ln{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums}
+  .lesson-row .lt{display:block;font-size:13px;font-weight:600;line-height:1.25}
+  .lesson-row .ls{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+  .hq-tag{font-size:10px;font-weight:800;letter-spacing:.08em;color:#1a0b28;background:var(--comic);padding:3px 6px;border-radius:5px}
+  .seen-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(45,212,191,.18)}
+  .seen-dot.off{background:transparent;border:1px solid rgba(255,255,255,.2);box-shadow:none}
+
+  /* bookmarks panel is the same drawer tab */
+  .bm-empty{padding:28px 12px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* controls */
+  .flipbook-controls{position:relative;z-index:30;padding:6px 14px 4px;transition:transform .4s ease,opacity .4s ease}
+  .controls-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1080px;margin:0 auto;
+    padding:8px 12px;border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);border:1px solid var(--line)}
+  .controls-left{display:flex;align-items:center;gap:8px;flex:1}
+  .controls-right{display:flex;align-items:center;gap:6px}
+  .control-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);transition:background .15s,transform .1s}
+  .control-btn:hover:not(:disabled){background:rgba(255,255,255,.12)}
+  .control-btn:active:not(:disabled){transform:scale(.92)}
+  .control-btn:disabled{opacity:.35;cursor:default}
+  .page-slider-container{flex:1;min-width:80px;display:flex;align-items:center}
+  .page-slider{width:100%}
+  .zoom-label{font-size:11px;color:var(--muted);min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+  .control-divider{width:1px;height:22px;background:var(--line);margin:0 4px}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--teal);box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer}
+
+  /* thumbs */
+  .thumbnails-bar{position:relative;z-index:30;padding:2px 12px 10px;transition:transform .4s ease,opacity .4s ease}
+  .thumbnails-scroll{display:flex;gap:7px;overflow-x:auto;padding:4px 2px;scroll-behavior:smooth}
+  .thumbnail-btn{position:relative;flex-shrink:0;width:48px;border-radius:7px;overflow:hidden;border:2px solid transparent;background:#121820;padding:0}
+  .thumbnail-btn:hover{transform:translateY(-2px)}
+  .thumbnail-btn.active{border-color:var(--teal)}
+  .thumbnail-btn.comic{border-color:rgba(192,132,252,.45)}
+  .thumbnail-btn.booked::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+  .thumbnail-img{width:100%;display:block}
+  .thumbnail-label{position:absolute;bottom:0;left:0;right:0;font-size:9px;text-align:center;color:#fff;
+    background:linear-gradient(0deg,rgba(0,0,0,.82),transparent);padding:8px 0 2px}
+
+  .flipbook-footer{position:relative;z-index:20;text-align:center;padding:2px 0 7px;font-size:11px;color:var(--muted)}
+  .hide-up{transform:translateY(-110%);opacity:0;pointer-events:none}
+  .hide-down{transform:translateY(110%);opacity:0;pointer-events:none}
+  .hidden{display:none !important}
+
+  .toast{
+    position:fixed;z-index:120;left:50%;bottom:92px;transform:translateX(-50%) translateY(12px);
+    background:rgba(12,20,32,.92);border:1px solid var(--line);color:#fff;padding:9px 14px;border-radius:999px;
+    font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .help-card{
+    position:fixed;z-index:90;right:16px;bottom:118px;width:260px;max-width:calc(100vw - 24px);
+    background:var(--panel);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:16px;padding:14px 16px;
+    box-shadow:0 18px 40px rgba(0,0,0,.4);
+  }
+  .help-card h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .help-card p{font-size:12px;color:#d7e6ef;display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)}
+  .help-card kbd{font:inherit;color:var(--teal)}
+
+  @media (max-width:760px){
+    .lesson-chip .chip-t{display:none}
+    .header-title{font-size:13px}
+    .header-subtitle{display:none}
+    .control-btn{width:34px;height:34px}
+  }
+  html.embed-mode .flipbook-footer{display:none}
+  html.embed-mode .splash-screen{
+    background:
+      linear-gradient(180deg,rgba(6,10,16,.55),rgba(6,10,16,.78)),
+      url("pages/page-01.jpg") center/cover no-repeat;
+  }
+</style>
+</head>
+<body>
+<div class="flipbook-container" id="container">
+
+  <div class="splash-screen" id="splash">
+    <div class="splash-content">
+      <div class="splash-logo"><img src="logo.png" alt="Fluency Studio" class="splash-logo-img" /></div>
+      <div class="splash-title-group">
+        <div class="splash-kicker">Fluency Studio · Student Book</div>
+        <h1 class="splash-title">Pocket Fluency</h1>
+        <p class="splash-subtitle">Módulo 2 · Revisão das lições 61 a 98<br/>vocabulário, função da língua e diálogos em cena</p>
+      </div>
+      <div class="splash-loader">
+        <div class="splash-loader-bar"><div class="splash-loader-fill" id="loaderFill"></div></div>
+        <div class="splash-loader-text" id="loaderText">Preparando o livro…</div>
+      </div>
+      <div class="splash-actions hidden" id="splashActions">
+        <button class="splash-btn" id="startBtn">Abrir o livro</button>
+        <button class="splash-btn ghost hidden" id="resumeBtn">Continuar leitura</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="flipbook-header" id="header">
+    <div class="header-left">
+      <button class="icon-btn" id="indexBtn" title="Índice de lições">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </button>
+      <img src="logo.png" alt="" class="header-logo" />
+      <div>
+        <h1 class="header-title">Pocket Fluency</h1>
+        <span class="header-subtitle">Módulo 2 · 61–98</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="lesson-chip" id="lessonChip"><span class="chip-n">Capa</span><span class="chip-t">Student Book</span></div>
+      <button class="icon-btn" id="bookmarkBtn" title="Marcar página">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 17-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+      </button>
+      <span class="header-page-indicator">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span id="pageIndicator">1 / 89</span>
+      </span>
+    </div>
+  </header>
+
+  <main class="flipbook-main" id="main">
+    <div class="flipbook-wrapper" id="flipbookWrapper">
+      <div class="flipbook-element" id="flipbook"></div>
+    </div>
+  </main>
+
+  <div class="drawer-scrim" id="scrim"></div>
+  <aside class="index-drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="drawer-title">
+        <h2>Índice</h2>
+        <button class="icon-btn" id="drawerClose" title="Fechar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <input class="drawer-search" id="lessonSearch" type="search" placeholder="Buscar lição, gramática, HQ…" />
+      <div class="drawer-filters">
+        <button class="pill on" data-filter="all">Todas</button>
+        <button class="pill" data-filter="comic">Com HQ</button>
+        <button class="pill" data-filter="booked">Marcadas</button>
+      </div>
+      <div class="drawer-stats">
+        <span>Vistas <b id="statSeen">0</b>/89</span>
+        <span>HQs <b>8</b> lições</span>
+        <span>Marcadas <b id="statBm">0</b></span>
+      </div>
+    </div>
+    <div class="drawer-list" id="lessonList"></div>
+  </aside>
+
+  <div class="flipbook-controls" id="controls">
+    <div class="controls-inner">
+      <div class="controls-left">
+        <button class="control-btn" id="prevBtn" title="Anterior">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="page-slider-container"><input type="range" class="page-slider" id="pageSlider" min="0" max="88" value="0" /></div>
+        <button class="control-btn" id="nextBtn" title="Próxima">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="controls-right">
+        <button class="control-btn" id="zoomOutBtn" title="Reduzir">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M8 11h6"/></svg>
+        </button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="control-btn" id="zoomInBtn" title="Ampliar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>
+        </button>
+        <div class="control-divider"></div>
+        <button class="control-btn" id="helpBtn" title="Atalhos">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        </button>
+        <button class="control-btn" id="fullscreenBtn" title="Tela cheia">
+          <svg id="fsIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="thumbnails-bar" id="thumbnails">
+    <div class="thumbnails-scroll" id="thumbnailsScroll"></div>
+  </div>
+  <footer class="flipbook-footer">Fluency Studio · Pocket edition · Módulo 2</footer>
+</div>
+
+<div class="help-card hidden" id="helpCard">
+  <h3>Atalhos</h3>
+  <p><span>Virar página</span><kbd>← →</kbd></p>
+  <p><span>Índice</span><kbd>I</kbd></p>
+  <p><span>Marcar página</span><kbd>B</kbd></p>
+  <p><span>Tela cheia</span><kbd>F</kbd></p>
+  <p><span>Fechar painéis</span><kbd>Esc</kbd></p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const TOTAL_PAGES = 89;
+const LS_LAST = "pocket-mod2-last";
+const LS_SEEN = "pocket-mod2-seen";
+const LS_BM = "pocket-mod2-bm";
+
+const LESSONS = [
+  { n:61, title:"Genitive case and questions with whose", short:"whose / genitive", start:1, kinds:["open","a","b","comic","comic"] },
+  { n:62, title:"Past continuous — affirmative and negative", short:"past continuous + / −", start:6, kinds:["open","a","b","comic","comic"] },
+  { n:64, title:"Past continuous — interrogative", short:"past continuous ?", start:11, kinds:["open","a","b","comic","comic"] },
+  { n:65, title:"Simple past — affirmative", short:"simple past +", start:16, kinds:["open","a","b","comic","comic"] },
+  { n:67, title:"Simple past — places & weekend", short:"simple past +", start:21, kinds:["open","a","b","comic","comic"] },
+  { n:68, title:"Simple past — travel", short:"simple past +", start:26, kinds:["open","a","b","comic","comic"] },
+  { n:71, title:"Simple past — negative", short:"simple past −", start:31, kinds:["open","a","b","comic","comic"] },
+  { n:72, title:"Simple past — interrogative", short:"simple past ?", start:36, kinds:["open","a","b","comic","comic"] },
+  { n:74, title:"Simple past — all forms", short:"simple past + − ?", start:41, kinds:["open","a","b"] },
+  { n:75, title:"Can — request, offer, permission", short:"can", start:44, kinds:["open","a","b"] },
+  { n:77, title:"Could", short:"could", start:47, kinds:["open","a","b"] },
+  { n:78, title:"Would like — requests and offers", short:"would like", start:50, kinds:["open","a","b"] },
+  { n:81, title:"How + adjective", short:"how + adj", start:53, kinds:["open","a","b"] },
+  { n:82, title:"Comparatives (as … as)", short:"as … as", start:56, kinds:["open","a","b"] },
+  { n:84, title:"Because for explanations", short:"because", start:59, kinds:["open","a","b"] },
+  { n:85, title:"Superlative — the most + adjective", short:"the most", start:62, kinds:["open","a","b"] },
+  { n:87, title:"Superlative — the + adjective + est", short:"-est", start:65, kinds:["open","a","b"] },
+  { n:88, title:"Review — comparative and superlative", short:"review", start:68, kinds:["open","a","b"] },
+  { n:91, title:"Future with will — affirmative", short:"will +", start:71, kinds:["open","a","b"] },
+  { n:92, title:"Future with will — negative and questions", short:"will − / ?", start:74, kinds:["open","a","b"] },
+  { n:94, title:"So — results and consequences", short:"so", start:77, kinds:["open","a","b"] },
+  { n:95, title:"Going to — affirmative", short:"going to +", start:80, kinds:["open","a","b"] },
+  { n:97, title:"Going to — negative and questions", short:"going to − / ?", start:83, kinds:["open","a","b"] },
+  { n:98, title:"Will vs. going to", short:"will vs going to", start:86, kinds:["open","a","b"] },
+];
+
+const PAGES = [{ kind:"cover", label:"Capa", lesson:null }];
+LESSONS.forEach(L => {
+  L.kinds.forEach((kind, i) => {
+    const label = kind==="open" ? "L"+L.n : kind==="a" ? L.n+"A" : kind==="b" ? L.n+"B" : "HQ";
+    PAGES.push({ kind, label, lesson:L, comic: kind==="comic" });
+  });
+});
+
+const $ = id => document.getElementById(id);
+let currentPage = 0, zoom = 100, fitScale = 1, pf = null, isPortrait = true;
+let showSplash = true, filter = "all";
+let seen = new Set(JSON.parse(localStorage.getItem(LS_SEEN) || "[]"));
+let bookmarks = new Set(JSON.parse(localStorage.getItem(LS_BM) || "[]"));
+const lastSaved = parseInt(localStorage.getItem(LS_LAST) || "0", 10);
+let pendingStart = 0;
+const NO_HIDE = new URLSearchParams(location.search).has("nohide");
+const EMBED = new URLSearchParams(location.search).has("embed");
+if(EMBED) document.documentElement.classList.add("embed-mode");
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function lessonAt(idx){
+  for(let i=LESSONS.length-1;i>=0;i--) if(idx >= LESSONS[i].start) return LESSONS[i];
+  return null;
+}
+function toast(msg){
+  const el=$("toast"); el.textContent=msg; el.classList.add("show");
+  clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),1600);
+}
+
+function buildPages(){
+  const frag=document.createDocumentFragment();
+  for(let i=1;i<=TOTAL_PAGES;i++){
+    const meta=PAGES[i-1];
+    const page=document.createElement("div");
+    page.className="flip-page";
+    page.dataset.density = (i===1 || i===TOTAL_PAGES) ? "hard" : "soft";
+    page.innerHTML = `<div class="page-texture"></div>
+      <img src="pages/page-${pad(i)}.jpg" alt="Página ${i}" class="flip-page-img" draggable="false" />
+      <div class="page-edge-shadow"></div>
+      ${meta && meta.comic ? '<span class="comic-ribbon">HQ</span>' : ""}`;
+    frag.appendChild(page);
+  }
+  $("flipbook").appendChild(frag);
+}
+
+function buildThumbnails(){
+  const scroll=$("thumbnailsScroll");
+  for(let i=1;i<=TOTAL_PAGES;i++){
+    const idx=i-1, meta=PAGES[idx];
+    const btn=document.createElement("button");
+    btn.className="thumbnail-btn"+(meta.comic?" comic":"");
+    btn.dataset.idx=idx;
+    btn.innerHTML=`<img src="thumbs/page-${pad(i)}.jpg" alt="" class="thumbnail-img" loading="lazy" />
+      <span class="thumbnail-label">${meta.label}</span>`;
+    btn.addEventListener("click",()=>flipToPage(idx));
+    scroll.appendChild(btn);
+  }
+}
+
+function renderIndex(){
+  const q=($("lessonSearch").value||"").toLowerCase().trim();
+  const list=$("lessonList");
+  list.innerHTML="";
+  const rows=[];
+  LESSONS.forEach(L=>{
+    const hasComic=L.kinds.includes("comic");
+    const booked=Array.from({length:L.kinds.length},(_,i)=>L.start+i).some(p=>bookmarks.has(p));
+    const hay=`${L.n} ${L.title} ${L.short} ${hasComic?"hq comic":""}`.toLowerCase();
+    if(q && !hay.includes(q)) return;
+    if(filter==="comic" && !hasComic) return;
+    if(filter==="booked" && !booked) return;
+    rows.push(L);
+  });
+  if(!rows.length){
+    list.innerHTML='<div class="bm-empty">Nada encontrado.</div>';
+    return;
+  }
+  rows.forEach(L=>{
+    const viewed=Array.from({length:L.kinds.length},(_,i)=>seen.has(L.start+i)).every(Boolean);
+    const cur=lessonAt(currentPage);
+    const btn=document.createElement("button");
+    btn.className="lesson-row"+(cur && cur.n===L.n?" current":"");
+    btn.innerHTML=`<span class="ln">${L.n}</span>
+      <span><span class="lt">${L.title}</span><span class="ls">${L.short} · ${L.kinds.length} págs</span></span>
+      <span>${L.kinds.includes("comic")?'<span class="hq-tag">HQ</span>':'<span class="seen-dot '+(viewed?"":"off")+'"></span>'}</span>`;
+    btn.addEventListener("click",()=>{ closeDrawer(); flipToPage(L.start); });
+    list.appendChild(btn);
+  });
+}
+
+function openDrawer(){ $("drawer").classList.add("open"); $("scrim").classList.add("open"); renderIndex(); setTimeout(()=>$("lessonSearch").focus(),50); }
+function closeDrawer(){ $("drawer").classList.remove("open"); $("scrim").classList.remove("open"); }
+
+function persist(){
+  localStorage.setItem(LS_LAST, String(currentPage));
+  localStorage.setItem(LS_SEEN, JSON.stringify([...seen]));
+  localStorage.setItem(LS_BM, JSON.stringify([...bookmarks]));
+  $("statSeen").textContent=seen.size;
+  $("statBm").textContent=bookmarks.size;
+}
+
+function onCurrentChange(){
+  seen.add(currentPage); persist();
+  $("pageIndicator").textContent=(currentPage+1)+" / "+TOTAL_PAGES;
+  $("pageSlider").value=currentPage;
+  $("prevBtn").disabled=currentPage<=0;
+  $("nextBtn").disabled=currentPage>=TOTAL_PAGES-1;
+  const L=lessonAt(currentPage);
+  const meta=PAGES[currentPage];
+  if(L){
+    $("lessonChip").innerHTML=`<span class="chip-n">L${L.n}</span><span class="chip-t">${meta.kind==="comic"?"HQ · ":""}${L.title}</span>`;
+  } else {
+    $("lessonChip").innerHTML=`<span class="chip-n">Capa</span><span class="chip-t">Pocket Fluency</span>`;
+  }
+  $("bookmarkBtn").classList.toggle("active", bookmarks.has(currentPage));
+  $("thumbnailsScroll").querySelectorAll(".thumbnail-btn").forEach(b=>{
+    const i=parseInt(b.dataset.idx,10);
+    b.classList.toggle("active", i===currentPage);
+    b.classList.toggle("booked", bookmarks.has(i));
+  });
+  const active=$("thumbnailsScroll").querySelector(".thumbnail-btn.active");
+  if(active) active.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
+  if($("drawer").classList.contains("open")) renderIndex();
+}
+
+function toggleBookmark(){
+  if(bookmarks.has(currentPage)){ bookmarks.delete(currentPage); toast("Marcador removido"); }
+  else { bookmarks.add(currentPage); toast("Página marcada"); }
+  persist(); onCurrentChange();
+}
+
+function initFlipbook(){
+  if(typeof St==="undefined" || !St.PageFlip){
+    console.warn("St.PageFlip missing"); return;
+  }
+  pf = new St.PageFlip($("flipbook"), {
+    width: 460,
+    height: 650,
+    size: "fixed",
+    showCover: true,
+    maxShadowOpacity: 0.55,
+    mobileScrollSupport: true,
+    flippingTime: 900,
+    useMouseEvents: true,
+    swipeDistance: 30,
+    showPageCorners: true,
+    disableFlipByClick: false,
+    drawShadow: true,
+    usePortrait: true,
+    autoSize: true,
+  });
+  pf.loadFromHTML($("flipbook").querySelectorAll(".flip-page"));
+  pf.on("flip", e => { currentPage = e.data; onCurrentChange(); });
+  pf.on("changeOrientation", e => { isPortrait = (e.data==="portrait"); applyFit(); });
+  isPortrait = pf.getOrientation ? pf.getOrientation()==="portrait" : window.innerWidth<760;
+  if(pendingStart>0){
+    try{ pf.turnToPage(pendingStart); }catch(e){}
+    currentPage=pendingStart;
+  }
+  setTimeout(()=>{ try{ pf.update(); }catch(e){} applyFit(); onCurrentChange(); }, 80);
+}
+
+function goNext(){ if(pf) pf.flipNext(); }
+function goPrev(){ if(pf) pf.flipPrev(); }
+function flipToPage(target){
+  if(!pf) return;
+  const clamped=Math.max(0,Math.min(target,TOTAL_PAGES-1));
+  try{ pf.flip(clamped,"top-right"); }catch(e){ try{ pf.turnToPage(clamped); }catch(_){ } }
+  currentPage=clamped; onCurrentChange();
+}
+
+function applyFit(){
+  const main=$("main"); if(!main) return;
+  const availW=main.clientWidth-20, availH=main.clientHeight-16;
+  const wrap=document.querySelector(".stf__wrapper");
+  const bw=(wrap && wrap.offsetWidth) ? wrap.offsetWidth : (isPortrait?460:920);
+  const bh=(wrap && wrap.offsetHeight) ? wrap.offsetHeight : 650;
+  fitScale=Math.min(availW/bw, availH/bh, 1.18);
+  applyTransform();
+}
+function applyTransform(){ $("flipbookWrapper").style.transform=`scale(${(fitScale*zoom/100).toFixed(4)})`; }
+function setZoom(z){
+  zoom=Math.max(50,Math.min(160,z));
+  applyTransform();
+  $("zoomLabel").textContent=zoom+"%";
+  $("zoomOutBtn").disabled=zoom<=50;
+  $("zoomInBtn").disabled=zoom>=160;
+}
+
+function toggleFullscreen(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+document.addEventListener("fullscreenchange",()=>{
+  $("fsIcon").innerHTML = document.fullscreenElement
+    ? '<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3m13 0v-3a2 2 0 0 0-2-2h-3"/>'
+    : '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3"/>';
+});
+
+let controlsTimer=null;
+function resetControlsTimer(){
+  $("controls").classList.remove("hide-down");
+  $("header").classList.remove("hide-up");
+  $("thumbnails").classList.remove("hide-down");
+  if(controlsTimer) clearTimeout(controlsTimer);
+  controlsTimer=setTimeout(()=>{
+    if(!showSplash && !NO_HIDE && !$("drawer").classList.contains("open")){
+      $("controls").classList.add("hide-down");
+      $("header").classList.add("hide-up");
+      $("thumbnails").classList.add("hide-down");
+    }
+  },4500);
+}
+
+function hideSplash(){
+  if(!showSplash) return;
+  showSplash=false;
+  $("splash").classList.add("hide");
+  setTimeout(()=>$("splash").classList.add("hidden"),800);
+  resetControlsTimer();
+}
+
+function preloadImages(){
+  let loaded=0;
+  const first=Math.min(8,TOTAL_PAGES);
+  const tick=()=>{
+    loaded++;
+    const pct=Math.min(100, Math.round(loaded/TOTAL_PAGES*100));
+    $("loaderFill").style.width=pct+"%";
+    $("loaderText").textContent = loaded<TOTAL_PAGES ? `Carregando ${loaded}/${TOTAL_PAGES}…` : "Pronto.";
+    if(loaded===first){
+      $("splashActions").classList.remove("hidden");
+      if(lastSaved>0){
+        $("resumeBtn").classList.remove("hidden");
+        $("resumeBtn").textContent="Continuar da p. "+(lastSaved+1);
+      }
+      if(EMBED){
+        if(lastSaved>0) $("resumeBtn").click();
+        else $("startBtn").click();
+      }
+    }
+  };
+  for(let i=1;i<=TOTAL_PAGES;i++){
+    const img=new Image();
+    img.onload=tick; img.onerror=tick;
+    img.src=`pages/page-${pad(i)}.jpg`;
+  }
+}
+
+$("startBtn").addEventListener("click", hideSplash);
+$("resumeBtn").addEventListener("click",()=>{
+  pendingStart=lastSaved;
+  if(pf){ try{pf.turnToPage(lastSaved);}catch(e){} currentPage=lastSaved; onCurrentChange(); }
+  hideSplash();
+});
+$("prevBtn").addEventListener("click",goPrev);
+$("nextBtn").addEventListener("click",goNext);
+$("pageSlider").addEventListener("input",e=>flipToPage(parseInt(e.target.value,10)));
+$("zoomInBtn").addEventListener("click",()=>setZoom(zoom+10));
+$("zoomOutBtn").addEventListener("click",()=>setZoom(zoom-10));
+$("fullscreenBtn").addEventListener("click",toggleFullscreen);
+$("bookmarkBtn").addEventListener("click",toggleBookmark);
+$("indexBtn").addEventListener("click",openDrawer);
+$("drawerClose").addEventListener("click",closeDrawer);
+$("scrim").addEventListener("click",closeDrawer);
+$("helpBtn").addEventListener("click",()=>$("helpCard").classList.toggle("hidden"));
+$("lessonSearch").addEventListener("input",renderIndex);
+document.querySelectorAll(".pill[data-filter]").forEach(p=>{
+  p.addEventListener("click",()=>{
+    filter=p.dataset.filter;
+    document.querySelectorAll(".pill[data-filter]").forEach(x=>x.classList.toggle("on",x===p));
+    renderIndex();
+  });
+});
+window.addEventListener("mousemove",resetControlsTimer);
+window.addEventListener("touchstart",resetControlsTimer,{passive:true});
+let resizeTimer=null;
+window.addEventListener("resize",()=>{ if(resizeTimer) clearTimeout(resizeTimer); resizeTimer=setTimeout(applyFit,140); });
+window.addEventListener("keydown",e=>{
+  if(showSplash){
+    if(e.key==="Enter") $("startBtn").click();
+    return;
+  }
+  const tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="textarea") return;
+  if(e.key==="ArrowRight") goNext();
+  else if(e.key==="ArrowLeft") goPrev();
+  else if(e.key==="f"||e.key==="F") toggleFullscreen();
+  else if(e.key==="i"||e.key==="I") $("drawer").classList.contains("open")?closeDrawer():openDrawer();
+  else if(e.key==="b"||e.key==="B") toggleBookmark();
+  else if(e.key==="Escape"){ closeDrawer(); $("helpCard").classList.add("hidden"); }
+});
+
+buildPages();
+buildThumbnails();
+preloadImages();
+persist();
+
+const q=new URLSearchParams(location.search);
+const lp=parseInt(q.get("page")||"",10);
+const ll=parseInt(q.get("lesson")||"",10);
+if(lp>=1 && lp<=TOTAL_PAGES) pendingStart=lp-1;
+else if(ll){ const hit=LESSONS.find(x=>x.n===ll); if(hit) pendingStart=hit.start; }
+
+function tryInit(retries){
+  if(typeof St!=="undefined" && St.PageFlip){ initFlipbook(); }
+  else if(retries>0) setTimeout(()=>tryInit(retries-1),180);
+}
+if(typeof St!=="undefined" && St.PageFlip) initFlipbook();
+else window.addEventListener("load",()=>tryInit(12));
+</script>
+</body>
+</html>

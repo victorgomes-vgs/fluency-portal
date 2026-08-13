@@ -669,6 +669,15 @@
 
     /* ── STUDENT DASHBOARD (referência visual) ── */
     .student-dash-wrap{background:var(--sd-page-bg);min-height:calc(100vh - 52px);padding-bottom:28px;margin:0 -16px;padding-left:16px;padding-right:16px;}
+    .materiais-fullbleed{max-width:none!important;}
+    .materiais-flip-shell{
+      position:relative;height:calc(100dvh - 118px);min-height:520px;
+      border-radius:18px;overflow:hidden;background:#070b12;
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:0 18px 48px rgba(0,0,0,.35);
+    }
+    .materiais-flip-shell iframe{width:100%;height:100%;border:0;display:block;background:#070b12;}
+    .admin-materiais-flip .materiais-flip-shell{height:calc(100dvh - 280px);min-height:480px;}
     .student-dash{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto;padding-top:8px;}
     .sd-card-light{background:var(--card,#FFFFFF);border:1px solid var(--divider,#E2E8F0);border-radius:8px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.05);color:var(--font,#1E1E1E);position:relative;}
     [data-theme="light"] .sd-card-light{
@@ -5167,7 +5176,30 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
   );
 }
 
-function MateriaisSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos,contrato}){
+function hasPocketFlipbook(profile){
+  const name=(profile?.name||profile?.nome||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const email=(profile?.email||"").toString().toLowerCase();
+  if(/fonseca/.test(name) || email.includes("victorfonseca")) return false;
+  const isTorifo=email.includes("victor9251") || (/\bvictor\b/.test(name) && /torifo/.test(name));
+  const isAnderson=email.includes("andersonferreira") || (/\banderson\b/.test(name) && /ferreira/.test(name));
+  return isTorifo || isAnderson;
+}
+const POCKET_FLIP_SRC="flips/books/pocket-mod2/index.html?embed=1";
+
+function MateriaisSection(props){
+  if(hasPocketFlipbook(props.profile)){
+    return(
+      <div className={props.isAdmin?"admin-materiais-flip":undefined}>
+        <div className="materiais-flip-shell">
+          <iframe title="Pocket Fluency — Módulo 2" src={POCKET_FLIP_SRC} allow="fullscreen" allowFullScreen/>
+        </div>
+      </div>
+    );
+  }
+  return <MateriaisLinksSection {...props}/>;
+}
+
+function MateriaisLinksSection({uid,isAdmin,trilhaData,materiaisData,modulosOcultos,contrato}){
   const courses=useCourses();
   const course=useMemo(()=>getCourseById(contrato),[courses,contrato]);
   const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
@@ -5871,7 +5903,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     return(
       <div>
         <button type="button" className="page-back" onClick={goStudentBack}><Icon name="arrow-left" size={16}/> Voltar</button>
-        {studentPage!=="trilha"&&<h2 className="text-xl font-bold mb-4" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]}</h2>}
+        {studentPage!=="trilha"&&!(studentPage==="materiais"&&hasPocketFlipbook(profile))&&<h2 className="text-xl font-bold mb-4" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]}</h2>}
         {studentPage==="trilha"&&(
           <TrilhaSection
             uid={uid}
@@ -5882,7 +5914,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             contrato={profile.contrato}
           />
         )}
-        {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
+        {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
         {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
         {studentPage==="calendario"&&<StudentCalendarView uid={uid} trilhaData={trilhaData} schedule={studentSchedule} studentName={profile.name}/>}
@@ -5935,7 +5967,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         />
       )}
 
-      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")} tabIndex={-1}>
+      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="materiais"&&hasPocketFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
         {showStudentUi&&(
           <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
             <span className="role-pill role-pill-student">Portal do aluno</span>
@@ -5987,14 +6019,14 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTabNav} hideGreeting/>}
             {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={true} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
             {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
-            {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
+            {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
             {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={true} links={links}/>}
             {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
           </>
         ):renderStudentPage()}
       </main>
-      {showStudentUi&&<WhatsAppFloat/>}
-      {showStudentUi&&<IVi mode="student"/>}
+      {showStudentUi&&!(studentPage==="materiais"&&hasPocketFlipbook(profile))&&<WhatsAppFloat/>}
+      {showStudentUi&&!(studentPage==="materiais"&&hasPocketFlipbook(profile))&&<IVi mode="student"/>}
     </div>
   );
 }

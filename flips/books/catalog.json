@@ -1,0 +1,13 @@
+{
+  "books": [
+    {
+      "id": "pocket-mod2",
+      "title": "Pocket Fluency",
+      "subtitle": "Módulo 2 · Lições 61–98",
+      "pages": 89,
+      "cover": "books/pocket-mod2/pages/page-01.jpg",
+      "logo": "books/pocket-mod2/logo.png",
+      "folder": "books/pocket-mod2"
+    }
+  ]
+}
