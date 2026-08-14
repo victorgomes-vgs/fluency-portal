@@ -8,6 +8,15 @@
       "cover": "books/pocket-mod2/pages/page-01.jpg",
       "logo": "books/pocket-mod2/logo.png",
       "folder": "books/pocket-mod2"
+    },
+    {
+      "id": "objective-proficiency",
+      "title": "Objective Proficiency",
+      "subtitle": "C2 · Units 1–3 · Lições 1–9",
+      "pages": 19,
+      "cover": "books/objective-proficiency/pages/page-01.jpg",
+      "logo": "books/objective-proficiency/logo.png",
+      "folder": "books/objective-proficiency"
     }
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "id": "objective-proficiency",
+  "title": "Objective Proficiency",
+  "subtitle": "C2 · Units 1–3 · Lessons 1–9",
+  "pages": 19,
+  "pagePattern": "pages/page-{nn}.jpg",
+  "logo": "logo.png"
+}
