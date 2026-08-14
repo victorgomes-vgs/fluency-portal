@@ -220,6 +220,16 @@
     .animate-spin { transition: none !important; }
 
     body{font-family:var(--ds-font),'Inter','Outfit',system-ui,sans-serif;font-size:16px;line-height:1.5;background:var(--bg);background-attachment:fixed;color:var(--font);min-height:100vh;}
+    .portal-sky{
+      background-color:#020814;
+      background-image:
+        linear-gradient(180deg,rgba(1,6,17,.20) 0%,rgba(1,8,22,.48) 58%,rgba(1,5,14,.76) 100%),
+        url('assets/portal-bg.jpg');
+      background-size:auto,cover;
+      background-position:center top;
+      background-repeat:no-repeat;
+      background-attachment:fixed;
+    }
     #root{position:relative;z-index:1;}
 
     /* ── CARDS (Efeito Vidro) ── */
@@ -3494,7 +3504,7 @@ function Login(){
     setLoading(false);
   }
   return(
-    <div className="min-h-screen flex flex-col items-center justify-center px-5" style={{paddingBottom:"calc(24px + env(safe-area-inset-bottom,0px))"}}>
+    <div className="portal-sky min-h-screen flex flex-col items-center justify-center px-5" style={{paddingBottom:"calc(24px + env(safe-area-inset-bottom,0px))"}}>
       <div className="login-logo-wrap" style={{filter:'drop-shadow(0 4px 12px rgba(0,0,0,.25))'}}>
         <BrandLogo large/>
       </div>
@@ -5937,7 +5947,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   const studentDisplayName=getFullName(profile.name||profile.nome||"Aluno");
 
   return(
-    <div className="min-h-screen pb-20">
+    <div className="portal-sky min-h-screen pb-20">
       <LogoBar
         onBack={isAdmin?(viewAsStudent?exitViewAsStudent:(onBack||null)):null}
         isAdmin={isAdmin&&!viewAsStudent}
