@@ -6001,65 +6001,158 @@ function WhatsAppFloat(){
   );
 }
 
-const IVI_TUTORIAL_STUDENT=`**Tutorial rápido do Portal** 🎓
+/* ── iVi: tom sempre calmo, educado e claro; responde com procedimentos reais do portal ── */
+const IVI_TONE_NOTE="Respondo com calma e clareza. Se algo for particular da sua conta, oriento o caminho no portal ou o contato com o Victor.";
 
-**Início** — visão geral: progresso, financeiro e atalhos.
-**Trilha** — lições por módulo. Cada lição pode ter: Lição Online, Tarefa, PDF e Aula ao Vivo. Concluídas aparecem em verde.
-**Materiais** — PDFs e recursos extras por módulo.
-**Diário** — histórico oficial de cada aula: presença, avaliação (F/A/L/E) e observações do professor.
-**Financeiro** — mensalidades, vencimentos, status e comprovantes (boleto/Pix).
-**Calendário** — aulas previstas no mês, conforme seu plano de estudos.
-**Contato / Agendamento** — WhatsApp do Victor e link para marcar ou remarcar aulas.
+const IVI_TUTORIAL_STUDENT=`**Tutorial do portal — passo a passo**
 
-Dica: use o ícone de sol/lua no topo para alternar tema claro, escuro ou automático — sua preferência fica salva.`;
+Com calma, estes são os principais espaços do seu portal:
+
+1. **Início** — resumo do dia: progresso, financeiro e atalhos.
+2. **Trilha** — sua jornada por módulos e lições. Em cada lição você pode encontrar Lição Online, Tarefa, PDF e material de aula. Status comuns: Pendente, Em andamento, Concluída e, no dia da aula, **Atual**.
+3. **Materiais** — livros digitais e recursos do seu curso. Alunos de **Proficiency FF** veem o flipbook *Objective Proficiency — Units 1–3* (virar página, zoom).
+4. **Diário** — histórico oficial de cada aula: presença/falta, notas **F/A/L/E** (0 a 100%) e observações.
+5. **Agenda** — calendário das suas aulas regulares, reposições agendadas e marcação do vencimento. Aqui também fica o fluxo de **Agendar Reposição**.
+6. **Reposições** — lista do que está a fazer, já agendado ou vencido, com as regras do contrato.
+7. **Financeiro** — parcelas, vencimentos, status e links de boleto/Pix.
+8. **Contato** — WhatsApp do professor Victor.
+
+**Dica de tema:** no topo, o ícone sol/lua alterna claro, escuro ou automático. Sua preferência fica salva.
+
+Se quiser, peça: “como agendar reposição”, “o que é FALE” ou “onde está o livro”.`;
+
+const IVI_TUTORIAL_ADMIN=`**Tutorial admin — o que está no ar hoje**
+
+Com calma, o mapa do painel:
+
+1. **Alunos** — cadastro, edição, aulas semanais, trilha e financeiro. O campo **aulas semanais** define quantas **reposições gratuitas do contrato** o aluno tem (1 aula/semana → 1 gratuita; 2 → 2, e assim por diante).
+2. **Agenda (calendário principal)** — fonte da verdade do estúdio (FullCalendar). Aqui você configura **dias e horários** do professor, sincroniza a **ocupação das aulas regulares** e vê aulas do dia / próxima aula / to-do / eventos manuais. Não usamos mais Google Calendar no portal.
+3. **Relatórios** — visão por aluno, por curso ou por período: Diário, presença, tarefas/notas e **Report Card** do módulo (com gráfico vertical das competências).
+4. **Diário (no aluno)** — status oficiais: Presença; Ausência com reposição; Falta do aluno com/sem reposição; Falta do professor. Notas **F/A/L/E** em percentual 0–100%.
+5. **Materiais** — flipbooks por curso (ex.: Proficiency FF → Objective Proficiency Units 1–3).
+6. **Cadastros pendentes** — formulários form-self / terceirizados para revisar e autorizar.
+
+Peça, por exemplo: “regras de reposição”, “pesos do Report Card” ou “como liberar horário vago”.`;
+
+const IVI_RULES_REPOSICAO_STUDENT=`**Reposições — regras com calma e clareza**
+
+Use **Agenda** ou **Reposições** no menu. Não há mais link externo de Google Calendar.
+
+**Quando nasce o direito**
+• **Falta do aluno com reposição** (ou ausência com reposição) → +1 reposição a fazer, válida por **30 dias corridos**. Depois disso, vai para “vencidas”.
+• **Falta do professor** → +1 reposição a fazer, **sem prazo de validade**.
+
+**Status no diário da falta**
+• **PENDENTE** → ainda precisa agendar  
+• **AGENDADO** → horário marcado  
+• **REPOSIÇÃO FEITA** → concluída (sai do contador “a fazer”)
+
+**Como agendar**
+1. Em Agenda/Reposições, toque em **Agendar Reposição** (só aparece se houver reposição válida).
+2. Escolha a falta que deseja repor.
+3. O sistema mostra **apenas horários vagos** da agenda do professor.
+4. Ao confirmar, o status daquela falta passa para **AGENDADO**.
+
+**Confirmação no dia da aula**
+No dia, o portal pede confirmação de presença. Aviso importante: **reposição só é liberada se a ausência for informada com pelo menos 3 horas de antecedência e se ainda houver reposição gratuita do seu contrato**. Se faltar esse prazo ou as gratuitas já tiverem acabado, a ausência é registrada **sem** direito a reposição.
+
+**Quantas gratuitas tenho?**  
+O número acompanha suas **aulas semanais** cadastradas no contrato (ex.: 2x/semana → 2 gratuitas). Em caso de dúvida no seu caso específico, fale com o Victor.`;
+
+const IVI_RULES_REPOSICAO_ADMIN=`**Reposições e Agenda — procedimento admin**
+
+**Calendário principal:** menu **Agenda**. É a agenda-mãe do estúdio (FullCalendar interno). Configure **dias/horários** do professor e use **Sincronizar ocupação das aulas regulares** para que os horários ocupados pelos alunos não apareçam como vagos nas reposições.
+
+**Cadastro do aluno:** em **aulas semanais**, cada aula (dia + horário) conta. O sistema grava \`reposicoesGratuitasContrato\` = quantidade dessas aulas. Isso limita o direito na confirmação de ausência (regra das 3h + saldo de gratuitas).
+
+**Diário → direito a repor**
+• \`falta_aluno_com_reposicao\` / \`ausencia_com_reposicao\` → validade 30 dias  
+• \`falta_professor\` → sem validade  
+• Fluxo do aluno: selecionar falta → horário vago → status **PENDENTE → AGENDADO → REPOSIÇÃO FEITA**
+
+**Não usar Google Calendar** no portal. Eventos manuais: botão **Agendar** na própria Agenda admin.`;
+
+const IVI_RULES_FALE=`**Avaliação F/A/L/E (0 a 100%)**
+
+No **Diário**, cada aula pode receber quatro notas percentuais:
+
+• **F — Fluência Oral**  
+• **A — Compreensão Auditiva**  
+• **L — Leitura**  
+• **E — Escrita**
+
+Valores de 0 a 100. Formatos antigos (revisão / atingiu / superou) ainda são lidos, mas o padrão atual é percentual.
+
+**Como entra no Report Card do módulo**
+• **F** e **A**: usam só a média do **diário** (peso 100% diário).  
+• **L (Leitura)**: **80% tarefa** + **20% diário**.  
+• **E (Escrita)**: **50% tarefa** + **50% diário**.  
+
+Se faltar um dos lados (só diário ou só tarefa), o sistema usa o que existir. O aluno vê um gráfico vertical moderno das competências; o admin monta/consulta em **Relatórios → Por aluno → Report Card**.`;
+
+const IVI_RULES_RELATORIOS_ADMIN=`**Relatórios (somente admin)**
+
+Em **Relatórios** você consulta:
+
+• **Por aluno** — histórico de tarefas, notas, presença (Diário) e Report Card do módulo.  
+• **Por curso** — módulos, âncoras de Report Card e alunos vinculados.  
+• **Por período** — consolidado de presença e atividade no intervalo.
+
+O Report Card usa as notas F/A/L/E e os pesos (F/A 100% diário; L 80% tarefa + 20% diário; E 50/50). Na trilha, o card “Report Card” é âncora estrutural do módulo — a consulta completa fica em Relatórios.`;
 
 const IVI_KB=[
-  {keys:["tutorial","como usar","usar o portal","navegar","primeiro acesso","ajuda portal","nao sei mexer","não sei mexer","me ensina","cadê minhas aulas","onde vejo progresso"],audience:["student","all"],answer:IVI_TUTORIAL_STUDENT},
-  {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online","onde estao minhas licoes","cadê a próxima lição","proxima licao"],audience:["student","all"],answer:"Sua **Trilha** mostra toda a jornada até a fluência, dividida em módulos. Toque em uma lição para ver links de **Lição Online**, **Tarefa**, **PDF** e **Aula ao Vivo**. Lições concluídas ficam destacadas em verde. 🚀"},
-  {keys:["tarefa","homework","dever","tarefa de casa","nao encontro homework","tarefa nao aparece"],audience:["student","all"],answer:"As tarefas ficam na **Trilha** — abra a lição correspondente e clique em **Tarefa Online**. Se não aparecer, o professor ainda não liberou aquela tarefa."},
-  {keys:["material","pdf","drive","materiais","baixar pdf","material completo","preciso do material"],audience:["student","all"],answer:"Acesse **Materiais** no menu ou abra a lição na **Trilha** e use os botões **Lição PDF** / **Material Completo**. 📚"},
-  {keys:["diário","diario","presença","presenca","falta","reposição","historico de aulas","minhas faltas","avaliacao da aula"],audience:["student","all"],answer:"O **Diário** registra cada aula com data, presença, avaliação (F/A/L/E) e observações. É o histórico oficial do seu curso."},
-  {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento","pagar mensalidade","parcela atrasada","atraso"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. Para negociar valores ou prazos, fale direto com o Victor — eu não tenho acesso aos seus dados financeiros individuais."},
-  {keys:["calendário","calendario","agenda de aulas","próxima aula","proxima aula","quando é minha aula","horario da aula"],audience:["student","all"],answer:"Confira em **Calendário** no menu do portal — lá aparecem suas aulas previstas no mês conforme seu plano de estudos."},
-  {keys:["agendar","agendamento","marcar aula","reposição","remarcar","desmarcar","cancelar aula","reposicao"],audience:["student","all"],answer:`Para agendar, remarcar ou pedir reposição, use **Agenda** / **Reposições** no portal. Também pode falar direto com o Victor no WhatsApp.`},
-  {keys:["professor","victor","whatsapp","contato","falar","falar com alguem","falar com alguém","teacher_victorgomes","instagram"],audience:["all"],answer:`O professor Victor Gomes atende alunos pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}. Instagram: @teacher_victorgomes`},
-  {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola","quero ser aluno","por onde comeco","não sei por onde","nao sei por onde","processo pra começar"],audience:["visitor","all"],answer:`Que ótimo! 🎉 Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
-  {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa","é caro","e caro","tem desconto","desconto","promoção","promocao","cupom"],audience:["visitor","all"],answer:"Os valores variam por programa e frequência de aulas — nunca invento números aqui. A aula demonstrativa é **gratuita** e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos."},
-  {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer","posso testar","conhecer antes de pagar","aula demo"],audience:["visitor","all"],answer:"A **aula demonstrativa é totalmente gratuita**, sem letras miúdas! É a melhor forma de conhecer o método PEH 5.0 e ver se a Fluency combina com você. Agende pelo site thefluency.studio ou WhatsApp."},
-  {keys:["método","metodo","peh","como funciona","metodologia","ensino","peh 5.0","por que escolher","como as aulas funcionam"],audience:["all"],answer:"A Fluency Studio usa o método exclusivo **PEH 5.0** do Victor Gomes:\n\n**P — Personalizado:** diagnóstico completo antes de qualquer aula.\n**E — Estratégico:** programa montado para seu estilo de aprendizagem.\n**H — Humanizado:** ambiente seguro para errar e tentar.\n\nNas aulas, o foco é a fala desde o primeiro dia — durante as aulas, nós só falamos."},
-  {keys:["fluency foundation","o que é foundation","programa completo","18 meses","foundation"],audience:["visitor","all"],answer:"O **Fluency Foundation** é nosso programa mais completo: fala, leitura, escrita e escuta, com fluência prevista em 18 meses (pode ser menos se você já tiver nível). Ideal para mercado de trabalho, viagens e exames internacionais. Material organizado sob medida, sem custo surpresa depois de começar."},
-  {keys:["flash talk","só quero falar","so quero falar","30 minutos","aula curta"],audience:["visitor","all"],answer:"O **Flash Talk** é para quem só quer conversação: aulas de 30 minutos, até 4x por semana, com temas do dia a dia escolhidos por você. Não precisa comprar material — é tudo apresentado na aula."},
-  {keys:["corporate speech","ingles corporativo","inglês corporativo","oratoria","oratória","apresentação em ingles","apresentacao em ingles"],audience:["visitor","all"],answer:"O **Corporate Speech** eleva sua capacidade de se expressar em inglês em ambientes de trabalho — vocabulário avançado e oratória de alto padrão. Requer nível mínimo B1. Vendido em módulos mensais avulsos."},
-  {keys:["curso","programa","módulo de aula","quais cursos","diferença entre programas","diferenca entre programas"],audience:["visitor","all"],answer:"A escola oferece três programas principais: **Fluency Foundation** (completo, 18 meses), **Flash Talk** (conversação, 30 min) e **Corporate Speech** (inglês corporativo, B1+). Veja todos em thefluency.studio ou pergunte ao Victor no WhatsApp."},
-  {keys:["premium","interactive","individual ou grupo","aula em grupo","aula individual","modalidade"],audience:["visitor","all"],answer:"Temos duas modalidades: **Premium** (só você e o professor) e **Interactive** (você e mais 2 ou 3 colegas, sempre em grupos reduzidos)."},
-  {keys:["quanto tempo","quanto tempo demora","quanto tempo pra ficar fluente","fluência em quanto tempo"],audience:["visitor","all"],answer:"No Fluency Foundation, a previsão é de 18 meses para fluência a partir da lição 1 — pode ser menos se você já tiver uma base e for nivelado direto num módulo mais avançado."},
-  {keys:["nível","nivel","cefr","a1","b1","c2","teste de nivel","prova de nivelamento","qual meu nivel"],audience:["all"],answer:"Os níveis seguem o **CEFR** (A1 a C2). Na aula demonstrativa o Victor avalia sua fluência de forma conversacional — não é prova, é conversa estratégica para montar sua trilha."},
-  {keys:["fluency studio","sobre a escola","quem é vocês","escola online","ao vivo","gravada","aulas gravadas"],audience:["visitor","all"],answer:"A **Fluency Studio** é uma escola de inglês 100% online, com aulas **ao vivo** (nunca gravadas), individuais ou em grupos reduzidos, do professor Victor Gomes. Slogan: *Fale, entenda e evolua com estratégia.*"},
-  {keys:["formação","formacao","experiencia","experiência","quem é o professor","victor gomes","ufscar","toefl","toeic"],audience:["visitor","all"],answer:"**Victor Gomes** — formado em Letras, pós-graduado em Ensino de Língua Estrangeira, Metodologias Ativas e Tecnologias pela UFScar. Morou meses nos EUA. 20 anos de carreira em escolas de idiomas e bilíngues/internacionais (Anglo, Objetivo, entre outras). Certificações TOEFL e TOEIC."},
-  {keys:["horario","horário","que horas","horario fixo","disponibilidade"],audience:["visitor","all"],answer:"Os horários são definidos conforme a disponibilidade do professor e do aluno. Uma vez fechado, o horário fica **fixo** — você se torna dono do horário."},
-  {keys:["contrato","multa","cancelar curso","fidelização","fidelizacao"],audience:["visitor","all"],answer:"O contrato é justo e parcelado. **Não há multas** — tudo que é pago corresponde a aulas realizadas."},
-  {keys:["frequencia","frequência","quantas vezes por semana","1x por semana","2x por semana","3x por semana","4x por semana","60 minutos","aula de 60"],audience:["visitor","all"],answer:"Sugestões de frequência:\n• **1x/semana** — manter o nível\n• **2x/semana** — equilíbrio (recomendado)\n• **3x/semana** — evolução mais rápida\n• **4x/semana** — intensivo\nAulas de **30 min** (Flash Talk) ou **60 min** (Foundation) conforme seu objetivo."},
-  {keys:["material didático","material didatico","comprar livro","livro de ingles","custo do material"],audience:["visitor","all"],answer:"No **Flash Talk** o material é apresentado na aula — não precisa comprar. No **Fluency Foundation**, o material é organizado personalizadamente no atendimento, sem surpresas de custo depois de começar. É proibido acrescentar materiais durante o curso."},
-  {keys:["inglês","ingles","grammar","gramática","gramatica","vocabulário","pronúncia","phrasal verb","phrasal verbs"],audience:["all"],answer:"Posso ajudar com dúvidas de inglês! Me diga o tema (tempos verbais, phrasal verbs, pronúncia…) e explico de forma clara. Continue praticando nas lições da sua **Trilha** também!"},
-  {keys:["make ou do","make vs do","diferenca make do","diferença make do"],audience:["all"],answer:"Ótima dúvida clássica! **Make** é usado para criar/produzir algo (make a cake, make a decision). **Do** é usado para atividades/tarefas genéricas (do homework, do the dishes). Vale revisar isso na sua Trilha também!"},
-  {keys:["present perfect","ja fiz","já fiz","have has"],audience:["all"],answer:"O **Present Perfect** (have/has + particípio) conecta o passado com o presente — usado quando o momento exato não importa ou a ação ainda tem efeito agora (I have finished my homework). Quer praticar mais? Isso costuma aparecer nas lições intermediárias da Trilha!"},
-  {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem problemas! Fale direto com o Victor pelo WhatsApp que ele reseta seu acesso rapidinho: ${WPP_VICTOR}`},
-  {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
-  {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente","terceirizado","alunosfora"],audience:["admin"],answer:"Alunos do **form-self** e **form-self-alunosfora** (terceirizados) aparecem em **Cadastros Pendentes**. Revise, complete o que faltar (financeiro é opcional para terceirizados) e clique em **AUTORIZAR LANÇAR**."},
-  {keys:["agenda admin","painel agenda","calendario admin"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e o calendário principal do estúdio (FullCalendar). Configure dias/horários do professor e sincronize a ocupação das aulas regulares."},
-  {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
+  {keys:["tutorial","como usar","usar o portal","navegar","primeiro acesso","ajuda portal","nao sei mexer","não sei mexer","me ensina","cadê minhas aulas","onde vejo progresso","mapa do portal"],audience:["student","all"],answer:IVI_TUTORIAL_STUDENT},
+  {keys:["tutorial admin","como usar admin","painel admin","mapa admin","ajuda admin"],audience:["admin"],answer:IVI_TUTORIAL_ADMIN},
+  {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online","onde estao minhas licoes","cadê a próxima lição","proxima licao","status atual","licao atual"],audience:["student","all"],answer:"Na **Trilha** você acompanha a jornada por módulos. Ao abrir uma lição, aparecem os links disponíveis (Lição Online, Tarefa, PDF, material de aula). Status usuais: Pendente, Em andamento, Concluída. No **dia da aula**, a próxima lição pode ficar como **Atual**, liberando o conteúdo do card. Siga com calma, lição a lição."},
+  {keys:["tarefa","homework","dever","tarefa de casa","nao encontro homework","tarefa nao aparece","exercicio","exercício"],audience:["student","all"],answer:"As tarefas ficam na **Trilha**: abra a lição e use **Tarefa Online**. Se o botão não aparecer, o professor ainda não liberou aquela atividade. Quando concluir, a nota pode entrar no Report Card — principalmente em **Leitura (L)** e **Escrita (E)**."},
+  {keys:["material","pdf","drive","materiais","baixar pdf","material completo","preciso do material","flipbook","livro digital","objective proficiency","proficiency","units"],audience:["student","all"],answer:"Em **Materiais** você encontra o conteúdo do seu curso. Se o seu contrato for **Proficiency FF**, o portal abre o flipbook **Objective Proficiency — Units 1–3** (páginas em revista, com zoom). Outros cursos podem ter links de PDF na Trilha (**Lição PDF** / **Material Completo**) ou outro flipbook correspondente."},
+  {keys:["diário","diario","presença","presenca","falta","historico de aulas","minhas faltas","avaliacao da aula","status do diario"],audience:["student","all"],answer:"O **Diário** é o histórico oficial: data, status da aula e avaliações. Status principais: **Presença**; **Ausência com reposição**; **Falta do aluno com reposição**; **Falta do aluno sem reposição**; **Falta do professor**. As notas usam **F/A/L/E** de 0 a 100%. Faltas com direito a repor alimentam a área **Reposições**."},
+  {keys:["fale","f/a/l/e","fluencia","fluência oral","compreensao auditiva","leitura nota","escrita nota","nota 0 a 100","percentual","report card","boletim","grafico","gráfico competências","pesos"],audience:["student","admin","all"],answer:IVI_RULES_FALE},
+  {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento","pagar mensalidade","parcela atrasada","atraso"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. A **Agenda** também destaca o próximo vencimento. Eu não consulto valores individuais da sua conta; para negociar prazos ou valores, fale com o Victor com tranquilidade pelo WhatsApp."},
+  {keys:["calendário","calendario","agenda de aulas","próxima aula","proxima aula","quando é minha aula","horario da aula","minha agenda"],audience:["student","all"],answer:"Sua **Agenda** no portal mostra as aulas regulares previstas, reposições já marcadas e o vencimento do pagamento. Ao tocar em um evento, você pode ver os materiais da lição correspondente. Para remarcar ou repor, use o fluxo interno de **Reposições** — tudo dentro do portal."},
+  {keys:["agendar","agendamento","marcar aula","reposição","remarcar","desmarcar","cancelar aula","reposicao","reposições","reposicoes a fazer","3 horas","3h","gratuita","gratuitas","antecedencia","antecedência","confirmar presença","ausente","como agendar reposicao","regras de reposicao"],audience:["student"],answer:IVI_RULES_REPOSICAO_STUDENT},
+  {keys:["google calendar","google","calendario google","sincronizar google"],audience:["student","admin","all"],answer:"O portal **não usa mais Google Calendar**. Toda a agenda e as reposições ficam no calendário interno (FullCalendar). Alunos usam **Agenda** e **Reposições**; o admin usa **Agenda** como calendário principal do estúdio."},
+  {keys:["professor","victor","whatsapp","contato","falar","falar com alguem","falar com alguém","teacher_victorgomes","instagram"],audience:["all"],answer:`O professor **Victor Gomes** atende com atenção pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}. Instagram: @teacher_victorgomes. Estou aqui para orientar o uso do portal com calma; assuntos pessoais de conta ele resolve melhor.`},
+  {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola","quero ser aluno","por onde comeco","não sei por onde","nao sei por onde","processo pra começar"],audience:["visitor","all"],answer:`Com prazer. O caminho mais simples:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
+  {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa","é caro","e caro","tem desconto","desconto","promoção","promocao","cupom"],audience:["visitor","all"],answer:"Os valores variam conforme o programa e a frequência. Eu não invento números. A aula demonstrativa é **gratuita**, e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos."},
+  {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer","posso testar","conhecer antes de pagar","aula demo"],audience:["visitor","all"],answer:"A **aula demonstrativa é gratuita**. É um momento tranquilo para conhecer o método PEH 5.0 e ver se a Fluency Studio faz sentido para você. Pode agendar pelo site thefluency.studio ou pelo WhatsApp."},
+  {keys:["método","metodo","peh","como funciona","metodologia","ensino","peh 5.0","por que escolher","como as aulas funcionam"],audience:["all"],answer:"A Fluency Studio usa o método **PEH 5.0**:\n\n**P — Personalizado:** diagnóstico antes de iniciar.\n**E — Estratégico:** programa alinhado ao seu estilo de aprendizagem.\n**H — Humanizado:** espaço seguro para errar e evoluir.\n\nNas aulas ao vivo, o foco é a fala desde o primeiro encontro."},
+  {keys:["fluency foundation","o que é foundation","programa completo","18 meses","foundation"],audience:["visitor","all"],answer:"O **Fluency Foundation** é o programa completo (fala, leitura, escrita e escuta), com previsão de fluência em cerca de 18 meses a partir da lição 1 — podendo ser menos se houver nivelamento. Material organizado sob medida, sem surpresa de custo depois do início."},
+  {keys:["flash talk","só quero falar","so quero falar","30 minutos","aula curta"],audience:["visitor","all"],answer:"O **Flash Talk** é conversação pura: aulas de 30 minutos, até 4x por semana, com temas do cotidiano. O material é apresentado na própria aula — sem compra extra de livro."},
+  {keys:["corporate speech","ingles corporativo","inglês corporativo","oratoria","oratória","apresentação em ingles","apresentacao em ingles"],audience:["visitor","all"],answer:"O **Corporate Speech** desenvolve inglês profissional e oratória. Nível mínimo sugerido: B1. É oferecido em módulos mensais avulsos."},
+  {keys:["curso","programa","módulo de aula","quais cursos","diferença entre programas","diferenca entre programas","proficiency ff","speech"],audience:["visitor","student","all"],answer:"Programas principais: **Fluency Foundation** (completo), **Flash Talk** (conversação 30 min), **Corporate Speech** (corporativo, B1+) e trilhas específicas como **Proficiency FF**. No portal, o contrato do aluno libera a trilha e os materiais correspondentes (incluindo flipbooks quando houver)."},
+  {keys:["premium","interactive","individual ou grupo","aula em grupo","aula individual","modalidade"],audience:["visitor","all"],answer:"Há duas modalidades: **Premium** (aula individual com o professor) e **Interactive** (você e mais 2 ou 3 colegas, em grupo reduzido)."},
+  {keys:["quanto tempo","quanto tempo demora","quanto tempo pra ficar fluente","fluência em quanto tempo"],audience:["visitor","all"],answer:"No Fluency Foundation, a referência é cerca de 18 meses a partir da lição 1. Se você já tiver base e for nivelado em um módulo mais avançado, o caminho pode ser mais curto."},
+  {keys:["nível","nivel","cefr","a1","b1","c2","teste de nivel","prova de nivelamento","qual meu nivel"],audience:["all"],answer:"Trabalhamos com o **CEFR** (A1 a C2). Na demonstrativa, a avaliação é conversacional — uma conversa estratégica para montar a trilha, não uma prova formal."},
+  {keys:["fluency studio","sobre a escola","quem é vocês","escola online","ao vivo","gravada","aulas gravadas"],audience:["visitor","all"],answer:"A **Fluency Studio** é uma escola de inglês online, com aulas **ao vivo** (não gravadas), individuais ou em grupos reduzidos, com o professor Victor Gomes. Slogan: *Fale, entenda e evolua com estratégia.*"},
+  {keys:["formação","formacao","experiencia","experiência","quem é o professor","victor gomes","ufscar","toefl","toeic"],audience:["visitor","all"],answer:"**Victor Gomes** — Letras; pós-graduação em Ensino de Língua Estrangeira, Metodologias Ativas e Tecnologias (UFScar). Experiência nos EUA e cerca de 20 anos em escolas de idiomas e bilíngues/internacionais. Certificações TOEFL e TOEIC."},
+  {keys:["horario","horário","que horas","horario fixo","disponibilidade"],audience:["visitor","all"],answer:"Os horários são combinados entre professor e aluno. Depois de fechado, o horário fica **fixo** — você se torna responsável por aquele encaixe na agenda."},
+  {keys:["contrato","multa","cancelar curso","fidelização","fidelizacao"],audience:["visitor","all"],answer:"O contrato é parcelado de forma clara. **Não há multas**: o que é pago corresponde a aulas realizadas."},
+  {keys:["frequencia","frequência","quantas vezes por semana","1x por semana","2x por semana","3x por semana","4x por semana","60 minutos","aula de 60","aulas semanais"],audience:["visitor","student","all"],answer:"Frequências comuns:\n• **1x/semana** — manutenção\n• **2x/semana** — equilíbrio (muito usado)\n• **3x/semana** — evolução mais rápida\n• **4x/semana** — intensivo\n\nDuração: 30 min (Flash Talk) ou 60 min (Foundation), conforme o programa. No portal, as **aulas semanais** cadastradas também definem quantas **reposições gratuitas** entram no contrato."},
+  {keys:["material didático","material didatico","comprar livro","livro de ingles","custo do material"],audience:["visitor","all"],answer:"No **Flash Talk**, o material é apresentado na aula. No **Fluency Foundation** e trilhas como **Proficiency**, o material é organizado no atendimento — sem surpresa de custo depois do início. Não se acrescentam materiais extras no meio do curso sem alinhamento."},
+  {keys:["inglês","ingles","grammar","gramática","gramatica","vocabulário","pronúncia","phrasal verb","phrasal verbs"],audience:["all"],answer:"Posso explicar dúvidas de inglês com calma. Diga o tema (tempos verbais, phrasal verbs, pronúncia…) e eu esclareço passo a passo. Vale reforçar também nas lições da sua **Trilha**."},
+  {keys:["make ou do","make vs do","diferenca make do","diferença make do"],audience:["all"],answer:"**Make** costuma indicar criar ou produzir algo (*make a decision*). **Do** costuma indicar tarefas ou atividades (*do homework*). Se quiser, trago mais exemplos no mesmo ritmo."},
+  {keys:["present perfect","ja fiz","já fiz","have has"],audience:["all"],answer:"O **Present Perfect** (have/has + particípio) liga passado e presente quando o momento exato importa menos, ou quando o efeito continua agora (*I have finished my homework*). Aparece com frequência nas lições intermediárias da Trilha."},
+  {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem pressa. Peça ao Victor pelo WhatsApp para resetar o acesso: ${WPP_VICTOR}. Em seguida, entre novamente com o e-mail cadastrado.`},
+  {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno","aulas semanais cadastro"],audience:["admin"],answer:"Em **Novo Aluno**, preencha nome, e-mail e senha — o login Firebase e o perfil no Firestore são criados juntos. Em seguida configure **aulas semanais** (dia + horário): a quantidade dessas aulas define \`reposicoesGratuitasContrato\`. Gere o calendário previsto quando a trilha e os dias estiverem prontos."},
+  {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente","terceirizado","alunosfora"],audience:["admin"],answer:"Alunos de **form-self** e **form-self-alunosfora** aparecem em **Cadastros Pendentes**. Revise os dados, complete o que faltar (financeiro é opcional para terceirizados) e use **AUTORIZAR LANÇAR** com atenção."},
+  {keys:["agenda admin","painel agenda","calendario admin","calendário principal","agenda principal","horario vago","ocupação","ocupacao","working days","disponibilidade professor","fullcalendar","regras de reposicao","reposição","reposicao","reposições","aulas semanais","gratuitas do contrato"],audience:["admin"],answer:IVI_RULES_REPOSICAO_ADMIN},
+  {keys:["relatorios","relatórios","report card admin","por aluno","por curso","por periodo","por período","report card fale"],audience:["admin"],answer:IVI_RULES_RELATORIOS_ADMIN},
+  {keys:["diario admin","lancar diario","lançar diário","status falta","fale admin"],audience:["admin"],answer:"No diário do aluno, use os status oficiais: Presença; Ausência com reposição; Falta do aluno com/sem reposição; Falta do professor. Lance **F/A/L/E** em 0–100%. Status com direito a repor atualizam os contadores de **Reposições** do aluno. Motivos de “com”/“sem” reposição ajudam o histórico a ficar claro."},
+  {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito fica o seletor de tema: escuro, claro ou automático (segue o sistema). A preferência é salva no dispositivo."},
+  {keys:["ivi","quem e voce","quem é você","o que voce faz","o que você faz","assistente"],audience:["all"],answer:`Sou a **iVi**, assistente do portal da Fluency Studio. Explico com calma como usar Trilha, Materiais, Diário, Agenda, Reposições, Financeiro e, no painel admin, Relatórios e o calendário principal. ${IVI_TONE_NOTE}`},
 ];
 
 function iviWelcome(mode){
-  if(mode==="visitor")return "Olá! Sou a **iVi** 👋 Assistente virtual da Fluency Studio. Posso explicar nossos cursos, o método PEH 5.0, como se matricular ou agendar aula demonstrativa gratuita. Também tiro dúvidas gerais de inglês. Como posso ajudar?";
-  if(mode==="admin")return "Olá, Victor! Sou a **iVi** — sua assistente no painel admin. Posso ajudar com cadastro de alunos, agenda, financeiro e uso do portal. O que precisa?";
-  return "Olá! Sou a **iVi** 👋 Sua assistente no portal. Posso ensinar a usar o site, tirar dúvidas sobre trilha, financeiro, materiais e inglês. Quer um **tutorial rápido**? É só pedir!";
+  if(mode==="visitor")return "Olá. Sou a **iVi**, assistente da Fluency Studio. Posso explicar cursos, o método PEH 5.0, matrícula e a aula demonstrativa gratuita — sempre com calma. Também ajudo com dúvidas gerais de inglês. Como posso orientar você?";
+  if(mode==="admin")return "Olá, Victor. Sou a **iVi**. Estou atualizada com Agenda (calendário interno), Reposições, aulas semanais → gratuitas do contrato, Diário F/A/L/E, Relatórios/Report Card e Materiais/flipbooks. Em que posso ajudar, com calma?";
+  return "Olá. Sou a **iVi**, sua assistente no portal. Posso ensinar Trilha, Materiais, Diário, Agenda, Reposições, Financeiro e as regras de reposição — com calma e clareza. Se quiser, peça o **tutorial do portal**.";
 }
 
 function iviQuickChips(mode){
   if(mode==="visitor")return["Como me matricular?","Aula demonstrativa","Quais os cursos?","Falar com Victor"];
-  if(mode==="admin")return["Cadastros pendentes","Cadastrar aluno","Usar a agenda"];
-  return["Tutorial do portal","Minha trilha","Financeiro","Falar com Victor"];
+  if(mode==="admin")return["Tutorial admin","Regras de reposição","Report Card FALE","Calendário principal"];
+  return["Tutorial do portal","Como agendar reposição","O que é FALE","Materiais / livro"];
 }
 
 function iviRespond(question,mode){
@@ -6075,10 +6168,10 @@ function iviRespond(question,mode){
     if(score>bestScore){bestScore=score;best=entry;}
   });
   if(best&&bestScore>0)return best.answer;
-  if(/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi)$/i.test(q.trim()))return iviWelcome(mode);
-  if(mode==="visitor")return `Boa pergunta! Para informações personalizadas sobre matrícula, valores e programas, o Victor atende pelo WhatsApp: ${WPP_SITE}. Posso ajudar com mais alguma coisa sobre a escola?`;
-  if(mode==="student")return `Não tenho essa resposta específica — e não tenho acesso aos seus dados individuais (notas, valores, datas). Para isso, fale com o Victor: ${WPP_VICTOR}. Ou pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal**!`;
-  return "Entendi! Não tenho essa resposta específica ainda. Pergunte sobre **trilha**, **financeiro**, **materiais** ou peça o **tutorial do portal** — sei bastante sobre isso!";
+  if(/^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|hi|hello)$/i.test(q.trim()))return iviWelcome(mode);
+  if(mode==="visitor")return `Não tenho essa resposta completa aqui. Para matrícula, valores e plano personalizado, o Victor atende com calma pelo WhatsApp: ${WPP_SITE}. Se quiser, posso falar de cursos, método PEH 5.0 ou aula demonstrativa.`;
+  if(mode==="student")return `Ainda não tenho essa resposta específica — e não acesso seus dados individuais (notas, valores ou datas particulares). Posso orientar sobre **tutorial**, **Agenda/Reposições**, **FALE**, **Materiais** ou **Trilha**. Para o seu caso concreto: ${WPP_VICTOR}.`;
+  return "Ainda não tenho essa resposta específica. Posso detalhar **Agenda principal**, **reposição**, **Report Card/FALE**, **Diário**, **Relatórios** ou o **tutorial admin**. É só dizer o tema.";
 }
 
 function IVi({mode="student"}){
@@ -6141,7 +6234,7 @@ function IVi({mode="student"}){
             </div>
             <div>
               <div style={{fontWeight:700,fontSize:14}}>iVi</div>
-              <div style={{fontSize:11,color:"rgba(234,242,247,.75)"}}>Assistente · Fluency Studio</div>
+              <div style={{fontSize:11,color:"rgba(234,242,247,.75)"}}>Assistente calma · Fluency Studio</div>
             </div>
             <button type="button" className="btn btn-bar" style={{marginLeft:"auto",padding:"8px",borderRadius:8,minWidth:40,minHeight:40}} onClick={closeIvi} aria-label="Fechar iVi">
               <Icon name="x" size={14}/>
