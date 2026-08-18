@@ -2536,7 +2536,7 @@ function makeBlankCourseModulos(totalLicoes){
 /**
  * Cores oficiais = cards do landing (thefluency.studio / Portal landing index.html)
  * e referência visual "cores dos cards.jpg":
- *  1. Fluency Foundation ......... Teal     #00a89d  (card-fluency / brand-teal)
+ *  1. Fluency General ............ Teal     #00a89d  (card-fluency / brand-teal)
  *  2. Flash Talk ................. Blue     #3b82f6  (card-flash)
  *  3. Corporate Speech ........... Purple   #8b5cf6  (card-corporate)
  *  4. Fluency Foundation Corporate Gold     #c9a84c  (card-ffc)
@@ -2548,10 +2548,25 @@ const PROFICIENCY_FF_MODULOS=[
   {id:1,nome:"Módulo 1 — Objective Proficiency (60 lições)",totalLicoes:60,semBlocos:true,tipoLivre:true,theme:"Objective Proficiency continuous plan — Units 1–20"},
 ];
 
+const FLUENCY_GENERAL_MODULOS=makeFoundationModulos([
+  "Módulo 1 — Lições 1–50",
+  "Módulo 2 — Lições 51–100",
+  "Módulo 3 — Lições 101–150",
+]).map((m,i)=>({
+  ...m,
+  unidades:Array.from({length:5},(_,u)=>({
+    id:u+1,
+    nome:`Unidade ${u+1}`,
+    licaoInicio:i*50+u*10+1,
+    licaoFim:i*50+(u+1)*10,
+  })),
+}));
+
 const DEFAULT_COURSES=[
-  {id:"foundation_general",nome:"Fluency Foundation",corBase:"#00a89d",ativo:true,ordem:1,
-    grupo:"general",padraoVisual:"teal",
-    modulos:makeFoundationModulos(["IMMEDIATE CONVERSATION","BUILDING CONFIDENCE","ADVANCED FLUENCY"])},
+  {id:"foundation_general",nome:"Fluency General",corBase:"#00a89d",ativo:true,ordem:1,
+    grupo:"general",padraoVisual:"teal",totalLicoes:150,unitReportCards:true,unitSize:10,
+    descricao:"Fluency General — 150 lições em 3 módulos (5 unidades × 10 lições). Report Card ao final de cada unidade e de cada módulo.",
+    modulos:FLUENCY_GENERAL_MODULOS.map(m=>({...m,unidades:(m.unidades||[]).map(u=>({...u)}))})},
   {id:"flash_general",nome:"Flash Talk",corBase:"#3b82f6",ativo:true,ordem:2,
     grupo:"general",padraoVisual:"blue",
     modulos:makeFlashModulos(4,62)},
@@ -2783,6 +2798,18 @@ async function ensureCoursesSeeded(forceBrandMeta){
         cur.modulos=payload.modulos;
       }
       // Proficiency FF: 1 módulo × 60 lições; não apaga lessonContent do Firebase
+      if(c.id==="foundation_general"){
+        cur.nome="Fluency General";
+        cur.modulos=payload.modulos;
+        cur.totalLicoes=150;
+        cur.unitReportCards=true;
+        cur.unitSize=10;
+        cur.descricao=payload.descricao||cur.descricao;
+        cur.ativo=true;
+        cur.grupo="general";
+        cur.padraoVisual="teal";
+        cur.corBase=c.corBase;
+      }
       if(c.id==="proficiency_ff"){
         cur.modulos=payload.modulos;
         cur.totalLicoes=60;
@@ -2900,8 +2927,9 @@ function useCourses(){
 }
 
 const COURSE_TEMPLATES=[
-  {id:"foundation",label:"Foundation (3×50, com blocos)",builder:()=>({
-    modulos:makeFoundationModulos(["Módulo 1","Módulo 2","Módulo 3"]),
+  {id:"foundation",label:"Fluency General (3×50, 5 unidades × 10 + Report Cards)",builder:()=>({
+    totalLicoes:150,unitReportCards:true,unitSize:10,
+    modulos:makeFoundationModulos(["Módulo 1 — Lições 1–50","Módulo 2 — Lições 51–100","Módulo 3 — Lições 101–150"]),
   })},
   {id:"flash",label:"Flash Talk (4×62, sem blocos)",builder:()=>({
     modulos:makeFlashModulos(4,62),
@@ -3439,26 +3467,56 @@ function generateBooks(course){
       });
       lesson.type=lesson.lessonType==="review"?"review":"lesson";
       items.push(lesson);
+      // Unit Report Card (ex.: Fluency General — a cada 10 lições)
+      const unitSize=c.unitReportCards?(parseInt(c.unitSize,10)||10):0;
+      if(unitSize>0&&li%unitSize===0){
+        const unitNum=li/unitSize;
+        const unitMeta=(mod.unidades||[])[unitNum-1];
+        const unitName=unitMeta?.nome||("Unidade "+unitNum);
+        const rangeLabel=unitMeta?(unitMeta.licaoInicio+"–"+unitMeta.licaoFim):"";
+        items[items.length-1].reportCardAfter=true;
+        items[items.length-1].unitReportCardAfter=true;
+        items.push({
+          id:`b${bi}-u${unitNum}-report-card`,
+          pos:"RC-U"+unitNum,
+          type:"report_card",
+          lessonType:"report_card",
+          num:0,
+          title:"Report Card — "+unitName+(rangeLabel?` (${rangeLabel})`:""),
+          status:"pendente",
+          date:"",dataPrevista:"",tema:"Consolidação da unidade",objetivos:"Report Card da unidade (âncora estrutural).",
+          feedback:"",obs:"",link:"",
+          evalF:"",evalA:"",evalL:"",evalE:"",
+          linkMaterial:"",linkLivroDigital:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",
+          linkGravacao:"",linkRelatorio:"",tarefaFeita:false,
+          materiaisModuloPdf:"",courseManaged:!!c.sharedContentEnabled,
+          reportCard:true,reportCardScope:"unit",
+          reportCardModuleId:bi,reportCardModuleName:mod.nome||mod.name||("Módulo "+bi),
+          reportCardUnitId:unitNum,reportCardUnitName:unitName,
+        });
+      }
     }
     // Structural rule: after the last lesson of each module → Report Card anchor
     if(items.length){
-      items[items.length-1].reportCardAfter=true;
+      const lastLesson=items.slice().reverse().find(it=>it.type!=="report_card"&&it.lessonType!=="report_card");
+      if(lastLesson)lastLesson.reportCardAfter=true;
       const modName=mod.nome||mod.name||("Módulo "+bi);
       items.push({
         id:`b${bi}-report-card`,
-        pos:"RC",
+        pos:"RC-M",
         type:"report_card",
         lessonType:"report_card",
         num:0,
         title:"Report Card — "+modName,
         status:"pendente",
-        date:"",dataPrevista:"",tema:"Consolidação do módulo",objetivos:"Report Card estrutural (sem fórmulas nesta versão).",
+        date:"",dataPrevista:"",tema:"Consolidação do módulo",objetivos:"Report Card do módulo (âncora estrutural).",
         feedback:"",obs:"",link:"",
         evalF:"",evalA:"",evalL:"",evalE:"",
         linkMaterial:"",linkLivroDigital:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",
         linkGravacao:"",linkRelatorio:"",tarefaFeita:false,
         materiaisModuloPdf:"",courseManaged:!!c.sharedContentEnabled,
-        reportCard:true,reportCardModuleId:bi,reportCardModuleName:modName,
+        reportCard:true,reportCardScope:"module",
+        reportCardModuleId:bi,reportCardModuleName:modName,
       });
     }
     books.push({bookIdx:bi,items});
@@ -4342,7 +4400,7 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
           <span className="num-dark">RC</span>
           <div className="flex-1 min-w-0">
             <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">{item.title}<span className={typeTag}>{typeLabel}</span></div>
-            <div className="text-xs muted mt-0.5">Âncora estrutural do módulo — use Relatórios → Por aluno → Report Card</div>
+            <div className="text-xs muted mt-0.5">{item.reportCardScope==="unit"?`Âncora da unidade${item.reportCardUnitName?" ("+item.reportCardUnitName+")":""}`:"Âncora do módulo"} — use Relatórios → Por aluno → Report Card</div>
           </div>
         </div>
       </div>
@@ -7019,7 +7077,7 @@ function ModalCadastro({onClose,onSaved}){
       }
       const docRef=uid?db.collection("students").doc(uid):db.collection("students").doc();
       const studentUid=docRef.id;
-      const programName=getCourseLabel(dados.contrato)||"Fluency Foundation General";
+      const programName=getCourseLabel(dados.contrato)||"Fluency General";
       await docRef.set({
         name:dados.nome.trim(),
         email,
@@ -7387,7 +7445,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         ? (gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,nParcelas||18,[])||[])
         : [];
       const financeiro={...FINANCEIRO_DEFAULT,parcelas};
-      const programName=getCourseLabel(dados.contrato)||"Fluency Foundation General";
+      const programName=getCourseLabel(dados.contrato)||"Fluency General";
 
       await db.collection("students").doc(studentUid).update({
         name:dados.nome.trim(),email,
@@ -7962,8 +8020,8 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact}){
     return buildAgendaEventsForMonth(students,mk,agendaExtra).filter(e=>e.date===selectedDate);
   },[students,selectedDate,agendaExtra]);
   function goToday(){
-    const t=new Date().toISOString().slice(0,10);
-    setFocusDate(t);setSelectedDate(t);setMonthKey(getMonthKey(new Date()));
+    const t=getTodayISO();
+    setFocusDate(t);setSelectedDate(t);setMonthKey(t.slice(0,7));
   }
   function setViewMode(v){
     setView(v);
