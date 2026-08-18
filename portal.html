@@ -4887,7 +4887,23 @@ function DiarioSection({uid,isAdmin,contrato}){
   const [entries,setEntries]=useState(null);
   const [studentContrato,setStudentContrato]=useState(contrato||"");
   const [openContentId,setOpenContentId]=useState(null);
-  useEffect(()=>db.collection("students").doc(uid).collection("diario").orderBy("num","asc").onSnapshot(snap=>setEntries(snap.docs.map(d=>({id:d.id,...d.data()})))),[uid]);
+  const [drafts,setDrafts]=useState({}); // id -> partial overrides
+  const [localNew,setLocalNew]=useState([]); // unsaved new entries
+  const [dirty,setDirty]=useState({}); // id -> true
+  const [savingId,setSavingId]=useState("");
+  useEffect(()=>db.collection("students").doc(uid).collection("diario").orderBy("num","asc").onSnapshot(snap=>{
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    setEntries(list);
+    // Drop drafts that match server (keep only still-dirty ones that still exist or are local)
+    setDrafts(prev=>{
+      const next={...prev};
+      Object.keys(next).forEach(id=>{
+        if(String(id).startsWith("new-"))return;
+        if(!list.some(e=>e.id===id))delete next[id];
+      });
+      return next;
+    });
+  }),[uid]);
   useEffect(()=>{
     if(contrato){setStudentContrato(contrato);return;}
     return db.collection("students").doc(uid).onSnapshot(doc=>{if(doc.exists&&doc.data().contrato)setStudentContrato(doc.data().contrato);});
@@ -4914,12 +4930,24 @@ function DiarioSection({uid,isAdmin,contrato}){
     });
     return opts;
   },[course]);
-  async function addEntry(){
-    const nextNum=entries&&entries.length>0?Math.max(...entries.map(e=>e.num||0))+1:1;
+  const displayEntries=useMemo(()=>{
+    const base=(entries||[]).map(e=>({...e,...(drafts[e.id]||{}),_isNew:false}));
+    const news=localNew.map(e=>({...e,...(drafts[e.id]||{}),_isNew:true}));
+    return [...base,...news].sort((a,b)=>(a.num||0)-(b.num||0));
+  },[entries,localNew,drafts]);
+  function patchDraft(id,patch){
+    setDrafts(prev=>({...prev,[id]:{...(prev[id]||{}),...patch}}));
+    setDirty(prev=>({...prev,[id]:true}));
+    setLocalNew(prev=>prev.map(e=>e.id===id?{...e,...patch}:e));
+  }
+  function addEntry(){
+    const allNums=[...(entries||[]).map(e=>e.num||0),...localNew.map(e=>e.num||0)];
+    const nextNum=allNums.length?Math.max(...allNums)+1:1;
     const first=lessonOptions[0];
-    await db.collection("students").doc(uid).collection("diario").add({
-      num:nextNum,
-      date:new Date().toISOString().slice(0,10),
+    const id="new-"+Date.now();
+    const row={
+      id,num:nextNum,
+      date:getTodayISO(),
       licaoNum:first?first.num:1,
       licaoId:first?first.id:"",
       licaoTitulo:first?first.title:"",
@@ -4928,47 +4956,99 @@ function DiarioSection({uid,isAdmin,contrato}){
       obs:"",
       reposicaoTipo:"",
       reposicaoMotivo:"",
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-    });
+      _isNew:true,
+    };
+    setLocalNew(prev=>[...prev,row]);
+    setDirty(prev=>({...prev,[id]:true}));
+    setOpenContentId(id);
   }
-  async function updateEntry(id,patch){
-    const merged={...entries.find(e=>e.id===id),...patch};
-    const statusNow=normalizeDiarioStatus({...merged,...patch});
-    if(diaryGrantsReposicao({...merged,...patch,status:statusNow})){
-      if(!merged.reposicaoStatus&&!patch.reposicaoStatus)patch.reposicaoStatus=REPO_STATUS.PENDENTE;
-      if(statusNow!=="falta_professor"&&!merged.reposicaoVence&&!patch.reposicaoVence){
-        const base=merged.date||new Date().toISOString().slice(0,10);
-        patch.reposicaoVence=addDaysISO(base,30);
+  function buildSavePayload(merged){
+    const patch={
+      num:merged.num||1,
+      date:merged.date||getTodayISO(),
+      licaoNum:merged.licaoNum||null,
+      licaoId:merged.licaoId||"",
+      licaoTitulo:merged.licaoTitulo||"",
+      status:normalizeDiarioStatus(merged),
+      ocorrido:merged.ocorrido||"",
+      obs:merged.obs||"",
+      reposicaoTipo:merged.reposicaoTipo||"",
+      reposicaoMotivo:merged.reposicaoMotivo||"",
+    };
+    const statusNow=patch.status;
+    if(diaryGrantsReposicao({...merged,status:statusNow})){
+      if(!merged.reposicaoStatus)patch.reposicaoStatus=REPO_STATUS.PENDENTE;
+      else patch.reposicaoStatus=merged.reposicaoStatus;
+      if(statusNow!=="falta_professor"&&!merged.reposicaoVence){
+        patch.reposicaoVence=addDaysISO(patch.date,30);
       }
-      if(statusNow==="falta_professor"){patch.reposicaoVence="";}
+      if(statusNow==="falta_professor")patch.reposicaoVence="";
     }
-    if(statusNow==="presenca"&&(merged.reposicaoStatus===REPO_STATUS.AGENDADO||patch.markReposicaoFeita)){
+    if(statusNow==="presenca"&&(merged.reposicaoStatus===REPO_STATUS.AGENDADO||merged.markReposicaoFeita)){
       patch.reposicaoStatus=REPO_STATUS.REPOSICAO_FEITA;
     }
-    await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);
-    try{
-      const snap=await db.collection("students").doc(uid).collection("diario").get();
-      await syncStudentReposicaoCounters(uid,snap.docs.map(d=>({id:d.id,...d.data()})));
-    }catch(e){}
-    if(diarioIsPresence(statusNow)&&(merged.licaoId||merged.licaoNum)){
-      const trilhaItemId=merged.licaoId||lessonIdFromNum(parseInt(merged.licaoNum,10),course);
-      if(trilhaItemId&&!String(trilhaItemId).includes("report-card")){
-        const trilhaPatch={};
-        trilhaPatch[`trilha.${trilhaItemId}.status`]="concluida";
-        if(merged.date)trilhaPatch[`trilha.${trilhaItemId}.date`]=merged.date;
-        try{await db.collection("students").doc(uid).update(trilhaPatch);}catch(e){}
-      }
-    }
+    return{patch,statusNow};
   }
-  async function onSelectLesson(entryId,lessonId){
+  async function saveEntry(id){
+    const row=displayEntries.find(e=>e.id===id);
+    if(!row)return;
+    setSavingId(id);
+    try{
+      const {patch,statusNow}=buildSavePayload(row);
+      if(row._isNew||String(id).startsWith("new-")){
+        const ref=await db.collection("students").doc(uid).collection("diario").add({
+          ...patch,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        setLocalNew(prev=>prev.filter(e=>e.id!==id));
+        setDrafts(prev=>{const n={...prev};delete n[id];return n;});
+        setDirty(prev=>{const n={...prev};delete n[id];return n;});
+        setOpenContentId(ref.id);
+      }else{
+        await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);
+        setDrafts(prev=>{const n={...prev};delete n[id];return n;});
+        setDirty(prev=>{const n={...prev};delete n[id];return n;});
+      }
+      try{
+        const snap=await db.collection("students").doc(uid).collection("diario").get();
+        await syncStudentReposicaoCounters(uid,snap.docs.map(d=>({id:d.id,...d.data()})));
+      }catch(e){}
+      if(diarioIsPresence(statusNow)&&(patch.licaoId||patch.licaoNum)){
+        const trilhaItemId=patch.licaoId||lessonIdFromNum(parseInt(patch.licaoNum,10),course);
+        if(trilhaItemId&&!String(trilhaItemId).includes("report-card")){
+          const trilhaPatch={};
+          trilhaPatch[`trilha.${trilhaItemId}.status`]="concluida";
+          if(patch.date)trilhaPatch[`trilha.${trilhaItemId}.date`]=patch.date;
+          try{await db.collection("students").doc(uid).update(trilhaPatch);}catch(e){}
+        }
+      }
+      notifySaveSuccess("Diário salvo!");
+    }catch(e){notifySaveError(e.message||"Erro ao salvar diário");}
+    finally{setSavingId("");}
+  }
+  function onSelectLesson(entryId,lessonId){
     const opt=lessonOptions.find(o=>o.id===lessonId);
     if(!opt)return;
-    await updateEntry(entryId,{licaoId:opt.id,licaoNum:opt.num,licaoTitulo:opt.title||opt.label});
+    patchDraft(entryId,{licaoId:opt.id,licaoNum:opt.num,licaoTitulo:opt.title||opt.label});
     setOpenContentId(entryId);
   }
-  async function deleteEntry(id){if(!confirm("Remover esta aula?"))return;await db.collection("students").doc(uid).collection("diario").doc(id).delete();}
+  async function deleteEntry(id){
+    if(!confirm("Remover esta aula?"))return;
+    if(String(id).startsWith("new-")){
+      setLocalNew(prev=>prev.filter(e=>e.id!==id));
+      setDrafts(prev=>{const n={...prev};delete n[id];return n;});
+      setDirty(prev=>{const n={...prev};delete n[id];return n;});
+      return;
+    }
+    try{
+      await db.collection("students").doc(uid).collection("diario").doc(id).delete();
+      setDrafts(prev=>{const n={...prev};delete n[id];return n;});
+      setDirty(prev=>{const n={...prev};delete n[id];return n;});
+      notifySaveSuccess("Aula removida.");
+    }catch(e){notifySaveError(e.message||"Erro ao remover");}
+  }
   if(!entries)return null;
-  const stats=computeDiarioStats(entries);
+  const stats=computeDiarioStats([...(entries||[]),...localNew]);
   const iS={background:"var(--input-bg)",border:"1px solid var(--input-border)",color:"var(--font)",borderRadius:8,padding:"4px 8px",fontSize:12,outline:"none",fontFamily:"'Outfit',sans-serif"};
 
   if(!isAdmin){
@@ -5011,23 +5091,26 @@ function DiarioSection({uid,isAdmin,contrato}){
     <div><div className="glass rounded-2xl p-5">
       <div className="flex items-center justify-between gap-3 flex-wrap mb-5">
         <div><h3 className="text-lg font-bold flex items-center gap-2"><Icon name="book-open" size={18} style={{color:'rgba(44,122,142,1)'}}/>Diário de Aulas</h3>
-          <p className="text-xs muted mt-1">Número da aula, lição do curso, status de presença, ocorrido e anotações.</p>
+          <p className="text-xs muted mt-1">Preencha a entrada e clique em <strong>Salvar</strong> para gravar. Alterações só entram no Firebase após salvar.</p>
         </div>
         <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={addEntry}><Icon name="plus" size={16}/> Nova Aula</button>
       </div>
-      {entries.length===0?<div className="text-center py-12 muted"><p>Nenhuma aula lançada ainda.</p></div>:(
-        <div className="space-y-4">{entries.map(e=>{
+      {displayEntries.length===0?<div className="text-center py-12 muted"><p>Nenhuma aula lançada ainda.</p></div>:(
+        <div className="space-y-4">{displayEntries.map(e=>{
           const st=normalizeDiarioStatus(e);
           const ds=dStatusMap[st]||DIARIO_STATUS_SELECT[0];
           const opt=lessonOptions.find(o=>o.id===e.licaoId)||lessonOptions.find(o=>o.num===e.licaoNum);
           const showContent=openContentId===e.id;
+          const needsSave=!!dirty[e.id]||!!e._isNew;
+          const isSaving=savingId===e.id;
           return(
-            <div key={e.id} className="rounded-2xl p-4" style={{border:"1px solid var(--divider)",background:"var(--badge)"}}>
+            <div key={e.id} className="rounded-2xl p-4" style={{border:needsSave?"1.5px solid rgba(180,83,9,.55)":"1px solid var(--divider)",background:"var(--badge)"}}>
               <div className="flex flex-wrap gap-3 items-start">
                 <div className="num-aula inline-flex flex-col items-center" style={{minWidth:56}}><span className="text-xs opacity-70">Aula</span><span style={{fontWeight:800,fontSize:18}}>{e.num}</span></div>
                 <div style={{flex:1,minWidth:200}}>
+                  {needsSave&&<div className="text-xs font-semibold mb-2" style={{color:"#b45309"}}>{e._isNew?"Nova entrada — ainda não salva":"Alterações não salvas"}</div>}
                   <div className="grid gap-2" style={{gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))"}}>
-                    <label className="text-xs muted">Data<input type="date" className="input-light mt-1 w-full" value={e.date||""} onChange={ev=>updateEntry(e.id,{date:ev.target.value})}/></label>
+                    <label className="text-xs muted">Data<input type="date" className="input-light mt-1 w-full" value={e.date||""} onChange={ev=>patchDraft(e.id,{date:ev.target.value})}/></label>
                     <label className="text-xs muted">Lição realizada
                       <select className="ds-select mt-1 w-full" value={e.licaoId||""} onChange={ev=>onSelectLesson(e.id,ev.target.value)}>
                         <option value="">— selecionar —</option>
@@ -5035,7 +5118,7 @@ function DiarioSection({uid,isAdmin,contrato}){
                       </select>
                     </label>
                     <label className="text-xs muted">Status
-                      <select className="ds-select mt-1 w-full" value={st} onChange={ev=>updateEntry(e.id,{status:ev.target.value})}>
+                      <select className="ds-select mt-1 w-full" value={st} onChange={ev=>patchDraft(e.id,{status:ev.target.value})}>
                         {DIARIO_STATUS_SELECT.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </label>
@@ -5056,11 +5139,22 @@ function DiarioSection({uid,isAdmin,contrato}){
                     </div>
                   )}
                   <label className="text-xs muted block mt-3">Ocorrido
-                    <textarea className="obs-input mt-1 w-full" rows={2} value={e.ocorrido||""} onChange={ev=>updateEntry(e.id,{ocorrido:ev.target.value})} placeholder="O que ocorreu na aula"/>
+                    <textarea className="obs-input mt-1 w-full" rows={2} value={e.ocorrido||""} onChange={ev=>patchDraft(e.id,{ocorrido:ev.target.value})} placeholder="O que ocorreu na aula"/>
                   </label>
                   <label className="text-xs muted block mt-2">Anotações
-                    <textarea className="obs-input mt-1 w-full" rows={2} value={e.obs||""} onChange={ev=>updateEntry(e.id,{obs:ev.target.value})} placeholder="Anotações do professor"/>
+                    <textarea className="obs-input mt-1 w-full" rows={2} value={e.obs||""} onChange={ev=>patchDraft(e.id,{obs:ev.target.value})} placeholder="Anotações do professor"/>
                   </label>
+                  <div className="flex gap-2 mt-3 flex-wrap">
+                    <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={!needsSave||isSaving} onClick={()=>saveEntry(e.id)}>
+                      <Icon name="save" size={14}/>{isSaving?"Salvando…":"Salvar"}
+                    </button>
+                    {needsSave&&!e._isNew&&(
+                      <button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={()=>{
+                        setDrafts(prev=>{const n={...prev};delete n[e.id];return n;});
+                        setDirty(prev=>{const n={...prev};delete n[e.id];return n;});
+                      }}>Descartar</button>
+                    )}
+                  </div>
                 </div>
                 <button className="btn btn-danger rounded-lg px-2.5 py-2" onClick={()=>deleteEntry(e.id)}><Icon name="trash-2" size={14}/></button>
               </div>
@@ -6341,10 +6435,10 @@ const IVI_KB=[
   {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa","é caro","e caro","tem desconto","desconto","promoção","promocao","cupom"],audience:["visitor","all"],answer:"Os valores variam conforme o programa e a frequência. Eu não invento números. A aula demonstrativa é **gratuita**, e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos."},
   {keys:["demonstrativ","aula grátis","aula gratis","teste","conhecer","posso testar","conhecer antes de pagar","aula demo"],audience:["visitor","all"],answer:"A **aula demonstrativa é gratuita**. É um momento tranquilo para conhecer o método PEH 5.0 e ver se a Fluency Studio faz sentido para você. Pode agendar pelo site thefluency.studio ou pelo WhatsApp."},
   {keys:["método","metodo","peh","como funciona","metodologia","ensino","peh 5.0","por que escolher","como as aulas funcionam"],audience:["all"],answer:"A Fluency Studio usa o método **PEH 5.0**:\n\n**P — Personalizado:** diagnóstico antes de iniciar.\n**E — Estratégico:** programa alinhado ao seu estilo de aprendizagem.\n**H — Humanizado:** espaço seguro para errar e evoluir.\n\nNas aulas ao vivo, o foco é a fala desde o primeiro encontro."},
-  {keys:["fluency foundation","o que é foundation","programa completo","18 meses","foundation"],audience:["visitor","all"],answer:"O **Fluency Foundation** é o programa completo (fala, leitura, escrita e escuta), com previsão de fluência em cerca de 18 meses a partir da lição 1 — podendo ser menos se houver nivelamento. Material organizado sob medida, sem surpresa de custo depois do início."},
+  {keys:["fluency foundation","fluency general","o que é foundation","programa completo","18 meses","foundation"],audience:["visitor","all"],answer:"O **Fluency General** (programa completo) tem **150 lições** em **3 módulos** (1–50, 51–100, 101–150). Cada módulo tem **5 unidades de 10 lições**, com **Report Card** ao final de cada unidade e de cada módulo. A previsão de fluência é cerca de 18 meses a partir da lição 1 — podendo ser menos com nivelamento."},
   {keys:["flash talk","só quero falar","so quero falar","30 minutos","aula curta"],audience:["visitor","all"],answer:"O **Flash Talk** é conversação pura: aulas de 30 minutos, até 4x por semana, com temas do cotidiano. O material é apresentado na própria aula — sem compra extra de livro."},
   {keys:["corporate speech","ingles corporativo","inglês corporativo","oratoria","oratória","apresentação em ingles","apresentacao em ingles"],audience:["visitor","all"],answer:"O **Corporate Speech** desenvolve inglês profissional e oratória. Nível mínimo sugerido: B1. É oferecido em módulos mensais avulsos."},
-  {keys:["curso","programa","módulo de aula","quais cursos","diferença entre programas","diferenca entre programas","proficiency ff","speech"],audience:["visitor","student","all"],answer:"Programas principais: **Fluency Foundation** (completo), **Flash Talk** (conversação 30 min), **Corporate Speech** (corporativo, B1+) e trilhas específicas como **Proficiency FF**. No portal, o contrato do aluno libera a trilha e os materiais correspondentes (incluindo flipbooks quando houver)."},
+  {keys:["curso","programa","módulo de aula","quais cursos","diferença entre programas","diferenca entre programas","proficiency ff","speech"],audience:["visitor","student","all"],answer:"Programas principais: **Fluency General** (completo, 150 lições), **Flash Talk** (conversação 30 min), **Corporate Speech** (corporativo, B1+) e trilhas específicas como **Proficiency FF**. No portal, o contrato do aluno libera a trilha e os materiais correspondentes (incluindo flipbooks quando houver)."},
   {keys:["premium","interactive","individual ou grupo","aula em grupo","aula individual","modalidade"],audience:["visitor","all"],answer:"Há duas modalidades: **Premium** (aula individual com o professor) e **Interactive** (você e mais 2 ou 3 colegas, em grupo reduzido)."},
   {keys:["quanto tempo","quanto tempo demora","quanto tempo pra ficar fluente","fluência em quanto tempo"],audience:["visitor","all"],answer:"No Fluency Foundation, a referência é cerca de 18 meses a partir da lição 1. Se você já tiver base e for nivelado em um módulo mais avançado, o caminho pode ser mais curto."},
   {keys:["nível","nivel","cefr","a1","b1","c2","teste de nivel","prova de nivelamento","qual meu nivel"],audience:["all"],answer:"Trabalhamos com o **CEFR** (A1 a C2). Na demonstrativa, a avaliação é conversacional — uma conversa estratégica para montar a trilha, não uma prova formal."},
