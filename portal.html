@@ -28,6 +28,9 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- FullCalendar v6 (Agenda do Aluno + Reposições) — plugins: daygrid, timegrid, interaction, list + locale pt-br -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/pt-br.global.min.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
@@ -36,6 +39,12 @@
     *,*::before,*::after{box-sizing:border-box;}
     html,body{height:100%;margin:0;padding:0;}
 
+    
+    /* FullCalendar host */
+    .fc-host{overflow:hidden;}
+    .fc-host .fc{--fc-border-color:var(--divider);--fc-page-bg-color:transparent;--fc-neutral-bg-color:rgba(15,23,42,.04);--fc-button-bg-color:#0f766e;--fc-button-border-color:#0f766e;--fc-button-hover-bg-color:#0d9488;--fc-today-bg-color:rgba(20,184,166,.12);}
+    .fc-host .fc-toolbar-title{font-size:1.05rem;font-weight:800;font-family:'Sora',sans-serif;}
+    .fc-host .fc-event{cursor:pointer;font-size:11px;}
     /* ═══════════════════════════════════════════════════════════
        DESIGN SYSTEM — High-End Premium (WCAG 4.5:1+)
        Palette locked per platform overhaul directive
@@ -2008,12 +2017,18 @@ const FOTO_MAX_MB = 12;
 const FOTO_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
 
-/* ═══════════════════════════════════════════════════════════════════
+
+    /* FullCalendar host */
+    .fc-host{overflow:hidden;}
+    .fc-host .fc{--fc-border-color:var(--divider);--fc-page-bg-color:transparent;--fc-neutral-bg-color:rgba(15,23,42,.04);--fc-button-bg-color:#0f766e;--fc-button-border-color:#0f766e;--fc-button-hover-bg-color:#0d9488;--fc-today-bg-color:rgba(20,184,166,.12);}
+    .fc-host .fc-toolbar-title{font-size:1.05rem;font-weight:800;font-family:'Sora',sans-serif;}
+    .fc-host .fc-event{cursor:pointer;font-size:11px;}
+    /* ═══════════════════════════════════════════════════════════════════
    SPA ROUTER (hash) — botão voltar do browser/celular + refresh
    Mantém a navegação interna no histórico do navegador e restaura
    a tela atual após F5 / pull-to-refresh no mobile.
    ═══════════════════════════════════════════════════════════════════ */
-const STUDENT_PAGES=["dashboard","trilha","materiais","diario","financeiro","calendario","contato","agendamento"];
+const STUDENT_PAGES=["dashboard","trilha","materiais","diario","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
 const ADMIN_VIEWS=["dashboard","alunos","cadastros","financeiro","agenda","relatorios","config"];
 const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","financeiro","recursos"];
 const PORTAL_ROUTE_SS_KEY="fs-portal-route-v1";
@@ -2418,7 +2433,13 @@ const LOGO_ENTRADA = "logoentrada.png";
 const IVI_PHOTO  = "assets/ivi.png";
 const WPP_SITE   = "https://wa.me/5511911999759?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos%20da%20Fluency%20Studio.";
 
-/* ══════════════════════════════════════════════════════════════
+
+    /* FullCalendar host */
+    .fc-host{overflow:hidden;}
+    .fc-host .fc{--fc-border-color:var(--divider);--fc-page-bg-color:transparent;--fc-neutral-bg-color:rgba(15,23,42,.04);--fc-button-bg-color:#0f766e;--fc-button-border-color:#0f766e;--fc-button-hover-bg-color:#0d9488;--fc-today-bg-color:rgba(20,184,166,.12);}
+    .fc-host .fc-toolbar-title{font-size:1.05rem;font-weight:800;font-family:'Sora',sans-serif;}
+    .fc-host .fc-event{cursor:pointer;font-size:11px;}
+    /* ══════════════════════════════════════════════════════════════
    SISTEMA DE CURSOS (Firestore `courses`)
    Admin tem controle total: adicionar, editar, ativar/desativar, excluir.
    ══════════════════════════════════════════════════════════════ */
@@ -2890,9 +2911,9 @@ const STUDENT_NAV = [
   {id:"materiais",   icon:"folder-open",    label:"Materiais",   grad:"linear-gradient(145deg,rgba(91,155,232,.28),rgba(60,120,210,.12))", color:"#5b9be8"},
   {id:"diario",      icon:"clipboard-list", label:"Diário",      grad:"linear-gradient(145deg,rgba(232,169,76,.28),rgba(200,130,40,.12))", color:"#e8a94c"},
   {id:"financeiro",  icon:"dollar-sign",    label:"Financeiro",  grad:"linear-gradient(145deg,rgba(52,211,153,.28),rgba(20,140,90,.12))", color:"#34d399"},
-  {id:"calendario",  icon:"calendar-days",  label:"Calendário",  grad:"linear-gradient(145deg,rgba(155,125,232,.28),rgba(110,80,200,.12))",color:"#9b7de8"},
+  {id:"agenda",      icon:"calendar-days",  label:"Agenda",      grad:"linear-gradient(145deg,rgba(155,125,232,.28),rgba(110,80,200,.12))",color:"#9b7de8"},
+  {id:"reposicoes",  icon:"calendar-plus",  label:"Reposições",  grad:"linear-gradient(145deg,rgba(229,99,107,.28),rgba(180,50,70,.12))", color:"#e5636b"},
   {id:"contato",     icon:"phone",          label:"Contato",     grad:"linear-gradient(145deg,rgba(62,207,142,.28),rgba(30,160,100,.12))", color:"#3ecf8e"},
-  {id:"agendamento", icon:"calendar-plus",  label:"Agendamento", grad:"linear-gradient(145deg,rgba(229,99,107,.28),rgba(180,50,70,.12))", color:"#e5636b"},
 ];
 
 /* Percent 0–100 for F/A/L/E (replaces revisao/atingiu/superou). Legacy mapped for reads. */
@@ -3884,13 +3905,13 @@ function Login(){
 }
 
 function LessonBadge({status}){
-  const m={pendente:"ls-pendente",andamento:"ls-andamento",concluida:"ls-concluida"};
-  const l={pendente:"Pendente",andamento:"Em Andamento",concluida:"Concluída"};
-  return <span className={m[status]||m.pendente}>{l[status]||"Pendente"}</span>;
+  const m={pendente:"ls-pendente",andamento:"ls-andamento",concluida:"ls-concluida",atual:"ls-andamento",realizada:"ls-concluida"};
+  const l={pendente:"Pendente",andamento:"Em Andamento",concluida:"Concluída",atual:"Atual",realizada:"Concluída"};
+  return <span className={m[status]||m.pendente}>{l[status]||status||"Pendente"}</span>;
 }
 
 function AdminLessonPanel({item,uid}){
-  const ST=[{v:"pendente",l:"Pendente"},{v:"andamento",l:"Em Andamento"},{v:"concluida",l:"Concluída"}];
+  const ST=[{v:"pendente",l:"Pendente"},{v:"atual",l:"Atual"},{v:"andamento",l:"Em Andamento"},{v:"concluida",l:"Concluída"}];
   const LK=[
     {f:"linkAula",l:"Lição Online"},
     {f:"linkTarefa",l:"Tarefa Online"},
@@ -4128,9 +4149,10 @@ function LessonItem({item,uid,isAdmin,defaultOpen=false,onFocused,embedMode=fals
   const isReview=item.type==="review"||item.lessonType==="review";
   const isOutput=item.lessonType==="output";
   const isDone=item.status==="concluida"||item.status==="realizada";
-  const isAndamento=item.status==="andamento";
+  const isAndamento=item.status==="andamento"||item.status==="atual";
   const isPending=!isDone&&!isAndamento;
-  const locked=isPending&&!isAdmin;
+  const locked=isPending&&!isAdmin; // status "atual" unlocks student content
+
   useEffect(()=>{
     if(embedMode||!defaultOpen)return;
     if(locked){onFocused?.();return;}
@@ -4702,12 +4724,23 @@ function DiarioSection({uid,isAdmin,contrato}){
   }
   async function updateEntry(id,patch){
     const merged={...entries.find(e=>e.id===id),...patch};
-    if(diarioNeedsReposicao(patch.status||merged.status)&&!merged.reposicaoVence&&(patch.status||"").includes("reposicao")){
-      const d=new Date(merged.date||new Date());d.setDate(d.getDate()+30);
-      patch.reposicaoVence=d.toISOString().slice(0,10);
+    const statusNow=normalizeDiarioStatus({...merged,...patch});
+    if(diaryGrantsReposicao({...merged,...patch,status:statusNow})){
+      if(!merged.reposicaoStatus&&!patch.reposicaoStatus)patch.reposicaoStatus=REPO_STATUS.PENDENTE;
+      if(statusNow!=="falta_professor"&&!merged.reposicaoVence&&!patch.reposicaoVence){
+        const base=merged.date||new Date().toISOString().slice(0,10);
+        patch.reposicaoVence=addDaysISO(base,30);
+      }
+      if(statusNow==="falta_professor"){patch.reposicaoVence="";}
+    }
+    if(statusNow==="presenca"&&(merged.reposicaoStatus===REPO_STATUS.AGENDADO||patch.markReposicaoFeita)){
+      patch.reposicaoStatus=REPO_STATUS.REPOSICAO_FEITA;
     }
     await db.collection("students").doc(uid).collection("diario").doc(id).update(patch);
-    const statusNow=normalizeDiarioStatus({...merged,...patch});
+    try{
+      const snap=await db.collection("students").doc(uid).collection("diario").get();
+      await syncStudentReposicaoCounters(uid,snap.docs.map(d=>({id:d.id,...d.data()})));
+    }catch(e){}
     if(diarioIsPresence(statusNow)&&(merged.licaoId||merged.licaoNum)){
       const trilhaItemId=merged.licaoId||lessonIdFromNum(parseInt(merged.licaoNum,10),course);
       if(trilhaItemId&&!String(trilhaItemId).includes("report-card")){
@@ -5529,7 +5562,7 @@ function StudentFinanceCard({financeiro,onGo}){
   );
 }
 
-function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosOcultos}){
+function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate,modulosOcultos}){
   const courses=useCourses();
   const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
   const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
@@ -5549,12 +5582,25 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
   const progressGeral=Math.round((licoesConcluidas/totalLicoes)*100);
 
   const [diarioStats,setDiarioStats]=useState({paraRepor:0});
+  const [repoCounters,setRepoCounters]=useState({aFazer:0,vencidas:0});
   useEffect(()=>db.collection("students").doc(uid).collection("diario").onSnapshot(snap=>{
-    setDiarioStats(computeDiarioStats(snap.docs.map(d=>d.data())));
+    const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
+    setDiarioStats(computeDiarioStats(entries));
+    const today=new Date().toISOString().slice(0,10);
+    setRepoCounters(computeReposicaoCounters(entries,today));
+    syncStudentReposicaoCounters(uid,entries);
   }),[uid]);
+
+  const showPresence=typeof shouldShowPresenceConfirm==="function"&&shouldShowPresenceConfirm(schedule);
 
   return(
     <div className="student-dash">
+      {showPresence&&(
+        <button type="button" className="glass rounded-2xl p-4 w-full text-left mb-1" style={{border:"1px solid rgba(20,184,166,.45)"}} onClick={()=>onNavigate("presenca")}>
+          <div className="text-xs font-extrabold tracking-wide" style={{color:"#14b8a6"}}>CONFIRME SUA AULA DE HOJE</div>
+          <div className="text-sm mt-1">Toque para confirmar presença ou avisar ausência.</div>
+        </button>
+      )}
       {/* Card 1 — Perfil: só primeiro nome no card */}
       <div className="sd-card-light sd-greeting">
         {profile.foto
@@ -5568,12 +5614,12 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,onNavigate,modulosO
       </div>
 
       {/* Card 2 — Resultado (lições, tarefas, reposições em um único card) */}
-      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={diarioStats.paraRepor} totalLicoes={totalLicoes}/>
+      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={repoCounters.aFazer||diarioStats.paraRepor} totalLicoes={totalLicoes}/>
 
       {/* Card 3 — Financeiro (Em dia/Atrasado + vencimento + Ver completo) */}
       <StudentFinanceCard financeiro={financeiro} onGo={()=>onNavigate("financeiro")}/>
 
-      {/* Card 4 — Ícones-link (carrossel horizontal, 6 destinos) */}
+      {/* Card 4 — Ícones-link (carrossel horizontal) */}
       <div className="sd-card-light">
         <div className="sd-scroll">
           {STUDENT_NAV.map(nav=>(
@@ -6380,14 +6426,14 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     {id:"recursos",   label:"Recursos",   icon:"link"},
   ];
 
-  const pageTitles={trilha:"Trilha",materiais:"Materiais",diario:"Diário",calendario:"Calendário",contato:"Contato",agendamento:"Agendamento",financeiro:"Financeiro"};
+  const pageTitles={trilha:"Trilha",materiais:"Materiais",diario:"Diário",agenda:"Agenda",reposicoes:"Reposições",calendario:"Agenda",contato:"Contato",agendamento:"Reposições",financeiro:"Financeiro",presenca:"Confirmar aula"};
 
   function renderStudentPage(){
-    if(studentPage==="dashboard")return <StudentDashboard uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onNavigate={navigateStudent} modulosOcultos={modulosOcultos}/>;
+    if(studentPage==="dashboard")return <StudentDashboard uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} schedule={studentSchedule} onNavigate={navigateStudent} modulosOcultos={modulosOcultos}/>;
     return(
       <div>
         <button type="button" className="page-back" onClick={goStudentBack}><Icon name="arrow-left" size={16}/> Voltar</button>
-        {studentPage!=="trilha"&&!(studentPage==="materiais"&&studentFlipbook(profile))&&<h2 className="text-xl font-bold mb-4 student-page-title" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]}</h2>}
+        {studentPage!=="trilha"&&!(studentPage==="materiais"&&studentFlipbook(profile))&&<h2 className="text-xl font-bold mb-4 student-page-title" style={{fontFamily:"'Sora',sans-serif"}}>{pageTitles[studentPage]||studentPage}</h2>}
         {studentPage==="trilha"&&(
           <TrilhaSection
             uid={uid}
@@ -6401,17 +6447,19 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
         {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
-        {studentPage==="calendario"&&<StudentCalendarView uid={uid} trilhaData={trilhaData} schedule={studentSchedule} studentName={profile.name}/>}
+        {(studentPage==="agenda"||studentPage==="calendario")&&(
+          <StudentAgendaPage uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro||FINANCEIRO_DEFAULT} schedule={studentSchedule} onNavigate={navigateStudent}/>
+        )}
+        {(studentPage==="reposicoes"||studentPage==="agendamento")&&(
+          <StudentReposicoesPage uid={uid} financeiro={financeiro||FINANCEIRO_DEFAULT}/>
+        )}
+        {studentPage==="presenca"&&(
+          <PresenceConfirmPage uid={uid} profile={profile} schedule={studentSchedule} trilhaData={trilhaData} financeiro={financeiro||FINANCEIRO_DEFAULT} onDone={()=>navigateStudent("agenda")}/>
+        )}
         {studentPage==="contato"&&(
           <div className="space-y-3">
             <PendingPage icon="💬" title="Contato"/>
             <a href={WPP_VICTOR} target="_blank" rel="noreferrer" className="btn btn-primary rounded-xl px-4 py-3 block text-center font-semibold">WhatsApp — Victor</a>
-          </div>
-        )}
-        {studentPage==="agendamento"&&(
-          <div className="space-y-3">
-            <PendingPage icon="🗓️" title="Agendamento"/>
-            <a href={SCHED_URL} target="_blank" rel="noreferrer" className="btn btn-primary rounded-xl px-4 py-3 block text-center font-semibold">Agendar Aula</a>
           </div>
         )}
       </div>
@@ -8405,6 +8453,7 @@ function AdminAgendaDashboard({students,onBack}){
   const [googleSyncing,setGoogleSyncing]=useState(false);
   const [googleLastSync,setGoogleLastSync]=useState(null);
   const [googleError,setGoogleError]=useState(null);
+  const [prepLesson,setPrepLesson]=useState(null);
 
   useEffect(()=>db.collection("studio").doc("agenda").onSnapshot(doc=>{
     const d=doc.exists?doc.data():{};
@@ -8468,15 +8517,21 @@ function AdminAgendaDashboard({students,onBack}){
             {aulasHoje.length===0
               ?<div style={{textAlign:"center",padding:"12px 0",color:"var(--font-muted)",fontSize:13}}>Nenhuma aula para hoje.</div>
               :aulasHoje.map((s,i)=>(
-                <div key={s.uid+"-"+i} className="aula-hoje-item">
+                <button key={s.uid+"-"+i} type="button" className="aula-hoje-item" style={{width:"100%",textAlign:"left",cursor:"pointer"}} onClick={()=>{
+                  const st=(students||[]).find(x=>x.uid===s.uid);
+                  const course=getCourseById(st?.contrato);
+                  const lesson=lessonForCalendarDate(st?.trilha||{},{calendarioCompleto:st?.calendarioCompleto||[],diasAulas:st?.diasAulas||[],horarioAulas:st?.horarioAulas||""},course,hojeISO);
+                  if(lesson)setPrepLesson({lesson,studentName:s.name});
+                  else if(s.uid){/* fallthrough */}
+                }}>
                   {s.foto?<img src={s.foto} alt="" style={{width:36,height:36,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}}/>
                     :<div style={{width:36,height:36,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={16}/></div>}
                   <div className="aula-hoje-hora">{s.horario}</div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontWeight:700,fontSize:13}}>{s.name}</div>
-                    <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato}{s.tipo==="prevista"?" · prevista":s.tipo==="recorrente"?" · semanal":s.tipo==="google"?" · Google":""}</div>
+                    <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato}{s.tipo==="prevista"?" · prevista":s.tipo==="recorrente"?" · semanal":s.tipo==="google"?" · Google":""} · tocar p/ material</div>
                   </div>
-                </div>
+                </button>
               ))}
           </div>
         </div>
@@ -8516,9 +8571,642 @@ function AdminAgendaDashboard({students,onBack}){
       </div>
       <GoogleCalendarEmbed/>
       {showAgendar&&<ModalAgendar onClose={()=>setShowAgendar(false)} onSave={ev=>saveAgenda({eventos:[...agenda.eventos,ev]})}/>}
+      {prepLesson&&<LessonQuickPanel lesson={prepLesson.lesson} title={"Preparar aula — "+(prepLesson.studentName||"")} onClose={()=>setPrepLesson(null)}/>}
     </div>
   );
 }
+
+/* ── AGENDA DO ALUNO + REPOSIÇÕES (FullCalendar) ── */
+const REPO_STATUS={PENDENTE:"PENDENTE",AGENDADO:"AGENDADO",REPOSICAO_FEITA:"REPOSICAO_FEITA"};
+const PROF_WORKING_DAYS=["seg","ter","qua","qui","sex"];
+const PROF_WORKING_HOURS=["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+
+function diaryGrantsReposicao(entry){
+  const st=normalizeDiarioStatus(entry);
+  return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao"||st==="falta_professor"||st==="a_repor";
+}
+function diaryReposicaoTipoLabel(entry){
+  const st=normalizeDiarioStatus(entry);
+  if(st==="falta_professor"||entry.reposicaoMotivo==="professor")return"Falta do professor";
+  return"Falta do aluno";
+}
+function diaryReposicaoValidUntil(entry){
+  const st=normalizeDiarioStatus(entry);
+  if(st==="falta_professor")return null; // sem limite
+  if(entry.reposicaoVence)return entry.reposicaoVence;
+  if(!entry.date)return null;
+  return addDaysISO(entry.date,30);
+}
+function isReposicaoVencida(entry,todayISO){
+  const st=normalizeDiarioStatus(entry);
+  if(st==="falta_professor")return false;
+  if((entry.reposicaoStatus||REPO_STATUS.PENDENTE)===REPO_STATUS.REPOSICAO_FEITA)return false;
+  if((entry.reposicaoStatus||"")===REPO_STATUS.AGENDADO)return false;
+  const until=diaryReposicaoValidUntil(entry);
+  return !!(until&&todayISO>until);
+}
+function isReposicaoAFazer(entry,todayISO){
+  if(!diaryGrantsReposicao(entry))return false;
+  const rs=entry.reposicaoStatus||REPO_STATUS.PENDENTE;
+  if(rs===REPO_STATUS.REPOSICAO_FEITA)return false;
+  if(rs===REPO_STATUS.AGENDADO)return true; // ainda conta até ser feita? Spec: a fazer decrements when FEITA. AGENDADO still "a fazer" scheduled.
+  return !isReposicaoVencida(entry,todayISO);
+}
+function computeReposicaoCounters(diarioEntries,todayISO){
+  const today=todayISO||new Date().toISOString().slice(0,10);
+  let aFazer=0,vencidas=0,agendadas=0;
+  (diarioEntries||[]).forEach(e=>{
+    if(!diaryGrantsReposicao(e))return;
+    const rs=e.reposicaoStatus||REPO_STATUS.PENDENTE;
+    if(rs===REPO_STATUS.REPOSICAO_FEITA)return;
+    if(rs===REPO_STATUS.AGENDADO){agendadas++;aFazer++;return;}
+    if(isReposicaoVencida(e,today))vencidas++;
+    else aFazer++;
+  });
+  return{aFazer,vencidas,agendadas};
+}
+async function syncStudentReposicaoCounters(uid,diarioEntries){
+  const c=computeReposicaoCounters(diarioEntries);
+  try{
+    await db.collection("students").doc(uid).set({
+      reposicoesAFazer:c.aFazer,
+      reposicoesVencidas:c.vencidas,
+      reposicoesAgendadas:c.agendadas,
+      reposicoesUpdatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    },{merge:true});
+  }catch(e){console.warn("sync reposicao counters",e);}
+  return c;
+}
+function nextPaymentInfo(financeiro){
+  const parcelas=financeiro?.parcelas||[];
+  const snap=typeof resolveFinanceSnapshot==="function"?resolveFinanceSnapshot(parcelas):{};
+  const today=getTodayISO();
+  const open=(parcelas||[]).filter(p=>getEffectiveParcelStatus(p,today)!=="paga").sort((a,b)=>(a.dataVencimento||"").localeCompare(b.dataVencimento||""));
+  const next=open[0]||null;
+  if(!next||!next.dataVencimento)return{date:null,status:"sem_vencimento",label:"Sem vencimento cadastrado",days:null};
+  const due=next.dataVencimento;
+  const eff=getEffectiveParcelStatus(next,today);
+  if(eff==="vencida"||due<today)return{date:due,status:"atrasado",label:"Atrasado",days:Math.round((new Date(today+"T12:00:00")-new Date(due+"T12:00:00"))/86400000)};
+  const days=Math.round((new Date(due+"T12:00:00")-new Date(today+"T12:00:00"))/86400000);
+  if(days===0)return{date:due,status:"hoje",label:"Vence hoje",days:0};
+  if(days<=7)return{date:due,status:"proximo",label:"Vence em "+days+" dia(s)",days};
+  return{date:due,status:"em_dia",label:"Em dia",days};
+}
+function findNextClassEvent(uid,schedule,trilhaData){
+  const today=new Date().toISOString().slice(0,10);
+  const arr=[{
+    uid,name:"",status:"ativo",
+    diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
+    dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
+  }];
+  for(let i=0;i<6;i++){
+    const mk=shiftMonthKey(getMonthKey(new Date()),i);
+    const evs=buildAgendaEventsForMonth(arr,mk,{onlyUid:uid}).filter(e=>e.type==="aula"&&e.date>=today);
+    if(evs.length)return evs.sort((a,b)=>a.date.localeCompare(b.date)||(a.time||"").localeCompare(b.time||""))[0];
+  }
+  return null;
+}
+function lessonForCalendarDate(trilhaData,schedule,course,dateISO){
+  const cal=(schedule?.calendarioCompleto||[]).find(c=>c.date===dateISO);
+  if(cal?.lessonId){
+    const books=mergeBooks(trilhaData||{},course);
+    for(const b of books){const it=b.items.find(i=>i.id===cal.lessonId);if(it)return it;}
+  }
+  if(cal?.lessonNum){
+    const id=lessonIdFromNum(cal.lessonNum,course);
+    const books=mergeBooks(trilhaData||{},course);
+    for(const b of books){const it=b.items.find(i=>i.id===id);if(it)return it;}
+  }
+  // fallback: next pending/atual lesson
+  const books=mergeBooks(trilhaData||{},course);
+  for(const b of books){
+    const it=b.items.find(i=>i.status==="atual"||i.status==="andamento");
+    if(it)return it;
+  }
+  return null;
+}
+
+function FullCalendarBox({events,onEventClick,selectable,onDateSelect,height}){
+  const ref=useRef(null);
+  const calRef=useRef(null);
+  useEffect(()=>{
+    if(!ref.current||typeof FullCalendar==="undefined")return;
+    if(calRef.current){calRef.current.destroy();calRef.current=null;}
+    calRef.current=new FullCalendar.Calendar(ref.current,{
+      locale:"pt-br",
+      initialView:"dayGridMonth",
+      height:height||520,
+      headerToolbar:{left:"prev,next today",center:"title",right:"dayGridMonth,timeGridWeek,listWeek"},
+      buttonText:{today:"Hoje",month:"Mês",week:"Semana",list:"Lista"},
+      navLinks:true,
+      editable:false,
+      selectable:!!selectable,
+      selectMirror:true,
+      dayMaxEvents:3,
+      events:events||[],
+      eventClick:(info)=>{
+        info.jsEvent.preventDefault();
+        onEventClick&&onEventClick(info.event);
+      },
+      select:(sel)=>{
+        if(onDateSelect)onDateSelect(sel);
+        calRef.current.unselect();
+      },
+      eventDidMount:(info)=>{
+        if(info.event.extendedProps?.blocked){
+          info.el.style.opacity=".45";
+          info.el.style.pointerEvents="none";
+        }
+      }
+    });
+    calRef.current.render();
+    return()=>{if(calRef.current){calRef.current.destroy();calRef.current=null;}};
+  },[events,selectable,height]);
+  if(typeof FullCalendar==="undefined"){
+    return <div className="glass rounded-2xl p-6 text-center muted">FullCalendar não carregou. Verifique a conexão e recarregue a página.</div>;
+  }
+  return <div className="fc-host glass rounded-2xl p-3" ref={ref}/>;
+}
+
+function LessonQuickPanel({lesson,onClose,title}){
+  if(!lesson)return null;
+  const links=[
+    {k:"linkAula",l:"Lição (HTML)"},
+    {k:"linkMaterial",l:"PDF do aluno"},
+    {k:"linkLivroDigital",l:"Livro digital"},
+    {k:"linkTarefa",l:"Tarefa"},
+    {k:"linkExtra",l:"Material do professor / Extra"},
+    {k:"linkGravacao",l:"Aula gravada"},
+  ].map(x=>({...x,href:resolvePortalAssetUrl(lesson[x.k]||(x.k==="linkMaterial"?lesson.link:""))})).filter(x=>x.href);
+  return(
+    <div className="tj-sheet" role="dialog" aria-modal="true" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="tj-sheet-panel" onClick={e=>e.stopPropagation()} style={{maxWidth:520}}>
+        <div className="tj-sheet-head">
+          <div>
+            <div style={{fontSize:11,opacity:.7,textTransform:"uppercase",letterSpacing:".08em"}}>{title||"Material da aula"}</div>
+            <div style={{fontSize:18,fontWeight:800,fontFamily:"'Sora',sans-serif"}}>{lesson.title||("Lição "+getLessonDisplayLabel(lesson))}</div>
+          </div>
+          <button type="button" className="tj-sheet-close" onClick={onClose}><Icon name="x" size={18}/></button>
+        </div>
+        <div className="tj-sheet-body space-y-3">
+          {lesson.tema?<div className="text-sm"><span className="muted">Tema:</span> {lesson.tema}</div>:null}
+          {lesson.objetivos?<div className="text-sm"><span className="muted">Objetivos:</span> {lesson.objetivos}</div>:null}
+          {links.length===0?<p className="text-sm muted">Nenhum material liberado ainda para esta lição.</p>:(
+            <div className="grid gap-2">
+              {links.map(l=><a key={l.k} className="btn btn-primary rounded-xl px-4 py-3 text-sm font-semibold text-center" href={l.href} target="_blank" rel="noreferrer">{l.l}</a>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScheduleReposicaoModal({uid,faltas,onClose,onDone}){
+  const [step,setStep]=useState("pick"); // pick | slot | saving | done | error
+  const [faltaselected,setFalta]=useState(null);
+  const [slots,setSlots]=useState([]);
+  const [busy,setBusy]=useState(false);
+  const [err,setErr]=useState("");
+  const [picked,setPicked]=useState(null);
+
+  useEffect(()=>{
+    if(step!=="slot")return;
+    let alive=true;
+    (async()=>{
+      setBusy(true);setErr("");
+      try{
+        let booked={};
+        try{
+          const bookedSnap=await db.collection("bookedSlots").get();
+          bookedSnap.docs.forEach(d=>{booked[d.id]=d.data();});
+        }catch(e){}
+        try{
+          const agenda=await db.collection("studio").doc("agenda").get();
+          Object.assign(booked,(agenda.exists&&agenda.data().bookedSlots)||{});
+        }catch(e){}
+        const out=[];
+        const today=new Date().toISOString().slice(0,10);
+        for(let d=1;d<=45;d++){
+          const iso=addDaysISO(today,d);
+          if(typeof isStudioClosed==="function"&&isStudioClosed(iso))continue;
+          const dow=JS_TO_DIA[new Date(iso+"T12:00:00").getDay()];
+          if(!PROF_WORKING_DAYS.includes(dow))continue;
+          PROF_WORKING_HOURS.forEach(h=>{
+            const id=iso+"_"+h;
+            if(booked[id])return;
+            out.push({id,date:iso,time:h,label:formatDateBR(iso)+" · "+h});
+          });
+        }
+        if(alive)setSlots(out.slice(0,80));
+      }catch(e){if(alive)setErr("Não foi possível carregar horários vagos.");}
+      finally{if(alive)setBusy(false);}
+    })();
+    return()=>{alive=false;};
+  },[step]);
+
+  async function confirm(){
+    if(!faltaselected||!picked)return;
+    setStep("saving");setErr("");
+    const slotId=picked.id;
+    const payload={
+      studentUid:uid,
+      type:"reposicao",
+      date:picked.date,
+      time:picked.time,
+      diarioId:faltaselected.id,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    try{
+      await db.runTransaction(async(tx)=>{
+        const ref=db.collection("bookedSlots").doc(slotId);
+        const snap=await tx.get(ref);
+        if(snap.exists)throw new Error("Horário acabou de ser ocupado. Escolha outro.");
+        tx.set(ref,payload);
+        const dRef=db.collection("students").doc(uid).collection("diario").doc(faltaselected.id);
+        tx.update(dRef,{
+          reposicaoStatus:REPO_STATUS.AGENDADO,
+          reposicaoAgendadaEm:picked.date,
+          reposicaoHorario:picked.time,
+          reposicaoSlotId:slotId,
+        });
+        const cRef=db.collection("students").doc(uid).collection("calendarEvents").doc("repo_"+faltaselected.id);
+        tx.set(cRef,{
+          type:"reposicao",
+          date:picked.date,
+          time:picked.time,
+          diarioId:faltaselected.id,
+          title:"Reposição",
+          createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        },{merge:true});
+      });
+      try{
+        await db.collection("studio").doc("agenda").set({bookedSlots:{[slotId]:payload}},{merge:true});
+      }catch(e){}
+      setStep("done");
+      onDone&&onDone();
+    }catch(e){
+      setErr(e.message||"Falha ao agendar.");
+      setStep("slot");
+    }
+  }
+
+  return(
+    <div className="tj-sheet" role="dialog" aria-modal="true" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="tj-sheet-panel" onClick={e=>e.stopPropagation()} style={{maxWidth:560}}>
+        <div className="tj-sheet-head">
+          <div>
+            <div style={{fontSize:11,opacity:.7,textTransform:"uppercase",letterSpacing:".08em"}}>Reposições</div>
+            <div style={{fontSize:18,fontWeight:800,fontFamily:"'Sora',sans-serif"}}>Agendar Reposição</div>
+          </div>
+          <button type="button" className="tj-sheet-close" onClick={onClose}><Icon name="x" size={18}/></button>
+        </div>
+        <div className="tj-sheet-body space-y-3">
+          {err&&<div className="err-box text-sm">{err}</div>}
+          {step==="pick"&&(
+            <>
+              <p className="text-sm muted">Selecione a falta que deseja repor:</p>
+              {faltas.length===0?<p className="text-sm">Nenhuma reposição pendente.</p>:faltas.map(f=>(
+                <button key={f.id} type="button" className="glass rounded-xl px-4 py-3 w-full text-left" onClick={()=>{setFalta(f);setStep("slot");}}>
+                  <div className="font-semibold text-sm">{formatDateBR(f.date)} · {diaryReposicaoTipoLabel(f)}</div>
+                  <div className="text-xs muted">Aula {f.num}{f.licaoTitulo?(" · "+f.licaoTitulo):""}{diaryReposicaoValidUntil(f)?(" · válido até "+formatDateBR(diaryReposicaoValidUntil(f))):" · sem prazo"}</div>
+                </button>
+              ))}
+            </>
+          )}
+          {step==="slot"&&(
+            <>
+              <button type="button" className="page-back" onClick={()=>setStep("pick")}><Icon name="arrow-left" size={14}/> Trocar falta</button>
+              <p className="text-sm muted">Horários vagos do professor:</p>
+              {busy&&<div className="text-sm muted">Carregando horários…</div>}
+              {!busy&&slots.length===0&&<div className="text-sm muted">Nenhum horário vago nos próximos dias.</div>}
+              <div className="space-y-2" style={{maxHeight:320,overflow:"auto"}}>
+                {slots.map(s=>(
+                  <button key={s.id} type="button" className={"rounded-xl px-3 py-2 w-full text-left text-sm "+(picked?.id===s.id?"btn-primary btn":"glass")} onClick={()=>setPicked(s)}>{s.label}</button>
+                ))}
+              </div>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-3 w-full font-semibold" disabled={!picked} onClick={confirm}>Confirmar horário</button>
+            </>
+          )}
+          {step==="saving"&&<div className="text-center py-8 muted">Agendando…</div>}
+          {step==="done"&&(
+            <div className="text-center space-y-3 py-4">
+              <div className="text-lg font-bold" style={{color:"#14b8a6"}}>Reposição agendada!</div>
+              <p className="text-sm muted">Status no diário: AGENDADO</p>
+              <button type="button" className="btn btn-primary rounded-xl px-4 py-2" onClick={onClose}>Fechar</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StudentReposicoesPage({uid,financeiro}){
+  const [diario,setDiario]=useState(null);
+  const [err,setErr]=useState("");
+  const [showSched,setShowSched]=useState(false);
+  const today=new Date().toISOString().slice(0,10);
+  useEffect(()=>{
+    const unsub=db.collection("students").doc(uid).collection("diario").orderBy("num","asc")
+      .onSnapshot(snap=>{
+        const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
+        setDiario(entries);
+        syncStudentReposicaoCounters(uid,entries);
+      },e=>setErr(e.message||"Erro ao carregar reposições"));
+    return()=>unsub();
+  },[uid]);
+  if(err)return <div className="err-box">{err}</div>;
+  if(!diario)return <div className="glass rounded-2xl p-8 text-center muted">Carregando reposições…</div>;
+  const pendentes=diario.filter(e=>diaryGrantsReposicao(e)&&(e.reposicaoStatus||REPO_STATUS.PENDENTE)===REPO_STATUS.PENDENTE&&!isReposicaoVencida(e,today));
+  const agendadas=diario.filter(e=>(e.reposicaoStatus||"")===REPO_STATUS.AGENDADO);
+  const vencidas=diario.filter(e=>diaryGrantsReposicao(e)&&isReposicaoVencida(e,today)&&(e.reposicaoStatus||REPO_STATUS.PENDENTE)!==REPO_STATUS.REPOSICAO_FEITA);
+  const counters=computeReposicaoCounters(diario,today);
+
+  return(
+    <div className="space-y-4">
+      <div className="grid gap-3" style={{gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))"}}>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0ea5e9"}}>{counters.aFazer}</div><div className="dash-stat-label">A fazer</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#e5636b"}}>{counters.vencidas}</div><div className="dash-stat-label">Vencidas</div></div>
+        <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#14b8a6"}}>{agendadas.length}</div><div className="dash-stat-label">Agendadas</div></div>
+      </div>
+      {pendentes.length>0&&(
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-3 w-full font-semibold" onClick={()=>setShowSched(true)}>Agendar Reposição</button>
+      )}
+      <div className="glass rounded-2xl p-4">
+        <h4 className="font-bold text-sm mb-3">Reposições a fazer</h4>
+        {pendentes.length===0?<p className="text-sm muted">Nenhuma reposição pendente.</p>:pendentes.map(f=>(
+          <div key={f.id} className="rounded-xl px-3 py-2 mb-2" style={{border:"1px solid var(--divider)"}}>
+            <div className="text-sm font-semibold">{formatDateBR(f.date)} · {diaryReposicaoTipoLabel(f)}</div>
+            <div className="text-xs muted">Aula {f.num}{diaryReposicaoValidUntil(f)?(" · válido até "+formatDateBR(diaryReposicaoValidUntil(f))):" · sem prazo de validade"}</div>
+          </div>
+        ))}
+      </div>
+      {agendadas.length>0&&(
+        <div className="glass rounded-2xl p-4">
+          <h4 className="font-bold text-sm mb-3">Já agendadas</h4>
+          {agendadas.map(f=>(
+            <div key={f.id} className="text-sm mb-2">{formatDateBR(f.reposicaoAgendadaEm||f.date)} {f.reposicaoHorario||""} · status AGENDADO</div>
+          ))}
+        </div>
+      )}
+      <div className="glass rounded-2xl p-4">
+        <h4 className="font-bold text-sm mb-3">Reposições vencidas</h4>
+        {vencidas.length===0?<p className="text-sm muted">Nenhuma vencida.</p>:vencidas.map(f=>(
+          <div key={f.id} className="text-sm mb-2 muted">{formatDateBR(f.date)} · {diaryReposicaoTipoLabel(f)} · venceu em {formatDateBR(diaryReposicaoValidUntil(f))}</div>
+        ))}
+      </div>
+      {showSched&&<ScheduleReposicaoModal uid={uid} faltas={pendentes} onClose={()=>setShowSched(false)} onDone={()=>setShowSched(false)}/>}
+    </div>
+  );
+}
+
+function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigate}){
+  const courses=useCourses();
+  const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
+  const [diario,setDiario]=useState([]);
+  const [calEvents,setCalEvents]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [err,setErr]=useState("");
+  const [selectedLesson,setSelectedLesson]=useState(null);
+  const [showSched,setShowSched]=useState(false);
+  const today=new Date().toISOString().slice(0,10);
+
+  useEffect(()=>{
+    let alive=true;
+    const u1=db.collection("students").doc(uid).collection("diario").orderBy("num","asc")
+      .onSnapshot(snap=>{
+        const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
+        if(!alive)return;
+        setDiario(entries);
+        syncStudentReposicaoCounters(uid,entries);
+        // mark trilha ATUAL for today's class
+        ensureTrilhaAtual(uid,trilhaData,schedule,course,entries).catch(()=>{});
+      },e=>setErr(e.message||"Erro no diário"));
+    const u2=db.collection("students").doc(uid).collection("calendarEvents")
+      .onSnapshot(snap=>{
+        if(!alive)return;
+        setCalEvents(snap.docs.map(d=>({id:d.id,...d.data()})));
+        setLoading(false);
+      },()=>setLoading(false));
+    return()=>{alive=false;u1();u2();};
+  },[uid,trilhaData,schedule,course]);
+
+  const counters=computeReposicaoCounters(diario,today);
+  const pay=nextPaymentInfo(financeiro);
+  const nextCls=findNextClassEvent(uid,schedule,trilhaData);
+  const pendentes=diario.filter(e=>diaryGrantsReposicao(e)&&(e.reposicaoStatus||REPO_STATUS.PENDENTE)===REPO_STATUS.PENDENTE&&!isReposicaoVencida(e,today));
+
+  const fcEvents=useMemo(()=>{
+    const out=[];
+    const arr=[{
+      uid,name:profile?.name||"Aluno",status:"ativo",
+      diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
+      dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
+    }];
+    // generate ~12 months of regular classes
+    for(let i=0;i<12;i++){
+      const mk=shiftMonthKey(getMonthKey(new Date()),i);
+      buildAgendaEventsForMonth(arr,mk,{onlyUid:uid}).forEach(e=>{
+        if(e.type==="aula"){
+          out.push({
+            id:"aula-"+e.date+"-"+(e.time||""),
+            title:(e.time?e.time+" · ":"")+"Aula",
+            start:e.time?`${e.date}T${(e.time||"09:00").slice(0,5)}:00`:`${e.date}`,
+            allDay:!e.time,
+            backgroundColor:"#0f766e",
+            borderColor:"#0f766e",
+            extendedProps:{kind:"aula",date:e.date,time:e.time||""}
+          });
+        }else if(e.type==="feriado"||e.type==="recesso"||e.type==="carnaval"){
+          out.push({
+            id:e.type+"-"+e.date+"-"+e.label,
+            title:e.label||e.type,
+            start:e.date,
+            allDay:true,
+            backgroundColor:"#64748b",
+            borderColor:"#64748b",
+            extendedProps:{kind:"blocked",blocked:true,date:e.date}
+          });
+        }
+      });
+    }
+    calEvents.forEach(ev=>{
+      if(ev.type==="reposicao"&&ev.date){
+        out.push({
+          id:"repo-"+ev.id,
+          title:(ev.time?ev.time+" · ":"")+"Reposição",
+          start:ev.time?`${ev.date}T${String(ev.time).slice(0,5)}:00`:ev.date,
+          allDay:!ev.time,
+          backgroundColor:"#7c3aed",
+          borderColor:"#7c3aed",
+          extendedProps:{kind:"reposicao",date:ev.date,time:ev.time||"",diarioId:ev.diarioId}
+        });
+      }
+    });
+    if(pay.date){
+      out.push({
+        id:"pay-"+pay.date,
+        title:"Vencimento",
+        start:pay.date,
+        allDay:true,
+        backgroundColor:"#b45309",
+        borderColor:"#b45309",
+        extendedProps:{kind:"vencimento",date:pay.date}
+      });
+    }
+    return out;
+  },[uid,profile,schedule,trilhaData,calEvents,pay.date]);
+
+  function onEventClick(ev){
+    const xp=ev.extendedProps||{};
+    if(xp.blocked||xp.kind==="vencimento")return;
+    const lesson=lessonForCalendarDate(trilhaData,schedule,course,xp.date||(ev.startStr||"").slice(0,10));
+    setSelectedLesson(lesson||{title:ev.title,tema:"",objetivos:""});
+  }
+
+  return(
+    <div className="space-y-4">
+      {err&&<div className="err-box">{err}</div>}
+      <div className="grid gap-3" style={{gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))"}}>
+        <div className="glass rounded-2xl p-4">
+          <div className="text-xs muted uppercase tracking-wide">Próxima aula</div>
+          <div className="font-bold text-sm mt-1">{nextCls?`${formatDateBR(nextCls.date)}${nextCls.time?(" · "+nextCls.time):""}`:"—"}</div>
+        </div>
+        <div className="glass rounded-2xl p-4">
+          <div className="text-xs muted uppercase tracking-wide">Pagamento</div>
+          <div className="font-bold text-sm mt-1">{pay.date?formatDateBR(pay.date):"—"}</div>
+          <div className="text-xs mt-1" style={{color:pay.status==="atrasado"?"#e5636b":pay.status==="proximo"?"#f59e0b":"#14b8a6"}}>{pay.label}</div>
+        </div>
+        <div className="glass rounded-2xl p-4">
+          <div className="text-xs muted uppercase tracking-wide">Reposições a fazer</div>
+          <div className="font-bold text-xl mt-1" style={{color:"#0ea5e9"}}>{counters.aFazer}</div>
+        </div>
+        <div className="glass rounded-2xl p-4">
+          <div className="text-xs muted uppercase tracking-wide">Reposições vencidas</div>
+          <div className="font-bold text-xl mt-1" style={{color:"#e5636b"}}>{counters.vencidas}</div>
+        </div>
+      </div>
+      {pendentes.length>0&&(
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-3 font-semibold" onClick={()=>setShowSched(true)}>Agendar Reposição</button>
+      )}
+      <div className="flex gap-2 flex-wrap">
+        <button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={()=>onNavigate&&onNavigate("reposicoes")}>Ver área de Reposições</button>
+      </div>
+      {loading?<div className="glass rounded-2xl p-8 text-center muted">Carregando calendário…</div>:<FullCalendarBox events={fcEvents} onEventClick={onEventClick}/>}
+      {selectedLesson&&<LessonQuickPanel lesson={selectedLesson} onClose={()=>setSelectedLesson(null)}/>}
+      {showSched&&<ScheduleReposicaoModal uid={uid} faltas={pendentes} onClose={()=>setShowSched(false)} onDone={()=>setShowSched(false)}/>}
+    </div>
+  );
+}
+
+async function ensureTrilhaAtual(uid,trilhaData,schedule,course,diarioEntries){
+  const today=new Date().toISOString().slice(0,10);
+  const lesson=lessonForCalendarDate(trilhaData,schedule,course,today);
+  if(!lesson||!lesson.id)return;
+  if(lesson.status==="concluida"||lesson.status==="realizada"||lesson.status==="atual")return;
+  // only promote if there is a class today for this student
+  const hasClassToday=(schedule?.calendarioCompleto||[]).some(c=>c.date===today)
+    || ((schedule?.diasAulas||[]).includes(JS_TO_DIA[new Date(today+"T12:00:00").getDay()]));
+  if(!hasClassToday)return;
+  const patch={};patch[`trilha.${lesson.id}.status`]="atual";
+  await db.collection("students").doc(uid).update(patch);
+}
+
+function PresenceConfirmPage({uid,profile,schedule,trilhaData,financeiro,onDone}){
+  const [msg,setMsg]=useState("");
+  const [busy,setBusy]=useState(false);
+  const courses=useCourses();
+  const c=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
+  const today=getTodayISO();
+  const horario=(schedule?.horarioAulas||"09:00").slice(0,5);
+  async function confirm(present){
+    setBusy(true);setMsg("");
+    try{
+      if(present){
+        await db.collection("students").doc(uid).collection("notifications").add({
+          type:"presence_confirm",title:"Presença confirmada",message:"Você confirmou presença na aula de hoje.",read:false,createdAt:firebase.firestore.FieldValue.serverTimestamp(),date:today
+        });
+        setMsg("Presença confirmada. Bom estudo!");
+        onDone&&onDone(true);
+        return;
+      }
+      // AUSENTE
+      const [hh,mm]=(horario||"09:00").split(":").map(Number);
+      const classAt=new Date(today+"T"+String(hh||9).padStart(2,"0")+":"+String(mm||0).padStart(2,"0")+":00");
+      const hoursAhead=(classAt-new Date())/3600000;
+      const diarioSnap=await db.collection("students").doc(uid).collection("diario").get();
+      const entries=diarioSnap.docs.map(d=>({id:d.id,...d.data()}));
+      const counters=computeReposicaoCounters(entries,today);
+      // gratuitas: count how many falta_aluno_com_reposicao not vencida + contract limit if any
+      const limit=Number(profile?.reposicoesGratuitasContrato??financeiro?.reposicoesGratuitas??3);
+      const used=entries.filter(e=>normalizeDiarioStatus(e)==="falta_aluno_com_reposicao"||normalizeDiarioStatus(e)==="ausencia_com_reposicao").length;
+      const hasGratis=used<limit;
+      const okTime=hoursAhead>=3;
+      let grant=okTime&&hasGratis;
+      let reason="";
+      if(!okTime)reason="menos de 3h de antecedência";
+      else if(!hasGratis)reason="esgotou as gratuitas do contrato";
+
+      const nextNum=entries.length?Math.max(...entries.map(e=>e.num||0))+1:1;
+      const lesson=lessonForCalendarDate(trilhaData,schedule,c,today);
+      const entry={
+        num:nextNum,
+        date:today,
+        licaoNum:lesson?.num||null,
+        licaoId:lesson?.id||"",
+        licaoTitulo:lesson?.title||"",
+        status:grant?"falta_aluno_com_reposicao":"falta_aluno_sem_reposicao",
+        reposicaoTipo:grant?"com":"sem",
+        reposicaoStatus:grant?REPO_STATUS.PENDENTE:"",
+        reposicaoVence:grant?addDaysISO(today,30):"",
+        ocorrido:grant?"Ausência com direito a reposição (auto)":("Ausência sem reposição. Motivo: "+reason),
+        obs:"Confirmado pelo aluno via portal",
+        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        source:"presence_confirm",
+      };
+      await db.collection("students").doc(uid).collection("diario").add(entry);
+      await db.collection("students").doc(uid).collection("notifications").add({
+        type:"presence_absent",title:"Ausência registrada",message:grant?"Direito a reposição gerado.":("Não há direito a reposição. Motivo: "+reason),read:false,createdAt:firebase.firestore.FieldValue.serverTimestamp(),date:today
+      });
+      // notify admin
+      try{
+        await db.collection("studio").doc("adminNotifications").collection("items").add({
+          type:"aluno_ausente",studentUid:uid,studentName:profile?.name||"",reason:grant?"com reposição":reason,date:today,createdAt:firebase.firestore.FieldValue.serverTimestamp(),read:false
+        });
+      }catch(e){}
+      if(grant)setMsg("Ausência registrada. Direito a reposição liberado.");
+      else setMsg("Não há direito a reposição. Motivo: "+reason);
+      onDone&&onDone(false);
+    }catch(e){setMsg("Erro: "+(e.message||e));}
+    finally{setBusy(false);}
+  }
+
+  return(
+    <div className="glass rounded-2xl p-6 space-y-4">
+      <h3 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>CONFIRME SUA AULA DE HOJE</h3>
+      <p className="text-sm">Horário previsto: <strong>{horario}</strong></p>
+      <div className="rounded-xl p-3 text-sm" style={{background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.35)"}}>
+        Reposição somente liberada se for desmarcado até 3h de antecedência e se estiver dentro do número de reposições gratuitas do seu contrato.
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button type="button" className="btn btn-primary rounded-2xl px-4 py-6 text-base font-bold" disabled={busy} onClick={()=>confirm(true)}>CONFIRMAR PRESENÇA</button>
+        <button type="button" className="btn rounded-2xl px-4 py-6 text-base font-bold" style={{background:"rgba(229,99,107,.15)",border:"1px solid rgba(229,99,107,.4)"}} disabled={busy} onClick={()=>confirm(false)}>AUSENTE</button>
+      </div>
+      {msg&&<div className="text-sm font-semibold">{msg}</div>}
+    </div>
+  );
+}
+
+function shouldShowPresenceConfirm(schedule){
+  const today=getTodayISO();
+  const hasClass=(schedule?.calendarioCompleto||[]).some(c=>c.date===today);
+  if(hasClass)return true;
+  const dias=schedule?.diasAulas||[];
+  const dow=JS_TO_DIA[new Date(today+"T12:00:00").getDay()];
+  return dias.includes(dow);
+}
+
 
 function StudentCalendarView({uid,trilhaData,schedule,studentName}){
   const studentAsArray=useMemo(()=>[{
@@ -9973,6 +10661,7 @@ if(typeof window!=="undefined"&&!window.__fsExerciseMsgHook){
 function AdminDashboard({students,onNavigate,pendentesCount=0}){
   const hoje=new Date();
   const hojeISO=hoje.toISOString().slice(0,10);
+  const [prepLesson,setPrepLesson]=useState(null);
 
   const ativos=useMemo(()=>(students||[]).filter(s=>(s.status||normalizeStatus(null,s))==="ativo"),[students]);
 
@@ -10011,7 +10700,13 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
         {aulasHoje.length===0
           ?<div style={{textAlign:"center",padding:"16px 0",color:"var(--font-muted)",fontSize:13}}>Nenhuma aula agendada para hoje.</div>
           :aulasHoje.map(s=>(
-            <div key={s.uid} className="aula-hoje-item">
+            <button key={s.uid} type="button" className="aula-hoje-item" style={{width:"100%",textAlign:"left",cursor:"pointer",border:"1px solid var(--divider)"}} onClick={()=>{
+              const st=(students||[]).find(x=>x.uid===s.uid);
+              const course=getCourseById(st?.contrato);
+              const lesson=lessonForCalendarDate(st?.trilha||{},{calendarioCompleto:st?.calendarioCompleto||[],diasAulas:st?.diasAulas||[],horarioAulas:st?.horarioAulas||""},course,hojeISO);
+              if(lesson)setPrepLesson({lesson,studentName:s.name});
+              else onNavigate("agenda");
+            }}>
               {s.foto
                 ?<img src={s.foto} alt={s.name} style={{width:36,height:36,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--divider)",flexShrink:0}}/>
                 :<div style={{width:36,height:36,borderRadius:"50%",background:"var(--badge)",border:"1px solid var(--divider)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={16}/></div>
@@ -10019,9 +10714,9 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
               <div className="aula-hoje-hora">{s.horario||"—"}</div>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontWeight:700,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
-                <div style={{fontSize:11,color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)}</div>
+                <div style={{fontSize:11,color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)} · material</div>
               </div>
-            </div>
+            </button>
           ))
         }
       </div>
@@ -10037,6 +10732,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
           </button>
         ))}
       </div>
+      {prepLesson&&<LessonQuickPanel lesson={prepLesson.lesson} title={"Preparar aula — "+(prepLesson.studentName||"")} onClose={()=>setPrepLesson(null)}/>}
     </div>
   );
 }

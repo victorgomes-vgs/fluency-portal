@@ -21,7 +21,6 @@ service cloud.firestore {
       );
     }
 
-    // A aparência pode carregar antes do login; somente o administrador altera.
     match /config/aparencia {
       allow read: if true;
       allow write: if isAdmin();
@@ -31,7 +30,6 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Catálogo e agenda são visíveis para usuários autenticados.
     match /courses/{courseId} {
       allow read: if signedIn();
       allow write: if isAdmin();
@@ -42,32 +40,58 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Catálogo interno editado pelo administrador e consumido pelos alunos.
+    // Slots de reposição: qualquer autenticado lê; cria se livre e for o próprio aluno
+    match /bookedSlots/{slotId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.studentUid is string
+        && ownsStudent(request.resource.data.studentUid);
+      allow update, delete: if isAdmin()
+        || (signedIn() && resource.data.studentUid != null && ownsStudent(resource.data.studentUid));
+    }
+
     match /students/__system_courses {
       allow read: if signedIn();
       allow write: if isAdmin();
     }
 
-    // Cada aluno enxerga apenas o próprio cadastro e histórico.
     match /students/{studentId} {
       allow read: if isAdmin() || ownsStudent(studentId) || (
         signedIn() &&
         request.auth.token.email != null &&
         resource.data.email == request.auth.token.email
       );
-      allow write: if isAdmin();
+      // Admin full write; student may merge counter/status fields on own doc
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || ownsStudent(studentId);
 
-      // Interactive homework: student may create/update own exercise progress.
       match /exercises/{exerciseId} {
         allow read: if isAdmin() || ownsStudent(studentId);
         allow create, update: if isAdmin() || ownsStudent(studentId);
         allow delete: if isAdmin();
       }
 
-      // Report cards: admin writes; student may read own.
       match /reportCards/{cardId} {
         allow read: if isAdmin() || ownsStudent(studentId);
         allow write: if isAdmin();
+      }
+
+      match /diario/{entryId} {
+        allow read: if isAdmin() || ownsStudent(studentId);
+        allow create: if isAdmin() || ownsStudent(studentId);
+        allow update: if isAdmin() || ownsStudent(studentId);
+        allow delete: if isAdmin();
+      }
+
+      match /calendarEvents/{eventId} {
+        allow read, create, update: if isAdmin() || ownsStudent(studentId);
+        allow delete: if isAdmin() || ownsStudent(studentId);
+      }
+
+      match /notifications/{notifId} {
+        allow read, update: if isAdmin() || ownsStudent(studentId);
+        allow create: if isAdmin() || ownsStudent(studentId);
+        allow delete: if isAdmin();
       }
 
       match /{document=**} {
