@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Lucas Silva Santana",
+    "email": "lucassantana@studio.com",
+    "password": "123456"
+  },
+  {
+    "name": "Gildasio de Araujo Goncalves",
+    "email": "gildasiogoncalves@studio.com",
+    "password": "123456"
+  },
+  {
+    "name": "Daniel Honório de Oliveira",
+    "email": "danieloliveira@studio.com",
+    "password": "123456"
+  },
+  {
+    "name": "André Santos Vilanova Cardozo dos Reis",
+    "email": "andrereis@studio.com",
+    "password": "123456"
+  },
+  {
+    "name": "Luiz Carlos Cavalini",
+    "email": "luizcavalini@studio.com",
+    "password": "123456"
+  },
+  {
+    "name": "Janaina Cunha Ferreira de Oliveira",
+    "email": "janainaoliveira@studio.com",
+    "password": "123456"
+  }
+]
