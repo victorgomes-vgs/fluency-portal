@@ -8516,7 +8516,7 @@ function GoogleCalendarEmbed(){
 function AdminAgendaDashboard({students,onBack}){
   const hoje=new Date();
   const hojeISO=hoje.toISOString().slice(0,10);
-  const [agenda,setAgenda]=useState({todos:[],eventos:[]});
+  const [agenda,setAgenda]=useState({todos:[],eventos:[],workingDays:PROF_WORKING_DAYS_DEFAULT,workingHours:PROF_WORKING_HOURS_DEFAULT,regularOccupied:{}});
   const [showAgendar,setShowAgendar]=useState(false);
   const [newTodo,setNewTodo]=useState("");
   const [googleEvents,setGoogleEvents]=useState([]);
@@ -8524,10 +8524,19 @@ function AdminAgendaDashboard({students,onBack}){
   const [googleLastSync,setGoogleLastSync]=useState(null);
   const [googleError,setGoogleError]=useState(null);
   const [prepLesson,setPrepLesson]=useState(null);
+  const [syncOccMsg,setSyncOccMsg]=useState("");
 
   useEffect(()=>db.collection("studio").doc("agenda").onSnapshot(doc=>{
     const d=doc.exists?doc.data():{};
-    setAgenda({todos:d.todos||[],eventos:d.eventos||[]});
+    const avail=getProfessorAvailability(d);
+    setAgenda({
+      todos:d.todos||[],
+      eventos:d.eventos||[],
+      workingDays:avail.workingDays,
+      workingHours:avail.workingHours,
+      regularOccupied:avail.regularOccupied,
+      bookedSlots:d.bookedSlots||{},
+    });
   }),[]);
 
   async function syncGoogle(){
@@ -8541,6 +8550,11 @@ function AdminAgendaDashboard({students,onBack}){
     finally{setGoogleSyncing(false);}
   }
   useEffect(()=>{syncGoogle();},[]);
+  useEffect(()=>{
+    if(!students||!students.length)return;
+    const map=buildRegularOccupiedMap(students,60);
+    db.collection("studio").doc("agenda").set({regularOccupied:map,regularOccupiedAt:new Date().toISOString()},{merge:true}).catch(()=>{});
+  },[students]);
 
   async function saveAgenda(patch){
     const ref=db.collection("studio").doc("agenda");
@@ -8549,20 +8563,85 @@ function AdminAgendaDashboard({students,onBack}){
     await ref.set({...base,...patch},{merge:true});
   }
 
+  async function syncRegularOccupation(){
+    setSyncOccMsg("Sincronizando ocupação das aulas regulares…");
+    try{
+      const map=buildRegularOccupiedMap(students,60);
+      await saveAgenda({regularOccupied:map,regularOccupiedAt:new Date().toISOString()});
+      setSyncOccMsg("Ocupação atualizada: "+Object.keys(map).length+" slots de aulas regulares.");
+    }catch(e){setSyncOccMsg("Erro ao sincronizar: "+(e.message||e));}
+  }
+
+  function toggleWorkingDay(day){
+    const cur=agenda.workingDays||PROF_WORKING_DAYS_DEFAULT;
+    const next=cur.includes(day)?cur.filter(d=>d!==day):[...cur,day];
+    const ordered=DIAS_SEMANA.filter(d=>next.includes(d));
+    saveAgenda({workingDays:ordered.length?ordered:PROF_WORKING_DAYS_DEFAULT});
+  }
+  function toggleWorkingHour(h){
+    const cur=agenda.workingHours||PROF_WORKING_HOURS_DEFAULT;
+    const next=cur.includes(h)?cur.filter(x=>x!==h):[...cur,h].sort();
+    saveAgenda({workingHours:next.length?next:PROF_WORKING_HOURS_DEFAULT});
+  }
+
   const agendaExtra=useMemo(()=>({eventos:agenda.eventos,googleEvents}),[agenda.eventos,googleEvents]);
 
   const proxima=useMemo(()=>findProximaAulaUnified(students,agendaExtra),[students,agendaExtra]);
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO,agendaExtra),[students,hojeISO,agendaExtra]);
   const todosPendentes=(agenda.todos||[]).filter(t=>!t.done).length;
+  const adminFcEvents=useMemo(()=>{
+    const out=[];
+    for(let i=0;i<3;i++){
+      const mk=shiftMonthKey(getMonthKey(new Date()),i);
+      buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
+        const t=String(e.time||"").slice(0,5);
+        const start=t?`${e.date}T${t}:00`:e.date;
+        const colors={aula:"#0f766e",reposicao:"#7c3aed",google:"#4285f4",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b"};
+        out.push({
+          id:(e.id||e.type)+"-"+e.date+"-"+(e.time||"")+"-"+e.label,
+          title:(t?t+" · ":"")+(e.label||e.type),
+          start,
+          allDay:!t,
+          backgroundColor:colors[e.type]||"#334155",
+          borderColor:colors[e.type]||"#334155",
+          extendedProps:{...e}
+        });
+      });
+    }
+    return out;
+  },[students,agendaExtra]);
 
   return(
     <div>
       <button className="btn rounded-xl px-3 py-2 text-sm mb-4 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Voltar ao Dashboard</button>
 
+      <div className="glass rounded-2xl p-4 mb-4" style={{borderColor:"rgba(15,118,110,.35)"}}>
+        <div className="font-bold text-sm" style={{fontFamily:"'Sora',sans-serif"}}>Calendário principal do estúdio</div>
+        <p className="text-xs muted mt-1">Esta é a agenda-mãe: aulas dos alunos + Google + eventos manuais + feriados. Os horários vagos de reposição saem daqui (dias/horários do professor − ocupação).</p>
+      </div>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c",fontSize:18}}>{proxima?formatDateBR(proxima.date).slice(0,5):"—"}</div><div className="dash-stat-label">Próxima Aula</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{todosPendentes}</div><div className="dash-stat-label">Tarefas Pendentes</div></div>
+      </div>
+
+      <div className="glass rounded-2xl p-4 mb-5">
+        <div className="font-bold text-sm mb-2">Disponibilidade do professor (horários para reposição)</div>
+        <div className="text-xs muted mb-2">Dias</div>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {DIAS_SEMANA.map(d=>(
+            <button key={d} type="button" className={"status-pill "+((agenda.workingDays||[]).includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11}} onClick={()=>toggleWorkingDay(d)}>{d}</button>
+          ))}
+        </div>
+        <div className="text-xs muted mb-2">Horários</div>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {HORARIOS_AULA_OPTS.map(h=>(
+            <button key={h} type="button" className={"status-pill "+((agenda.workingHours||[]).includes(h)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11}} onClick={()=>toggleWorkingHour(h)}>{h}</button>
+          ))}
+        </div>
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold" onClick={syncRegularOccupation}>Sincronizar ocupação das aulas regulares</button>
+        {syncOccMsg&&<div className="text-xs muted mt-2">{syncOccMsg}</div>}
       </div>
 
       <div className="agenda-grid mb-5">
@@ -8630,8 +8709,26 @@ function AdminAgendaDashboard({students,onBack}){
       </div>
 
       <div style={{marginBottom:10}}>
-        <div style={{fontWeight:800,fontSize:13,letterSpacing:".04em",color:"var(--font-muted)",textTransform:"uppercase"}}>Calendário do Portal</div>
-        <div style={{fontSize:12,color:"var(--font-muted)"}}>Aulas, feriados, eventos manuais e Google Calendar sincronizado · Hoje · Semana · Mês</div>
+        <div style={{fontWeight:800,fontSize:13,letterSpacing:".04em",color:"var(--font-muted)",textTransform:"uppercase"}}>Calendário principal (FullCalendar)</div>
+        <div style={{fontSize:12,color:"var(--font-muted)"}}>Fonte da verdade do estúdio — aulas dos alunos, reposições e bloqueios</div>
+      </div>
+      <FullCalendarBox
+        events={adminFcEvents}
+        height={560}
+        onEventClick={(ev)=>{
+          const xp=ev.extendedProps||{};
+          if(!xp.studentUid)return;
+          const st=(students||[]).find(x=>x.uid===xp.studentUid);
+          if(!st)return;
+          const course=getCourseById(st.contrato);
+          const lesson=lessonForCalendarDate(st.trilha||{},{calendarioCompleto:st.calendarioCompleto||[],diasAulas:st.diasAulas||[],horarioAulas:st.horarioAulas||"",aulasSemanais:st.aulasSemanais||null},course,xp.date||(ev.startStr||"").slice(0,10));
+          if(lesson)setPrepLesson({lesson,studentName:st.name});
+        }}
+      />
+
+      <div style={{marginTop:24,marginBottom:10}}>
+        <div style={{fontWeight:800,fontSize:13,letterSpacing:".04em",color:"var(--font-muted)",textTransform:"uppercase"}}>Calendário clássico do portal</div>
+        <div style={{fontSize:12,color:"var(--font-muted)"}}>Hoje · Semana · Mês (visão auxiliar) + sync Google</div>
       </div>
       <PlatformCalendar students={students} agendaExtra={agendaExtra} showGoogleSync onRefreshGoogle={syncGoogle} googleSyncing={googleSyncing} googleLastSync={googleLastSync} googleError={googleError} googleEventCount={googleEvents.length}/>
 
@@ -8648,8 +8745,32 @@ function AdminAgendaDashboard({students,onBack}){
 
 /* ── AGENDA DO ALUNO + REPOSIÇÕES (FullCalendar) ── */
 const REPO_STATUS={PENDENTE:"PENDENTE",AGENDADO:"AGENDADO",REPOSICAO_FEITA:"REPOSICAO_FEITA"};
-const PROF_WORKING_DAYS=["seg","ter","qua","qui","sex"];
-const PROF_WORKING_HOURS=["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+/* Must match JS_TO_DIA / DIAS_SEMANA names (NOT "seg"/"ter") */
+const PROF_WORKING_DAYS_DEFAULT=["Segunda","Terça","Quarta","Quinta","Sexta"];
+const PROF_WORKING_HOURS_DEFAULT=["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+function getProfessorAvailability(agendaDoc){
+  const d=agendaDoc||{};
+  const days=Array.isArray(d.workingDays)&&d.workingDays.length?d.workingDays:PROF_WORKING_DAYS_DEFAULT;
+  const hours=Array.isArray(d.workingHours)&&d.workingHours.length?d.workingHours:PROF_WORKING_HOURS_DEFAULT;
+  return{workingDays:days,workingHours:hours,regularOccupied:d.regularOccupied||{}};
+}
+function buildRegularOccupiedMap(students,daysAhead=60){
+  const map={};
+  const today=new Date().toISOString().slice(0,10);
+  const list=(students||[]).filter(s=>(s.status||normalizeStatus(null,s))==="ativo");
+  for(let i=0;i<=daysAhead;i++){
+    const iso=addDaysISO(today,i);
+    if(isStudioClosed(iso))continue;
+    const mk=iso.slice(0,7);
+    buildAgendaEventsForMonth(list,mk).forEach(e=>{
+      if(e.type!=="aula"||e.date!==iso)return;
+      const t=String(e.time||"").slice(0,5);
+      if(!t)return;
+      map[iso+"_"+t]={studentUid:e.studentUid,studentName:e.studentName,type:"aula_regular"};
+    });
+  }
+  return map;
+}
 
 function diaryGrantsReposicao(entry){
   const st=normalizeDiarioStatus(entry);
@@ -8847,28 +8968,35 @@ function ScheduleReposicaoModal({uid,faltas,onClose,onDone}){
       setBusy(true);setErr("");
       try{
         let booked={};
+        let avail={workingDays:PROF_WORKING_DAYS_DEFAULT,workingHours:PROF_WORKING_HOURS_DEFAULT,regularOccupied:{}};
         try{
           const bookedSnap=await db.collection("bookedSlots").get();
           bookedSnap.docs.forEach(d=>{booked[d.id]=d.data();});
         }catch(e){}
         try{
           const agenda=await db.collection("studio").doc("agenda").get();
-          Object.assign(booked,(agenda.exists&&agenda.data().bookedSlots)||{});
+          const ad=agenda.exists?agenda.data():{};
+          Object.assign(booked,ad.bookedSlots||{});
+          avail=getProfessorAvailability(ad);
         }catch(e){}
+        const occupied={...avail.regularOccupied,...booked};
         const out=[];
         const today=new Date().toISOString().slice(0,10);
         for(let d=1;d<=45;d++){
           const iso=addDaysISO(today,d);
           if(typeof isStudioClosed==="function"&&isStudioClosed(iso))continue;
           const dow=JS_TO_DIA[new Date(iso+"T12:00:00").getDay()];
-          if(!PROF_WORKING_DAYS.includes(dow))continue;
-          PROF_WORKING_HOURS.forEach(h=>{
+          if(!avail.workingDays.includes(dow))continue;
+          avail.workingHours.forEach(h=>{
             const id=iso+"_"+h;
-            if(booked[id])return;
+            if(occupied[id])return;
             out.push({id,date:iso,time:h,label:formatDateBR(iso)+" · "+h});
           });
         }
-        if(alive)setSlots(out.slice(0,80));
+        if(alive){
+          setSlots(out.slice(0,120));
+          if(!out.length)setErr("Nenhum horário livre. No admin: Agenda → configure dias/horários do professor e sincronize a ocupação.");
+        }
       }catch(e){if(alive)setErr("Não foi possível carregar horários vagos.");}
       finally{if(alive)setBusy(false);}
     })();
