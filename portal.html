@@ -3648,6 +3648,10 @@ function normalizeStudent(id,raw){
     modulosOcultos:Array.isArray(d.modulosOcultos)?d.modulosOcultos:[],
     links:Array.isArray(d.links)?d.links:[],
     diasAulas:Array.isArray(d.diasAulas)?d.diasAulas:[],
+    aulasSemanais:normalizeAulasSemanais(d.aulasSemanais,d.diasAulas,d.horarioAulas),
+    reposicoesGratuitasContrato:d.reposicoesGratuitasContrato!=null
+      ?Number(d.reposicoesGratuitasContrato)
+      :deriveScheduleFromAulas(normalizeAulasSemanais(d.aulasSemanais,d.diasAulas,d.horarioAulas)).reposicoesGratuitasContrato,
   };
 }
 /** Auth secundário: cria login sem deslogar o admin. */
@@ -6584,6 +6588,8 @@ const BLANK_DADOS={
   foto:"",dataCadastro:new Date().toISOString().slice(0,10),
   contrato:"foundation_general",duracao:"",
   diasAulas:[],horarioAulas:"",
+  aulasSemanais:[{id:1,dia:"",horario:""}],
+  reposicoesGratuitasContrato:1,
   valorCheio:"",descontos:"",valorFinal:"",diaVencimento:"",
   dataInicio:"",licaoInicio:"1",numParcelas:18,
   status:"lead",
@@ -6598,6 +6604,83 @@ const BLANK_TRIAGEM={
   expectativas:[],objetivo:"",horasSemana:"",prazo:"",observacoes:"",
 };
 const DIAS_SEMANA=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+const HORARIOS_AULA_OPTS=["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
+function blankAulaSemanal(n){return{id:n||1,dia:"",horario:""};}
+function normalizeAulasSemanais(raw,diasAulas,horarioAulas){
+  if(Array.isArray(raw)&&raw.length){
+    return raw.map((a,i)=>({
+      id:a.id!=null?a.id:(i+1),
+      dia:a.dia||a.day||"",
+      horario:String(a.horario||a.time||"").slice(0,5),
+    }));
+  }
+  const dias=Array.isArray(diasAulas)?diasAulas:[];
+  const h=String(horarioAulas||"").slice(0,5);
+  if(dias.length)return dias.map((d,i)=>({id:i+1,dia:d,horario:h}));
+  return[blankAulaSemanal(1)];
+}
+function deriveScheduleFromAulas(aulas){
+  const list=(aulas||[]).filter(a=>a&&(a.dia||a.horario));
+  const dias=[...new Set(list.map(a=>a.dia).filter(Boolean))];
+  const horarios=[...new Set(list.map(a=>String(a.horario||"").slice(0,5)).filter(Boolean))];
+  return{
+    diasAulas:dias,
+    horarioAulas:horarios[0]||"",
+    aulasSemanais:list.length?list.map((a,i)=>({id:a.id!=null?a.id:(i+1),dia:a.dia||"",horario:String(a.horario||"").slice(0,5)})):[blankAulaSemanal(1)],
+    reposicoesGratuitasContrato:Math.max(1,list.filter(a=>a.dia&&a.horario).length||list.length||1),
+  };
+}
+function WeeklyClassesEditor({value,onChange}){
+  const aulas=normalizeAulasSemanais(value);
+  function setAula(idx,patch){
+    const next=aulas.map((a,i)=>i===idx?{...a,...patch}:a);
+    onChange(next);
+  }
+  function addAula(){
+    const nextId=aulas.reduce((m,a)=>Math.max(m,Number(a.id)||0),0)+1;
+    onChange([...aulas,{id:nextId,dia:"",horario:""}]);
+  }
+  function removeAula(idx){
+    if(aulas.length<=1){onChange([blankAulaSemanal(1)]);return;}
+    onChange(aulas.filter((_,i)=>i!==idx).map((a,i)=>({...a,id:i+1})));
+  }
+  const qtd=aulas.filter(a=>a.dia&&a.horario).length||aulas.length;
+  return(
+    <div style={{gridColumn:"1/-1"}}>
+      <label className="form-label">Aulas semanais contratadas</label>
+      <p className="text-xs muted mb-2">Cada aula semanal dá direito a <strong>1 reposição gratuita</strong>. Agora: <strong>{qtd}</strong> reposição(ões) gratuita(s).</p>
+      <div className="space-y-3">
+        {aulas.map((a,idx)=>(
+          <div key={a.id||idx} className="rounded-xl p-3" style={{border:"1px solid var(--divider)",background:"var(--badge)"}}>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="text-sm font-bold">Aula {idx+1}</div>
+              {aulas.length>1&&<button type="button" className="btn btn-danger rounded-lg px-2 py-1 text-xs" onClick={()=>removeAula(idx)}>Remover</button>}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="form-label">Dia da semana</label>
+                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.dia||""} onChange={e=>setAula(idx,{dia:e.target.value})}>
+                  <option value="">— selecionar —</option>
+                  {DIAS_SEMANA.map(d=><option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="form-label">Horário disponível</label>
+                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.horario||""} onChange={e=>setAula(idx,{horario:e.target.value})}>
+                  <option value="">— selecionar —</option>
+                  {HORARIOS_AULA_OPTS.map(h=><option key={h} value={h}>{h}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold mt-3 inline-flex items-center gap-2" onClick={addAula}>
+        <Icon name="plus" size={14}/> Adicionar aulas semanais
+      </button>
+    </div>
+  );
+}
 /** @deprecated use getActiveContratos() / useCourses() — mantido só como fallback síncrono */
 const CONTRATOS=getActiveContratos();
 const STATUS_OPTIONS=["lead","interessado","ativo","trancado","evadido"];
@@ -6631,7 +6714,10 @@ function ModalCadastro({onClose,onSaved}){
     setD("foto","");
   }
 
-  function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
+  function setAulasSemanais(list){
+    const der=deriveScheduleFromAulas(list);
+    setDados(p=>({...p,aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato}));
+  }
 
   function TriagemOption({label,field,value}){
     const sel=triagem[field]===value;
@@ -6707,8 +6793,7 @@ function ModalCadastro({onClose,onSaved}){
         dataCadastro:dados.dataCadastro,
         contrato:dados.contrato,
         duracao:dados.duracao.trim(),
-        diasAulas:dados.diasAulas,
-        horarioAulas:dados.horarioAulas.trim(),
+        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
         valorCheio:parseFloat(dados.valorCheio)||0,
         descontos:parseFloat(dados.descontos)||0,
         valorFinal:parseFloat(dados.valorFinal)||0,
@@ -6843,19 +6928,7 @@ function ModalCadastro({onClose,onSaved}){
                     {Array.from({length:totalLicoesCurso},(_,i)=><option key={i+1} value={i+1}>{getCourseLessonLabel(courseSel,i+1)||(i+1)}</option>)}
                   </select>
                 </div>
-                <div style={{gridColumn:"1/-1"}}>
-                  <label className="form-label">Dias das Aulas</label>
-                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>
-                    {DIAS_SEMANA.map(d=>(
-                      <button key={d} onClick={()=>toggleDia(d)}
-                        className={"status-pill "+(dados.diasAulas.includes(d)?"status-pill-ativo":"status-pill-inactive")}
-                        style={{fontSize:11,padding:"5px 12px"}}>
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div><label className="form-label">Horário das Aulas</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Ex: 19:00 – 20:00" value={dados.horarioAulas} onChange={e=>setD("horarioAulas",e.target.value)}/></div>
+                <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
                 <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
                 <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
                 <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
@@ -7029,6 +7102,8 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
     endereco:raw.endereco||"",foto:raw.foto||"",
     contrato:resolveContratoId(raw.contrato||"foundation_general"),duracao:raw.duracao||"",
     diasAulas:Array.isArray(raw.diasAulas)?raw.diasAulas:[],horarioAulas:raw.horarioAulas||"",
+    aulasSemanais:normalizeAulasSemanais(raw.aulasSemanais,raw.diasAulas,raw.horarioAulas),
+    reposicoesGratuitasContrato:raw.reposicoesGratuitasContrato||null,
     valorCheio:raw.valorCheio??"",descontos:raw.descontos??"",
     valorFinal:raw.valorFinal??"",diaVencimento:raw.diaVencimento??"",
     dataInicio:raw.dataInicio||"",licaoInicio:raw.licaoInicio||"1",
@@ -7043,7 +7118,10 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
   const totalLicoesCurso=getTotalLicoes(courseSel)||150;
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
-  function toggleDia(d){setDados(p=>({...p,diasAulas:(p.diasAulas||[]).includes(d)?p.diasAulas.filter(x=>x!==d):[...(p.diasAulas||[]),d]}));}
+  function setAulasSemanais(list){
+    const der=deriveScheduleFromAulas(list);
+    setDados(p=>({...p,aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato}));
+  }
 
   function TriRead({label,field}){
     const v=triagem[field];
@@ -7077,7 +7155,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:dados.foto.trim(),
         contrato:dados.contrato,duracao:dados.duracao.trim(),
-        diasAulas:dados.diasAulas||[],horarioAulas:dados.horarioAulas.trim(),
+        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
         valorCheio:parseFloat(dados.valorCheio)||0,
         descontos:parseFloat(dados.descontos)||0,
         valorFinal:parseFloat(dados.valorFinal)||0,
@@ -7177,12 +7255,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                     {Array.from({length:totalLicoesCurso},(_,i)=><option key={i+1} value={i+1}>{getCourseLessonLabel(courseSel,i+1)||(i+1)}</option>)}
                   </select>
                 </div>
-                <div style={{gridColumn:"1/-1"}}><label className="form-label">Dias das Aulas</label>
-                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>
-                    {DIAS_SEMANA.map(d=><button key={d} type="button" onClick={()=>toggleDia(d)} className={"status-pill "+((dados.diasAulas||[]).includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11,padding:"5px 12px"}}>{d}</button>)}
-                  </div>
-                </div>
-                <div><label className="form-label">Horário</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.horarioAulas} onChange={e=>setD("horarioAulas",e.target.value)}/></div>
+                <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
                 <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
                 <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
                 <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
@@ -7422,12 +7495,16 @@ const STUDIO_CLOSED_MAP=(()=>{
 })();
 function isStudioClosed(iso){return!!STUDIO_CLOSED_MAP[iso];}
 function getStudioDayInfo(iso){return STUDIO_CLOSED_MAP[iso]||null;}
-function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas="",course=null}){
-  if(!dataInicio||!diasAulas?.length)return null;
+function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas="",aulasSemanais=null,course=null}){
+  const aulasNorm=normalizeAulasSemanais(aulasSemanais,diasAulas,horarioAulas).filter(a=>a.dia);
+  const diasList=aulasNorm.length?aulasNorm.map(a=>a.dia):diasAulas;
+  if(!dataInicio||!diasList?.length)return null;
   const courseObj=course||DEFAULT_COURSES[0];
   const total=totalLicoes||getTotalLicoes(courseObj)||150;
-  const diasSet=new Set(diasAulas.map(d=>DIA_TO_JS[d]).filter(v=>v!==undefined));
+  const diasSet=new Set(diasList.map(d=>DIA_TO_JS[d]).filter(v=>v!==undefined));
   if(!diasSet.size)return null;
+  const horarioPorDia={};
+  aulasNorm.forEach(a=>{if(a.dia&&a.horario)horarioPorDia[a.dia]=a.horario;});
   let current=new Date(dataInicio+"T12:00:00");
   let lessonNum=parseInt(licaoInicio,10)||1;
   const trilhaUpdates={};
@@ -7438,8 +7515,10 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
     if(isStudioClosed(iso)){current.setDate(current.getDate()+1);continue;}
     if(diasSet.has(current.getDay())){
       const id=lessonIdFromNum(lessonNum,courseObj);
+      const diaNome=JS_TO_DIA[current.getDay()];
+      const horario=horarioPorDia[diaNome]||horarioAulas||"";
       trilhaUpdates[id]={...(trilhaExistente[id]||{}),dataPrevista:iso};
-      calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:JS_TO_DIA[current.getDay()],horario:horarioAulas||""});
+      calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:diaNome,horario});
       lessonNum++;
     }
     current.setDate(current.getDate()+1);
@@ -7454,6 +7533,7 @@ async function aplicarCalendarioAluno(uid,student,trilhaExistente){
     dataInicio:student.dataInicio,diasAulas:student.diasAulas||[],
     licaoInicio:student.licaoInicio||1,trilhaExistente:trilhaExistente||student.trilha||{},
     horarioAulas:student.horarioAulas||"",
+    aulasSemanais:student.aulasSemanais||null,
     totalLicoes:getTotalLicoes(course),
     course,
   });
@@ -7524,18 +7604,19 @@ function collectRecurringClassEvents(students,monthKey,onlyUid=null){
   (students||[]).forEach(s=>{
     if(onlyUid&&s.uid!==onlyUid)return;
     if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
-    if(!s.diasAulas?.length)return;
-    const diasSet=new Set(s.diasAulas);
+    const aulas=normalizeAulasSemanais(s.aulasSemanais,s.diasAulas,s.horarioAulas).filter(a=>a.dia);
+    if(!aulas.length)return;
     for(let d=1;d<=daysInMonth;d++){
       const iso=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
       if(s.dataInicio&&iso<s.dataInicio)continue;
       if(isStudioClosed(iso))continue;
       const dow=JS_TO_DIA[new Date(iso+"T12:00:00").getDay()];
-      if(!diasSet.has(dow))continue;
-      events.push({
-        date:iso,type:"aula",source:"recorrente",
-        label:`${s.name||"Aluno"} · Aula`,time:s.horarioAulas||"",
-        studentUid:s.uid,studentName:s.name||"Aluno",color:"#1e8fa8",
+      aulas.filter(a=>a.dia===dow).forEach(a=>{
+        events.push({
+          date:iso,type:"aula",source:"recorrente",
+          label:`${s.name||"Aluno"} · Aula`,time:a.horario||s.horarioAulas||"",
+          studentUid:s.uid,studentName:s.name||"Aluno",color:"#1e8fa8",
+        });
       });
     }
   });
@@ -7827,6 +7908,8 @@ function ModalEdicao({student,onClose,onSaved}){
     dataCadastro:student.dataCadastro||new Date().toISOString().slice(0,10),
     contrato:resolveContratoId(student.contrato||"foundation_general"),duracao:student.duracao||"",
     diasAulas:student.diasAulas||[],horarioAulas:student.horarioAulas||"",
+    aulasSemanais:normalizeAulasSemanais(student.aulasSemanais,student.diasAulas,student.horarioAulas),
+    reposicoesGratuitasContrato:student.reposicoesGratuitasContrato||null,
     valorCheio:student.valorCheio||"",descontos:student.descontos||"",
     valorFinal:student.valorFinal||"",diaVencimento:student.diaVencimento||"",
     status:student.status||"lead",
@@ -7844,7 +7927,10 @@ function ModalEdicao({student,onClose,onSaved}){
 
   function setD(k,v){setDados(p=>({...p,[k]:v}));}
   function setT(k,v){setTriagem(p=>({...p,[k]:v}));}
-  function toggleDia(d){setDados(p=>({...p,diasAulas:p.diasAulas.includes(d)?p.diasAulas.filter(x=>x!==d):[...p.diasAulas,d]}));}
+  function setAulasSemanais(list){
+    const der=deriveScheduleFromAulas(list);
+    setDados(p=>({...p,aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato}));
+  }
   function handleFotoSelect(file){
     if(fotoPreview&&fotoPreview.indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
     setFotoFile(file);
@@ -7915,8 +8001,8 @@ function ModalEdicao({student,onClose,onSaved}){
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:fotoUrl,
         dataCadastro:dados.dataCadastro,contrato:dados.contrato,
-        duracao:dados.duracao.trim(),diasAulas:dados.diasAulas,
-        horarioAulas:dados.horarioAulas.trim(),
+        duracao:dados.duracao.trim(),
+        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
         valorCheio:parseFloat(dados.valorCheio)||0,
         descontos:parseFloat(dados.descontos)||0,
         valorFinal:parseFloat(dados.valorFinal)||0,
@@ -8112,12 +8198,8 @@ function ModalEdicao({student,onClose,onSaved}){
                   </select>
                 </div>
                 <div style={{gridColumn:"1/-1"}}>
-                  <label className="form-label">Dias das Aulas</label>
-                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:4}}>
-                    {DIAS_SEMANA.map(d=><button key={d} onClick={()=>toggleDia(d)} className={"status-pill "+(dados.diasAulas.includes(d)?"status-pill-ativo":"status-pill-inactive")} style={{fontSize:11,padding:"5px 12px"}}>{d}</button>)}
-                  </div>
+                <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
                 </div>
-                <div><label className="form-label">Horário das Aulas</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Ex: 19:00 – 20:00" value={dados.horarioAulas} onChange={e=>setD("horarioAulas",e.target.value)}/></div>
                 <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
                 <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
                 <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
@@ -9139,8 +9221,12 @@ function PresenceConfirmPage({uid,profile,schedule,trilhaData,financeiro,onDone}
       const entries=diarioSnap.docs.map(d=>({id:d.id,...d.data()}));
       const counters=computeReposicaoCounters(entries,today);
       // gratuitas: count how many falta_aluno_com_reposicao not vencida + contract limit if any
-      const limit=Number(profile?.reposicoesGratuitasContrato??financeiro?.reposicoesGratuitas??3);
-      const used=entries.filter(e=>normalizeDiarioStatus(e)==="falta_aluno_com_reposicao"||normalizeDiarioStatus(e)==="ausencia_com_reposicao").length;
+      const aulasCount=normalizeAulasSemanais(profile?.aulasSemanais,profile?.diasAulas,profile?.horarioAulas).filter(a=>a.dia&&a.horario).length;
+      const limit=Number(profile?.reposicoesGratuitasContrato??financeiro?.reposicoesGratuitas??(aulasCount||1));
+      const used=entries.filter(e=>{
+        const st=normalizeDiarioStatus(e);
+        return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao";
+      }).length;
       const hasGratis=used<limit;
       const okTime=hoursAhead>=3;
       let grant=okTime&&hasGratis;
