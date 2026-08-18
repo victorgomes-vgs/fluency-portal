@@ -1309,7 +1309,6 @@
     [data-theme="light"] .rating-btn.selected{background:linear-gradient(135deg,#3566B6,#2252A0);border-color:#2252A0;}
     [data-theme="light"] ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#86CFFF,#3566B6);border-radius:99px;}
     [data-theme="light"] h1,[data-theme="light"] h2,[data-theme="light"] .font-bold{color:#174082;}
-    [data-theme="light"] .gcal-embed-wrap{box-shadow:0 12px 36px rgba(23,64,130,.10);}
     [data-theme="light"] .agenda-next{background:linear-gradient(135deg,rgba(255,248,230,.8),rgba(224,236,255,.75));border-color:rgba(53,102,182,.22);}
     [data-theme="light"] .agenda-next-label{color:#2252A0;}
     [data-theme="light"] .fc-day.today{background:linear-gradient(145deg,rgba(134,207,255,.35),rgba(163,224,214,.25));box-shadow:inset 0 0 0 2px rgba(53,102,182,.45);}
@@ -2415,11 +2414,6 @@ function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
   );
 }
 const WPP_VICTOR = "https://wa.me/5511919756733";
-const SCHED_URL  = "https://calendar.app.google/t19iBmkthDc6Ev8N7";
-const GCAL_EMAIL     = "victor.gomes.gs@gmail.com";
-const GCAL_EMBED_URL = "https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FSao_Paulo&showPrint=0&src=dmljdG9yLmdvbWVzLmdzQGdtYWlsLmNvbQ&color=%23039be5";
-const GCAL_OPEN_URL  = "https://calendar.google.com/calendar/u/0?cid=dmljdG9yLmdvbWVzLmdzQGdtYWlsLmNvbQ";
-const GCAL_ICAL_URL  = `https://calendar.google.com/calendar/ical/${encodeURIComponent(GCAL_EMAIL)}/public/basic.ics`;
 const LOGO_URL   = "https://thefluency.studio/logo.png";
 const LOGO_MARK  = "assets/logo_portal_jul.png";
 const LOGO_NAME  = "assets/logo_portal_jul2.png";
@@ -4658,7 +4652,6 @@ function RecursosSection({uid,isAdmin,links}){
         <div className="space-y-3">
           {links.map(lk=><a key={lk.id} href={lk.url} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="link"/></div><div><div className="font-semibold">{lk.label}</div><div className="text-xs muted truncate max-w-[180px]">{lk.url}</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>)}
           <a href={WPP_VICTOR} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block" style={{borderColor:"rgba(37,211,102,.28)",background:"rgba(37,211,102,.05)"}}><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{background:"rgba(37,211,102,.12)",border:"1px solid rgba(37,211,102,.26)"}}><Icon name="message-circle" style={{color:"#25d366"}}/></div><div><div className="font-semibold">WhatsApp — Victor</div><div className="text-xs muted">Falar com o professor</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
-          <a href={SCHED_URL} target="_blank" rel="noreferrer" className="btn rounded-2xl px-4 py-4 block"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="calendar"/></div><div><div className="font-semibold">Agendar Aula</div><div className="text-xs muted">Google Calendar</div></div></div><Icon name="external-link" size={15} className="muted shrink-0"/></div></a>
         </div>
       )}
     </div></div>
@@ -6028,7 +6021,7 @@ const IVI_KB=[
   {keys:["diário","diario","presença","presenca","falta","reposição","historico de aulas","minhas faltas","avaliacao da aula"],audience:["student","all"],answer:"O **Diário** registra cada aula com data, presença, avaliação (F/A/L/E) e observações. É o histórico oficial do seu curso."},
   {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento","pagar mensalidade","parcela atrasada","atraso"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. Para negociar valores ou prazos, fale direto com o Victor — eu não tenho acesso aos seus dados financeiros individuais."},
   {keys:["calendário","calendario","agenda de aulas","próxima aula","proxima aula","quando é minha aula","horario da aula"],audience:["student","all"],answer:"Confira em **Calendário** no menu do portal — lá aparecem suas aulas previstas no mês conforme seu plano de estudos."},
-  {keys:["agendar","agendamento","marcar aula","reposição","remarcar","desmarcar","cancelar aula","reposicao"],audience:["student","all"],answer:`Para agendar, remarcar ou pedir reposição, use **Agendamento** no portal ou este link: ${SCHED_URL}. Também pode falar direto com o Victor no WhatsApp.`},
+  {keys:["agendar","agendamento","marcar aula","reposição","remarcar","desmarcar","cancelar aula","reposicao"],audience:["student","all"],answer:`Para agendar, remarcar ou pedir reposição, use **Agenda** / **Reposições** no portal. Também pode falar direto com o Victor no WhatsApp.`},
   {keys:["professor","victor","whatsapp","contato","falar","falar com alguem","falar com alguém","teacher_victorgomes","instagram"],audience:["all"],answer:`O professor Victor Gomes atende alunos pelo WhatsApp: ${WPP_VICTOR}. Para novos alunos e matrículas: ${WPP_SITE}. Instagram: @teacher_victorgomes`},
   {keys:["matricul","inscri","começar","começar a estudar","quero estudar","entrar na escola","quero ser aluno","por onde comeco","não sei por onde","nao sei por onde","processo pra começar"],audience:["visitor","all"],answer:`Que ótimo! 🎉 Para se matricular na Fluency Studio:\n\n1. Agende uma **aula demonstrativa gratuita**\n2. Converse com o Victor sobre seu objetivo e nível\n3. Receba um plano personalizado\n\nWhatsApp: ${WPP_SITE}`},
   {keys:["valor","preço","preco","quanto custa","investimento","mensalidade custa","é caro","e caro","tem desconto","desconto","promoção","promocao","cupom"],audience:["visitor","all"],answer:"Os valores variam por programa e frequência de aulas — nunca invento números aqui. A aula demonstrativa é **gratuita** e o Victor monta uma proposta personalizada no WhatsApp. Não trabalhamos com cupons genéricos."},
@@ -6053,7 +6046,7 @@ const IVI_KB=[
   {keys:["esqueci senha","esqueci a senha","nao consigo entrar","não consigo entrar","recuperar senha","login não funciona","login nao funciona","qual meu login"],audience:["visitor","student","all"],answer:`Sem problemas! Fale direto com o Victor pelo WhatsApp que ele reseta seu acesso rapidinho: ${WPP_VICTOR}`},
   {keys:["cadastrar","novo aluno","criar aluno","adicionar aluno"],audience:["admin"],answer:"No painel admin, clique em **Novo Aluno** no topo. Preencha nome, email e senha — o sistema cria o login Firebase e o perfil no Firestore automaticamente."},
   {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente","terceirizado","alunosfora"],audience:["admin"],answer:"Alunos do **form-self** e **form-self-alunosfora** (terceirizados) aparecem em **Cadastros Pendentes**. Revise, complete o que faltar (financeiro é opcional para terceirizados) e clique em **AUTORIZAR LANÇAR**."},
-  {keys:["agenda admin","painel agenda","google calendar sync"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e calendário unificado. Use **Sincronizar Google** para puxar eventos do calendário do Victor."},
+  {keys:["agenda admin","painel agenda","calendario admin"],audience:["admin"],answer:"Em **Agenda** você vê aulas do dia, próxima aula, tarefas e o calendário principal do estúdio (FullCalendar). Configure dias/horários do professor e sincronize a ocupação das aulas regulares."},
   {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito há o seletor de tema: 🌙 Dark, ☀️ Light ou 💻 Auto (segue o sistema). Sua preferência fica salva automaticamente."},
 ];
 
@@ -7620,11 +7613,7 @@ function buildAgendaEventsForMonth(students,monthKey,agendaExtra={}){
   const custom=(agendaExtra.eventos||[]).map(e=>({
     date:e.data,type:"agenda",source:"manual",label:e.titulo,time:e.hora||"",color:"#60daa8",notas:e.notas,id:e.id,
   }));
-  const google=(agendaExtra.googleEvents||[]).filter(e=>e.date?.startsWith(monthKey)).map(e=>({
-    date:e.date,type:"google",source:"google",label:e.title||e.summary||"Google Calendar",
-    time:e.time||"",color:"#4285f4",notas:e.description||"",id:e.id,
-  }));
-  return[...studio,...fromPrevista,...fromRecurring,...custom,...google]
+  return[...studio,...fromPrevista,...fromRecurring,...custom]
     .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||"").localeCompare(b.time||""));
 }
 function buildAgendaEventsForRange(students,startISO,endISO,agendaExtra={}){
@@ -7657,55 +7646,12 @@ function getWeekDaysFrom(iso){
   const start=getWeekStartMonday(iso);
   return Array.from({length:7},(_,i)=>addDaysISO(start,i));
 }
-function unfoldICS(text){return(text||"").replace(/\r\n/g,"\n").replace(/\n /g,"");}
-function decodeICSValue(v){return(v||"").replace(/\\n/g,"\n").replace(/\\,/g,",").replace(/\\;/g,";").trim();}
-function parseICSDate(val){
-  const clean=(val||"").trim().replace(/Z$/,"");
-  let m=clean.match(/^(\d{4})(\d{2})(\d{2})$/);
-  if(m)return{date:`${m[1]}-${m[2]}-${m[3]}`,time:""};
-  m=clean.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/);
-  if(m)return{date:`${m[1]}-${m[2]}-${m[3]}`,time:`${m[4]}:${m[5]}`};
-  return null;
-}
-function parseICS(text){
-  const events=[];const seen=new Set();
-  unfoldICS(text).split("BEGIN:VEVENT").slice(1).forEach((part,idx)=>{
-    const block=(part.split("END:VEVENT")[0]||part);
-    const summary=(block.match(/\nSUMMARY[^:]*:([^\n]+)/i)||[])[1];
-    const dtstart=(block.match(/\nDTSTART[^:]*:([^\n]+)/i)||[])[1];
-    const desc=(block.match(/\nDESCRIPTION[^:]*:([^\n]+)/i)||[])[1];
-    if(!dtstart)return;
-    const parsed=parseICSDate(dtstart);
-    if(!parsed)return;
-    const title=decodeICSValue(summary)||"Evento Google";
-    const key=parsed.date+title+(parsed.time||"");
-    if(seen.has(key))return;
-    seen.add(key);
-    events.push({id:"gcal-"+idx+"-"+parsed.date,date:parsed.date,time:parsed.time,title,description:decodeICSValue(desc)||""});
-  });
-  return events;
-}
-async function fetchGoogleCalendarEvents(){
-  const tryUrls=[GCAL_ICAL_URL,`https://api.allorigins.win/raw?url=${encodeURIComponent(GCAL_ICAL_URL)}`];
-  for(const url of tryUrls){
-    try{
-      const res=await fetch(url);
-      if(!res.ok)continue;
-      const text=await res.text();
-      if(!text.includes("BEGIN:VCALENDAR"))continue;
-      const events=parseICS(text);
-      if(events.length)return events;
-    }catch(e){}
-  }
-  return [];
-}
 function eventsToAulasCards(events,students){
   return(events||[]).map((e,i)=>{
     const s=e.studentUid?(students||[]).find(st=>st.uid===e.studentUid):null;
     const name=e.studentName||s?.name||e.label?.split(" · ")[0]||e.label||"Evento";
     let contrato="";
-    if(e.type==="google")contrato="Google Calendar";
-    else if(e.lessonNum)contrato=`Lição ${e.lessonNum}`;
+    if(e.lessonNum)contrato=`Lição ${e.lessonNum}`;
     else if(s)contrato=getCourseLabel(s.contrato);
     else contrato=e.source==="recorrente"?"Aula semanal":"—";
     return{
@@ -7717,11 +7663,11 @@ function eventsToAulasCards(events,students){
 function getAulasDoDia(students,dateISO,agendaExtra={}){
   const monthKey=dateISO.slice(0,7);
   const dayEvents=buildAgendaEventsForMonth(students,monthKey,agendaExtra)
-    .filter(e=>e.date===dateISO&&(e.type==="aula"||e.type==="google"||e.type==="agenda"));
+    .filter(e=>e.date===dateISO&&(e.type==="aula"||e.type==="agenda"));
   return eventsToAulasCards(dayEvents,students);
 }
-function eventTypeLabel(type){return type==="aula"?"Aula":type==="google"?"Google":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type;}
-const FC_EV_CLS={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom",google:"fc-ev-google"};
+function eventTypeLabel(type){return type==="aula"?"Aula":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type;}
+const FC_EV_CLS={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom"};
 function EventChip({e,full}){
   const cls=FC_EV_CLS[e.type]||"fc-ev-custom";
   if(full)return <div className={"fc-ev "+cls} title={e.label}>{e.time?e.time.split("–")[0].trim()+" · ":""}{e.label}</div>;
@@ -7736,7 +7682,7 @@ function formatWeekRange(startISO){
   const me=e.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
   return `${s.getDate()} ${s.toLocaleDateString("pt-BR",{month:"short"})} – ${e.getDate()} ${e.toLocaleDateString("pt-BR",{month:"short",year:"numeric"})}`;
 }
-function PlatformCalendar({students,agendaExtra={},onlyUid,compact,showGoogleSync,onRefreshGoogle,googleSyncing,googleLastSync,googleError,googleEventCount}){
+function PlatformCalendar({students,agendaExtra={},onlyUid,compact}){
   const todayStr=new Date().toISOString().slice(0,10);
   const [view,setView]=useState("mes");
   const [focusDate,setFocusDate]=useState(todayStr);
@@ -7767,7 +7713,6 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact,showGoogleSyn
   const legend=(
     <div className="fc-legend">
       <span><span className="fc-ev fc-ev-aula" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Aulas</span>
-      <span><span className="fc-ev fc-ev-google" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Google</span>
       <span><span className="fc-ev fc-ev-custom" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Manual</span>
       <span><span className="fc-ev fc-ev-feriado" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Feriado</span>
       <span><span className="fc-ev fc-ev-carnaval" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Carnaval</span>
@@ -7780,16 +7725,6 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact,showGoogleSyn
         {[{id:"hoje",label:"Hoje"},{id:"semana",label:"Semana"},{id:"mes",label:"Mês"}].map(t=>(
           <button key={t.id} type="button" className={"fc-view-tab"+(view===t.id?" active":"")} onClick={()=>setViewMode(t.id)}>{t.label}</button>
         ))}
-        {showGoogleSync&&(
-          <div className="fc-sync-row">
-            {googleLastSync&&<span>{googleEventCount??0} eventos Google · {googleLastSync.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</span>}
-            {googleError&&<span style={{color:"#f09090"}}>{googleError}</span>}
-            <button type="button" className="btn rounded-xl px-2.5 py-1 text-xs inline-flex items-center gap-1" onClick={onRefreshGoogle} disabled={googleSyncing}>
-              {googleSyncing?<div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"/>:<Icon name="refresh-cw" size={12}/>}
-              Sincronizar
-            </button>
-          </div>
-        )}
       </div>
 
       {view==="hoje"&&(
@@ -7810,7 +7745,6 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact,showGoogleSyn
                   <div className="fc-today-body">
                     <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}><EventChip e={e}/><span className="fc-today-label">{e.label}</span></div>
                     {e.studentName&&e.type==="aula"&&<div className="fc-today-meta">{e.studentName}{e.lessonNum?` · Lição ${e.lessonNum}`:""}</div>}
-                    {e.type==="google"&&<div className="fc-today-meta">Google Calendar</div>}
                   </div>
                 </div>
               ))}
@@ -8351,13 +8285,6 @@ const dashCSS=`
 .fc-ev-carnaval{background:rgba(240,204,96,.22);color:#f0cc60;}
 .fc-ev-recesso{background:rgba(192,160,248,.18);color:#c0a0f8;}
 .fc-ev-custom{background:rgba(96,218,168,.18);color:#60daa8;}
-.fc-ev-google{background:rgba(66,133,244,.2);color:#6ba3f7;}
-.gcal-embed-wrap{margin-bottom:20px;overflow:hidden;}
-.gcal-embed-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--divider);flex-wrap:wrap;}
-.gcal-embed-frame{width:100%;min-height:520px;height:min(72vh,640px);background:#fff;}
-.gcal-iframe{width:100%;height:100%;min-height:inherit;border:0;display:block;}
-[data-theme="light"] .gcal-embed-wrap{border-color:rgba(53,102,182,.18);}
-[data-theme="light"] .gcal-embed-head{background:linear-gradient(135deg,rgba(224,236,255,.5),rgba(255,255,255,.9));}
 .fc-side{padding:14px 16px;border-top:1px solid var(--divider);max-height:180px;overflow-y:auto;}
 .fc-side-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--font-muted);margin-bottom:8px;}
 [data-theme="light"] .dash-nav-btn{background:#fff;border:1.5px solid #0f2c5c;color:#0f172a;}
@@ -8378,7 +8305,6 @@ const dashCSS=`
 .fc-view-tab:hover{border-color:rgba(30,143,168,.4);color:var(--font);}
 .fc-view-tab.active{background:rgba(30,143,168,.15);border-color:rgba(30,143,168,.5);color:#1e8fa8;}
 [data-theme="light"] .fc-view-tab.active{background:rgba(53,102,182,.12);border-color:rgba(53,102,182,.35);color:#174082;}
-.fc-sync-row{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:10px;color:var(--font-muted);flex-wrap:wrap;}
 .fc-week-grid{display:grid;grid-template-columns:repeat(7,1fr);min-height:320px;}
 .fc-week-day{border-right:1px solid var(--divider);border-bottom:1px solid var(--divider);padding:8px 6px;min-height:280px;vertical-align:top;}
 .fc-week-day:last-child{border-right:none;}
@@ -8412,7 +8338,7 @@ function FluencyCalendar({monthKey,events,onMonthChange,selectedDate,onSelectDat
     cells.push({iso,day:d,events:(events||[]).filter(e=>e.date===iso)});
   }
   const selectedEvents=selectedDate?(dayDetailEvents||(events||[]).filter(e=>e.date===selectedDate)):[];
-  const evCls={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom",google:"fc-ev-google"};
+  const evCls={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom"};
   const inner=(
     <>
       <div className="fc-head">
@@ -8448,7 +8374,7 @@ function FluencyCalendar({monthKey,events,onMonthChange,selectedDate,onSelectDat
           {selectedEvents.length===0
             ?<div style={{fontSize:12,color:"var(--font-muted)"}}>Nenhum evento neste dia.</div>
             :selectedEvents.map((e,i)=><div key={i} style={{fontSize:12,marginBottom:6,display:"flex",gap:6,alignItems:"flex-start"}}>
-              <span className={"fc-ev "+(evCls[e.type]||"fc-ev-custom")} style={{flexShrink:0,padding:"1px 5px",fontSize:8}}>{e.type==="aula"?"Aula":e.type==="google"?"Google":e.type==="agenda"?"Agenda":e.type}</span>
+              <span className={"fc-ev "+(evCls[e.type]||"fc-ev-custom")} style={{flexShrink:0,padding:"1px 5px",fontSize:8}}>{e.type==="aula"?"Aula":e.type==="agenda"?"Agenda":e.type}</span>
               <span style={{fontWeight:700,color:e.color||"var(--font)"}}>{e.time?e.time+" · ":""}{e.label}</span>
             </div>)}
         </div>
@@ -8491,38 +8417,12 @@ function ModalAgendar({onClose,onSave}){
   );
 }
 
-function GoogleCalendarEmbed(){
-  return(
-    <div className="gcal-embed-wrap glass rounded-2xl">
-      <div className="gcal-embed-head">
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <Icon name="calendar" size={18} style={{color:"#039be5"}}/>
-          <div>
-            <div style={{fontWeight:800,fontSize:14,fontFamily:"'Sora',sans-serif"}}>Google Calendar — Victor Gomes</div>
-            <div style={{fontSize:11,color:"var(--font-muted)"}}>Agenda ao vivo · fuso America/Sao_Paulo</div>
-          </div>
-        </div>
-        <a href={GCAL_OPEN_URL} target="_blank" rel="noreferrer" className="btn rounded-xl px-3 py-1.5 text-xs font-semibold inline-flex items-center gap-1">
-          <Icon name="external-link" size={13}/>Abrir no Google
-        </a>
-      </div>
-      <div className="gcal-embed-frame">
-        <iframe src={GCAL_EMBED_URL} title="Google Calendar — The Fluency Studio" className="gcal-iframe" loading="lazy"/>
-      </div>
-    </div>
-  );
-}
-
 function AdminAgendaDashboard({students,onBack}){
   const hoje=new Date();
   const hojeISO=hoje.toISOString().slice(0,10);
   const [agenda,setAgenda]=useState({todos:[],eventos:[],workingDays:PROF_WORKING_DAYS_DEFAULT,workingHours:PROF_WORKING_HOURS_DEFAULT,regularOccupied:{}});
   const [showAgendar,setShowAgendar]=useState(false);
   const [newTodo,setNewTodo]=useState("");
-  const [googleEvents,setGoogleEvents]=useState([]);
-  const [googleSyncing,setGoogleSyncing]=useState(false);
-  const [googleLastSync,setGoogleLastSync]=useState(null);
-  const [googleError,setGoogleError]=useState(null);
   const [prepLesson,setPrepLesson]=useState(null);
   const [syncOccMsg,setSyncOccMsg]=useState("");
 
@@ -8539,17 +8439,6 @@ function AdminAgendaDashboard({students,onBack}){
     });
   }),[]);
 
-  async function syncGoogle(){
-    setGoogleSyncing(true);setGoogleError(null);
-    try{
-      const events=await fetchGoogleCalendarEvents();
-      setGoogleEvents(events);
-      setGoogleLastSync(new Date());
-      if(!events.length)setGoogleError("Nenhum evento Google. Torne o calendário público nas configurações.");
-    }catch(e){setGoogleError("Falha ao sincronizar Google Calendar.");}
-    finally{setGoogleSyncing(false);}
-  }
-  useEffect(()=>{syncGoogle();},[]);
   useEffect(()=>{
     if(!students||!students.length)return;
     const map=buildRegularOccupiedMap(students,60);
@@ -8584,7 +8473,7 @@ function AdminAgendaDashboard({students,onBack}){
     saveAgenda({workingHours:next.length?next:PROF_WORKING_HOURS_DEFAULT});
   }
 
-  const agendaExtra=useMemo(()=>({eventos:agenda.eventos,googleEvents}),[agenda.eventos,googleEvents]);
+  const agendaExtra=useMemo(()=>({eventos:agenda.eventos}),[agenda.eventos]);
 
   const proxima=useMemo(()=>findProximaAulaUnified(students,agendaExtra),[students,agendaExtra]);
   const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO,agendaExtra),[students,hojeISO,agendaExtra]);
@@ -8596,7 +8485,7 @@ function AdminAgendaDashboard({students,onBack}){
       buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
         const t=String(e.time||"").slice(0,5);
         const start=t?`${e.date}T${t}:00`:e.date;
-        const colors={aula:"#0f766e",reposicao:"#7c3aed",google:"#4285f4",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b"};
+        const colors={aula:"#0f766e",reposicao:"#7c3aed",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b"};
         out.push({
           id:(e.id||e.type)+"-"+e.date+"-"+(e.time||"")+"-"+e.label,
           title:(t?t+" · ":"")+(e.label||e.type),
@@ -8617,7 +8506,7 @@ function AdminAgendaDashboard({students,onBack}){
 
       <div className="glass rounded-2xl p-4 mb-4" style={{borderColor:"rgba(15,118,110,.35)"}}>
         <div className="font-bold text-sm" style={{fontFamily:"'Sora',sans-serif"}}>Calendário principal do estúdio</div>
-        <p className="text-xs muted mt-1">Esta é a agenda-mãe: aulas dos alunos + Google + eventos manuais + feriados. Os horários vagos de reposição saem daqui (dias/horários do professor − ocupação).</p>
+        <p className="text-xs muted mt-1">Esta é a agenda-mãe: aulas dos alunos + eventos manuais + feriados. Os horários vagos de reposição saem daqui (dias/horários do professor − ocupação).</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
@@ -8678,7 +8567,7 @@ function AdminAgendaDashboard({students,onBack}){
                   <div className="aula-hoje-hora">{s.horario}</div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontWeight:700,fontSize:13}}>{s.name}</div>
-                    <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato}{s.tipo==="prevista"?" · prevista":s.tipo==="recorrente"?" · semanal":s.tipo==="google"?" · Google":""} · tocar p/ material</div>
+                    <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato}{s.tipo==="prevista"?" · prevista":s.tipo==="recorrente"?" · semanal":""} · tocar p/ material</div>
                   </div>
                 </button>
               ))}
@@ -8728,15 +8617,9 @@ function AdminAgendaDashboard({students,onBack}){
 
       <div style={{marginTop:24,marginBottom:10}}>
         <div style={{fontWeight:800,fontSize:13,letterSpacing:".04em",color:"var(--font-muted)",textTransform:"uppercase"}}>Calendário clássico do portal</div>
-        <div style={{fontSize:12,color:"var(--font-muted)"}}>Hoje · Semana · Mês (visão auxiliar) + sync Google</div>
+        <div style={{fontSize:12,color:"var(--font-muted)"}}>Hoje · Semana · Mês (visão auxiliar)</div>
       </div>
-      <PlatformCalendar students={students} agendaExtra={agendaExtra} showGoogleSync onRefreshGoogle={syncGoogle} googleSyncing={googleSyncing} googleLastSync={googleLastSync} googleError={googleError} googleEventCount={googleEvents.length}/>
-
-      <div style={{marginTop:24,marginBottom:10}}>
-        <div style={{fontWeight:800,fontSize:13,letterSpacing:".04em",color:"var(--font-muted)",textTransform:"uppercase"}}>Google Calendar</div>
-        <div style={{fontSize:12,color:"var(--font-muted)"}}>Visualização ao vivo da agenda do Victor</div>
-      </div>
-      <GoogleCalendarEmbed/>
+      <PlatformCalendar students={students} agendaExtra={agendaExtra}/>
       {showAgendar&&<ModalAgendar onClose={()=>setShowAgendar(false)} onSave={ev=>saveAgenda({eventos:[...agenda.eventos,ev]})}/>}
       {prepLesson&&<LessonQuickPanel lesson={prepLesson.lesson} title={"Preparar aula — "+(prepLesson.studentName||"")} onClose={()=>setPrepLesson(null)}/>}
     </div>
