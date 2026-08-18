@@ -1,6 +1,15 @@
 {
   "books": [
     {
+      "id": "empower-b1",
+      "title": "EMPOWER B1",
+      "subtitle": "Units 3 – 6",
+      "pages": 19,
+      "cover": "books/empower-b1/pages/page-01.png",
+      "logo": "books/empower-b1/logo.png",
+      "folder": "books/empower-b1"
+    },
+    {
       "id": "pocket-mod2",
       "title": "Pocket Fluency",
       "subtitle": "Módulo 2 · Lições 61–98",
@@ -17,6 +26,15 @@
       "cover": "books/objective-proficiency/pages/page-01.jpg",
       "logo": "books/objective-proficiency/logo.png",
       "folder": "books/objective-proficiency"
+    },
+    {
+      "id": "reflexive-mind-m1",
+      "title": "Reflexive Mind",
+      "subtitle": "Módulo 1 · Lições 1–30 + R1–R5",
+      "pages": 66,
+      "cover": "books/reflexive-mind-m1/pages/page-01.png",
+      "logo": "books/reflexive-mind-m1/logo.png",
+      "folder": "books/reflexive-mind-m1"
     }
   ]
 }

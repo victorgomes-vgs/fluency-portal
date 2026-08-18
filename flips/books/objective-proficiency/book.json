@@ -3,6 +3,17 @@
   "title": "Objective Proficiency",
   "subtitle": "C2 · Units 1–3 · Lessons 1–9",
   "pages": 19,
-  "pagePattern": "pages/page-{nn}.jpg",
-  "logo": "logo.png"
+  "pageSources": {
+    "1": "pages/page-01.jpg",
+    "2-19": "pages/{n}.png  (n = pageIndex - 1)"
+  },
+  "logo": "logo.png",
+  "viewer": {
+    "pageTurn": "magazine-3d-page-flip",
+    "engine": "St.PageFlip",
+    "paper": "soft-with-verso-transparency",
+    "shadows": true,
+    "thumbnails": "hover-only",
+    "zoomMax": 200
+  }
 }

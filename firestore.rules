@@ -1,0 +1,96 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.uid == "58fjgMCI2aV7NQpXo3TcReUjHRF3";
+    }
+
+    function userMap() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function ownsStudent(studentId) {
+      return signedIn() && (
+        request.auth.uid == studentId ||
+        userMap().studentId == studentId
+      );
+    }
+
+    // A aparência pode carregar antes do login; somente o administrador altera.
+    match /config/aparencia {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /config/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Catálogo e agenda são visíveis para usuários autenticados.
+    match /courses/{courseId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /studio/{document=**} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Catálogo interno editado pelo administrador e consumido pelos alunos.
+    match /students/__system_courses {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Cada aluno enxerga apenas o próprio cadastro e histórico.
+    match /students/{studentId} {
+      allow read: if isAdmin() || ownsStudent(studentId) || (
+        signedIn() &&
+        request.auth.token.email != null &&
+        resource.data.email == request.auth.token.email
+      );
+      allow write: if isAdmin();
+
+      // Interactive homework: student may create/update own exercise progress.
+      match /exercises/{exerciseId} {
+        allow read: if isAdmin() || ownsStudent(studentId);
+        allow create, update: if isAdmin() || ownsStudent(studentId);
+        allow delete: if isAdmin();
+      }
+
+      // Report cards: admin writes; student may read own.
+      match /reportCards/{cardId} {
+        allow read: if isAdmin() || ownsStudent(studentId);
+        allow write: if isAdmin();
+      }
+
+      match /{document=**} {
+        allow read: if isAdmin() || ownsStudent(studentId);
+        allow write: if isAdmin();
+      }
+    }
+
+    match /users/{userId} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == userId);
+      allow write: if isAdmin();
+    }
+
+    match /invoices/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /transactions/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
