@@ -91,11 +91,34 @@
 
     /* Admin shell: deep slate sidebar + light main */
     .admin-shell { display: flex; min-height: 100vh; background: var(--ds-bg); }
+    .admin-shell.sidebar-collapsed .admin-sidebar {
+      width: 0 !important; min-width: 0 !important; padding: 0 !important; border: none !important;
+      overflow: hidden !important; opacity: 0; pointer-events: none;
+    }
+    .admin-shell.sidebar-collapsed .admin-sidebar-reopen {
+      display: inline-flex !important;
+    }
+    .admin-sidebar-reopen {
+      display: none; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 12px; border: 1.5px solid #0f2c5c;
+      background: #fff; color: #0f2c5c; cursor: pointer; flex-shrink: 0;
+    }
+    .admin-clock {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+      padding: 8px 12px; border-radius: 12px; background: #F8FAFC; border: 1px solid #E2E8F0;
+      min-width: 132px;
+    }
+    .admin-clock-time { font-family: 'Sora', var(--ds-font); font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: .02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .admin-clock-meta { font-size: 10px; font-weight: 600; color: #64748b; letter-spacing: .02em; }
+    .admin-clock-dot { width: 7px; height: 7px; border-radius: 99px; display: inline-block; margin-right: 5px; vertical-align: middle; }
+    .admin-clock-dot.ok { background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.18); }
+    .admin-clock-dot.warn { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
     .admin-sidebar {
       width: 260px; flex-shrink: 0; background: var(--ds-sidebar);
       color: var(--ds-sidebar-text); display: flex; flex-direction: column;
       padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
       border-right: 1px solid rgba(203,213,225,.12);
+      transition: width .2s ease, opacity .2s ease, padding .2s ease;
     }
     .admin-sidebar-brand { padding: 0 20px 28px; border-bottom: 1px solid rgba(203,213,225,.12); margin-bottom: 16px; }
     .admin-sidebar-brand .brand-byline { color: var(--ds-sidebar-muted) !important; }
@@ -158,6 +181,9 @@
       }
       .admin-main-body { padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
       .admin-main-header { padding: 12px 16px; }
+      .admin-shell.sidebar-collapsed .admin-sidebar { display: none !important; }
+      .admin-clock { min-width: 110px; padding: 6px 10px; }
+      .admin-clock-time { font-size: 15px; }
     }
 
     /* Finance KPI grid */
@@ -2022,7 +2048,17 @@ const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
    a tela atual após F5 / pull-to-refresh no mobile.
    ═══════════════════════════════════════════════════════════════════ */
 const STUDENT_PAGES=["dashboard","trilha","materiais","diario","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
-const ADMIN_VIEWS=["dashboard","alunos","cadastros","financeiro","agenda","relatorios","config"];
+const ADMIN_VIEWS=["dashboard","alunos","cadastros","pendencias","financeiro","agenda","relatorios","config"];
+const ADMIN_NAV_ITEMS=[
+  {id:"dashboard", icon:"layout-dashboard", label:"Painel", cor:"#0f172a"},
+  {id:"alunos", icon:"users", label:"Alunos", cor:"#0f2c5c"},
+  {id:"cadastros", icon:"clipboard-check", label:"Cadastros", cor:"#1e3a8a"},
+  {id:"pendencias", icon:"alert-circle", label:"Pendências", cor:"#b45309"},
+  {id:"financeiro", icon:"wallet", label:"Financeiro", cor:"#0f766e"},
+  {id:"agenda", icon:"calendar", label:"Agenda", cor:"#0e4d6e"},
+  {id:"relatorios", icon:"file-text", label:"Relatórios", cor:"#334155"},
+  {id:"config", icon:"settings", label:"Configurações", cor:"#1e293b"},
+];
 const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","financeiro","recursos"];
 const PORTAL_ROUTE_SS_KEY="fs-portal-route-v1";
 
@@ -3001,6 +3037,10 @@ const ICONS = {
   "camera":        <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>,
   "settings":      <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
   "lock":          <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
+  "layout-dashboard":<><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></>,
+  "alert-circle":  <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>,
+  "clock":         <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
+  "panel-left":    <><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></>,
 };
 function Icon({name,size=18,className="",style={}}){
   const p=ICONS[name]; if(!p) return null;
@@ -3008,8 +3048,125 @@ function Icon({name,size=18,className="",style={}}){
 }
 
 function getLessonTitle(n){return `Lesson ${n}`;}
-function getTodayPT(){return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+function getTodayPT(){return getStudioNow().toLocaleDateString('pt-BR',{timeZone:STUDIO_TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function formatDateBR(iso){if(!iso)return "—";const[y,m,d]=iso.split("-");return `${d}/${m}/${y}`;}
+/* ── Studio clock (America/Sao_Paulo) — não depende só do PC ── */
+const STUDIO_TZ="America/Sao_Paulo";
+const _studioClock={offsetMs:0,syncedAt:null,source:null,status:"pending",listeners:new Set()};
+function getStudioNow(){return new Date(Date.now()+(_studioClock.offsetMs||0));}
+function studioParts(date){
+  const d=date||getStudioNow();
+  const fmt=new Intl.DateTimeFormat("en-GB",{timeZone:STUDIO_TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+  const parts=Object.fromEntries(fmt.formatToParts(d).filter(p=>p.type!=="literal").map(p=>[p.type,p.value]));
+  return{
+    date:`${parts.year}-${parts.month}-${parts.day}`,
+    time:`${parts.hour}:${parts.minute}`,
+    second:parts.second,
+    timeFull:`${parts.hour}:${parts.minute}:${parts.second}`,
+  };
+}
+function getStudioTimeHHMM(){return studioParts().time;}
+function notifyStudioClock(){_studioClock.listeners.forEach(fn=>{try{fn({..._studioClock,now:getStudioNow()});}catch(e){}});}
+function subscribeStudioClock(fn){_studioClock.listeners.add(fn);return()=>_studioClock.listeners.delete(fn);}
+async function syncStudioClockFirebase(){
+  const t0=Date.now();
+  const ref=db.collection("studio").doc("clockPing");
+  await ref.set({pingAt:firebase.firestore.FieldValue.serverTimestamp(),clientAt:t0},{merge:true});
+  const snap=await ref.get();
+  const t1=Date.now();
+  const serverTs=snap.exists&&snap.data().pingAt&&typeof snap.data().pingAt.toMillis==="function"?snap.data().pingAt.toMillis():null;
+  if(!serverTs)throw new Error("firebase clock empty");
+  const rtt=(t1-t0)/2;
+  _studioClock.offsetMs=(serverTs+rtt)-Date.now();
+  _studioClock.syncedAt=Date.now();
+  _studioClock.source="firebase";
+  _studioClock.status="ok";
+  try{localStorage.setItem("fs-studio-clock-offset",String(_studioClock.offsetMs));localStorage.setItem("fs-studio-clock-at",String(_studioClock.syncedAt));}catch(e){}
+  notifyStudioClock();
+  return true;
+}
+async function syncStudioClockFromUrl(url,parser,source){
+  const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+  const timer=ctrl?setTimeout(()=>ctrl.abort(),4500):null;
+  try{
+    const res=await fetch(url,{signal:ctrl?ctrl.signal:undefined,cache:"no-store"});
+    if(!res.ok)throw new Error("http "+res.status);
+    const data=await res.json();
+    const trustedMs=parser(data);
+    if(!trustedMs||isNaN(trustedMs))throw new Error("bad time payload");
+    _studioClock.offsetMs=trustedMs-Date.now();
+    _studioClock.syncedAt=Date.now();
+    _studioClock.source=source;
+    _studioClock.status="ok";
+    try{localStorage.setItem("fs-studio-clock-offset",String(_studioClock.offsetMs));localStorage.setItem("fs-studio-clock-at",String(_studioClock.syncedAt));}catch(e){}
+    notifyStudioClock();
+    return true;
+  }finally{if(timer)clearTimeout(timer);}
+}
+async function syncStudioClock(){
+  try{
+    await syncStudioClockFromUrl(
+      "https://timeapi.io/api/Time/current/zone?timeZone=America%2FSao_Paulo",
+      d=>{const s=d.dateTime||d.date+"T"+(d.time||"00:00:00");return new Date(s).getTime();},
+      "timeapi.io"
+    );
+    return;
+  }catch(e1){}
+  try{
+    await syncStudioClockFromUrl(
+      "https://worldtimeapi.org/api/timezone/America/Sao_Paulo",
+      d=>d.unixtime?d.unixtime*1000:Date.parse(d.datetime),
+      "worldtimeapi"
+    );
+    return;
+  }catch(e2){}
+  try{
+    await syncStudioClockFirebase();
+    return;
+  }catch(e3){
+    try{
+      const off=Number(localStorage.getItem("fs-studio-clock-offset"));
+      const at=Number(localStorage.getItem("fs-studio-clock-at"));
+      if(!isNaN(off)){_studioClock.offsetMs=off;_studioClock.syncedAt=at||null;_studioClock.source="cache";_studioClock.status="warn";notifyStudioClock();return;}
+    }catch(e4){}
+    _studioClock.status="warn";
+    _studioClock.source="local-fallback";
+    notifyStudioClock();
+  }
+}
+function useStudioClock(tickMs){
+  const [tick,setTick]=useState(0);
+  const [meta,setMeta]=useState({status:_studioClock.status,source:_studioClock.source,syncedAt:_studioClock.syncedAt});
+  useEffect(()=>{
+    syncStudioClock();
+    const syncId=setInterval(()=>syncStudioClock(),5*60*1000);
+    const onVis=()=>{if(document.visibilityState==="visible")syncStudioClock();};
+    document.addEventListener("visibilitychange",onVis);
+    const unsub=subscribeStudioClock(m=>setMeta({status:m.status,source:m.source,syncedAt:m.syncedAt}));
+    return()=>{clearInterval(syncId);document.removeEventListener("visibilitychange",onVis);unsub();};
+  },[]);
+  useEffect(()=>{
+    const id=setInterval(()=>setTick(t=>t+1),tickMs||1000);
+    return()=>clearInterval(id);
+  },[tickMs]);
+  const now=getStudioNow();
+  const parts=studioParts(now);
+  return{now,parts,todayISO:parts.date,timeHHMM:parts.time,timeFull:parts.timeFull,status:meta.status,source:meta.source,syncedAt:meta.syncedAt,tick};
+}
+function AdminStudioClock(){
+  const {parts,status,source}=useStudioClock(1000);
+  const[y,m,d]=String(parts.date||"").split("-");
+  const dateLabel=d&&m?`${d}/${m}`:"—";
+  return(
+    <div className="admin-clock" title={"Relógio Fluency · "+STUDIO_TZ+(source?" · "+source:"")}>
+      <div className="admin-clock-time">{parts.timeFull||"—"}</div>
+      <div className="admin-clock-meta">
+        <span className={"admin-clock-dot "+(status==="ok"?"ok":"warn")}/>
+        {dateLabel} · São Paulo
+      </div>
+    </div>
+  );
+}
 function formatCurrency(val){if(val===null||val===undefined||val===""||isNaN(val))return "—";return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(val);}
 /** Nome completo limpo (perfil, ficha). */
 function getFullName(name){
@@ -3125,7 +3282,16 @@ function getAdminStatusCounts(students){
   });
   return c;
 }
-function getTodayISO(){const t=new Date();return`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;}
+function getTodayISO(){return studioParts(getStudioNow()).date;}
+function classDateTimePassed(dateISO,timeHHMM,nowParts){
+  const np=nowParts||studioParts(getStudioNow());
+  if(!dateISO)return false;
+  if(dateISO<np.date)return true;
+  if(dateISO>np.date)return false;
+  const t=String(timeHHMM||"").slice(0,5);
+  if(!t||t==="—")return false; // same day without time: still "current" until day ends
+  return t<=np.time;
+}
 function getEffectiveParcelStatus(parcela,todayStr){
   if(parcela.status==="paga")return"paga";
   if(parcela.dataVencimento&&parcela.dataVencimento<todayStr)return"vencida";
@@ -6138,6 +6304,8 @@ const IVI_KB=[
   {keys:["cadastro pendente","form-self","form self","autorizar","lançar","lancar","pendente","terceirizado","alunosfora"],audience:["admin"],answer:"Alunos de **form-self** e **form-self-alunosfora** aparecem em **Cadastros Pendentes**. Revise os dados, complete o que faltar (financeiro é opcional para terceirizados) e use **AUTORIZAR LANÇAR** com atenção."},
   {keys:["agenda admin","painel agenda","calendario admin","calendário principal","agenda principal","horario vago","ocupação","ocupacao","working days","disponibilidade professor","fullcalendar","regras de reposicao","reposição","reposicao","reposições","aulas semanais","gratuitas do contrato"],audience:["admin"],answer:IVI_RULES_REPOSICAO_ADMIN},
   {keys:["relatorios","relatórios","report card admin","por aluno","por curso","por periodo","por período","report card fale"],audience:["admin"],answer:IVI_RULES_RELATORIOS_ADMIN},
+  {keys:["pendencias","pendências","pendencia diario","diário pendente","aula sem diario","lancar diario pendente"],audience:["admin"],answer:"Em **Pendências** aparecem aulas da grade que **já passaram** (pelo relógio de São Paulo do portal) e ainda **não têm lançamento no Diário**. A trilha pode ficar na mesma lição por vários dias — o critério é o Diário. Toque no item para abrir a ficha do aluno na aba Diário. O menu esquerdo lista todas as áreas do painel e pode ser escondido/mostrado em qualquer tela admin."},
+  {keys:["relogio","relógio","hora certa","sao paulo","são paulo","sincronizar hora"],audience:["admin"],answer:"No canto do header admin fica o **relógio do estúdio** (fuso America/Sao_Paulo), sincronizado por fonte externa (não usa só o relógio do computador). Aulas de hoje e **Próxima aula** seguem esse horário."},
   {keys:["diario admin","lancar diario","lançar diário","status falta","fale admin"],audience:["admin"],answer:"No diário do aluno, use os status oficiais: Presença; Ausência com reposição; Falta do aluno com/sem reposição; Falta do professor. Lance **F/A/L/E** em 0–100%. Status com direito a repor atualizam os contadores de **Reposições** do aluno. Motivos de “com”/“sem” reposição ajudam o histórico a ficar claro."},
   {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito fica o seletor de tema: escuro, claro ou automático (segue o sistema). A preferência é salva no dispositivo."},
   {keys:["ivi","quem e voce","quem é você","o que voce faz","o que você faz","assistente"],audience:["all"],answer:`Sou a **iVi**, assistente do portal da Fluency Studio. Explico com calma como usar Trilha, Materiais, Diário, Agenda, Reposições, Financeiro e, no painel admin, Relatórios e o calendário principal. ${IVI_TONE_NOTE}`},
@@ -7776,10 +7944,10 @@ function formatWeekRange(startISO){
   return `${s.getDate()} ${s.toLocaleDateString("pt-BR",{month:"short"})} – ${e.getDate()} ${e.toLocaleDateString("pt-BR",{month:"short",year:"numeric"})}`;
 }
 function PlatformCalendar({students,agendaExtra={},onlyUid,compact}){
-  const todayStr=new Date().toISOString().slice(0,10);
+  const todayStr=getTodayISO();
   const [view,setView]=useState("mes");
   const [focusDate,setFocusDate]=useState(todayStr);
-  const [monthKey,setMonthKey]=useState(getMonthKey(new Date()));
+  const [monthKey,setMonthKey]=useState(todayStr.slice(0,7));
   const [selectedDate,setSelectedDate]=useState(todayStr);
   const weekStart=useMemo(()=>getWeekStartMonday(focusDate),[focusDate]);
   const weekDays=useMemo(()=>getWeekDaysFrom(focusDate),[focusDate]);
@@ -7887,12 +8055,14 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact}){
   );
 }
 function findProximaAulaUnified(students,agendaExtra={}){
-  const today=new Date().toISOString().slice(0,10);
+  const nowParts=studioParts(getStudioNow());
+  const today=nowParts.date;
   let best=null;
   for(let i=0;i<4;i++){
-    const mk=shiftMonthKey(getMonthKey(new Date()),i);
+    const mk=shiftMonthKey(today.slice(0,7),i);
     buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
-      if(e.type!=="aula"||!e.date||e.date<today)return;
+      if(e.type!=="aula"||!e.date)return;
+      if(classDateTimePassed(e.date,e.time,nowParts))return;
       const stu=(students||[]).find(s=>s.uid===e.studentUid);
       const lesson=e.lessonNum&&stu?(stu.trilha||{})[lessonIdFromNum(e.lessonNum,getCourseById(stu.contrato))]:null;
       if(lesson?.status==="concluida"||lesson?.status==="realizada")return;
@@ -7906,6 +8076,58 @@ function findProximaAulaUnified(students,agendaExtra={}){
     });
   }
   return best;
+}
+function collectClassSlotsForRange(students,startISO,endISO){
+  const out=[];
+  const seen=new Set();
+  let mk=startISO.slice(0,7);
+  const endMk=endISO.slice(0,7);
+  for(let i=0;i<8;i++){
+    buildAgendaEventsForMonth(students,mk).forEach(e=>{
+      if(e.type!=="aula"||!e.date||!e.studentUid)return;
+      if(e.date<startISO||e.date>endISO)return;
+      const key=e.studentUid+"|"+e.date+"|"+String(e.time||"").slice(0,5);
+      if(seen.has(key))return;
+      seen.add(key);
+      out.push({
+        studentUid:e.studentUid,
+        studentName:e.studentName||"",
+        date:e.date,
+        time:String(e.time||"").slice(0,5),
+        lessonNum:e.lessonNum||null,
+        source:e.source||"aula",
+      });
+    });
+    if(mk===endMk)break;
+    mk=shiftMonthKey(mk,1);
+  }
+  return out.sort((a,b)=>a.date.localeCompare(b.date)||(a.time||"").localeCompare(b.time||""));
+}
+function computeDiarioPendencias(students,diarioByUid,nowParts){
+  const np=nowParts||studioParts(getStudioNow());
+  const end=np.date;
+  const start=addDaysISO(end,-45);
+  const ativos=(students||[]).filter(s=>(s.status||normalizeStatus(null,s))==="ativo");
+  const slots=collectClassSlotsForRange(ativos,start,end);
+  const pending=[];
+  slots.forEach(slot=>{
+    if(!classDateTimePassed(slot.date,slot.time,np))return;
+    const entries=diarioByUid&&diarioByUid[slot.studentUid]||[];
+    const has=entries.some(en=>{
+      const d=en.date||en.data||"";
+      if(d!==slot.date)return false;
+      // Um lançamento no dia cobre o(s) slot(s) daquele dia.
+      return true;
+    });
+    if(has)return;
+    const st=ativos.find(s=>s.uid===slot.studentUid);
+    pending.push({
+      ...slot,
+      studentName:slot.studentName||st?.name||"Aluno",
+      courseLabel:getCourseLabel(st?.contrato)||st?.program||"—",
+    });
+  });
+  return pending;
 }
 /* ── MODAL DE EDIÇÃO ── */
 function ModalEdicao({student,onClose,onSaved}){
@@ -8511,8 +8733,8 @@ function ModalAgendar({onClose,onSave}){
 }
 
 function AdminAgendaDashboard({students,onBack}){
-  const hoje=new Date();
-  const hojeISO=hoje.toISOString().slice(0,10);
+  const clock=useStudioClock(30000);
+  const hojeISO=clock.todayISO;
   const [agenda,setAgenda]=useState({todos:[],eventos:[],workingDays:PROF_WORKING_DAYS_DEFAULT,workingHours:PROF_WORKING_HOURS_DEFAULT,regularOccupied:{}});
   const [showAgendar,setShowAgendar]=useState(false);
   const [newTodo,setNewTodo]=useState("");
@@ -8568,8 +8790,8 @@ function AdminAgendaDashboard({students,onBack}){
 
   const agendaExtra=useMemo(()=>({eventos:agenda.eventos}),[agenda.eventos]);
 
-  const proxima=useMemo(()=>findProximaAulaUnified(students,agendaExtra),[students,agendaExtra]);
-  const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO,agendaExtra),[students,hojeISO,agendaExtra]);
+  const proxima=useMemo(()=>findProximaAulaUnified(students,agendaExtra),[students,agendaExtra,clock.tick,clock.todayISO,clock.timeHHMM]);
+  const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO,agendaExtra),[students,hojeISO,agendaExtra,clock.tick]);
   const todosPendentes=(agenda.todos||[]).filter(t=>!t.done).length;
   const adminFcEvents=useMemo(()=>{
     const out=[];
@@ -8643,7 +8865,7 @@ function AdminAgendaDashboard({students,onBack}){
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
               <Icon name="calendar-check" size={16} style={{color:"#1e8fa8"}}/>
               <span style={{fontWeight:700,fontSize:14}}>Aulas e Eventos de Hoje</span>
-              <span style={{fontSize:11,color:"var(--font-muted)"}}>{hoje.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})}</span>
+              <span style={{fontSize:11,color:"var(--font-muted)"}}>{getTodayPT()}</span>
             </div>
             {aulasHoje.length===0
               ?<div style={{textAlign:"center",padding:"12px 0",color:"var(--font-muted)",fontSize:13}}>Nenhuma aula para hoje.</div>
@@ -10836,34 +11058,46 @@ if(typeof window!=="undefined"&&!window.__fsExerciseMsgHook){
 
 
 /* ── DASHBOARD ── */
-function AdminDashboard({students,onNavigate,pendentesCount=0}){
-  const hoje=new Date();
-  const hojeISO=hoje.toISOString().slice(0,10);
+function AdminDashboard({students,onNavigate,pendentesCount=0,diarioPendenciasCount=0}){
+  const clock=useStudioClock(30000);
+  const hojeISO=clock.todayISO;
   const [prepLesson,setPrepLesson]=useState(null);
+  const proxima=useMemo(()=>findProximaAulaUnified(students),[students,clock.tick,clock.todayISO,clock.timeHHMM]);
 
   const ativos=useMemo(()=>(students||[]).filter(s=>(s.status||normalizeStatus(null,s))==="ativo"),[students]);
 
-  const totalRecebidoMes=useMemo(()=>computeStudioFinanceMonth(students,getMonthKey(hoje)).recebido,[students]);
+  const totalRecebidoMes=useMemo(()=>computeStudioFinanceMonth(students,hojeISO.slice(0,7)).recebido,[students,hojeISO]);
 
-  const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO]);
+  const aulasHoje=useMemo(()=>getAulasDoDia(students,hojeISO),[students,hojeISO,clock.tick]);
 
   // Ícones: só cores frias/escuras (proibido laranja/dourado/quente)
-  const navBtns=[
-    {id:"alunos",    icon:"users",        label:"Alunos",      cor:"#0f2c5c", ativo:true},
-    {id:"cadastros", icon:"clipboard-check",label:"Cadastros", cor:"#1e3a8a", ativo:true},
-    {id:"financeiro",icon:"dollar-sign",  label:"Financeiro",  cor:"#0f766e", ativo:true},
-    {id:"agenda",    icon:"calendar",     label:"Agenda",      cor:"#0e4d6e", ativo:true},
-    {id:"relatorios",icon:"file-text",    label:"Relatórios",  cor:"#334155", ativo:true},
-    {id:"config",    icon:"settings",     label:"Config.",     cor:"#1e293b", ativo:true},
-  ];
+  const navBtns=ADMIN_NAV_ITEMS.filter(b=>b.id!=="dashboard").map(b=>({...b,ativo:true,label:b.id==="config"?"Config.":b.label}));
 
   return(
     <div>
-      {/* STATS — 3 cards (sem Total Alunos; ativos bastam) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+      {/* STATS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0f2c5c"}}>{ativos.length}</div><div className="dash-stat-label">Alunos Ativos</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#0e4d6e",fontSize:20}}>{formatCurrency(totalRecebidoMes)}</div><div className="dash-stat-label">Recebido no Mês</div></div>
         <div className="dash-stat-card"><div className="dash-stat-num" style={{color:"#1e3a8a"}}>{aulasHoje.length}</div><div className="dash-stat-label">Aulas Hoje</div></div>
+        <button type="button" className="dash-stat-card" style={{textAlign:"left",cursor:"pointer",width:"100%"}} onClick={()=>onNavigate("pendencias")}>
+          <div className="dash-stat-num" style={{color:"#b45309"}}>{typeof diarioPendenciasCount==="number"?diarioPendenciasCount:"—"}</div>
+          <div className="dash-stat-label">Pendências Diário</div>
+        </button>
+      </div>
+
+      {/* Próxima aula real (relógio SP) */}
+      <div className="glass rounded-2xl p-4 mb-5" style={{borderColor:"rgba(15,118,110,.28)"}}>
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:".06em",textTransform:"uppercase",color:"var(--font-muted)",marginBottom:6}}>Próxima aula</div>
+        {proxima
+          ?<div style={{display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap",alignItems:"baseline"}}>
+            <div>
+              <div style={{fontWeight:800,fontSize:16}}>{proxima.student?.name||"Aluno"}</div>
+              <div style={{fontSize:13,color:"var(--font-muted)"}}>{formatDateBR(proxima.date)} · {proxima.time||"—"} · Lição {proxima.lessonNum||"—"}</div>
+            </div>
+            <button type="button" className="btn rounded-xl px-3 py-2 text-xs font-semibold" onClick={()=>onNavigate("agenda")}>Ver agenda</button>
+          </div>
+          :<div style={{fontSize:13,color:"var(--font-muted)"}}>Nenhuma aula futura na grade.</div>}
       </div>
 
       {/* AULAS DO DIA */}
@@ -10872,7 +11106,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
           <Icon name="calendar-check" size={16} style={{color:"#0f2c5c"}}/>
           <span style={{fontWeight:700,fontSize:14}}>Aulas de Hoje</span>
           <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:4}}>
-            {hoje.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})}
+            {getTodayPT()}
           </span>
         </div>
         {aulasHoje.length===0
@@ -10906,11 +11140,55 @@ function AdminDashboard({students,onNavigate,pendentesCount=0}){
             <Icon name={b.icon} size={22} style={{color:b.cor}}/>
             <span>{b.label}</span>
             {b.id==="cadastros"&&pendentesCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#0f2c5c",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{pendentesCount}</span>}
+            {b.id==="pendencias"&&diarioPendenciasCount>0&&<span style={{position:"absolute",top:6,right:8,background:"#b45309",color:"#fff",fontSize:10,fontWeight:800,minWidth:18,height:18,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>{diarioPendenciasCount}</span>}
             {!b.ativo&&<span style={{fontSize:9,color:"var(--font-muted)",marginTop:-4}}>Em breve</span>}
           </button>
         ))}
       </div>
       {prepLesson&&<LessonQuickPanel lesson={prepLesson.lesson} title={"Preparar aula — "+(prepLesson.studentName||"")} onClose={()=>setPrepLesson(null)}/>}
+    </div>
+  );
+}
+
+function AdminPendencias({students,items,loading,onOpenStudent,onBack,onRefresh}){
+  const grouped=useMemo(()=>{
+    const map={};
+    (items||[]).forEach(it=>{
+      if(!map[it.date])map[it.date]=[];
+      map[it.date].push(it);
+    });
+    return Object.keys(map).sort((a,b)=>b.localeCompare(a)).map(date=>({date,rows:map[date].sort((a,b)=>(a.time||"").localeCompare(b.time||""))}));
+  },[items]);
+  return(
+    <div>
+      <button className="btn rounded-xl px-3 py-2 text-sm mb-4 inline-flex items-center gap-2" onClick={onBack}><Icon name="arrow-left" size={14}/> Voltar ao Painel</button>
+      <div className="glass rounded-2xl p-5 mb-4">
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+          <div>
+            <h2 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Pendências de Diário</h2>
+            <p className="text-sm muted mt-1">Aulas da grade que já passaram e ainda não têm lançamento no Diário. A trilha pode ficar na mesma lição por vários dias — o que conta aqui é o registro no Diário.</p>
+          </div>
+          <button type="button" className="btn rounded-xl px-3 py-2 text-sm inline-flex items-center gap-2" onClick={onRefresh}><Icon name="refresh-cw" size={14}/> Atualizar</button>
+        </div>
+        <div className="mt-3 text-sm font-semibold">{loading?"Carregando…":`${(items||[]).length} pendência(s)`}</div>
+      </div>
+      {loading?<LoadingScreen/>:grouped.length===0?(
+        <div className="glass rounded-2xl p-8 text-center muted">Nenhuma pendência. Todas as aulas passadas dos últimos 45 dias têm Diário lançado.</div>
+      ):grouped.map(g=>(
+        <div key={g.date} className="glass rounded-2xl p-4 mb-3">
+          <div style={{fontWeight:800,fontSize:13,marginBottom:10}}>{formatDateBR(g.date)} · {g.rows.length} aula(s)</div>
+          {g.rows.map((r,idx)=>(
+            <button key={r.studentUid+"-"+r.date+"-"+r.time+"-"+idx} type="button" className="aula-hoje-item" style={{width:"100%",textAlign:"left",cursor:"pointer",border:"1px solid var(--divider)"}} onClick={()=>onOpenStudent(r.studentUid)}>
+              <div className="aula-hoje-hora">{r.time||"—"}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontWeight:700,fontSize:13}}>{r.studentName}</div>
+                <div style={{fontSize:11,color:"var(--font-muted)"}}>{r.courseLabel} · sem lançamento no Diário{r.lessonNum?` · Lição ${r.lessonNum}`:""}</div>
+              </div>
+              <Icon name="chevron-right" size={16} className="muted"/>
+            </button>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -11216,38 +11494,78 @@ function AdminApp({user}){
   },[]);
   useEffect(()=>db.collection("students").where("status","==","pendente_aprovacao").onSnapshot(snap=>setPendentesCount(snap.size),()=>setPendentesCount(0)),[]);
 
-  if(selectedUid)return <StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={closeStudent}/>;
+  const [sidebarOpen,setSidebarOpen]=useState(()=>{
+    try{return localStorage.getItem("fs-admin-sidebar")!=="0";}catch(e){return true;}
+  });
+  const toggleSidebar=useCallback(()=>{
+    setSidebarOpen(v=>{
+      const next=!v;
+      try{localStorage.setItem("fs-admin-sidebar",next?"1":"0");}catch(e){}
+      return next;
+    });
+  },[]);
 
-  const viewTitles={dashboard:"Painel do Professor",alunos:"Alunos",cadastros:"Cadastros Pendentes",financeiro:"Financeiro",agenda:"Agenda",config:"Configurações"};
+  const [diarioByUid,setDiarioByUid]=useState({});
+  const [diarioPendencias,setDiarioPendencias]=useState([]);
+  const [diarioPendLoading,setDiarioPendLoading]=useState(false);
+  const clockTick=useStudioClock(60000);
 
-  const adminNav=[
-    {id:"dashboard",icon:"layout-dashboard",label:"Painel"},
-    {id:"alunos",icon:"users",label:"Alunos"},
-    {id:"cadastros",icon:"clipboard-check",label:"Cadastros"},
-    {id:"financeiro",icon:"wallet",label:"Financeiro"},
-    {id:"agenda",icon:"calendar",label:"Agenda"},
-    {id:"config",icon:"settings",label:"Configurações"},
-  ];
+  const refreshDiarioPendencias=useCallback(async()=>{
+    if(!students||!students.length){setDiarioPendencias([]);setDiarioByUid({});return;}
+    setDiarioPendLoading(true);
+    try{
+      const ativos=students.filter(s=>(s.status||normalizeStatus(null,s))==="ativo");
+      const map={};
+      await Promise.all(ativos.map(async s=>{
+        try{
+          const snap=await db.collection("students").doc(s.uid).collection("diario").get();
+          map[s.uid]=snap.docs.map(d=>({id:d.id,...d.data()}));
+        }catch(e){map[s.uid]=[];}
+      }));
+      setDiarioByUid(map);
+      setDiarioPendencias(computeDiarioPendencias(ativos,map,studioParts(getStudioNow())));
+    }finally{setDiarioPendLoading(false);}
+  },[students]);
+
+  useEffect(()=>{refreshDiarioPendencias();},[refreshDiarioPendencias,clockTick.todayISO]);
+
+  const viewTitles={
+    dashboard:"Painel do Professor",
+    alunos:"Alunos",
+    cadastros:"Cadastros Pendentes",
+    pendencias:"Pendências de Diário",
+    financeiro:"Financeiro",
+    agenda:"Agenda",
+    relatorios:"Relatórios",
+    config:"Configurações",
+  };
+  const headerTitle=selectedUid?"Ficha do aluno":(viewTitles[adminView]||"Painel");
+  const diarioPendCount=diarioPendencias.length;
+
   return(
-    <div className="admin-shell" data-admin-view="true">
+    <div className={"admin-shell"+(sidebarOpen?"":" sidebar-collapsed")} data-admin-view="true">
       {showModal&&<ModalCadastro onClose={()=>setShowModal(false)} onSaved={()=>setShowModal(false)}/>}
       <aside className="admin-sidebar" aria-label="Navegação administrativa">
         <div className="admin-sidebar-brand">
           <BrandLogo/>
-          <div style={{marginTop:12,display:"flex",alignItems:"center",gap:8}}>
+          <div style={{marginTop:12,display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
             <span className="role-pill role-pill-admin">Admin</span>
             <span style={{fontSize:11,color:"#CBD5E1"}}>Área restrita</span>
           </div>
         </div>
         <div className="admin-sidebar-label">Gestão da escola</div>
-        {adminNav.map(n=>(
-          <button key={n.id} type="button" className={"admin-nav-item"+(adminView===n.id?" active":"")} onClick={()=>goAdminView(n.id)}>
+        {ADMIN_NAV_ITEMS.map(n=>(
+          <button key={n.id} type="button" className={"admin-nav-item"+(!selectedUid&&adminView===n.id?" active":"")} onClick={()=>goAdminView(n.id)}>
             <Icon name={n.icon} size={18}/>
             <span>{n.label}</span>
             {n.id==="cadastros"&&pendentesCount>0&&<span className="nav-badge">{pendentesCount}</span>}
+            {n.id==="pendencias"&&diarioPendCount>0&&<span className="nav-badge" style={{background:"#F59E0B"}}>{diarioPendCount}</span>}
           </button>
         ))}
         <div style={{marginTop:"auto",padding:"16px 20px",borderTop:"1px solid rgba(203,213,225,.12)"}}>
+          <button type="button" className="admin-nav-item" style={{padding:"10px 0"}} onClick={toggleSidebar}>
+            <Icon name="panel-left" size={18}/><span>Esconder menu</span>
+          </button>
           <button type="button" className="admin-nav-item" style={{padding:"10px 0"}} onClick={()=>auth.signOut()}>
             <Icon name="log-out" size={18}/><span>Sair</span>
           </button>
@@ -11256,16 +11574,33 @@ function AdminApp({user}){
       <div className="admin-main">
         <header className="admin-main-header">
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
-            <div>
-              <div className="view-separator" style={{marginBottom:4,border:"none",padding:0}}>Área administrativa · não visível ao aluno</div>
-              <h1 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>{viewTitles[adminView]||"Painel"}</h1>
-              <p style={{fontSize:13,color:"#475569",margin:"4px 0 0"}}>Fluency Studio · Gestão premium</p>
+            <div style={{display:"flex",alignItems:"flex-start",gap:10,minWidth:0}}>
+              <button type="button" className="admin-sidebar-reopen" title="Mostrar menu" aria-label="Mostrar menu" onClick={toggleSidebar}>
+                <Icon name="panel-left" size={18}/>
+              </button>
+              <div>
+                <div className="view-separator" style={{marginBottom:4,border:"none",padding:0}}>Área administrativa · não visível ao aluno</div>
+                <h1 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>{headerTitle}</h1>
+                <p style={{fontSize:13,color:"#475569",margin:"4px 0 0"}}>Fluency Studio · Gestão premium</p>
+              </div>
             </div>
             <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-              {pendentesCount>0&&(
+              <AdminStudioClock/>
+              {sidebarOpen&&(
+                <button type="button" className="btn rounded-xl px-3 py-2.5 text-sm inline-flex items-center gap-2" onClick={toggleSidebar} title="Esconder menu">
+                  <Icon name="panel-left" size={16}/> Menu
+                </button>
+              )}
+              {diarioPendCount>0&&!selectedUid&&(
+                <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>goAdminView("pendencias")}
+                  style={{background:"#FFFBEB",border:"1.5px solid #b45309",color:"#92400e"}}>
+                  <Icon name="alert-circle" size={16}/> {diarioPendCount} diário
+                </button>
+              )}
+              {pendentesCount>0&&!selectedUid&&(
                 <button className="btn rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>goAdminView("cadastros")}
                   style={{background:"#E0F2FE",border:"1.5px solid #0f2c5c",color:"#0f2c5c"}}>
-                  <Icon name="clipboard-check" size={16}/> {pendentesCount} pendente{pendentesCount>1?"s":""}
+                  <Icon name="clipboard-check" size={16}/> {pendentesCount} cadastro{pendentesCount>1?"s":""}
                 </button>
               )}
               <button className="btn btn-primary rounded-xl px-4 py-2.5 inline-flex items-center gap-2 text-sm font-semibold" onClick={()=>setShowModal(true)}>
@@ -11281,12 +11616,16 @@ function AdminApp({user}){
               <button className="btn rounded-lg px-3 py-1.5 text-xs" onClick={()=>window.location.reload()}>Recarregar</button>
             </div>
           )}
-          {!students
+          {selectedUid
+            ?<StudentDetail uid={selectedUid} isAdmin initialTab={selectedInitialTab} onBack={closeStudent}/>
+            :!students
             ?<LoadingScreen/>
             :adminView==="dashboard"
-            ?<AdminDashboard students={students} pendentesCount={pendentesCount} onNavigate={id=>goAdminView(id)}/>
+            ?<AdminDashboard students={students} pendentesCount={pendentesCount} diarioPendenciasCount={diarioPendCount} onNavigate={id=>goAdminView(id)}/>
             :adminView==="cadastros"
             ?<AdminCadastrosPendentes onBack={()=>goAdminView("dashboard")} onLaunched={uid=>openStudent(uid,"overview")}/>
+            :adminView==="pendencias"
+            ?<AdminPendencias students={students} items={diarioPendencias} loading={diarioPendLoading} onBack={()=>goAdminView("dashboard")} onRefresh={refreshDiarioPendencias} onOpenStudent={uid=>openStudent(uid,"diario")}/>
             :adminView==="financeiro"
             ?<AdminFinanceiroDashboard students={students} onBack={()=>goAdminView("dashboard")} onSelectStudent={uid=>openStudent(uid,"financeiro")}/>
             :adminView==="agenda"
