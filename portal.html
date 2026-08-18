@@ -2566,7 +2566,7 @@ const DEFAULT_COURSES=[
   {id:"foundation_general",nome:"Fluency General",corBase:"#00a89d",ativo:true,ordem:1,
     grupo:"general",padraoVisual:"teal",totalLicoes:150,unitReportCards:true,unitSize:10,
     descricao:"Fluency General — 150 lições em 3 módulos (5 unidades × 10 lições). Report Card ao final de cada unidade e de cada módulo.",
-    modulos:FLUENCY_GENERAL_MODULOS.map(m=>({...m,unidades:(m.unidades||[]).map(u=>({...u)}))})},
+    modulos:FLUENCY_GENERAL_MODULOS},
   {id:"flash_general",nome:"Flash Talk",corBase:"#3b82f6",ativo:true,ordem:2,
     grupo:"general",padraoVisual:"blue",
     modulos:makeFlashModulos(4,62)},
