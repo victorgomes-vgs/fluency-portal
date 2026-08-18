@@ -2548,24 +2548,33 @@ const PROFICIENCY_FF_MODULOS=[
   {id:1,nome:"Módulo 1 — Objective Proficiency (60 lições)",totalLicoes:60,semBlocos:true,tipoLivre:true,theme:"Objective Proficiency continuous plan — Units 1–20"},
 ];
 
-const FLUENCY_GENERAL_MODULOS=makeFoundationModulos([
-  "Módulo 1 — Lições 1–50",
-  "Módulo 2 — Lições 51–100",
-  "Módulo 3 — Lições 101–150",
-]).map((m,i)=>({
-  ...m,
-  unidades:Array.from({length:5},(_,u)=>({
-    id:u+1,
-    nome:`Unidade ${u+1}`,
-    licaoInicio:i*50+u*10+1,
-    licaoFim:i*50+(u+1)*10,
-  })),
-}));
+/** Fluency General: 150 lições simples (sem Input/Output/Review). 3 módulos × 50, 5 unidades × 10. */
+function makeFluencyGeneralModulos(){
+  const names=[
+    "Módulo 1 — Lições 1–50",
+    "Módulo 2 — Lições 51–100",
+    "Módulo 3 — Lições 101–150",
+  ];
+  return names.map((nome,i)=>({
+    id:i+1,
+    nome,
+    totalLicoes:50,
+    semBlocos:true,
+    tipoLivre:true,
+    unidades:Array.from({length:5},(_,u)=>({
+      id:u+1,
+      nome:"Unidade "+(u+1),
+      licaoInicio:i*50+u*10+1,
+      licaoFim:i*50+(u+1)*10,
+    })),
+  }));
+}
+const FLUENCY_GENERAL_MODULOS=makeFluencyGeneralModulos();
 
 const DEFAULT_COURSES=[
   {id:"foundation_general",nome:"Fluency General",corBase:"#00a89d",ativo:true,ordem:1,
     grupo:"general",padraoVisual:"teal",totalLicoes:150,unitReportCards:true,unitSize:10,
-    descricao:"Fluency General — 150 lições em 3 módulos (5 unidades × 10 lições). Report Card ao final de cada unidade e de cada módulo.",
+    descricao:"Fluency General — 150 lições em 3 módulos (1–50, 51–100, 101–150). Cada módulo tem 5 unidades de 10 lições. Report Card ao final de cada unidade e de cada módulo. Sem blocos Input/Output/Review.",
     modulos:FLUENCY_GENERAL_MODULOS},
   {id:"flash_general",nome:"Flash Talk",corBase:"#3b82f6",ativo:true,ordem:2,
     grupo:"general",padraoVisual:"blue",
@@ -2927,9 +2936,9 @@ function useCourses(){
 }
 
 const COURSE_TEMPLATES=[
-  {id:"foundation",label:"Fluency General (3×50, 5 unidades × 10 + Report Cards)",builder:()=>({
+  {id:"foundation",label:"Fluency General (150 lições · 3 módulos · 5 unidades × 10)",builder:()=>({
     totalLicoes:150,unitReportCards:true,unitSize:10,
-    modulos:makeFoundationModulos(["Módulo 1 — Lições 1–50","Módulo 2 — Lições 51–100","Módulo 3 — Lições 101–150"]),
+    modulos:makeFluencyGeneralModulos(),
   })},
   {id:"flash",label:"Flash Talk (4×62, sem blocos)",builder:()=>({
     modulos:makeFlashModulos(4,62),
@@ -3440,14 +3449,14 @@ function generateBooks(course){
         contentNum++;
         num=contentNum;
         pos=contentNum;
-        title=getLessonTitle(contentNum);
+        title=(mod.tipoLivre||c.unitReportCards)?("Lição "+contentNum):getLessonTitle(contentNum);
         if(isReflective){
           const meta=getReflectiveMeta(lt,contentNum,0);
           tema=meta.tema;objetivos=meta.objetivos;
         }
       }
       const lesson={
-        id:lessonId,pos:pos,type:isReview?"review":"lesson",lessonType:lt,num:num,
+        id:lessonId,pos:pos,type:isReview?"review":"lesson",lessonType:lt||(mod.tipoLivre?"lesson":lt),num:num,
         title:title,status:"pendente",
         date:"",dataPrevista:"",tema:tema,objetivos:objetivos,feedback:"",obs:"",link:"",
         evalF:"",evalA:"",evalL:"",evalE:"",
@@ -3466,6 +3475,7 @@ function generateBooks(course){
           lesson[k]=shared[k];
         }
       });
+      if(mod.tipoLivre&&lesson.lessonType!=="review"){lesson.lessonType="lesson";lesson.type="lesson";}
       lesson.type=lesson.lessonType==="review"?"review":"lesson";
       items.push(lesson);
       // Unit Report Card (ex.: Fluency General — a cada 10 lições)
@@ -3473,17 +3483,17 @@ function generateBooks(course){
       if(unitSize>0&&li%unitSize===0){
         const unitNum=li/unitSize;
         const unitMeta=(mod.unidades||[])[unitNum-1];
-        const unitName=unitMeta?.nome||("Unidade "+unitNum);
+        const unitName=(unitMeta&&unitMeta.nome)||("Unidade "+unitNum);
         const rangeLabel=unitMeta?(unitMeta.licaoInicio+"–"+unitMeta.licaoFim):"";
         items[items.length-1].reportCardAfter=true;
         items[items.length-1].unitReportCardAfter=true;
         items.push({
-          id:`b${bi}-u${unitNum}-report-card`,
+          id:"b"+bi+"-u"+unitNum+"-report-card",
           pos:"RC-U"+unitNum,
           type:"report_card",
           lessonType:"report_card",
           num:0,
-          title:"Report Card — "+unitName+(rangeLabel?` (${rangeLabel})`:""),
+          title:"Report Card — "+unitName+(rangeLabel?(" ("+rangeLabel+")"):""),
           status:"pendente",
           date:"",dataPrevista:"",tema:"Consolidação da unidade",objetivos:"Report Card da unidade (âncora estrutural).",
           feedback:"",obs:"",link:"",
