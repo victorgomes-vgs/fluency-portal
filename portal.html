@@ -2047,7 +2047,7 @@ const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
    Mantém a navegação interna no histórico do navegador e restaura
    a tela atual após F5 / pull-to-refresh no mobile.
    ═══════════════════════════════════════════════════════════════════ */
-const STUDENT_PAGES=["dashboard","trilha","materiais","diario","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
+const STUDENT_PAGES=["dashboard","trilha","materiais","diario","reportcard","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
 const ADMIN_VIEWS=["dashboard","alunos","cadastros","pendencias","financeiro","agenda","relatorios","config"];
 const ADMIN_NAV_ITEMS=[
   {id:"dashboard", icon:"layout-dashboard", label:"Painel", cor:"#0f172a"},
@@ -2059,7 +2059,7 @@ const ADMIN_NAV_ITEMS=[
   {id:"relatorios", icon:"file-text", label:"Relatórios", cor:"#334155"},
   {id:"config", icon:"settings", label:"Configurações", cor:"#1e293b"},
 ];
-const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","financeiro","recursos"];
+const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","reportcard","financeiro","recursos"];
 const PORTAL_ROUTE_SS_KEY="fs-portal-route-v1";
 
 function _normHash(h){
@@ -2965,6 +2965,7 @@ const STUDENT_NAV = [
   {id:"trilha",      icon:"route",          label:"Trilha",      grad:"linear-gradient(145deg,rgba(0,217,192,.28),rgba(0,150,130,.12))",  color:"#00d9c0"},
   {id:"materiais",   icon:"folder-open",    label:"Materiais",   grad:"linear-gradient(145deg,rgba(91,155,232,.28),rgba(60,120,210,.12))", color:"#5b9be8"},
   {id:"diario",      icon:"clipboard-list", label:"Diário",      grad:"linear-gradient(145deg,rgba(232,169,76,.28),rgba(200,130,40,.12))", color:"#e8a94c"},
+  {id:"reportcard",  icon:"file-check",     label:"Report Card", grad:"linear-gradient(145deg,rgba(99,102,241,.28),rgba(67,56,202,.12))", color:"#818cf8"},
   {id:"financeiro",  icon:"dollar-sign",    label:"Financeiro",  grad:"linear-gradient(145deg,rgba(52,211,153,.28),rgba(20,140,90,.12))", color:"#34d399"},
   {id:"agenda",      icon:"calendar-days",  label:"Agenda",      grad:"linear-gradient(145deg,rgba(155,125,232,.28),rgba(110,80,200,.12))",color:"#9b7de8"},
   {id:"reposicoes",  icon:"calendar-plus",  label:"Reposições",  grad:"linear-gradient(145deg,rgba(229,99,107,.28),rgba(180,50,70,.12))", color:"#e5636b"},
@@ -3478,61 +3479,62 @@ function generateBooks(course){
       if(mod.tipoLivre&&lesson.lessonType!=="review"){lesson.lessonType="lesson";lesson.type="lesson";}
       lesson.type=lesson.lessonType==="review"?"review":"lesson";
       items.push(lesson);
-      // Unit Report Card (ex.: Fluency General — a cada 10 lições)
+      // Regra (metadado na lição): fim de unidade — NÃO cria card na Trilha
       const unitSize=c.unitReportCards?(parseInt(c.unitSize,10)||10):0;
       if(unitSize>0&&li%unitSize===0){
         const unitNum=li/unitSize;
         const unitMeta=(mod.unidades||[])[unitNum-1];
-        const unitName=(unitMeta&&unitMeta.nome)||("Unidade "+unitNum);
-        const rangeLabel=unitMeta?(unitMeta.licaoInicio+"–"+unitMeta.licaoFim):"";
         items[items.length-1].reportCardAfter=true;
         items[items.length-1].unitReportCardAfter=true;
-        items.push({
-          id:"b"+bi+"-u"+unitNum+"-report-card",
-          pos:"RC-U"+unitNum,
-          type:"report_card",
-          lessonType:"report_card",
-          num:0,
-          title:"Report Card — "+unitName+(rangeLabel?(" ("+rangeLabel+")"):""),
-          status:"pendente",
-          date:"",dataPrevista:"",tema:"Consolidação da unidade",objetivos:"Report Card da unidade (âncora estrutural).",
-          feedback:"",obs:"",link:"",
-          evalF:"",evalA:"",evalL:"",evalE:"",
-          linkMaterial:"",linkLivroDigital:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",
-          linkGravacao:"",linkRelatorio:"",tarefaFeita:false,
-          materiaisModuloPdf:"",courseManaged:!!c.sharedContentEnabled,
-          reportCard:true,reportCardScope:"unit",
-          reportCardModuleId:bi,reportCardModuleName:mod.nome||mod.name||("Módulo "+bi),
-          reportCardUnitId:unitNum,reportCardUnitName:unitName,
-        });
+        items[items.length-1].reportCardScope="unit";
+        items[items.length-1].reportCardUnitId=unitNum;
+        items[items.length-1].reportCardUnitName=(unitMeta&&unitMeta.nome)||("Unidade "+unitNum);
       }
     }
-    // Structural rule: after the last lesson of each module → Report Card anchor
+    // Regra (metadado): fim de módulo — NÃO cria card na Trilha (Report Card fica no ícone do portal)
     if(items.length){
-      const lastLesson=items.slice().reverse().find(it=>it.type!=="report_card"&&it.lessonType!=="report_card");
-      if(lastLesson)lastLesson.reportCardAfter=true;
-      const modName=mod.nome||mod.name||("Módulo "+bi);
-      items.push({
-        id:`b${bi}-report-card`,
-        pos:"RC-M",
-        type:"report_card",
-        lessonType:"report_card",
-        num:0,
-        title:"Report Card — "+modName,
-        status:"pendente",
-        date:"",dataPrevista:"",tema:"Consolidação do módulo",objetivos:"Report Card do módulo (âncora estrutural).",
-        feedback:"",obs:"",link:"",
-        evalF:"",evalA:"",evalL:"",evalE:"",
-        linkMaterial:"",linkLivroDigital:"",linkAula:"",linkChamada:"",linkTarefa:"",linkExtra:"",
-        linkGravacao:"",linkRelatorio:"",tarefaFeita:false,
-        materiaisModuloPdf:"",courseManaged:!!c.sharedContentEnabled,
-        reportCard:true,reportCardScope:"module",
-        reportCardModuleId:bi,reportCardModuleName:modName,
-      });
+      const lastLesson=items[items.length-1];
+      lastLesson.reportCardAfter=true;
+      lastLesson.moduleReportCardAfter=true;
+      lastLesson.reportCardModuleId=bi;
+      lastLesson.reportCardModuleName=mod.nome||mod.name||("Módulo "+bi);
     }
     books.push({bookIdx:bi,items});
   });
   return books;
+}
+/** Menu de Report Cards do curso (unidades + módulos) — fora da Trilha. */
+function getCourseReportCardMenu(course){
+  const c=course||DEFAULT_COURSES[0];
+  const out=[];
+  (c.modulos||[]).forEach((mod,mi)=>{
+    const bi=mod.id!=null?mod.id:mi+1;
+    const modName=mod.nome||mod.name||("Módulo "+bi);
+    const units=Array.isArray(mod.unidades)?mod.unidades:[];
+    if(c.unitReportCards&&units.length){
+      units.forEach(u=>{
+        out.push({
+          id:"rc-m"+bi+"-u"+(u.id||""),
+          scope:"unit",
+          moduleId:bi,
+          moduleName:modName,
+          unitId:u.id,
+          unitName:u.nome||("Unidade "+u.id),
+          licaoInicio:u.licaoInicio,
+          licaoFim:u.licaoFim,
+          label:(u.nome||("Unidade "+u.id))+(u.licaoInicio&&u.licaoFim?(" · Lições "+u.licaoInicio+"–"+u.licaoFim):""),
+        });
+      });
+    }
+    out.push({
+      id:"rc-m"+bi,
+      scope:"module",
+      moduleId:bi,
+      moduleName:modName,
+      label:modName,
+    });
+  });
+  return out;
 }
 const BOOKS_TEMPLATE=generateBooks(DEFAULT_COURSES[0]);
 function mergeBooks(trilhaData,course){
@@ -4893,6 +4895,94 @@ function RecursosSection({uid,isAdmin,links}){
   );
 }
 
+function StudentReportCardsSection({uid,profile,contrato,isAdmin}){
+  const courses=useCourses();
+  const course=useMemo(()=>getCourseById(contrato||profile?.contrato),[courses,contrato,profile]);
+  const menu=useMemo(()=>getCourseReportCardMenu(course),[course]);
+  const books=useMemo(()=>generateBooks(course),[course]);
+  const [exercisesMap,setExercisesMap]=useState({});
+  const [diarioEntries,setDiarioEntries]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [selected,setSelected]=useState(null);
+  const student=useMemo(()=>({uid,name:profile?.name||profile?.nome||"",contrato:course?.id||contrato}),[uid,profile,course,contrato]);
+  useEffect(()=>{
+    let alive=true;
+    (async()=>{
+      setLoading(true);
+      try{
+        const[ex,di]=await Promise.all([loadStudentExercises(uid),loadStudentDiario(uid)]);
+        if(!alive)return;
+        setExercisesMap(ex||{});
+        setDiarioEntries(di||[]);
+      }catch(e){}
+      finally{if(alive)setLoading(false);}
+    })();
+    return()=>{alive=false;};
+  },[uid]);
+  const moduleBook=useMemo(()=>{
+    if(!selected)return null;
+    const book=books.find(b=>b.bookIdx===selected.moduleId)||books[selected.moduleId-1];
+    if(!book)return null;
+    if(selected.scope==="module")return{...book,items:(book.items||[]).filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card")};
+    const start=selected.licaoInicio,end=selected.licaoFim;
+    const items=(book.items||[]).filter(i=>{
+      if(i.type==="report_card"||i.lessonType==="report_card")return false;
+      const n=Number(i.num);
+      if(!n||start==null||end==null)return false;
+      return n>=start&&n<=end;
+    });
+    return{bookIdx:book.bookIdx,items,reportCardTitle:selected.label};
+  },[selected,books]);
+  if(loading)return <LoadingScreen/>;
+  if(selected&&moduleBook){
+    return(
+      <ReportCardView
+        student={student}
+        course={course}
+        moduleBook={moduleBook}
+        exercisesMap={exercisesMap}
+        diarioEntries={diarioEntries}
+        onBack={()=>setSelected(null)}
+      />
+    );
+  }
+  return(
+    <div className="space-y-4">
+      <div className="glass rounded-2xl p-5">
+        <h3 className="text-lg font-bold flex items-center gap-2" style={{fontFamily:"'Sora',sans-serif"}}>
+          <Icon name="file-check" size={18} style={{color:"#818cf8"}}/> Report Card
+        </h3>
+        <p className="text-xs muted mt-1">
+          {course?.unitReportCards
+            ?"Há Report Card ao final de cada unidade (10 lições) e de cada módulo. A Trilha só tem as lições — os boletins ficam aqui."
+            :"Escolha o módulo para ver o Report Card. A Trilha não exibe boletim; use este ícone."}
+        </p>
+        <div className="text-xs muted mt-2">{course?.nome||"Curso"} · {menu.length} boletim(ns)</div>
+      </div>
+      {menu.length===0?(
+        <div className="glass rounded-2xl p-8 text-center muted">Nenhum Report Card configurado para este curso.</div>
+      ):(
+        <div className="space-y-2">
+          {menu.map(item=>(
+            <button key={item.id} type="button" className="btn rounded-2xl px-4 py-4 block w-full text-left" onClick={()=>setSelected(item)}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="chip w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><Icon name="file-check" size={18}/></div>
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate">{item.scope==="unit"?"Unidade":"Módulo"} · {item.label}</div>
+                    <div className="text-xs muted">{item.scope==="unit"?"Report Card da unidade":"Report Card do módulo"}</div>
+                  </div>
+                </div>
+                <Icon name="chevron-right" size={16} className="muted shrink-0"/>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DiarioSection({uid,isAdmin,contrato}){
   const courses=useCourses();
   const [entries,setEntries]=useState(null);
@@ -5958,7 +6048,7 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
             <div className="cosmic-card-progress"><strong>{progressGeral}%</strong>concluído</div>
           </div>
           <div className="cosmic-card-route">
-            {currentBook.items.map((item,idx)=>{
+            {currentBook.items.filter(it=>it.type!=="report_card"&&it.lessonType!=="report_card"&&!it.reportCard).map((item,idx)=>{
               const isReview=item.type==="review"||item.lessonType==="review";
               const isOutput=item.lessonType==="output";
               const sc=statusClassForLesson(item);
@@ -6831,11 +6921,12 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     {id:"trilha",     label:"Trilha",     icon:"map"},
     {id:"materiais",  label:"Materiais",  icon:"file-text"},
     {id:"diario",     label:"Diário",     icon:"book-open"},
+    {id:"reportcard", label:"Report Card",icon:"file-check"},
     {id:"financeiro", label:"Financeiro", icon:"dollar-sign"},
     {id:"recursos",   label:"Recursos",   icon:"link"},
   ];
 
-  const pageTitles={trilha:"Trilha",materiais:"Materiais",diario:"Diário",agenda:"Agenda",reposicoes:"Reposições",calendario:"Agenda",contato:"Contato",agendamento:"Reposições",financeiro:"Financeiro",presenca:"Confirmar aula"};
+  const pageTitles={trilha:"Trilha",materiais:"Materiais",diario:"Diário",reportcard:"Report Card",agenda:"Agenda",reposicoes:"Reposições",calendario:"Agenda",contato:"Contato",agendamento:"Reposições",financeiro:"Financeiro",presenca:"Confirmar aula"};
 
   function renderStudentPage(){
     if(studentPage==="dashboard")return <StudentDashboard uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} schedule={studentSchedule} onNavigate={navigateStudent} modulosOcultos={modulosOcultos}/>;
@@ -6855,6 +6946,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         )}
         {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
         {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
+        {studentPage==="reportcard"&&<StudentReportCardsSection uid={uid} profile={profile} contrato={profile.contrato} isAdmin={false}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
         {(studentPage==="agenda"||studentPage==="calendario")&&(
           <StudentAgendaPage uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro||FINANCEIRO_DEFAULT} schedule={studentSchedule} onNavigate={navigateStudent}/>
@@ -6963,6 +7055,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} contrato={profile.contrato}/>}
             {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={true} links={links}/>}
             {activeTab==="diario"&&<DiarioSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
+            {activeTab==="reportcard"&&<StudentReportCardsSection uid={uid} profile={profile} contrato={profile.contrato} isAdmin={true}/>}
           </>
         ):renderStudentPage()}
       </main>
