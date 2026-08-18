@@ -6678,7 +6678,7 @@ const BLANK_TRIAGEM={
   expectativas:[],objetivo:"",horasSemana:"",prazo:"",observacoes:"",
 };
 const DIAS_SEMANA=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
-const HORARIOS_AULA_OPTS=["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
+const HORARIOS_AULA_OPTS=["06:30","07:00","07:30","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","17:25","17:30","18:00","19:00","19:15","19:30","19:50","20:00","20:20","21:00"];
 function blankAulaSemanal(n){return{id:n||1,dia:"",horario:""};}
 function normalizeAulasSemanais(raw,diasAulas,horarioAulas){
   if(Array.isArray(raw)&&raw.length){
@@ -8723,7 +8723,7 @@ function AdminAgendaDashboard({students,onBack}){
 const REPO_STATUS={PENDENTE:"PENDENTE",AGENDADO:"AGENDADO",REPOSICAO_FEITA:"REPOSICAO_FEITA"};
 /* Must match JS_TO_DIA / DIAS_SEMANA names (NOT "seg"/"ter") */
 const PROF_WORKING_DAYS_DEFAULT=["Segunda","Terça","Quarta","Quinta","Sexta"];
-const PROF_WORKING_HOURS_DEFAULT=["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+const PROF_WORKING_HOURS_DEFAULT=["06:30","07:00","08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00","17:25","18:00","19:00","19:15","19:50","20:00"];
 function getProfessorAvailability(agendaDoc){
   const d=agendaDoc||{};
   const days=Array.isArray(d.workingDays)&&d.workingDays.length?d.workingDays:PROF_WORKING_DAYS_DEFAULT;
