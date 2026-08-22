@@ -1,0 +1,14 @@
+{
+  "id": "corporate-speech-m1-student",
+  "title": "Corporate Speech",
+  "subtitle": "Módulo 1 · Student Book · Units 1–8",
+  "brand": "The Fluency Studio",
+  "pages": 97,
+  "pagePattern": "pages/page-{nn}.png",
+  "logo": "logo.png",
+  "viewer": {
+    "engine": "St.PageFlip",
+    "pageTurn": "magazine-3d-page-flip",
+    "dpi": 160
+  }
+}

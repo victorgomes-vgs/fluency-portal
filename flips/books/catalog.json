@@ -44,6 +44,15 @@
       "cover": "books/reflexive-mind-m1/pages/page-01.png",
       "logo": "books/reflexive-mind-m1/logo.png",
       "folder": "books/reflexive-mind-m1"
+    },
+    {
+      "id": "corporate-speech-m1",
+      "title": "Corporate Speech",
+      "subtitle": "Módulo 1 · Student Book",
+      "pages": 97,
+      "cover": "books/corporate-speech-m1/pages/page-01.png",
+      "logo": "books/corporate-speech-m1/logo.png",
+      "folder": "books/corporate-speech-m1"
     }
   ]
 }

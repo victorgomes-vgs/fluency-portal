@@ -1,0 +1,68 @@
+========================================================
+  Corporate Speech — Student Book Flipbook (Módulo 1)
+  The Fluency Studio
+========================================================
+
+O que é
+-------
+Flipbook 3D de alta qualidade do livro do aluno:
+  - Lições 1–32 + Reviews 1–5
+  - Páginas PNG em alta resolução
+  - Motor St.PageFlip (mesmo padrão Reflexive / Proficiency)
+  - Índice por unidade, miniaturas, atalhos, tela cheia
+
+
+ABRIR NO COMPUTADOR
+-------------------
+NÃO abra index.html com duplo clique (file://).
+
+No PowerShell, dentro desta pasta:
+
+  python -m http.server 8080
+
+Depois abra:
+
+  http://localhost:8080
+
+
+ATALHOS
+-------
+  ← / → / Espaço   virar página
+  Home / End       primeira / última
+  F                tela cheia
+  Esc              fechar índice
+
+
+DEEP LINKS
+----------
+  ?lesson=5
+  ?review=2
+  ?key=licao-12
+  ?page=20
+  ?embed=1          (sem splash — útil no portal)
+
+
+REGENERAR PÁGINAS
+-----------------
+Se atualizar algum PDF em licao-XX/student ou review-XX/student:
+
+  python scripts/render_pages.py
+
+Isso recria pages/, thumbs/, book.json, page-map.json e lessons.js.
+
+
+CONTEÚDO
+--------
+Fonte principal: FFB-*.pdf de cada licao-XX/student
+(padrão Fluency Studio: barra lateral, watermark Fs, pills).
+Reviews: review-XX/student/lesson.pdf.
+
+Ordem do livro:
+  L1–6 + R1 · L7–12 + R2 · L13–18 + R3 · L19–24 + R4 · L25–30 + R5 · L31–32
+
+
+WORKBOOK
+--------
+Este pacote é só o Student Book. O workbook fica para depois.
+
+========================================================

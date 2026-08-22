@@ -1,0 +1,8 @@
+{
+  "title": "Reflexive Mind",
+  "subtitle": "Módulo 1 · Lições 1–30 + Reviews 1–5",
+  "logo": "logo.png",
+  "pages": 66,
+  "id": "reflexive-mind-m1",
+  "pagePattern": "pages/page-{nn}.png"
+}

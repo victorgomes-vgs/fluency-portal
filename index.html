@@ -849,6 +849,55 @@
     .sd-apr-lbl{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sd-surface-muted,#58718A);line-height:1;}
     .sd-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .sd-scroll::-webkit-scrollbar{display:none;}
+    
+    /* Student side menu */
+    .student-shell{display:flex;align-items:stretch;min-height:calc(100vh - 52px);}
+    .student-side-nav{
+      width:232px;flex-shrink:0;position:sticky;top:52px;align-self:flex-start;max-height:calc(100vh - 52px);
+      overflow:auto;padding:14px 12px 24px;z-index:40;
+      background:linear-gradient(180deg,rgba(8,18,36,.92),rgba(5,12,26,.88));
+      border-right:1px solid rgba(255,255,255,.08);backdrop-filter:blur(14px);
+    }
+    [data-theme="light"] .student-side-nav{background:linear-gradient(180deg,#fff,rgba(240,247,255,.96));border-right-color:rgba(23,64,130,.12);}
+    .student-side-nav-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 8px 12px;}
+    .student-side-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#55b8ff;}
+    [data-theme="light"] .student-side-kicker{color:#1a73e8;}
+    .student-side-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:var(--font,#e8eef4);}
+    .student-side-hint{
+      margin:0 8px 12px;padding:8px 10px;border-radius:12px;font-size:11px;line-height:1.35;
+      background:rgba(85,184,255,.12);border:1px solid rgba(85,184,255,.28);color:#cfe9ff;
+    }
+    [data-theme="light"] .student-side-hint{background:rgba(26,115,232,.08);border-color:rgba(26,115,232,.2);color:#174082;}
+    .student-side-item{
+      width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:10px 10px;border-radius:12px;
+      border:1px solid transparent;background:transparent;color:inherit;cursor:pointer;margin-bottom:4px;
+    }
+    .student-side-item:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);}
+    .student-side-item.active{background:rgba(85,184,255,.14);border-color:rgba(85,184,255,.35);}
+    [data-theme="light"] .student-side-item:hover{background:rgba(26,115,232,.06);}
+    [data-theme="light"] .student-side-item.active{background:rgba(26,115,232,.1);border-color:rgba(26,115,232,.28);}
+    .student-side-item .side-ico{width:34px;height:34px;border-radius:10px;flex:0 0 34px;}
+    .student-side-item .side-label{font-size:13px;font-weight:700;}
+    .student-side-item .side-sub{font-size:10px;opacity:.7;margin-top:1px;}
+    .student-side-toggle{
+      display:none;position:fixed;z-index:60;left:12px;bottom:88px;width:48px;height:48px;border-radius:16px;
+      border:1px solid rgba(85,184,255,.35);background:rgba(8,18,36,.92);color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);
+      align-items:center;justify-content:center;cursor:pointer;
+    }
+    .student-side-toggle .pulse-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 0 0 rgba(34,211,238,.7);animation:sidePulse 1.8s infinite;}
+    @keyframes sidePulse{0%{box-shadow:0 0 0 0 rgba(34,211,238,.55)}70%{box-shadow:0 0 0 10px rgba(34,211,238,0)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}
+    .student-main-col{flex:1;min-width:0;}
+    .student-side-scrim{display:none;}
+    @media (max-width:960px){
+      .student-side-nav{
+        position:fixed;left:0;top:0;bottom:0;max-height:none;transform:translateX(-105%);transition:transform .28s ease;z-index:80;margin:0;padding-top:64px;width:min(280px,86vw);
+      }
+      .student-side-nav.open{transform:translateX(0);}
+      .student-side-scrim{display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);}
+      .student-side-scrim.open{display:block;}
+      .student-side-toggle{display:inline-flex;}
+    }
+
     .sd-nav-carousel{flex-shrink:0;width:68px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;padding:0;color:inherit;}
     .sd-nav-carousel:active .sd-nav-icon{transform:scale(.96);}
     .sd-chip{flex-shrink:0;width:64px;padding:10px 8px;border-radius:12px;text-align:center;border:1.5px solid rgba(255,255,255,.14);cursor:pointer;background:rgba(255,255,255,.06);transition:filter .12s,box-shadow .12s;font-family:inherit;color:inherit;}
@@ -6671,6 +6720,54 @@ function StatMetricRow({icon,iconBg,iconColor,imageMeta,value,label,pct,donutCol
   );
 }
 
+
+function StudentSideNav({page,onNavigate}){
+  const [open,setOpen]=useState(false);
+  const subs={
+    dashboard:"Visão geral",
+    trilha:"Sua jornada",
+    materiais:"Livro / flipbook",
+    diario:"Presenças",
+    reportcard:"Notas",
+    financeiro:"Pagamentos",
+    agenda:"Calendário",
+    reposicoes:"Reposições",
+    contato:"Falar com a escola",
+  };
+  const items=[{id:"dashboard",label:"Início",sub:subs.dashboard}, ...STUDENT_NAV.map(n=>({id:n.id,label:n.label,sub:subs[n.id]||"Abrir",meta:n}))];
+  const seen=new Set();
+  const nav=items.filter(it=>{if(seen.has(it.id))return false;seen.add(it.id);return true;});
+  return(
+    <>
+      <button type="button" className="student-side-toggle" onClick={()=>setOpen(true)} aria-label="Abrir menu do portal">
+        <Icon name="menu" size={20}/><span className="pulse-dot" aria-hidden="true"/>
+      </button>
+      <div className={"student-side-scrim"+(open?" open":"")} onClick={()=>setOpen(false)}/>
+      <aside className={"student-side-nav"+(open?" open":"")} aria-label="Menu do aluno">
+        <div className="student-side-nav-head">
+          <div>
+            <div className="student-side-kicker">Portal do aluno</div>
+            <div className="student-side-title">Navegação</div>
+          </div>
+          <button type="button" className="btn rounded-lg" style={{width:34,height:34,padding:0,display:"inline-flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setOpen(false)} aria-label="Fechar menu"><Icon name="x" size={16}/></button>
+        </div>
+        <div className="student-side-hint">Este menu leva a todas as áreas do portal. No celular, use o botão flutuante com o pontinho azul.</div>
+        {nav.map(it=>{
+          const meta=it.meta||STUDENT_NAV.find(n=>n.id===it.id)||{image:"assets/icons/cosmic/trilha.webp",crop:1.1,color:"#55b8ff",label:it.label};
+          const active=page===it.id||(page==="calendario"&&it.id==="agenda")||(page==="agendamento"&&it.id==="reposicoes")||(page==="dashboard"&&it.id==="dashboard");
+          return(
+            <button key={it.id} type="button" className={"student-side-item"+(active?" active":"")} onClick={()=>{onNavigate(it.id);setOpen(false);}}>
+              <CosmicSectionImage meta={meta} className="side-ico"/>
+              <span><div className="side-label">{it.label}</div><div className="side-sub">{it.sub}</div></span>
+            </button>
+          );
+        })}
+      </aside>
+    </>
+  );
+}
+
+
 function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor,totalLicoes,totalTarefas}){
   const lessonPct=Math.min(100,Math.round((licoesConcluidas/Math.max(1,totalLicoes||1))*100));
   const taskPct=Math.min(100,Math.round((tarefasFeitas/Math.max(1,totalTarefas||1))*100));
@@ -7331,18 +7428,7 @@ const IVI_TUTORIAL_STUDENT=`**Tutorial do portal — passo a passo**
 
 Com calma, estes são os principais espaços do seu portal:
 
-1. **Início** — resumo do dia: progresso, financeiro e atalhos.
-2. **Trilha** — sua jornada por módulos e lições. Em cada lição você pode encontrar Lição Online, Tarefa, PDF e material de aula. Status comuns: Pendente, Em andamento, Concluída e, no dia da aula, **Atual**.
-3. **Materiais** — livros digitais e recursos do seu curso. Alunos de **Proficiency FF** veem o flipbook *Objective Proficiency — Units 1–3* (virar página, zoom).
-4. **Diário** — histórico oficial de cada aula: presença/falta, notas **F/A/L/E** (0 a 100%) e observações.
-5. **Agenda** — calendário das suas aulas regulares, reposições agendadas e marcação do vencimento. Aqui também fica o fluxo de **Agendar Reposição**.
-6. **Reposições** — lista do que está a fazer, já agendado ou vencido, com as regras do contrato.
-7. **Financeiro** — parcelas, vencimentos, status e links de boleto/Pix.
-8. **Contato** — WhatsApp do professor Victor.
-
-**Dica de tema:** no topo, o ícone sol/lua alterna claro, escuro ou automático. Sua preferência fica salva.
-
-Se quiser, peça: “como agendar reposição”, “o que é FALE” ou “onde está o livro”.`;
+0. **Menu lateral** — no desktop fica à esquerda;
 
 const IVI_TUTORIAL_ADMIN=`**Tutorial admin — o que está no ar hoje**
 
@@ -7465,6 +7551,12 @@ const IVI_KB=[
   {keys:["pendencias","pendências","pendencia diario","diário pendente","aula sem diario","lancar diario pendente"],audience:["admin"],answer:"Em **Pendências** aparecem aulas da grade que **já passaram** (pelo relógio de São Paulo do portal) e ainda **não têm lançamento no Diário**. A trilha pode ficar na mesma lição por vários dias — o critério é o Diário. Toque no item para abrir a ficha do aluno na aba Diário. O menu esquerdo lista todas as áreas do painel e pode ser escondido/mostrado em qualquer tela admin."},
   {keys:["relogio","relógio","hora certa","sao paulo","são paulo","sincronizar hora"],audience:["admin"],answer:"No canto do header admin fica o **relógio do estúdio** (fuso America/Sao_Paulo), sincronizado por fonte externa (não usa só o relógio do computador). Aulas de hoje e **Próxima aula** seguem esse horário."},
   {keys:["diario admin","lancar diario","lançar diário","status falta","fale admin"],audience:["admin"],answer:"No diário do aluno, use os status oficiais: Presença; Ausência com reposição; Falta do aluno com/sem reposição; Falta do professor. Lance **F/A/L/E** em 0–100%. Status com direito a repor atualizam os contadores de **Reposições** do aluno. Motivos de “com”/“sem” reposição ajudam o histórico a ficar claro."},
+
+  {keys:["menu","menu lateral","onde fica o menu","navegacao","navegação","sidebar aluno","como navegar portal","acessos"],audience:["student","all"],answer:"No **portal do aluno** há um **menu lateral**. No desktop ele fica à esquerda; no celular aparece o botão flutuante com o **pontinho azul**. Por ele você vai a: **Início**, **Trilha**, **Materiais** (flipbook), **Diário**, **Report Card**, **Financeiro**, **Agenda**, **Reposições** e **Contato**."},
+  {keys:["zoom","aumentar pagina","página pequena","nao consigo ler","não consigo ler","flipbook zoom","arrastar pagina","arrastar página","mão na pagina","livro pequeno"],audience:["student","all"],answer:"No **livro digital (Materiais)** use o **slider de zoom** (ou botões + / −) até **250%**. Com zoom acima de 100%, **arraste a página** com o dedo ou mouse para cima/baixo/lados. Atalhos: `+` `−` zoom, `0` reset, `Ctrl` + scroll."},
+  {keys:["constelacao","constelação","tarefas no inicio","tarefas dashboard","media das tarefas","média das tarefas"],audience:["student","all"],answer:"No **Início**, alunos do **Fluency General** veem o card **Tarefas** com total, feitas, média /100, gráfico e a **constelação** das tarefas input. Cada orb abre a mesma **Tarefa Online** da Trilha."},
+  {keys:["calendario google style","agenda semana","ver horario","horário da aula na agenda"],audience:["student","all"],answer:"A **Agenda** usa visual no estilo Google Calendar (semana com horários). Toque em uma aula para abrir os **materiais da Trilha**. Reposições ficam em **Reposições**."},
+
   {keys:["tema","dark","light","escuro","claro","auto"],audience:["all"],answer:"No canto superior direito fica o seletor de tema: escuro, claro ou automático (segue o sistema). A preferência é salva no dispositivo."},
   {keys:["ivi","quem e voce","quem é você","o que voce faz","o que você faz","assistente"],audience:["all"],answer:`Sou a **iVi**, assistente do portal da Fluency Studio. Explico com calma como usar Trilha, Materiais, Diário, Agenda, Reposições, Financeiro e, no painel admin, Relatórios e o calendário principal. ${IVI_TONE_NOTE}`},
 ];
@@ -7472,13 +7564,13 @@ const IVI_KB=[
 function iviWelcome(mode){
   if(mode==="visitor")return "Olá. Sou a **iVi**, assistente da Fluency Studio. Posso explicar cursos, o método PEH 5.0, matrícula e a aula demonstrativa gratuita — sempre com calma. Também ajudo com dúvidas gerais de inglês. Como posso orientar você?";
   if(mode==="admin")return "Olá, Victor. Sou a **iVi**. Estou atualizada com Agenda (calendário interno), Reposições, aulas semanais → gratuitas do contrato, Diário F/A/L/E, Relatórios/Report Card e Materiais/flipbooks. Em que posso ajudar, com calma?";
-  return "Olá. Sou a **iVi**, sua assistente no portal. Posso ensinar Trilha, Materiais, Diário, Agenda, Reposições, Financeiro e as regras de reposição — com calma e clareza. Se quiser, peça o **tutorial do portal**.";
+  return "Olá. Sou a **iVi**, sua assistente no portal. Conheço **todas as áreas**: menu lateral, Início, Trilha, Materiais/flipbook (zoom e arrastar), Diário, Report Card, Financeiro, Agenda, Reposições, Contato e as regras de reposição/FALE. Peça o **tutorial do portal** ou diga a área.";
 }
 
 function iviQuickChips(mode){
   if(mode==="visitor")return["Como me matricular?","Aula demonstrativa","Quais os cursos?","Falar com Victor"];
   if(mode==="admin")return["Tutorial admin","Regras de reposição","Report Card FALE","Calendário principal"];
-  return["Tutorial do portal","Como agendar reposição","O que é FALE","Materiais / livro"];
+  return["Tutorial do portal","Menu lateral","Materiais / zoom do livro","Como agendar reposição","O que é FALE"];
 }
 
 function iviRespond(question,mode){
@@ -7887,7 +7979,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
   const studentDisplayName=getFullName(profile.name||profile.nome||"Aluno");
 
   return(
-    <div className={"min-h-screen pb-20"+(showStudentUi?" student-universe":"")}>
+    <div className={"min-h-screen pb-20"+(showStudentUi?" student-universe student-has-side":"")}>
       <LogoBar
         onBack={isAdmin?(viewAsStudent?exitViewAsStudent:(onBack||null)):null}
         isAdmin={isAdmin&&!viewAsStudent}
@@ -7917,6 +8009,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         />
       )}
 
+      {showStudentUi&&<StudentSideNav page={studentPage} onNavigate={(id)=>navigateStudent(id==="dashboard"?"dashboard":id)} />}
       <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="dashboard"?" student-dashboard-main":"")+(showStudentUi&&studentPage==="materiais"&&studentFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
         {showStudentUi&&(
           <div className="student-portal-context">

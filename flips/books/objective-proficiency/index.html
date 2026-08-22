@@ -277,6 +277,30 @@
     .header-subtitle{display:none}
     .control-btn{width:34px;height:34px}
   }
+/* FLIPBOOK_UX_V2 */
+
+  .zoom-slider-wrap{display:flex;align-items:center;gap:8px;min-width:min(220px,42vw);padding:0 4px}
+  .zoom-slider{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;
+    background:rgba(255,255,255,.18);outline:none;cursor:pointer;
+  }
+  .zoom-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
+    background:linear-gradient(135deg,var(--teal),var(--teal-2,#14b8a6));border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);
+  }
+  .zoom-slider::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;background:var(--teal);border:2px solid #fff;
+  }
+  .flipbook-main.is-panning{cursor:grab}
+  .flipbook-main.is-panning.dragging{cursor:grabbing}
+  .flipbook-main.is-panning .flipbook-wrapper{transition:none}
+  .pan-hint{
+    position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:25;
+    font-size:11px;color:var(--muted);background:rgba(7,11,18,.72);border:1px solid var(--line);
+    padding:6px 10px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .2s;
+  }
+  .pan-hint.show{opacity:1}
+
   html.embed-mode .flipbook-footer{display:none}
   html.embed-mode .splash-screen{
     background:
@@ -334,6 +358,7 @@
     <div class="flipbook-wrapper" id="flipbookWrapper">
       <div class="flipbook-element" id="flipbook"></div>
     </div>
+    <div class="pan-hint" id="panHint">Arraste a página com o dedo ou mouse para ler · Espaço+arrastar</div>
   </main>
 
   <div class="drawer-scrim" id="scrim"></div>
@@ -375,7 +400,10 @@
         <button class="control-btn" id="zoomOutBtn" title="Reduzir">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M8 11h6"/></svg>
         </button>
-        <span class="zoom-label" id="zoomLabel">100%</span>
+        <div class="zoom-slider-wrap" title="Zoom">
+          <input type="range" class="zoom-slider" id="zoomSlider" min="50" max="250" step="5" value="100" aria-label="Zoom" />
+          <span class="zoom-label" id="zoomLabel">100%</span>
+        </div>
         <button class="control-btn" id="zoomInBtn" title="Ampliar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>
         </button>
@@ -597,7 +625,7 @@ function initFlipbook(){
     flippingTime: 1050,
     useMouseEvents: true,
     showPageCorners: true,
-    disableFlipByClick: false,
+    disableFlipByClick: true,
     mobileScrollSupport: true,
     swipeDistance: 28,
     usePortrait: true,
@@ -634,7 +662,9 @@ function applyFit(){
   const wrap=document.querySelector(".stf__wrapper");
   const bw=(wrap && wrap.offsetWidth) ? wrap.offsetWidth : (isPortrait?PAGE_W:PAGE_W*2);
   const bh=(wrap && wrap.offsetHeight) ? wrap.offsetHeight : PAGE_H;
-  fitScale=Math.min(availW/bw, availH/bh, 1.18);
+  fitScale=Math.min(availW/bw, availH/bh, 1.85);
+  if(!canPan()) resetPan();
+  updatePanHint();
   applyTransform();
 }
 function applyTransform(){
@@ -764,6 +794,61 @@ const lp=parseInt(q.get("page")||"",10);
 const ll=parseInt(q.get("lesson")||"",10);
 if(lp>=1 && lp<=TOTAL_PAGES) pendingStart=lp-1;
 else if(ll){ const hit=LESSONS.find(x=>x.n===ll); if(hit) pendingStart=hit.start; }
+
+
+(function setupPan(){
+  const main=$("main");
+  if(!main) return;
+  function onDown(ev){
+    if(!canPan()) return;
+    if(ev.target && (ev.target.closest("button") || ev.target.closest("input") || ev.target.closest(".index-drawer"))) return;
+    // Primary button / touch only
+    if(ev.pointerType==="mouse" && ev.button!==0 && !spacePan) return;
+    panning=true;
+    panStartX=ev.clientX; panStartY=ev.clientY;
+    panOriginX=panX; panOriginY=panY;
+    main.classList.add("dragging");
+    try{ main.setPointerCapture(ev.pointerId); }catch(e){}
+    ev.preventDefault();
+  }
+  function onMove(ev){
+    if(!panning) return;
+    panX=panOriginX+(ev.clientX-panStartX);
+    panY=panOriginY+(ev.clientY-panStartY);
+    applyTransform();
+  }
+  function onUp(ev){
+    if(!panning) return;
+    panning=false;
+    main.classList.remove("dragging");
+    try{ main.releasePointerCapture(ev.pointerId); }catch(e){}
+  }
+  main.addEventListener("pointerdown", onDown, {passive:false});
+  main.addEventListener("pointermove", onMove, {passive:false});
+  main.addEventListener("pointerup", onUp);
+  main.addEventListener("pointercancel", onUp);
+  window.addEventListener("keydown", e=>{
+    if(e.code==="Space" && !["INPUT","TEXTAREA"].includes((e.target.tagName||""))){ spacePan=true; }
+    if((e.key==="+"||e.key==="=") && !["INPUT","TEXTAREA"].includes((e.target.tagName||""))) setZoom(zoom+ZOOM_STEP);
+    if(e.key==="-" && !["INPUT","TEXTAREA"].includes((e.target.tagName||""))) setZoom(zoom-ZOOM_STEP);
+    if(e.key==="0" && !["INPUT","TEXTAREA"].includes((e.target.tagName||""))){ resetPan(); setZoom(100); }
+  });
+  window.addEventListener("keyup", e=>{ if(e.code==="Space") spacePan=false; });
+  // Wheel zoom when ctrl/cmd, else pan vertically when zoomed
+  main.addEventListener("wheel", e=>{
+    if(e.ctrlKey || e.metaKey){
+      e.preventDefault();
+      setZoom(zoom + (e.deltaY<0 ? ZOOM_STEP : -ZOOM_STEP));
+      return;
+    }
+    if(canPan()){
+      e.preventDefault();
+      panY -= e.deltaY;
+      panX -= e.deltaX;
+      applyTransform();
+    }
+  }, {passive:false});
+})();
 
 function tryInit(retries){
   if(typeof St!=="undefined" && St.PageFlip){ initFlipbook(); }

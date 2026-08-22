@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Reflexive Mind — Módulo 1 | Fluency Studio</title>
+<link rel="icon" href="logo.png" />
+<script src="page-flip.browser.js"></script>
+<style>
+:root{
+  --bg:#0a0510; --panel:rgba(20,10,18,.9); --panel-solid:#140a12;
+  --accent:#f59e0b; --accent-2:#fb923c; --accent-deep:#c2410c;
+  --neon:#ff2a55; --ink:#f7f4f8; --muted:#a89bb0; --line:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#07040c}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--ink);overflow:hidden;user-select:none;
+  background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(245,158,11,.18),transparent 55%),
+  radial-gradient(ellipse 40% 40% at 90% 80%,rgba(255,42,85,.1),transparent 50%),#07040c}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+img{display:block}
+.flipbook-container{position:fixed;inset:0;display:flex;flex-direction:column}
+.splash-screen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 30%,rgba(245,158,11,.2),transparent 50%),#07040c;transition:opacity .7s}
+.splash-screen.hide{opacity:0;pointer-events:none}
+.splash-content{text-align:center;padding:28px;max-width:480px;background:rgba(20,10,18,.75);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(14px)}
+.splash-logo-img{width:84px;height:84px;border-radius:20px;margin:0 auto;box-shadow:0 0 40px rgba(245,158,11,.35)}
+.splash-kicker{margin-top:14px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+.splash-title{margin-top:8px;font-size:clamp(32px,7vw,48px);font-weight:800;
+  background:linear-gradient(120deg,#fff 0%,var(--accent) 55%,var(--neon) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.splash-subtitle{margin-top:10px;color:var(--muted);font-size:14px}
+.splash-btn{margin-top:18px;padding:12px 22px;border-radius:999px;font-weight:700;font-size:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#1a0a00;box-shadow:0 8px 24px rgba(245,158,11,.35)}
+.flipbook-header{position:relative;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 14px;background:linear-gradient(180deg,rgba(7,4,12,.95),transparent);backdrop-filter:blur(8px)}
+.header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.header-logo{width:34px;height:34px;border-radius:10px}
+.header-title{font-size:14px;font-weight:700}
+.header-subtitle{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:8px}
+.lesson-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
+  background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);font-size:12px;font-weight:600;max-width:min(320px,40vw)}
+.lesson-chip .chip-n{color:var(--accent)}
+.lesson-chip .chip-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.header-page-indicator{font-size:12px;color:var(--muted);padding:7px 12px;border-radius:99px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05)}
+.icon-btn:hover{background:rgba(255,255,255,.12)}
+.flipbook-main{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 12px;min-height:0}
+.flipbook-wrapper{width:min(560px,94vw);transform-origin:center center}
+@media(min-width:1100px){.flipbook-wrapper{width:min(1100px,96vw)}}
+.flipbook-element{width:100%;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.flip-page{overflow:hidden;background:#120810}
+.flip-page-img{width:100%;height:100%;object-fit:contain;background:#0a0510;pointer-events:none}
+.flipbook-controls{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);z-index:40;
+  display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;
+  background:rgba(20,10,18,.88);border:1px solid var(--line);backdrop-filter:blur(12px)}
+.ctrl-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);font-size:18px}
+.ctrl-btn:hover{background:rgba(245,158,11,.2)}
+.drawer-scrim{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-scrim.open{opacity:1;pointer-events:auto}
+.index-drawer{position:fixed;z-index:80;top:0;left:0;bottom:0;width:min(400px,92vw);background:var(--panel-solid);
+  border-right:1px solid var(--line);transform:translateX(-104%);transition:transform .3s;display:flex;flex-direction:column}
+.index-drawer.open{transform:translateX(0)}
+.drawer-head{padding:16px;border-bottom:1px solid var(--line)}
+.drawer-search{width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;font:inherit;font-size:13px}
+.drawer-list{flex:1;overflow:auto;padding:10px}
+.lesson-row{width:100%;display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;text-align:left;
+  padding:10px;border-radius:12px;margin-bottom:6px;background:rgba(255,255,255,.03)}
+.lesson-row:hover{background:rgba(245,158,11,.1)}
+.lesson-row.current{border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.12)}
+.lesson-row .ln{font-weight:800;color:var(--accent)}
+.lesson-row .lt{font-size:13px;font-weight:600}
+.lesson-row .ls{font-size:11px;color:var(--muted);margin-top:2px}
+.thumb-rail{position:fixed;bottom:5.2rem;left:0;right:0;z-index:35;padding:0 12px}
+.thumb-scroll{display:flex;gap:8px;overflow-x:auto;padding:8px 4px}
+.thumbnail-btn{flex:0 0 auto;width:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;background:#1a0e14}
+.thumbnail-btn.current{border-color:var(--accent)}
+.thumbnail-img{width:64px;height:90px;object-fit:cover}
+html.embed-mode .splash-screen{display:none!important}
+html.embed-mode .flipbook-footer{display:none}
+.flipbook-footer{position:fixed;bottom:0;left:0;right:0;text-align:center;padding:4px;font-size:10px;color:var(--muted);pointer-events:none}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;padding:8px 14px;border-radius:999px;
+  background:rgba(245,158,11,.95);color:#1a0a00;font-size:12px;font-weight:700;opacity:0;transition:opacity .2s}
+#toast.show{opacity:1}
+
+/* FLIPBOOK_UX_V2 compact */
+.flipbook-main{position:relative;overflow:hidden}
+.flipbook-wrapper{transform-origin:center center}
+.flipbook-controls{flex-wrap:wrap;max-width:min(720px,96vw);justify-content:center}
+.zoom-slider-wrap{display:flex;align-items:center;gap:8px;min-width:160px;max-width:240px}
+.zoom-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:rgba(255,255,255,.18);outline:none;cursor:pointer}
+.zoom-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid currentColor}
+.zoom-label{font-size:11px;min-width:40px;text-align:center;opacity:.85}
+.pan-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:25;font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.12);opacity:0;pointer-events:none;transition:opacity .2s}
+.pan-hint.show{opacity:1}
+.flipbook-main.is-panning{cursor:grab}
+.flipbook-main.is-panning.dragging{cursor:grabbing}
+
+</style>
+</head>
+<body>
+<div class="flipbook-container">
+  <div class="splash-screen" id="splash">
+    <div class="splash-content">
+      <img class="splash-logo-img" src="logo.png" alt="Fs" onerror="this.style.display='none'"/>
+      <div class="splash-kicker">Fluency Studio</div>
+      <div class="splash-title">Reflexive Mind</div>
+      <p class="splash-subtitle">Módulo 1 · Lições 1–30 + Reviews 1–5 · B1→B2</p>
+      <button class="splash-btn" id="btnStart" type="button">Abrir o livro</button>
+    </div>
+  </div>
+  <header class="flipbook-header">
+    <div class="header-left">
+      <img class="header-logo" src="logo.png" alt="" onerror="this.style.display='none'"/>
+      <div>
+        <div class="header-title">Reflexive Mind</div>
+        <div class="header-subtitle">Módulo 1</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="lesson-chip" id="lessonChip"><span class="chip-n">—</span><span class="chip-t">Student Book</span></div>
+      <div class="header-page-indicator"><span id="pageCur">1</span> / <span id="pageTotal">66</span></div>
+      <button class="icon-btn" id="btnIndex" type="button" title="Índice">☰</button>
+    </div>
+  </header>
+  <main class="flipbook-main">
+    <div class="flipbook-wrapper" id="wrapper">
+      <div class="flipbook-element" id="flipbook"></div>
+    </div>
+  </main>
+  <div class="thumb-rail"><div class="thumb-scroll" id="thumbnailsScroll"></div></div>
+  <div class="flipbook-controls">
+    <button class="ctrl-btn" id="btnPrev" type="button">‹</button>
+    <button class="ctrl-btn" id="btnNext" type="button">›</button>
+    <button class="ctrl-btn" id="btnZoomOut" type="button" title="Reduzir">−</button>
+    <div class="zoom-slider-wrap"><input class="zoom-slider" id="zoomSlider" type="range" min="50" max="250" step="5" value="100" aria-label="Zoom"/><span class="zoom-label" id="zoomLabel">100%</span></div>
+    <button class="ctrl-btn" id="btnZoomIn" type="button" title="Ampliar">+</button>
+
+  </div>
+  <footer class="flipbook-footer">© Fluency Studio · Reflexive Mind Módulo 1</footer>
+</div>
+<div class="drawer-scrim" id="scrim"></div>
+<aside class="index-drawer" id="drawer">
+  <div class="drawer-head">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <strong style="letter-spacing:.08em;text-transform:uppercase;font-size:13px">Índice</strong>
+      <button class="icon-btn" id="btnCloseDrawer" type="button">✕</button>
+    </div>
+    <input class="drawer-search" id="lessonSearch" type="search" placeholder="Buscar lição…" />
+  </div>
+  <div class="drawer-list" id="lessonList"></div>
+</aside>
+<div id="toast"></div>
+<script>
+"use strict";
+const TOTAL_PAGES = 66;
+const LS_LAST = "rm-m1-last";
+const LESSONS = [
+  { n:1, type:'lesson', key:'licao-01', title:'Lição 1', short:'Student book · Lesson 1', start:1, kinds:['a','b','b'] },
+  { n:2, type:'lesson', key:'licao-02', title:'Lição 2', short:'Student book · Lesson 2', start:4, kinds:['a','b'] },
+  { n:3, type:'lesson', key:'licao-03', title:'Lição 3', short:'Student book · Lesson 3', start:6, kinds:['a','b'] },
+  { n:4, type:'lesson', key:'licao-04', title:'Lição 4', short:'Student book · Lesson 4', start:8, kinds:['a','b'] },
+  { n:5, type:'lesson', key:'licao-05', title:'Lição 5', short:'Student book · Lesson 5', start:10, kinds:['a','b'] },
+  { n:6, type:'lesson', key:'licao-06', title:'Lição 6', short:'Student book · Lesson 6', start:12, kinds:['a','b'] },
+  { n:1, type:'review', key:'review-01', title:'Review 1', short:'Revisão 1', start:14, kinds:['a'] },
+  { n:7, type:'lesson', key:'licao-07', title:'Lição 7', short:'Student book · Lesson 7', start:15, kinds:['a','b'] },
+  { n:8, type:'lesson', key:'licao-08', title:'Lição 8', short:'Student book · Lesson 8', start:17, kinds:['a','b'] },
+  { n:9, type:'lesson', key:'licao-09', title:'Lição 9', short:'Student book · Lesson 9', start:19, kinds:['a','b'] },
+  { n:10, type:'lesson', key:'licao-10', title:'Lição 10', short:'Student book · Lesson 10', start:21, kinds:['a','b'] },
+  { n:11, type:'lesson', key:'licao-11', title:'Lição 11', short:'Student book · Lesson 11', start:23, kinds:['a','b'] },
+  { n:12, type:'lesson', key:'licao-12', title:'Lição 12', short:'Student book · Lesson 12', start:25, kinds:['a','b'] },
+  { n:2, type:'review', key:'review-02', title:'Review 2', short:'Revisão 2', start:27, kinds:['a'] },
+  { n:13, type:'lesson', key:'licao-13', title:'Lição 13', short:'Student book · Lesson 13', start:28, kinds:['a','b'] },
+  { n:14, type:'lesson', key:'licao-14', title:'Lição 14', short:'Student book · Lesson 14', start:30, kinds:['a','b'] },
+  { n:15, type:'lesson', key:'licao-15', title:'Lição 15', short:'Student book · Lesson 15', start:32, kinds:['a','b'] },
+  { n:16, type:'lesson', key:'licao-16', title:'Lição 16', short:'Student book · Lesson 16', start:34, kinds:['a','b'] },
+  { n:17, type:'lesson', key:'licao-17', title:'Lição 17', short:'Student book · Lesson 17', start:36, kinds:['a','b'] },
+  { n:18, type:'lesson', key:'licao-18', title:'Lição 18', short:'Student book · Lesson 18', start:38, kinds:['a','b'] },
+  { n:3, type:'review', key:'review-03', title:'Review 3', short:'Revisão 3', start:40, kinds:['a'] },
+  { n:19, type:'lesson', key:'licao-19', title:'Lição 19', short:'Student book · Lesson 19', start:41, kinds:['a','b'] },
+  { n:20, type:'lesson', key:'licao-20', title:'Lição 20', short:'Student book · Lesson 20', start:43, kinds:['a','b'] },
+  { n:21, type:'lesson', key:'licao-21', title:'Lição 21', short:'Student book · Lesson 21', start:45, kinds:['a','b'] },
+  { n:22, type:'lesson', key:'licao-22', title:'Lição 22', short:'Student book · Lesson 22', start:47, kinds:['a','b'] },
+  { n:23, type:'lesson', key:'licao-23', title:'Lição 23', short:'Student book · Lesson 23', start:49, kinds:['a','b'] },
+  { n:24, type:'lesson', key:'licao-24', title:'Lição 24', short:'Student book · Lesson 24', start:51, kinds:['a','b'] },
+  { n:4, type:'review', key:'review-04', title:'Review 4', short:'Revisão 4', start:53, kinds:['a'] },
+  { n:25, type:'lesson', key:'licao-25', title:'Lição 25', short:'Student book · Lesson 25', start:54, kinds:['a','b'] },
+  { n:26, type:'lesson', key:'licao-26', title:'Lição 26', short:'Student book · Lesson 26', start:56, kinds:['a','b'] },
+  { n:27, type:'lesson', key:'licao-27', title:'Lição 27', short:'Student book · Lesson 27', start:58, kinds:['a','b'] },
+  { n:28, type:'lesson', key:'licao-28', title:'Lição 28', short:'Student book · Lesson 28', start:60, kinds:['a','b'] },
+  { n:29, type:'lesson', key:'licao-29', title:'Lição 29', short:'Student book · Lesson 29', start:62, kinds:['a','b'] },
+  { n:30, type:'lesson', key:'licao-30', title:'Lição 30', short:'Student book · Lesson 30', start:64, kinds:['a','b'] },
+  { n:5, type:'review', key:'review-05', title:'Review 5', short:'Revisão 5', start:66, kinds:['a'] },
+];
+const $ = id => document.getElementById(id);
+let currentPage = 0, pf = null, pendingStart = 0;
+const EMBED = new URLSearchParams(location.search).has("embed");
+if (EMBED) document.documentElement.classList.add("embed-mode");
+function pad(n){ return String(n).padStart(2,"0"); }
+function lessonAt(idx){
+  for (let i = LESSONS.length - 1; i >= 0; i--) if (idx + 1 >= LESSONS[i].start) return LESSONS[i];
+  return null;
+}
+function toast(msg){
+  const el = $("toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+}
+function buildPages(){
+  const frag = document.createDocumentFragment();
+  for (let i = 1; i <= TOTAL_PAGES; i++){
+    const page = document.createElement("div");
+    page.className = "flip-page";
+    page.dataset.density = (i === 1 || i === TOTAL_PAGES) ? "hard" : "soft";
+    page.innerHTML = '<img src="pages/page-' + pad(i) + '.png" alt="Página ' + i + '" class="flip-page-img" draggable="false" />';
+    frag.appendChild(page);
+  }
+  $("flipbook").appendChild(frag);
+}
+function buildThumbnails(){
+  const scroll = $("thumbnailsScroll");
+  for (let i = 1; i <= TOTAL_PAGES; i++){
+    const idx = i - 1;
+    const btn = document.createElement("button");
+    btn.className = "thumbnail-btn";
+    btn.dataset.idx = idx;
+    btn.innerHTML = '<img src="thumbs/page-' + pad(i) + '.png" alt="" class="thumbnail-img" loading="lazy" />';
+    btn.addEventListener("click", () => flipToPage(idx));
+    scroll.appendChild(btn);
+  }
+}
+function renderIndex(){
+  const q = ($("lessonSearch").value || "").toLowerCase().trim();
+  const list = $("lessonList");
+  list.innerHTML = "";
+  LESSONS.forEach(L => {
+    const hay = (L.n + " " + L.title + " " + L.short + " " + L.type).toLowerCase();
+    if (q && !hay.includes(q)) return;
+    const cur = lessonAt(currentPage);
+    const btn = document.createElement("button");
+    btn.className = "lesson-row" + (cur && cur.key === L.key ? " current" : "");
+    const tag = L.type === "review" ? ("R" + L.n) : ("L" + L.n);
+    btn.innerHTML = '<span class="ln">' + tag + '</span><span><span class="lt">' + L.title + '</span><span class="ls">' + L.short + '</span></span>';
+    btn.addEventListener("click", () => { flipToPage(L.start - 1); closeDrawer(); });
+    list.appendChild(btn);
+  });
+}
+function onCurrentChange(){
+  $("pageCur").textContent = String(currentPage + 1);
+  const L = lessonAt(currentPage);
+  if (L){
+    const tag = L.type === "review" ? ("R" + L.n) : ("L" + L.n);
+    $("lessonChip").innerHTML = '<span class="chip-n">' + tag + '</span><span class="chip-t">' + L.title + '</span>';
+  }
+  document.querySelectorAll(".thumbnail-btn").forEach(b => {
+    b.classList.toggle("current", parseInt(b.dataset.idx, 10) === currentPage);
+  });
+  try { localStorage.setItem(LS_LAST, String(currentPage)); } catch(e){}
+  renderIndex();
+}
+function flipToPage(idx){
+  const clamped = Math.max(0, Math.min(TOTAL_PAGES - 1, idx));
+  if (pf) { try { pf.turnToPage(clamped); } catch(e){} }
+  currentPage = clamped;
+  onCurrentChange();
+}
+function openDrawer(){ $("drawer").classList.add("open"); $("scrim").classList.add("open"); renderIndex(); }
+function closeDrawer(){ $("drawer").classList.remove("open"); $("scrim").classList.remove("open"); }
+function initFlip(){
+  buildPages();
+  buildThumbnails();
+  const el = $("flipbook");
+  // stPageFlip PageFlip
+  if (typeof St === "undefined" && typeof PageFlip === "undefined"){
+    // page-flip.browser.js may expose St.PageFlip
+  }
+  const PageFlipCtor = (window.St && window.St.PageFlip) || window.PageFlip;
+  if (!PageFlipCtor){
+    toast("Engine de flip não carregou");
+    // fallback: show first page static
+    return;
+  }
+  pf = new PageFlipCtor(el, {
+    width: 560, height: 790,
+    size: "stretch",
+    minWidth: 280, maxWidth: 1200,
+    minHeight: 400, maxHeight: 1200,
+    drawShadow: true,
+    maxShadowOpacity: 0.4,
+    showCover: true,
+    mobileScrollSupport: true, disableFlipByClick: true,
+    usePortrait: true,
+    startPage: pendingStart || 0,
+  });
+  pf.loadFromHTML(el.querySelectorAll(".flip-page"));
+  pf.on("flip", (e) => { currentPage = e.data; onCurrentChange(); });
+  currentPage = pendingStart || 0;
+  onCurrentChange();
+}
+function startBook(){
+  $("splash").classList.add("hide");
+  setTimeout(() => { $("splash").style.display = "none"; }, 700);
+  if (!pf) initFlip();
+}
+$("btnStart").addEventListener("click", startBook);
+$("btnPrev").addEventListener("click", () => { if (pf) pf.flipPrev(); else flipToPage(currentPage - 1); });
+$("btnNext").addEventListener("click", () => { if (pf) pf.flipNext(); else flipToPage(currentPage + 1); });
+$("btnIndex").addEventListener("click", openDrawer);
+$("btnCloseDrawer").addEventListener("click", closeDrawer);
+$("scrim").addEventListener("click", closeDrawer);
+$("lessonSearch").addEventListener("input", renderIndex);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") $("btnPrev").click();
+  if (e.key === "ArrowRight") $("btnNext").click();
+  if (e.key === "Escape") closeDrawer();
+});
+// deep link ?lesson=5 or ?page=12 or ?key=licao-05 or ?review=2
+const q = new URLSearchParams(location.search);
+const pageQ = parseInt(q.get("page") || "", 10);
+const lessonQ = parseInt(q.get("lesson") || "", 10);
+const reviewQ = parseInt(q.get("review") || "", 10);
+const keyQ = q.get("key") || "";
+if (pageQ >= 1) pendingStart = pageQ - 1;
+else if (keyQ){ const hit = LESSONS.find(x => x.key === keyQ); if (hit) pendingStart = hit.start - 1; }
+else if (reviewQ){ const hit = LESSONS.find(x => x.type === "review" && x.n === reviewQ); if (hit) pendingStart = hit.start - 1; }
+else if (lessonQ){ const hit = LESSONS.find(x => x.type === "lesson" && x.n === lessonQ); if (hit) pendingStart = hit.start - 1; }
+else {
+  const last = parseInt(localStorage.getItem(LS_LAST) || "0", 10);
+  if (last > 0) pendingStart = last;
+}
+if (EMBED) startBook();
+else {
+  // preload
+  setTimeout(() => { if (!pf) initFlip(); }, 100);
+}
+</script>
+<script>
+
+/* FLIPBOOK_UX_V2 compact runtime */
+(function(){
+  const ZOOM_MIN=50, ZOOM_MAX=250, ZOOM_STEP=10;
+  let zoom=100, fitScale=1, panX=0, panY=0, panning=false;
+  let panStartX=0, panStartY=0, panOriginX=0, panOriginY=0;
+  const wrap=document.getElementById("wrapper") || document.getElementById("flipbookWrapper");
+  const main=document.querySelector(".flipbook-main");
+  if(!wrap || !main) return;
+  if(!document.getElementById("panHint")){
+    const hint=document.createElement("div");
+    hint.id="panHint"; hint.className="pan-hint";
+    hint.textContent="Arraste a página para ler · zoom > 100%";
+    main.appendChild(hint);
+  }
+  function canPan(){return zoom>105;}
+  function apply(){
+    wrap.style.transform=`translate(${panX}px,${panY}px) scale(${(fitScale*zoom/100).toFixed(4)})`;
+    const label=document.getElementById("zoomLabel");
+    const slider=document.getElementById("zoomSlider");
+    if(label) label.textContent=zoom+"%";
+    if(slider && String(slider.value)!==String(zoom)) slider.value=String(zoom);
+    const hint=document.getElementById("panHint");
+    if(hint) hint.classList.toggle("show", canPan());
+    main.classList.toggle("is-panning", canPan());
+    if(!canPan()){panX=0;panY=0;}
+  }
+  function setZoom(z){
+    zoom=Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z)));
+    if(!canPan()){panX=0;panY=0;}
+    apply();
+  }
+  function applyFit(){
+    const availW=main.clientWidth-12, availH=main.clientHeight-12;
+    const bw=wrap.offsetWidth||460, bh=wrap.offsetHeight||650;
+    fitScale=Math.min(availW/bw, availH/bh, 1.85);
+    apply();
+  }
+  const zin=document.getElementById("btnZoomIn");
+  const zout=document.getElementById("btnZoomOut");
+  const slider=document.getElementById("zoomSlider");
+  if(zin) zin.addEventListener("click", ()=>setZoom(zoom+ZOOM_STEP));
+  if(zout) zout.addEventListener("click", ()=>setZoom(zoom-ZOOM_STEP));
+  if(slider) slider.addEventListener("input", e=>setZoom(parseInt(e.target.value,10)));
+  main.addEventListener("pointerdown", ev=>{
+    if(!canPan()) return;
+    if(ev.target.closest("button,input,a,.index-drawer")) return;
+    if(ev.pointerType==="mouse" && ev.button!==0) return;
+    panning=true; panStartX=ev.clientX; panStartY=ev.clientY; panOriginX=panX; panOriginY=panY;
+    main.classList.add("dragging");
+    try{main.setPointerCapture(ev.pointerId);}catch(e){}
+    ev.preventDefault();
+  }, {passive:false});
+  main.addEventListener("pointermove", ev=>{
+    if(!panning) return;
+    panX=panOriginX+(ev.clientX-panStartX);
+    panY=panOriginY+(ev.clientY-panStartY);
+    apply();
+  });
+  function endPan(ev){ if(!panning) return; panning=false; main.classList.remove("dragging"); try{main.releasePointerCapture(ev.pointerId);}catch(e){} }
+  main.addEventListener("pointerup", endPan);
+  main.addEventListener("pointercancel", endPan);
+  main.addEventListener("wheel", ev=>{
+    if(ev.ctrlKey||ev.metaKey){ ev.preventDefault(); setZoom(zoom+(ev.deltaY<0?ZOOM_STEP:-ZOOM_STEP)); return; }
+    if(canPan()){ ev.preventDefault(); panY-=ev.deltaY; panX-=ev.deltaX; apply(); }
+  }, {passive:false});
+  window.addEventListener("keydown", e=>{
+    if(["INPUT","TEXTAREA"].includes((e.target.tagName||""))) return;
+    if(e.key==="+"||e.key==="=") setZoom(zoom+ZOOM_STEP);
+    if(e.key==="-") setZoom(zoom-ZOOM_STEP);
+    if(e.key==="0"){ panX=0; panY=0; setZoom(100); }
+  });
+  window.addEventListener("resize", ()=>{ clearTimeout(applyFit._t); applyFit._t=setTimeout(applyFit,120); });
+  // Prefer larger pages in PageFlip if present
+  setTimeout(applyFit, 200);
+  setTimeout(applyFit, 800);
+})();
+
+</script>
+</body>
+</html>
