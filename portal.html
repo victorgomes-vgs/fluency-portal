@@ -584,6 +584,7 @@
     .ds-ausente{background:rgba(200,60,80,.16);border:1px solid rgba(200,60,80,.38);color:#f0909a;}
     .ds-desmarcada{background:rgba(140,140,140,.11);border:1px solid rgba(140,140,140,.26);color:#a0b0c0;}
     .ds-rep-gratis{background:rgba(42,100,200,.16);border:1px solid rgba(42,100,200,.34);color:#88c0f8;}
+    .ds-rep-adequacao{background:rgba(14,165,233,.16);border:1px solid rgba(14,165,233,.38);color:#7dd3fc;}
     .ds-rep-paga{background:rgba(180,100,20,.16);border:1px solid rgba(180,100,20,.34);color:#f0b060;}
     .ds-cancelada{background:rgba(160,40,70,.16);border:1px solid rgba(160,40,70,.34);color:#f09090;}
     [data-theme="light"] .ds-realizada{color:#0a5c38;background:rgba(20,140,90,.10);}
@@ -591,6 +592,7 @@
     [data-theme="light"] .ds-ausente{color:#7a1020;background:rgba(200,60,80,.08);}
     [data-theme="light"] .ds-desmarcada{color:#404050;background:rgba(140,140,140,.08);}
     [data-theme="light"] .ds-rep-gratis{color:#1a3a80;background:rgba(42,100,200,.08);}
+    [data-theme="light"] .ds-rep-adequacao{color:#0369a1;background:rgba(14,165,233,.10);}
     [data-theme="light"] .ds-rep-paga{color:#6a3800;background:rgba(180,100,20,.08);}
     [data-theme="light"] .ds-cancelada{color:#6a1030;background:rgba(160,40,70,.08);}
     .diario-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;display:inline-block;}
@@ -2428,7 +2430,7 @@ function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
           <button type="button" className="btn btn-primary rounded-xl px-3 py-2 text-sm font-semibold inline-flex items-center gap-1.5"
             disabled={disabled||busy}
             onClick={()=>inputRef.current&&inputRef.current.click()}>
-            <Icon name="camera" size={14}/>{busy?"Salvando foto…":"Enviar do dispositivo"}
+            <Icon name="camera" size={14}/>{busy?"Salvando foto…":"Galeria ou câmera"}
           </button>
           {previewUrl?(
             <button type="button" className="btn rounded-xl px-3 py-2 text-sm" disabled={disabled||busy} onClick={onClear}>
@@ -2437,9 +2439,10 @@ function FotoUploadField({previewUrl,onSelectFile,onClear,disabled,busy,hint}){
           ):null}
         </div>
         <p style={{fontSize:11,color:"var(--font-muted)",marginTop:6,lineHeight:1.4}}>
-          {hint||"JPG, PNG ou WEBP · até "+FOTO_MAX_MB+" MB · a foto é salva na nuvem e aparece no perfil e nas listas."}
+          {hint||"Escolha da galeria ou tire uma foto · JPG, PNG ou WEBP · até "+FOTO_MAX_MB+" MB · salva no perfil e nas listas."}
         </p>
-        <input ref={inputRef} type="file" accept={FOTO_ACCEPT} capture="environment" style={{display:"none"}}
+        {/* Sem attribute capture: no mobile o SO oferece Galeria + Câmera (capture forçava só câmera). */}
+        <input ref={inputRef} type="file" accept={FOTO_ACCEPT+",image/*"} style={{display:"none"}}
           onChange={e=>{
             const f=e.target.files&&e.target.files[0];
             e.target.value="";
@@ -3212,11 +3215,28 @@ function getFullName(name){
   const n=String(name||"").trim().replace(/\s+/g," ");
   return n||"Aluno";
 }
-/** Só o primeiro nome (cards compactos). */
+/** Só o primeiro nome (saudações). */
 function getFirstName(name){
   const full=getFullName(name);
   if(full==="Aluno")return full;
   return full.split(/\s+/)[0]||full;
+}
+/** Nome + sobrenome (cards, listas e cadastros). */
+function getShortName(name){
+  const full=getFullName(name);
+  if(full==="Aluno")return full;
+  const parts=full.split(/\s+/).filter(Boolean);
+  if(parts.length<=1)return parts[0]||full;
+  return parts[0]+" "+parts[parts.length-1];
+}
+/** Ordena entradas do diário: mais recente primeiro (data, depois nº). */
+function sortDiarioEntriesDesc(list){
+  return[...(list||[])].sort((a,b)=>{
+    const da=String(a.date||"");
+    const db=String(b.date||"");
+    if(da!==db)return db.localeCompare(da);
+    return(Number(b.num)||0)-(Number(a.num)||0);
+  });
 }
 
 /** Feedback de salvamento: som + toast + notificação do sistema (quando permitido) */
@@ -3585,6 +3605,7 @@ const DIARIO_STATUS=[
   {value:"falta_aluno_com_reposicao",label:"Falta do aluno com reposição",cls:"ds-ausente"},
   {value:"falta_aluno_sem_reposicao",label:"Falta do aluno sem reposição",cls:"ds-ausente"},
   {value:"falta_professor",label:"Falta do professor",cls:"ds-cancelada"},
+  {value:"adequacao_com_reposicao",label:"Adequação com reposição",cls:"ds-rep-adequacao"},
   // legacy (kept for reading old entries)
   {value:"realizada",label:"Presença",cls:"ds-realizada",legacy:true},
   {value:"andamento",label:"Em Andamento",cls:"ds-andamento",legacy:true},
@@ -3601,8 +3622,11 @@ function normalizeDiarioStatus(entry){
   const s=entry.status;
   if(s==="realizada"||s==="rep_feita")return"presenca";
   if(s==="cancelada")return"falta_professor";
-  if(s==="falta_professor"||s==="presenca"||s==="ausencia_com_reposicao"||s==="falta_aluno_com_reposicao"||s==="falta_aluno_sem_reposicao")return s;
-  if(s==="a_repor"||s==="rep_vencida")return entry.reposicaoMotivo==="professor"?"ausencia_com_reposicao":"falta_aluno_com_reposicao";
+  if(s==="falta_professor"||s==="presenca"||s==="ausencia_com_reposicao"||s==="falta_aluno_com_reposicao"||s==="falta_aluno_sem_reposicao"||s==="adequacao_com_reposicao")return s;
+  if(s==="a_repor"||s==="rep_vencida"){
+    if(entry.reposicaoMotivo==="adequacao"||entry.reposicaoTipo==="adequacao")return"adequacao_com_reposicao";
+    return entry.reposicaoMotivo==="professor"?"ausencia_com_reposicao":"falta_aluno_com_reposicao";
+  }
   if(s==="ausente"){
     if(entry.reposicaoTipo==="com")return"falta_aluno_com_reposicao";
     if(entry.reposicaoTipo==="sem")return"falta_aluno_sem_reposicao";
@@ -3615,7 +3639,19 @@ function diarioIsPresence(status){
   return status==="presenca"||status==="realizada"||status==="rep_feita";
 }
 function diarioNeedsReposicao(status){
-  return status==="ausencia_com_reposicao"||status==="falta_aluno_com_reposicao"||status==="a_repor";
+  return status==="ausencia_com_reposicao"||status==="falta_aluno_com_reposicao"||status==="adequacao_com_reposicao"||status==="a_repor";
+}
+/** Reposição gerada por Adequação: gratuita, mas NÃO consome a cota do contrato. */
+function isReposicaoAdequacao(entry){
+  if(!entry)return false;
+  const st=normalizeDiarioStatus(entry);
+  return st==="adequacao_com_reposicao"||entry.reposicaoMotivo==="adequacao"||entry.reposicaoTipo==="adequacao"||!!entry.reposicaoNaoContaGratuita;
+}
+/** Conta contra o saldo de reposições gratuitas do contrato (aluno/ausência). */
+function countsAgainstGratuitasContrato(entry){
+  if(!entry||isReposicaoAdequacao(entry))return false;
+  const st=normalizeDiarioStatus(entry);
+  return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao";
 }
 const REP_COM_MOTIVOS=[
   {v:"prazo",l:"Informada dentro do prazo"},
@@ -5034,7 +5070,8 @@ function DiarioSection({uid,isAdmin,contrato}){
   const displayEntries=useMemo(()=>{
     const base=(entries||[]).map(e=>({...e,...(drafts[e.id]||{}),_isNew:false}));
     const news=localNew.map(e=>({...e,...(drafts[e.id]||{}),_isNew:true}));
-    return [...base,...news].sort((a,b)=>(a.num||0)-(b.num||0));
+    // Mais recente primeiro (admin e aluno)
+    return sortDiarioEntriesDesc([...base,...news]);
   },[entries,localNew,drafts]);
   function patchDraft(id,patch){
     setDrafts(prev=>({...prev,[id]:{...(prev[id]||{}),...patch}}));
@@ -5084,6 +5121,14 @@ function DiarioSection({uid,isAdmin,contrato}){
         patch.reposicaoVence=addDaysISO(patch.date,30);
       }
       if(statusNow==="falta_professor")patch.reposicaoVence="";
+      // Adequação: gera reposição gratuita com 30 dias, fora da cota do contrato
+      if(statusNow==="adequacao_com_reposicao"){
+        patch.reposicaoMotivo="adequacao";
+        patch.reposicaoTipo="adequacao";
+        patch.reposicaoNaoContaGratuita=true;
+        if(!merged.reposicaoVence)patch.reposicaoVence=addDaysISO(patch.date,30);
+        if(!merged.ocorrido)patch.ocorrido="Adequação pedagógica — reposição gratuita (não consome cota do contrato)";
+      }
     }
     if(statusNow==="presenca"&&(merged.reposicaoStatus===REPO_STATUS.AGENDADO||merged.markReposicaoFeita)){
       patch.reposicaoStatus=REPO_STATUS.REPOSICAO_FEITA;
@@ -5167,8 +5212,8 @@ function DiarioSection({uid,isAdmin,contrato}){
             <div key={i}><div style={{fontSize:18,fontWeight:800,color:s.color||"var(--font)"}}>{s.n}</div><div className="text-xs muted">{s.l}</div></div>
           ))}
         </div>
-        {entries.length===0?<div className="glass rounded-2xl p-8 text-center muted">Nenhuma aula lançada ainda.</div>:(
-          <div className="space-y-2">{entries.map(e=>{
+        {displayEntries.length===0?<div className="glass rounded-2xl p-8 text-center muted">Nenhuma aula lançada ainda.</div>:(
+          <div className="space-y-2">{displayEntries.map(e=>{
             const st=normalizeDiarioStatus(e);
             const ds=dStatusMap[st]||dStatusMap[e.status]||{cls:"",label:st};
             const dateLabel=e.reposicaoVence&&diarioNeedsReposicao(st)?`vence em ${formatDateBR(e.reposicaoVence).slice(0,5)}`:formatDateBR(e.date).slice(0,5);
@@ -5508,6 +5553,9 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
   const [filtroStatus,setFiltroStatus]=useState("ativo");
   const [busca,setBusca]=useState("");
   const [kpiDetail,setKpiDetail]=useState(null); // null | 'revenue' | 'outstanding' | 'overdue'
+  const [openChargesMonth,setOpenChargesMonth]=useState(()=>getMonthKey(new Date()));
+  const [showVerPorAluno,setShowVerPorAluno]=useState(false);
+  const [buscaPagante,setBuscaPagante]=useState("");
   const [despesasPorMes,setDespesasPorMes]=useState({});
   const [despesasFixas,setDespesasFixas]=useState([]);
   const [fixasPagasPorMes,setFixasPagasPorMes]=useState({});
@@ -5555,6 +5603,43 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
 
   const kpis=useMemo(()=>computeFinanceKpis(effectiveInvoices,effectiveTransactions,monthKey),[effectiveInvoices,effectiveTransactions,monthKey]);
   const isCurrentMonth=monthKey===getMonthKey(new Date());
+  const vigencyMonthKey=getMonthKey(new Date());
+
+  // Cobranças em aberto: ordenadas por vencimento; UI mostra mês vigente + links dos outros meses
+  const unpaidByMonth=useMemo(()=>{
+    const map={};
+    effectiveInvoices.filter(i=>i.status!=="paid").forEach(inv=>{
+      const mk=inv.dueDate?String(inv.dueDate).slice(0,7):vigencyMonthKey;
+      if(!map[mk])map[mk]=[];
+      map[mk].push(inv);
+    });
+    Object.keys(map).forEach(mk=>{
+      map[mk].sort((a,b)=>String(a.dueDate||"").localeCompare(String(b.dueDate||"")));
+    });
+    return map;
+  },[effectiveInvoices,vigencyMonthKey]);
+  const unpaidMonthKeys=useMemo(()=>{
+    const keys=Object.keys(unpaidByMonth).sort((a,b)=>b.localeCompare(a));
+    if(!keys.includes(vigencyMonthKey))keys.unshift(vigencyMonthKey);
+    return keys;
+  },[unpaidByMonth,vigencyMonthKey]);
+  const openChargesShown=unpaidByMonth[openChargesMonth]||[];
+  const otherUnpaidMonths=unpaidMonthKeys.filter(mk=>mk!==openChargesMonth&&(unpaidByMonth[mk]||[]).length>0);
+
+  // Ativos com cobranças cadastradas (pagantes)
+  const alunosPagantes=useMemo(()=>{
+    return(students||[]).filter(s=>{
+      const st=(s.status||normalizeStatus(null,s));
+      if(st!=="ativo")return false;
+      const parcelas=(s.financeiro?.parcelas||[]).filter(p=>getParcelValor(p)>0);
+      return parcelas.length>0;
+    }).sort((a,b)=>getShortName(a.name).localeCompare(getShortName(b.name),"pt-BR"));
+  },[students]);
+  const alunosPagantesFiltrados=useMemo(()=>{
+    if(!buscaPagante.trim())return alunosPagantes;
+    const q=buscaPagante.toLowerCase();
+    return alunosPagantes.filter(s=>(s.name||"").toLowerCase().includes(q)||(s.email||"").toLowerCase().includes(q));
+  },[alunosPagantes,buscaPagante]);
 
   const expensesByMonth=useMemo(()=>{
     const out={};
@@ -5660,6 +5745,82 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
         </p>
       </div>
 
+      <button
+        type="button"
+        className="premium-card"
+        onClick={()=>{setShowVerPorAluno(true);setBuscaPagante("");}}
+        style={{marginBottom:16,width:"100%",textAlign:"left",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,borderColor:"#BFDBFE",background:"linear-gradient(135deg,#F8FAFC,#EFF6FF)"}}
+      >
+        <div style={{display:"flex",alignItems:"center",gap:14,minWidth:0}}>
+          <div style={{width:44,height:44,borderRadius:12,background:"#0F172A",color:"#fff",display:"grid",placeItems:"center",flexShrink:0}}>
+            <Icon name="users" size={20}/>
+          </div>
+          <div style={{minWidth:0}}>
+            <div style={{fontSize:11,fontWeight:800,letterSpacing:".08em",color:"#0369A1",textTransform:"uppercase"}}>Ver por aluno</div>
+            <div style={{fontSize:16,fontWeight:800,color:"#1E1E1E",marginTop:2}}>Financeiro completo de cada aluno ativo pagante</div>
+            <div style={{fontSize:12,color:"#475569",marginTop:4}}>{alunosPagantes.length} aluno{alunosPagantes.length!==1?"s":""} com cobranças cadastradas</div>
+          </div>
+        </div>
+        <span style={{fontSize:13,fontWeight:700,color:"#0F172A",whiteSpace:"nowrap"}}>Abrir lista →</span>
+      </button>
+
+      {showVerPorAluno&&(
+        <ModalOverlay onClose={()=>setShowVerPorAluno(false)}>
+          <div className="modal-box" style={{maxWidth:560}} onClick={e=>e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <div style={{fontSize:11,fontWeight:700,opacity:.8,letterSpacing:".06em"}}>FINANCEIRO</div>
+                <div style={{fontFamily:"'Sora',sans-serif",fontSize:18,fontWeight:800}}>Ver por aluno</div>
+              </div>
+              <button type="button" className="btn rounded-lg px-2 py-1" style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff"}} onClick={()=>setShowVerPorAluno(false)}>
+                <Icon name="x" size={18}/>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div style={{position:"relative",marginBottom:14}}>
+                <Icon name="search" size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",opacity:.45}}/>
+                <input className="input-light" style={{paddingLeft:32}} placeholder="Buscar aluno ativo pagante..." value={buscaPagante} onChange={e=>setBuscaPagante(e.target.value)}/>
+              </div>
+              <div className="space-y-2" style={{maxHeight:420,overflowY:"auto"}}>
+                {alunosPagantesFiltrados.length===0?(
+                  <div className="text-center py-8 text-sm" style={{color:"#475569"}}>Nenhum aluno ativo com cobranças.</div>
+                ):alunosPagantesFiltrados.map(s=>{
+                  const parcelas=(s.financeiro?.parcelas||[]).filter(p=>getParcelValor(p)>0);
+                  const snap=resolveFinanceSnapshot(s.financeiro?.parcelas||[]);
+                  const openSum=parcelas.filter(p=>getEffectiveParcelStatus(p,getTodayISO())!=="paga").reduce((a,p)=>a+getParcelValor(p),0);
+                  return(
+                    <button
+                      key={s.uid}
+                      type="button"
+                      className="fin-student-pick w-full text-left"
+                      style={snap.isLate?{borderColor:"#FECACA",background:"#FEF2F2"}:{}}
+                      onClick={()=>{setShowVerPorAluno(false);onSelectStudent&&onSelectStudent(s.uid);}}
+                    >
+                      {s.foto
+                        ?<img src={s.foto} alt="" style={{width:40,height:40,borderRadius:"50%",objectFit:"cover",border:"2px solid #E2E8F0"}}/>
+                        :<div style={{width:40,height:40,borderRadius:"50%",background:"#F8F9FA",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
+                      }
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getShortName(s.name)}</div>
+                        <div style={{fontSize:11,color:"#475569"}}>
+                          {parcelas.length} cobrança{parcelas.length!==1?"s":""}
+                          {openSum>0?<> · aberto {formatCurrency(openSum)}</>:null}
+                        </div>
+                      </div>
+                      <span className={snap.isLate?"status-badge status-badge-overdue":"status-badge status-badge-paid"}>{snap.isLate?"Em atraso":"Em dia"}</span>
+                      <Icon name="arrow-right" size={16} style={{opacity:.45}}/>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={()=>setShowVerPorAluno(false)}>Fechar</button>
+            </div>
+          </div>
+        </ModalOverlay>
+      )}
+
       {/* KPI cards — clicáveis */}
       <div className="fin-kpi-grid">
         <button type="button" className="fin-kpi-card" onClick={()=>setKpiDetail("revenue")} style={{cursor:"pointer",textAlign:"left",fontFamily:"inherit",width:"100%"}}>
@@ -5716,7 +5877,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                         const d=typeof dateRaw==="string"?dateRaw:(toJsDate(dateRaw)?toJsDate(dateRaw).toISOString().slice(0,10):"");
                         return(
                           <tr key={row.id}>
-                            <td style={{fontWeight:600}}>{row.studentName||"Aluno"}</td>
+                            <td style={{fontWeight:600}} title={row.studentName||""}>{getShortName(row.studentName||"Aluno")}</td>
                             <td>{row.description||"—"}</td>
                             <td>{d?formatDateBR(d):"—"}</td>
                             <td style={{fontWeight:700}}>{formatCurrency(row.amount)}</td>
@@ -5766,7 +5927,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                 return(
                   <tr key={tx.id}>
                     <td>{dateStr}</td>
-                    <td style={{fontWeight:600}}>{tx.studentName||"Aluno"}</td>
+                    <td style={{fontWeight:600}} title={tx.studentName||""}>{getShortName(tx.studentName||"Aluno")}</td>
                     <td>{tx.description||"—"}</td>
                     <td style={{fontWeight:700,color:"#15803D"}}>{formatCurrency(tx.amount)}</td>
                     <td>
@@ -5783,18 +5944,52 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
       </div>
 
       <div className="fin-table-card">
-        <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 16px"}}>Cobranças em aberto / atraso</h3>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,flexWrap:"wrap",marginBottom:12}}>
+          <div>
+            <h3 style={{fontSize:16,fontWeight:700,color:"#1E1E1E",margin:"0 0 4px"}}>Cobranças em aberto / atraso</h3>
+            <p style={{fontSize:12,color:"#475569",margin:0}}>
+              Ordem por vencimento · mês exibido: <strong>{formatMonthYear(openChargesMonth)}</strong>
+              {openChargesMonth===vigencyMonthKey?" (vigente)":""}
+            </p>
+          </div>
+        </div>
+        {otherUnpaidMonths.length>0&&(
+          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14}}>
+            <span style={{fontSize:11,fontWeight:700,color:"#64748B",alignSelf:"center",letterSpacing:".04em",textTransform:"uppercase"}}>Outros meses</span>
+            {otherUnpaidMonths.map(mk=>(
+              <button
+                key={mk}
+                type="button"
+                className="status-pill status-pill-inactive"
+                style={{fontSize:12,cursor:"pointer"}}
+                onClick={()=>setOpenChargesMonth(mk)}
+                title={"Abrir cobranças de "+formatMonthYear(mk)}
+              >
+                {formatMonthYear(mk)}
+                <span style={{marginLeft:6,background:"rgba(0,0,0,.06)",borderRadius:99,padding:"1px 7px",fontSize:10,fontWeight:800}}>{(unpaidByMonth[mk]||[]).length}</span>
+              </button>
+            ))}
+            {openChargesMonth!==vigencyMonthKey&&(
+              <button type="button" className="status-pill status-pill-ativo" style={{fontSize:12,cursor:"pointer"}} onClick={()=>setOpenChargesMonth(vigencyMonthKey)}>
+                Voltar ao mês vigente
+              </button>
+            )}
+          </div>
+        )}
         <div style={{overflowX:"auto"}}>
           <table className="fin-table">
             <thead>
               <tr><th>Aluno</th><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
-              {effectiveInvoices.filter(i=>i.status!=="paid").length===0?(
-                <tr><td colSpan={6} style={{textAlign:"center",color:"#475569",padding:28}}>Nenhuma cobrança em aberto com valor.</td></tr>
-              ):effectiveInvoices.filter(i=>i.status!=="paid").map(inv=>(
+              {openChargesShown.length===0?(
+                <tr><td colSpan={6} style={{textAlign:"center",color:"#475569",padding:28}}>
+                  Nenhuma cobrança em aberto em {formatMonthYear(openChargesMonth)}.
+                  {otherUnpaidMonths.length>0?" Use os links de outros meses acima.":""}
+                </td></tr>
+              ):openChargesShown.map(inv=>(
                 <tr key={inv.id}>
-                  <td style={{fontWeight:600}}>{inv.studentName||"Aluno"}</td>
+                  <td style={{fontWeight:600}} title={inv.studentName||""}>{getShortName(inv.studentName||"Aluno")}</td>
                   <td>{inv.description||"—"}</td>
                   <td>{inv.dueDate?formatDateBR(String(inv.dueDate).slice(0,10)):"—"}</td>
                   <td style={{fontWeight:700}}>{formatCurrency(inv.amount)}</td>
@@ -5843,7 +6038,7 @@ function AdminFinanceiroDashboard({students,onBack,onSelectStudent}){
                   :<div style={{width:40,height:40,borderRadius:"50%",background:"#F8F9FA",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="user" size={18}/></div>
                 }
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
+                  <div style={{fontWeight:700,fontSize:14,color:"#1E1E1E",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getShortName(s.name)}</div>
                   <div style={{fontSize:11,color:"#475569"}}>
                     {parcelas.length} cobrança{parcelas.length!==1?"s":""} com valor
                     {openSum>0?<> · aberto {formatCurrency(openSum)}</>:null}
@@ -5869,6 +6064,11 @@ function computeDiarioStats(entries){
     const s=normalizeDiarioStatus(e);
     if(s==="presenca"){realizadas++;}
     else if(s==="ausencia_com_reposicao"){ausentes++;paraRepor++;}
+    else if(s==="adequacao_com_reposicao"){
+      // Adequação: gera reposição (30 dias) sem contar nas gratuitas do contrato
+      const due=e.reposicaoVence?new Date(e.reposicaoVence):null;
+      if(due&&due<now)repVencidas++;else paraRepor++;
+    }
     else if(s==="falta_aluno_com_reposicao"){
       ausentes++;
       const due=e.reposicaoVence?new Date(e.reposicaoVence):null;
@@ -6485,7 +6685,8 @@ const IVI_RULES_REPOSICAO_ADMIN=`**Reposições e Agenda — procedimento admin*
 **Cadastro do aluno:** em **aulas semanais**, cada aula (dia + horário) conta. O sistema grava \`reposicoesGratuitasContrato\` = quantidade dessas aulas. Isso limita o direito na confirmação de ausência (regra das 3h + saldo de gratuitas).
 
 **Diário → direito a repor**
-• \`falta_aluno_com_reposicao\` / \`ausencia_com_reposicao\` → validade 30 dias  
+• \`falta_aluno_com_reposicao\` / \`ausencia_com_reposicao\` → validade 30 dias (consome gratuita do contrato)  
+• \`adequacao_com_reposicao\` → **Adequação com reposição**: gera reposição gratuita com 30 dias, **não** consome a cota de gratuitas; se não repor a tempo, perde normalmente  
 • \`falta_professor\` → sem validade  
 • Fluxo do aluno: selecionar falta → horário vago → status **PENDENTE → AGENDADO → REPOSIÇÃO FEITA**
 
@@ -7019,10 +7220,12 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
                 }
                 <div className="flex-1 min-w-0">
                   <div className="sd-hello" style={{marginBottom:2}}>Visão do aluno</div>
-                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--font,#1E1E1E)",lineHeight:1.25}} title="Nome completo só no cadastro (Perfil completo)">
-                    {getFirstName(profile.name)}
+                  <h1 className="text-2xl font-extrabold tracking-tight" style={{fontFamily:"'Sora',sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--font,#1E1E1E)",lineHeight:1.25}} title={getFullName(profile.name)}>
+                    {getShortName(profile.name)}
                   </h1>
-                  <p style={{fontSize:11,color:"#475569",marginTop:4}}>Nome completo: abra <strong>Perfil completo</strong></p>
+                  {getFullName(profile.name)!==getShortName(profile.name)&&(
+                    <p style={{fontSize:11,color:"#475569",marginTop:4}} title={getFullName(profile.name)}>Completo no perfil</p>
+                  )}
                   <div className="student-card-meta" style={{marginTop:12}}>
                     <div><span className="meta-label">Curso</span><span className="meta-val">{courseName||"—"}</span></div>
                     <div><span className="meta-label">Módulo</span><span className="meta-val">{currentMod} · {currentModMeta?.name||"—"}</span></div>
@@ -9137,7 +9340,7 @@ function AdminAgendaDashboard({students,onBack}){
                     :<div style={{width:36,height:36,borderRadius:"50%",background:"var(--badge)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={16}/></div>}
                   <div className="aula-hoje-hora">{s.horario}</div>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontWeight:700,fontSize:13}}>{s.name}</div>
+                    <div style={{fontWeight:700,fontSize:13}} title={getFullName(s.name)}>{getShortName(s.name)}</div>
                     <div style={{fontSize:11,color:"var(--font-muted)"}}>{s.contrato}{s.tipo==="prevista"?" · prevista":s.tipo==="recorrente"?" · semanal":""} · tocar p/ material</div>
                   </div>
                 </button>
@@ -9228,16 +9431,18 @@ function buildRegularOccupiedMap(students,daysAhead=60){
 
 function diaryGrantsReposicao(entry){
   const st=normalizeDiarioStatus(entry);
-  return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao"||st==="falta_professor"||st==="a_repor";
+  return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao"||st==="falta_professor"||st==="adequacao_com_reposicao"||st==="a_repor";
 }
 function diaryReposicaoTipoLabel(entry){
   const st=normalizeDiarioStatus(entry);
   if(st==="falta_professor"||entry.reposicaoMotivo==="professor")return"Falta do professor";
+  if(isReposicaoAdequacao(entry)||st==="adequacao_com_reposicao")return"Adequação (não consome gratuita)";
   return"Falta do aluno";
 }
 function diaryReposicaoValidUntil(entry){
   const st=normalizeDiarioStatus(entry);
   if(st==="falta_professor")return null; // sem limite
+  // Adequação e falta do aluno: 30 dias (vence e perde normalmente)
   if(entry.reposicaoVence)return entry.reposicaoVence;
   if(!entry.date)return null;
   return addDaysISO(entry.date,30);
@@ -9793,10 +9998,8 @@ function PresenceConfirmPage({uid,profile,schedule,trilhaData,financeiro,onDone}
       // gratuitas: count how many falta_aluno_com_reposicao not vencida + contract limit if any
       const aulasCount=normalizeAulasSemanais(profile?.aulasSemanais,profile?.diasAulas,profile?.horarioAulas).filter(a=>a.dia&&a.horario).length;
       const limit=Number(profile?.reposicoesGratuitasContrato??financeiro?.reposicoesGratuitas??(aulasCount||1));
-      const used=entries.filter(e=>{
-        const st=normalizeDiarioStatus(e);
-        return st==="falta_aluno_com_reposicao"||st==="ausencia_com_reposicao";
-      }).length;
+      // Adequação NÃO entra na cota de gratuitas do contrato
+      const used=entries.filter(e=>countsAgainstGratuitasContrato(e)).length;
       const hasGratis=used<limit;
       const okTime=hoursAhead>=3;
       let grant=okTime&&hasGratis;
@@ -11146,7 +11349,7 @@ function AdminRelatorioCurso({students,courseId,onBack,onOpenStudent}){
       <div className="space-y-2">
         {linked.map(s=>(
           <button key={s.uid} type="button" className="glass rounded-xl px-4 py-3 w-full text-left flex justify-between" onClick={()=>onOpenStudent(s)}>
-            <span className="font-semibold text-sm">{s.name}</span>
+            <span className="font-semibold text-sm" title={getFullName(s.name)}>{getShortName(s.name)}</span>
             <span className="text-xs muted">Abrir relatório →</span>
           </button>
         ))}
@@ -11186,7 +11389,7 @@ function AdminRelatorioPeriodo({students,onBack,onOpenStudent}){
         rows.length===0?<div className="glass rounded-2xl p-8 text-center muted">Nenhum lançamento no período.</div>:(
           <div className="space-y-2">{rows.map(r=>(
             <button key={r.student.uid} type="button" className="glass rounded-xl px-4 py-3 w-full text-left flex justify-between" onClick={()=>onOpenStudent(r.student)}>
-              <span className="font-semibold text-sm">{r.student.name}</span>
+              <span className="font-semibold text-sm" title={getFullName(r.student.name)}>{getShortName(r.student.name)}</span>
               <span className="text-xs muted">{r.count} lançamento(s) · {r.presencas} presença(s)</span>
             </button>
           ))}</div>
@@ -11229,7 +11432,7 @@ function AdminRelatorios({students,onBack,onOpenStudentProfile}){
           {alunos.map(s=>(
             <button key={s.uid} type="button" className="glass rounded-xl px-4 py-3 w-full text-left flex justify-between items-center" onClick={()=>{setSelected(s);setMode("aluno");}}>
               <div>
-                <div className="font-semibold text-sm">{s.name}</div>
+                <div className="font-semibold text-sm" title={getFullName(s.name)}>{getShortName(s.name)}</div>
                 <div className="text-xs muted">{getCourseLabel(s.contrato)}</div>
               </div>
               <span className="text-xs muted">Abrir →</span>
@@ -11381,7 +11584,7 @@ function AdminDashboard({students,onNavigate,pendentesCount=0,diarioPendenciasCo
               }
               <div className="aula-hoje-hora">{s.horario||"—"}</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontWeight:700,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
+                <div style={{fontWeight:700,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getShortName(s.name)}</div>
                 <div style={{fontSize:11,color:"var(--font-muted)"}}>{getCourseLabel(s.contrato)} · material</div>
               </div>
             </button>
@@ -11565,7 +11768,7 @@ function AdminAlunos({students,onSelectUid}){
                           :<div style={{width:48,height:48,borderRadius:"50%",background:"var(--badge)",border:"1px solid var(--divider)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="user" size={20}/></div>
                         }
                         <div style={{minWidth:0,flex:1}}>
-                          <div className="font-bold" style={{fontSize:14,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getFirstName(s.name)}</div>
+                          <div className="font-bold" style={{fontSize:14,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}} title={getFullName(s.name)}>{getShortName(s.name)}</div>
                           <div style={{marginTop:6}}><StatusBadge status={s.status||"lead"}/></div>
                         </div>
                       </div>
