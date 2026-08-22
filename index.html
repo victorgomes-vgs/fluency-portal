@@ -774,8 +774,13 @@
     .sd-avatar-ph{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
     .sd-hello{font-size:14px;color:var(--sd-surface-muted);font-weight:500;}
     .sd-name{font-family:'Sora',sans-serif,var(--font-family-ui);font-size:22px;font-weight:800;line-height:1.2;color:var(--sd-surface-text,#1E1E1E);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block;}
-    .sd-fullname-full{font-size:12px;font-weight:600;color:var(--sd-surface-muted,#475569);margin-top:4px;line-height:1.3;word-break:break-word;}
+    .sd-name-full{font-size:12px;font-weight:600;color:var(--sd-surface-muted,#475569);margin-top:4px;line-height:1.3;word-break:break-word;}
     .sd-bday{font-size:13px;font-weight:600;color:var(--sd-surface-muted);margin-top:6px;}
+    .sd-apr{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;margin-left:auto;}
+    .sd-apr-ring{position:relative;width:64px;height:64px;}
+    .sd-apr-ring svg{display:block;}
+    .sd-apr-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:var(--sd-surface-text,#102B48);line-height:1;pointer-events:none;}
+    .sd-apr-lbl{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sd-surface-muted,#58718A);line-height:1;}
     .sd-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .sd-scroll::-webkit-scrollbar{display:none;}
     .sd-nav-carousel{flex-shrink:0;width:68px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;padding:0;color:inherit;}
@@ -785,20 +790,23 @@
     .sd-chip-num{font-weight:800;font-size:14px;color:var(--sd-dark-text);}
     .sd-chip-lbl{font-size:8px;color:var(--sd-dark-muted);margin-top:3px;text-transform:uppercase;letter-spacing:.03em;}
     .sd-chip-current{box-shadow:0 0 0 2px #e8a94c;}
-    .sd-card-fin{padding:12px 16px;}
-    .sd-fin-head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0;}
+    .sd-card-fin{padding:14px 16px;background:linear-gradient(160deg,#111111 0%,#0a0a0a 55%,#050505 100%)!important;border:1.5px solid rgba(255,255,255,.10)!important;color:#F4F9FF!important;box-shadow:0 12px 32px rgba(0,0,0,.45)!important;cursor:pointer;}
+    [data-theme="light"] .sd-card-fin{background:linear-gradient(160deg,#141414 0%,#0b0b0b 60%,#050505 100%)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 14px 36px rgba(0,0,0,.28)!important;}
+    .sd-card-fin .sd-fin-head{color:rgba(244,249,255,.55);margin-bottom:0;}
+    .sd-card-fin .sd-fin-link{color:#5eead4;}
+    .sd-fin-head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0;gap:10px;}
     .sd-fin-link{background:none;border:none;color:#5eead4;font-size:11px;font-weight:700;cursor:pointer;padding:0;letter-spacing:.02em;}
     .sd-fin-link:hover{text-decoration:underline;}
-    .sd-fin-main{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-top:10px;}
-    .sd-fin-month{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;line-height:1.1;color:var(--sd-dark-text);}
-    .sd-fin-due-line{font-size:11px;color:var(--sd-dark-muted);margin-top:4px;}
-    .sd-fin-due-line strong{color:var(--sd-dark-text);font-weight:700;}
+    .sd-fin-main{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;}
+    .sd-fin-month{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;line-height:1.1;color:#F4F9FF;}
+    .sd-fin-due-line{font-size:11px;color:rgba(244,249,255,.55);margin-top:4px;}
+    .sd-fin-due-line strong{color:#F4F9FF;font-weight:700;}
     .sd-fin-badge-sm{display:inline-block;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.06em;flex-shrink:0;}
     .sd-fin-badge-ok{background:rgba(52,211,153,.2);color:#34d399;border:1px solid rgba(52,211,153,.4);}
     .sd-fin-badge-late{background:rgba(248,113,113,.2);color:#f87171;border:1px solid rgba(248,113,113,.4);}
-    .sd-fin-next{font-size:11px;color:var(--sd-dark-muted);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10);}
-    .sd-fin-next strong{color:var(--sd-dark-text);font-weight:700;}
-    .sd-fin-empty{font-size:12px;color:var(--sd-dark-muted);margin-top:8px;}
+    .sd-fin-next{font-size:12px;color:rgba(244,249,255,.55);margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.10);}
+    .sd-fin-next strong{color:#F4F9FF;font-weight:700;}
+    .sd-fin-empty{font-size:12px;color:rgba(244,249,255,.55);margin-top:8px;}
     .sd-metric{display:flex;align-items:center;gap:14px;}
     .sd-metric-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .sd-metric-body{flex:1;min-width:0;}
@@ -806,6 +814,21 @@
     .sd-metric-lbl{font-size:13px;font-weight:600;color:var(--sd-surface-muted);margin-top:3px;}
     .sd-metrics-combined{display:flex;flex-direction:column;gap:0;}
     .sd-metric-divider{height:1px;background:var(--sd-surface-border);margin:14px 0;}
+    .sd-metrics-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;padding:4px 0;}
+    .sd-metric-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;padding:6px 8px;min-width:0;position:relative;}
+    .sd-metric-cell + .sd-metric-cell::before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:1px;background:rgba(255,255,255,.14);}
+    .sd-metric-cell .sd-metric-num{font-size:22px;color:#F4F9FF;}
+    .sd-metric-cell .sd-metric-lbl{font-size:10px;font-weight:700;line-height:1.25;color:rgba(244,249,255,.58);margin-top:0;}
+    .sd-card-metrics-dark{
+      padding:14px 10px;
+      background:linear-gradient(145deg,#1a2333 0%,#121826 55%,#0c111b 100%)!important;
+      border:1.5px solid rgba(255,255,255,.12)!important;
+      color:#F4F9FF!important;
+      box-shadow:0 10px 28px rgba(0,0,0,.35)!important;
+    }
+    [data-theme="light"] .sd-card-metrics-dark{
+      background:linear-gradient(145deg,#1e2a3d 0%,#152033 55%,#0f1724 100%)!important;
+    }
     .sd-fin-head{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--sd-dark-muted);margin-bottom:14px;}
     .sd-fin-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
     .sd-fin-col-label{font-size:12px;font-weight:700;text-transform:lowercase;margin-bottom:4px;}
@@ -6163,13 +6186,112 @@ function PendingPage({icon,title}){
   );
 }
 
-function MiniDonut({pct,color,size=48}){
-  const r=17,circ=2*Math.PI*r,offset=circ-(Math.min(Math.max(pct,0),100)/100)*circ;
+function MiniDonut({pct,color,size=48,strokeWidth=5}){
+  const r=(size/2)-strokeWidth-1;
+  const circ=2*Math.PI*r,offset=circ-(Math.min(Math.max(pct,0),100)/100)*circ;
   return(
     <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}} aria-hidden="true">
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--sd-donut-track)" strokeWidth={5}/>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--sd-donut-track)" strokeWidth={strokeWidth}/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={strokeWidth} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"/>
     </svg>
+  );
+}
+
+function aproveitamentoRingColor(pct){
+  if(pct<30)return"#f87171";
+  if(pct<50)return"#f59e0b";
+  return"#14b8a6";
+}
+
+function isHomeworkLessonItem(item){
+  if(!item)return false;
+  if(item.type==="report_card"||item.lessonType==="report_card"||item.reportCard)return false;
+  if(item.type==="review"||item.lessonType==="review")return false;
+  return true;
+}
+
+/** Aproveitamento = 60% aulas (feitas/esperadas) + 40% tarefas (feitas/esperadas). */
+function computeStudentAproveitamento({books,diarioEntries,profile,course,today}){
+  const todayStr=today||getTodayISO();
+  let pastSlots=[];
+  const cal=Array.isArray(profile?.calendarioCompleto)?profile.calendarioCompleto:null;
+  if(cal&&cal.length){
+    pastSlots=cal.filter(s=>s&&s.date&&s.date<=todayStr);
+  }else if(profile?.dataInicio&&typeof gerarCalendarioCompleto==="function"){
+    try{
+      const result=gerarCalendarioCompleto({
+        dataInicio:profile.dataInicio,
+        diasAulas:profile.diasAulas||[],
+        licaoInicio:profile.licaoInicio||1,
+        trilhaExistente:{},
+        horarioAulas:profile.horarioAulas||"",
+        aulasSemanais:profile.aulasSemanais||null,
+        totalLicoes:getTotalLicoes(course),
+        course,
+      });
+      pastSlots=(result?.calendario||[]).filter(s=>s&&s.date&&s.date<=todayStr);
+    }catch(e){pastSlots=[];}
+  }
+
+  const presenceDates=new Set();
+  (diarioEntries||[]).forEach(e=>{
+    const st=normalizeDiarioStatus(e);
+    if(!diarioIsPresence(st))return;
+    const d=e.date||e.data||"";
+    if(d)presenceDates.add(d);
+  });
+  const aulasEsperadas=pastSlots.length;
+  let aulasFeitas=0;
+  if(aulasEsperadas>0){
+    const expectedDates=new Set(pastSlots.map(s=>s.date));
+    presenceDates.forEach(d=>{if(expectedDates.has(d))aulasFeitas++;});
+    // Also count presence on dates not in calendar (reposições feitas etc.) toward feito, capped later
+    if(aulasFeitas===0&&presenceDates.size)aulasFeitas=Math.min(presenceDates.size,aulasEsperadas);
+  }else{
+    aulasFeitas=presenceDates.size;
+  }
+
+  const allItems=[];
+  (books||[]).forEach(b=>(b.items||[]).forEach(i=>allItems.push(i)));
+  const pastIds=new Set(pastSlots.map(s=>s.lessonId).filter(Boolean));
+  const pastNums=new Set(pastSlots.map(s=>s.lessonNum).filter(n=>n!=null));
+  let expectedItems=allItems.filter(i=>{
+    if(!isHomeworkLessonItem(i))return false;
+    if(pastIds.has(i.id)||pastNums.has(i.num))return true;
+    if(i.dataPrevista&&i.dataPrevista<=todayStr)return true;
+    return false;
+  });
+  if(!expectedItems.length){
+    expectedItems=allItems.filter(i=>isHomeworkLessonItem(i)&&(i.status==="concluida"||i.status==="realizada"||i.status==="andamento"));
+  }
+  const tarefasEsperadas=expectedItems.length||allItems.filter(isHomeworkLessonItem).filter(i=>i.status==="concluida"||i.status==="realizada"||i.status==="andamento").length;
+  const expectedIdSet=new Set(expectedItems.map(i=>i.id));
+  const tarefasFeitas=expectedItems.length
+    ?allItems.filter(i=>i.tarefaFeita&&expectedIdSet.has(i.id)).length
+    :allItems.filter(i=>i.tarefaFeita).length;
+
+  const aulaPct=aulasEsperadas>0?Math.min(1,aulasFeitas/aulasEsperadas):(presenceDates.size?1:1);
+  const tarefaPct=tarefasEsperadas>0?Math.min(1,tarefasFeitas/tarefasEsperadas):1;
+  const pct=Math.round(100*(0.6*aulaPct+0.4*tarefaPct));
+  return{
+    pct:Math.max(0,Math.min(100,pct)),
+    aulasFeitas,aulasEsperadas:aulasEsperadas||0,
+    tarefasFeitas,tarefasEsperadas:tarefasEsperadas||0,
+    aulaPct,tarefaPct,
+  };
+}
+
+function AproveitamentoRing({pct,detail}){
+  const color=aproveitamentoRingColor(pct);
+  const tip=detail||("Aproveitamento "+pct+"%");
+  return(
+    <div className="sd-apr" title={tip} aria-label={tip}>
+      <div className="sd-apr-ring">
+        <MiniDonut pct={pct} color={color} size={64} strokeWidth={6}/>
+        <div className="sd-apr-pct" style={{color}}>{pct}%</div>
+      </div>
+      <div className="sd-apr-lbl">Aproveitamento</div>
+    </div>
   );
 }
 
@@ -6189,14 +6311,23 @@ function StatMetricRow({icon,iconBg,iconColor,imageMeta,value,label,pct,donutCol
   );
 }
 
-function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor,totalLicoes}){
+function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor}){
   return(
-    <div className="sd-card-light sd-metrics-combined">
-      <StatMetricRow icon="check-circle" iconBg="rgba(52,211,153,.18)" iconColor="#10b981" value={licoesConcluidas} label="lições concluídas" pct={Math.round((licoesConcluidas/totalLicoes)*100)} donutColor="#14b8a6"/>
-      <div className="sd-metric-divider"/>
-      <StatMetricRow imageMeta={TASK_COSMIC_ICON} value={tarefasFeitas} label="tarefas entregues" pct={licoesConcluidas?Math.round((tarefasFeitas/licoesConcluidas)*100):0} donutColor="#f59e0b"/>
-      <div className="sd-metric-divider"/>
-      <StatMetricRow icon="upload-cloud" iconBg="rgba(59,130,246,.18)" iconColor="#3b82f6" value={paraRepor} label="reposições a fazer" pct={paraRepor?Math.min(paraRepor*20,100):0} donutColor="#3b82f6"/>
+    <div className="sd-card-dark sd-card-metrics-dark">
+      <div className="sd-metrics-row">
+        <div className="sd-metric-cell">
+          <div className="sd-metric-num">{licoesConcluidas}</div>
+          <div className="sd-metric-lbl">lições concluídas</div>
+        </div>
+        <div className="sd-metric-cell">
+          <div className="sd-metric-num">{tarefasFeitas}</div>
+          <div className="sd-metric-lbl">tarefas entregues</div>
+        </div>
+        <div className="sd-metric-cell">
+          <div className="sd-metric-num">{paraRepor}</div>
+          <div className="sd-metric-lbl">reposições a fazer</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -6205,33 +6336,23 @@ function StudentFinanceCard({financeiro,onGo}){
   const parcelas=financeiro?.parcelas||[];
   const [todayKey,setTodayKey]=useState(getTodayISO);
   useEffect(()=>{const id=setInterval(()=>{const t=getTodayISO();setTodayKey(k=>k===t?k:t);},60000);return()=>clearInterval(id);},[]);
-  const {current,next,isLate,allPaid,sorted,todayStr}=useMemo(()=>resolveFinanceSnapshot(parcelas),[parcelas,todayKey]);
-  const hojeDisplay=formatDateBR(todayStr).slice(0,5);
+  const {current,isLate,allPaid,sorted}=useMemo(()=>resolveFinanceSnapshot(parcelas),[parcelas,todayKey]);
+  const statusLabel=sorted.length===0?"—":(isLate?"ATRASADO":"EM DIA");
+  const statusCls=isLate?"sd-fin-badge-late":"sd-fin-badge-ok";
+  let nextLine="Sem lançamentos";
+  if(sorted.length){
+    if(allPaid&&!current)nextLine="Nenhum vencimento em aberto";
+    else if(current?.dataVencimento)nextLine="Próximo vencimento: "+formatDateBR(current.dataVencimento);
+    else nextLine="Próximo vencimento: —";
+  }
+  const openFin=(e)=>{if(e){e.preventDefault();e.stopPropagation();}if(onGo)onGo();};
   return(
-    <div className="sd-card-dark sd-card-fin">
+    <div className="sd-card-dark sd-card-fin" onClick={openFin} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==="Enter"||e.key===" ")openFin(e);}}>
       <div className="sd-fin-head-row">
         <span className="sd-fin-head" style={{margin:0}}>FINANCEIRO</span>
-        <button type="button" className="sd-fin-link" onClick={onGo}>Ver completo ↗</button>
+        <span className={"sd-fin-badge-sm "+(sorted.length?statusCls:"sd-fin-badge-ok")}>{statusLabel}</span>
       </div>
-      {sorted.length===0?(
-        <div className="sd-fin-empty">Sem lançamentos cadastrados</div>
-      ):allPaid&&!current?(
-        <div className="sd-fin-main">
-          <div><div className="sd-fin-month">Tudo em dia</div><div className="sd-fin-due-line">Hoje: <strong>{hojeDisplay}</strong></div></div>
-          <span className="sd-fin-badge-sm sd-fin-badge-ok">EM DIA</span>
-        </div>
-      ):(
-        <>
-          <div className="sd-fin-main">
-            <div>
-              <div className="sd-fin-month">{current?.mes||formatMonthDay(current?.dataVencimento)}</div>
-              <div className="sd-fin-due-line">Vence <strong>{formatDateBR(current?.dataVencimento).slice(0,5)}</strong> · Hoje <strong>{hojeDisplay}</strong></div>
-            </div>
-            <span className={"sd-fin-badge-sm "+(isLate?"sd-fin-badge-late":"sd-fin-badge-ok")}>{isLate?"EM ATRASO":"EM DIA"}</span>
-          </div>
-          {next?.dataVencimento&&<div className="sd-fin-next">Próximo: <strong>{formatMonthDay(next.dataVencimento)}</strong></div>}
-        </>
-      )}
+      <div className="sd-fin-next" style={{marginTop:12}}>{nextLine}</div>
     </div>
   );
 }
@@ -6257,13 +6378,20 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
 
   const [diarioStats,setDiarioStats]=useState({paraRepor:0});
   const [repoCounters,setRepoCounters]=useState({aFazer:0,vencidas:0});
+  const [diarioEntries,setDiarioEntries]=useState([]);
   useEffect(()=>db.collection("students").doc(uid).collection("diario").onSnapshot(snap=>{
     const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
+    setDiarioEntries(entries);
     setDiarioStats(computeDiarioStats(entries));
     const today=new Date().toISOString().slice(0,10);
     setRepoCounters(computeReposicaoCounters(entries,today));
     syncStudentReposicaoCounters(uid,entries);
   }),[uid]);
+
+  const aproveitamento=useMemo(
+    ()=>computeStudentAproveitamento({books,diarioEntries,profile,course,today:getTodayISO()}),
+    [books,diarioEntries,profile,course]
+  );
 
   const showPresence=typeof shouldShowPresenceConfirm==="function"&&shouldShowPresenceConfirm(schedule);
 
@@ -6275,7 +6403,7 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
           <div className="text-sm mt-1">Toque para confirmar presença ou avisar ausência.</div>
         </button>
       )}
-      {/* Card 1 — Perfil: só primeiro nome no card */}
+      {/* Card 1 — Perfil + Aproveitamento */}
       <div className="sd-card-light sd-greeting">
         {profile.foto
           ?<img src={profile.foto} alt="" className="sd-avatar"/>
@@ -6285,12 +6413,16 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
           <div className="sd-hello">Hello,</div>
           <div className="sd-name" title={getFullName(profile.name)}>{getFirstName(profile.name)}</div>
         </div>
+        <AproveitamentoRing
+          pct={aproveitamento.pct}
+          detail={"Aulas "+aproveitamento.aulasFeitas+"/"+aproveitamento.aulasEsperadas+" · Tarefas "+aproveitamento.tarefasFeitas+"/"+aproveitamento.tarefasEsperadas}
+        />
       </div>
 
-      {/* Card 2 — Resultado (lições, tarefas, reposições em um único card) */}
-      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={repoCounters.aFazer||diarioStats.paraRepor} totalLicoes={totalLicoes}/>
+      {/* Card 2 — lições / tarefas / reposições em uma linha dark */}
+      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={repoCounters.aFazer||diarioStats.paraRepor}/>
 
-      {/* Card 3 — Financeiro (Em dia/Atrasado + vencimento + Ver completo) */}
+      {/* Card 3 — Financeiro preto: status + próximo vencimento */}
       <StudentFinanceCard financeiro={financeiro} onGo={()=>onNavigate("financeiro")}/>
 
       {/* Card 4 — Ícones-link (carrossel horizontal) */}
