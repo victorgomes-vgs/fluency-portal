@@ -1073,6 +1073,104 @@
     .student-universe .sd-fin-link{color:#087F7A;}
     .student-universe .sd-fin-badge-ok{background:rgba(5,150,105,.10);color:#087F5B;border-color:rgba(5,150,105,.24);}
     .student-universe .sd-fin-badge-late{background:rgba(220,38,38,.09);color:#B4232E;border-color:rgba(220,38,38,.20);}
+
+    /* ── PAINEL DO ALUNO — responsividade ampla e cards profissionais ── */
+    .student-portal-context{max-width:720px;margin:0 auto 12px;padding:0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .student-dash{max-width:720px;gap:16px;padding-top:10px;padding-bottom:34px;}
+    .student-universe .sd-profile-card,
+    [data-theme="light"] .student-universe .sd-profile-card{
+      border:1.5px solid rgba(37,139,255,.88);
+      box-shadow:0 18px 46px rgba(0,25,68,.24),0 0 0 3px rgba(37,139,255,.10),inset 0 1px 0 rgba(255,255,255,.92);
+    }
+    .student-universe .sd-card-metrics-dark,
+    [data-theme="light"] .student-universe .sd-card-metrics-dark{
+      --sd-donut-track:rgba(255,255,255,.12);
+      background:linear-gradient(145deg,rgba(21,35,55,.98) 0%,rgba(11,22,39,.98) 58%,rgba(5,14,28,.99) 100%)!important;
+      color:#F7FBFF!important;border:1px solid rgba(123,211,255,.24)!important;
+      box-shadow:0 18px 46px rgba(0,8,28,.34),inset 0 1px 0 rgba(255,255,255,.10)!important;
+    }
+    .student-universe .sd-card-metrics-dark .sd-metric-num,
+    [data-theme="light"] .student-universe .sd-card-metrics-dark .sd-metric-num{color:#F7FBFF;}
+    .student-universe .sd-card-metrics-dark .sd-metric-lbl,
+    [data-theme="light"] .student-universe .sd-card-metrics-dark .sd-metric-lbl{color:rgba(228,242,255,.72);}
+    .sd-metric-value-row{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;}
+    .sd-metric-chart{position:relative;width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;}
+    .sd-metric-chart svg{position:absolute;inset:0;}
+    .sd-metric-chart span{position:relative;z-index:1;font-size:8px;font-weight:900;color:#DFF7FF;letter-spacing:-.02em;}
+    .sd-metric-track{height:4px;width:min(100%,86px);margin:8px auto 0;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;}
+    .sd-metric-track span{display:block;height:100%;border-radius:inherit;min-width:0;box-shadow:0 0 10px currentColor;}
+    .sd-card-metrics-dark .sd-metric-cell{padding:10px 12px;}
+    .sd-card-metrics-dark .sd-metric-cell + .sd-metric-cell::before{background:rgba(178,218,246,.16);}
+
+    .student-universe .sd-card-fin .sd-fin-link{color:#75E8F6;}
+    .sd-fin-status-band{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:12px 14px;border-radius:14px;border:1px solid transparent;transition:transform .18s ease,filter .18s ease;}
+    .sd-card-fin:hover .sd-fin-status-band{transform:translateY(-1px);filter:brightness(1.06);}
+    .sd-fin-status-band.is-late{background:linear-gradient(90deg,rgba(190,24,45,.34),rgba(248,113,113,.13));border-color:rgba(248,113,113,.46);box-shadow:0 9px 24px rgba(127,20,38,.24);}
+    .sd-fin-status-band.is-ok{background:linear-gradient(90deg,rgba(5,150,105,.24),rgba(52,211,153,.08));border-color:rgba(52,211,153,.32);}
+    .sd-fin-status-band.is-empty{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);}
+    .sd-fin-status-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 38px;background:rgba(255,255,255,.10);color:#F7FBFF;}
+    .sd-fin-status-copy{min-width:0;flex:1;}
+    .sd-fin-status-copy strong{display:block;color:#F7FBFF;font-size:12px;font-weight:900;letter-spacing:.055em;}
+    .sd-fin-status-copy span{display:block;color:rgba(229,241,252,.70);font-size:11px;line-height:1.35;margin-top:3px;}
+    .sd-fin-status-arrow{color:rgba(255,255,255,.72);flex:0 0 auto;}
+
+    .sd-nav-card{padding:18px 20px 20px;}
+    .sd-nav-card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;}
+    .sd-nav-card-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:900;color:#123C62;}
+    .sd-nav-card-sub{font-size:11px;font-weight:600;color:#58718A;text-align:right;}
+    .sd-nav-grid-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 10px;width:100%;}
+    .sd-nav-grid-wrap .sd-nav-carousel{width:100%;min-width:0;padding:7px 3px;border-radius:14px;}
+    .sd-nav-grid-wrap .sd-nav-carousel:hover{background:rgba(43,139,255,.07);}
+    .sd-nav-grid-wrap .sd-nav-label{font-size:10px;max-width:100%;overflow-wrap:anywhere;}
+
+    .cosmic-card-current{color:#D9F5FF;font-weight:800;}
+    .cosmic-card-open{min-height:40px;border-radius:12px!important;padding:0 13px!important;background:rgba(30,184,225,.12)!important;border:1px solid rgba(65,221,245,.26)!important;}
+    .cosmic-card-open:hover{background:rgba(30,184,225,.22)!important;}
+
+    @media (min-width:900px){
+      .student-dashboard-main{width:100%;max-width:1280px!important;padding-left:clamp(24px,3.2vw,48px)!important;padding-right:clamp(24px,3.2vw,48px)!important;margin-left:auto!important;margin-right:auto!important;}
+      .student-dashboard-main .student-portal-context{max-width:1180px;margin-bottom:16px;}
+      .student-dashboard-main .student-dash{
+        max-width:1180px;display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);
+        gap:20px;padding-top:12px;padding-bottom:52px;align-items:stretch;
+      }
+      .student-dashboard-main .sd-presence-card,
+      .student-dashboard-main .sd-card-fin,
+      .student-dashboard-main .sd-nav-card,
+      .student-dashboard-main .cosmic-card{grid-column:1 / -1;}
+      .student-dashboard-main .sd-profile-card,
+      .student-dashboard-main .sd-card-metrics-dark{min-height:158px;}
+      .student-dashboard-main .sd-profile-card{padding:24px 26px;}
+      .student-dashboard-main .sd-card-metrics-dark{padding:20px 18px;display:flex;align-items:center;}
+      .student-dashboard-main .sd-card-metrics-dark .sd-metrics-row{width:100%;}
+      .student-dashboard-main .sd-card-fin{padding:18px 20px;}
+      .student-dashboard-main .sd-fin-status-band{padding:14px 18px;}
+      .student-dashboard-main .sd-nav-card{padding:22px 26px 24px;}
+      .student-dashboard-main .sd-nav-grid-wrap{grid-template-columns:repeat(8,minmax(0,1fr));gap:12px;}
+      .student-dashboard-main .sd-nav-icon.cosmic-image-crop{width:60px;height:60px;flex-basis:60px;}
+      .student-dashboard-main .sd-nav-grid-wrap .sd-nav-label{font-size:11px;}
+      .student-dashboard-main .cosmic-card{padding:22px 26px 24px;min-height:290px;}
+      .student-dashboard-main .cosmic-card-title{font-size:16px;}
+      .student-dashboard-main .cosmic-card-course{font-size:12px;}
+      .student-dashboard-main .cosmic-card-route{min-height:172px;}
+      .student-dashboard-main .cosmic-card-foot{margin-top:7px;}
+    }
+    @media (max-width:520px){
+      .student-dash{gap:14px;padding-top:8px;}
+      .sd-nav-card{padding:16px 12px 18px;}
+      .sd-nav-card-head{align-items:flex-start;margin-bottom:13px;padding:0 4px;}
+      .sd-nav-card-sub{max-width:128px;}
+      .sd-nav-grid-wrap{gap:11px 6px;}
+      .sd-card-metrics-dark .sd-metric-cell{padding:8px 5px;}
+      .sd-metric-value-row{gap:4px;}
+      .sd-metric-chart span{font-size:7px;}
+      .sd-fin-status-band{padding:11px 12px;}
+      .cosmic-card-foot{align-items:flex-start;flex-direction:column;}
+      .cosmic-card-open{width:100%;justify-content:center;}
+    }
+    @media (max-width:350px){
+      .sd-nav-grid-wrap{grid-template-columns:repeat(3,minmax(0,1fr));}
+    }
     .student-universe .cosmic-stage{border-color:rgba(77,176,255,.24);}
     .student-universe .cosmic-card{
       color:#F7FBFF;background-color:#020814;
@@ -6573,22 +6671,31 @@ function StatMetricRow({icon,iconBg,iconColor,imageMeta,value,label,pct,donutCol
   );
 }
 
-function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor}){
+function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor,totalLicoes,totalTarefas}){
+  const lessonPct=Math.min(100,Math.round((licoesConcluidas/Math.max(1,totalLicoes||1))*100));
+  const taskPct=Math.min(100,Math.round((tarefasFeitas/Math.max(1,totalTarefas||1))*100));
+  const repoPct=Math.min(100,Math.max(0,(paraRepor||0)*25));
+  const metrics=[
+    {value:licoesConcluidas,label:"lições concluídas",pct:lessonPct,color:"#38BDF8",chart:lessonPct+"%"},
+    {value:tarefasFeitas,label:"tarefas entregues",pct:taskPct,color:"#34D399",chart:taskPct+"%"},
+    {value:paraRepor,label:"reposições a fazer",pct:repoPct,color:paraRepor?"#FB7185":"#5EEAD4",chart:paraRepor?String(paraRepor):"0"},
+  ];
   return(
     <div className="sd-card-dark sd-card-metrics-dark">
       <div className="sd-metrics-row">
-        <div className="sd-metric-cell">
-          <div className="sd-metric-num">{licoesConcluidas}</div>
-          <div className="sd-metric-lbl">lições concluídas</div>
-        </div>
-        <div className="sd-metric-cell">
-          <div className="sd-metric-num">{tarefasFeitas}</div>
-          <div className="sd-metric-lbl">tarefas entregues</div>
-        </div>
-        <div className="sd-metric-cell">
-          <div className="sd-metric-num">{paraRepor}</div>
-          <div className="sd-metric-lbl">reposições a fazer</div>
-        </div>
+        {metrics.map(metric=>(
+          <div className="sd-metric-cell" key={metric.label}>
+            <div className="sd-metric-value-row">
+              <div className="sd-metric-num">{metric.value}</div>
+              <div className="sd-metric-chart" role="img" aria-label={metric.label+": "+metric.value}>
+                <MiniDonut pct={metric.pct} color={metric.color} size={42} strokeWidth={4}/>
+                <span>{metric.chart}</span>
+              </div>
+            </div>
+            <div className="sd-metric-lbl">{metric.label}</div>
+            <div className="sd-metric-track" aria-hidden="true"><span style={{width:metric.pct+"%",background:metric.color,color:metric.color}}/></div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -6599,11 +6706,11 @@ function StudentFinanceCard({financeiro,onGo}){
   const [todayKey,setTodayKey]=useState(getTodayISO);
   useEffect(()=>{const id=setInterval(()=>{const t=getTodayISO();setTodayKey(k=>k===t?k:t);},60000);return()=>clearInterval(id);},[]);
   const {current,isLate,allPaid,sorted}=useMemo(()=>resolveFinanceSnapshot(parcelas),[parcelas,todayKey]);
-  const statusLabel=sorted.length===0?"—":(isLate?"ATRASADO":"EM DIA");
-  const statusCls=isLate?"sd-fin-badge-late":"sd-fin-badge-ok";
+  const statusLabel=sorted.length===0?"FINANCEIRO SEM LANÇAMENTOS":(isLate?"PAGAMENTO ATRASADO":"FINANCEIRO EM DIA");
   let nextLine="Sem lançamentos";
   if(sorted.length){
     if(allPaid&&!current)nextLine="Nenhum vencimento em aberto";
+    else if(isLate&&current?.dataVencimento)nextLine="Vencido em "+formatDateBR(current.dataVencimento)+" · toque para ver e regularizar";
     else if(current?.dataVencimento)nextLine="Próximo vencimento: "+formatDateBR(current.dataVencimento);
     else nextLine="Próximo vencimento: —";
   }
@@ -6612,9 +6719,13 @@ function StudentFinanceCard({financeiro,onGo}){
     <div className="sd-card-dark sd-card-fin" onClick={openFin} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==="Enter"||e.key===" ")openFin(e);}}>
       <div className="sd-fin-head-row">
         <span className="sd-fin-head" style={{margin:0}}>FINANCEIRO</span>
-        <span className={"sd-fin-badge-sm "+(sorted.length?statusCls:"sd-fin-badge-ok")}>{statusLabel}</span>
+        <span className="sd-fin-link">Ver detalhes</span>
       </div>
-      <div className="sd-fin-next" style={{marginTop:12}}>{nextLine}</div>
+      <div className={"sd-fin-status-band "+(!sorted.length?"is-empty":isLate?"is-late":"is-ok")}>
+        <span className="sd-fin-status-icon"><Icon name={!sorted.length?"minus":isLate?"alert-triangle":"check-circle"} size={20}/></span>
+        <span className="sd-fin-status-copy"><strong>{statusLabel}</strong><span>{nextLine}</span></span>
+        <Icon name="arrow-right" size={18} className="sd-fin-status-arrow"/>
+      </div>
     </div>
   );
 }
@@ -6637,9 +6748,15 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
     let c=0;visibleBooks.forEach(b=>b.items.forEach(i=>{if(i.tarefaFeita)c++;}));return c;
   },[visibleBooks]);
   const totalLicoes=visibleBooks.reduce((s,b)=>s+b.items.filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card"&&!i.reportCard).length,0)||1;
+  const totalTarefas=visibleBooks.reduce((s,b)=>s+b.items.filter(isHomeworkLessonItem).length,0)||1;
   const progressGeral=Math.round((licoesConcluidas/totalLicoes)*100);
   const currentRouteItems=useMemo(()=>currentBook?currentBook.items.filter(it=>it.type!=="report_card"&&it.lessonType!=="report_card"&&!it.reportCard):[],[currentBook]);
   const currentModuleComplete=currentRouteItems.length>0&&currentRouteItems.every(item=>item.status==="concluida"||item.status==="realizada");
+  const currentLesson=useMemo(()=>{
+    const active=currentRouteItems.find(item=>item.status==="andamento"||item.status==="atual");
+    if(active)return active;
+    return currentRouteItems.find(item=>!(item.status==="concluida"||item.status==="realizada"))||currentRouteItems[currentRouteItems.length-1]||null;
+  },[currentRouteItems]);
 
   const [diarioStats,setDiarioStats]=useState({paraRepor:0});
   const [repoCounters,setRepoCounters]=useState({aFazer:0,vencidas:0});
@@ -6663,13 +6780,13 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
   return(
     <div className="student-dash">
       {showPresence&&(
-        <button type="button" className="glass rounded-2xl p-4 w-full text-left mb-1" style={{border:"1px solid rgba(20,184,166,.45)"}} onClick={()=>onNavigate("presenca")}>
+        <button type="button" className="glass rounded-2xl p-4 w-full text-left mb-1 sd-presence-card" style={{border:"1px solid rgba(20,184,166,.45)"}} onClick={()=>onNavigate("presenca")}>
           <div className="text-xs font-extrabold tracking-wide" style={{color:"#14b8a6"}}>CONFIRME SUA AULA DE HOJE</div>
           <div className="text-sm mt-1">Toque para confirmar presença ou avisar ausência.</div>
         </button>
       )}
       {/* Card 1 — Perfil + Aproveitamento */}
-      <div className="sd-card-light sd-greeting">
+      <div className="sd-card-light sd-greeting sd-profile-card">
         {profile.foto
           ?<img src={profile.foto} alt="" className="sd-avatar"/>
           :<div className="sd-avatar-ph"><Icon name="user" size={24}/></div>
@@ -6685,16 +6802,20 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
       </div>
 
       {/* Card 2 — lições / tarefas / reposições em uma linha dark */}
-      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={repoCounters.aFazer||diarioStats.paraRepor} totalLicoes={totalLicoes}/>
+      <StudentStatsCard licoesConcluidas={licoesConcluidas} tarefasFeitas={tarefasFeitas} paraRepor={repoCounters.aFazer||diarioStats.paraRepor} totalLicoes={totalLicoes} totalTarefas={totalTarefas}/>
 
       {/* Card 3 — Financeiro preto: status + próximo vencimento */}
       <StudentFinanceCard financeiro={financeiro} onGo={()=>onNavigate("financeiro")}/>
 
-      {/* Card 4 — Ícones-link (carrossel horizontal) */}
-      <div className="sd-card-light">
-        <div className="sd-scroll">
+      {/* Card 4 — todos os acessos em grade responsiva, sem rolagem lateral */}
+      <div className="sd-card-light sd-nav-card">
+        <div className="sd-nav-card-head">
+          <div className="sd-nav-card-title">Acessos rápidos</div>
+          <div className="sd-nav-card-sub">Tudo à vista, em qualquer tela</div>
+        </div>
+        <div className="sd-nav-grid-wrap">
           {STUDENT_NAV.map(nav=>(
-            <button key={nav.id} type="button" className="sd-nav-carousel" onClick={()=>onNavigate(nav.id)} title={nav.label}>
+            <button key={nav.id} type="button" className="sd-nav-carousel" onClick={()=>onNavigate(nav.id)} title={nav.label} aria-label={"Abrir "+nav.label}>
               <CosmicSectionImage meta={nav} className="sd-nav-icon"/>
               <div className="sd-nav-label">{nav.label}</div>
             </button>
@@ -6743,8 +6864,8 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
             </div>
           </div>
           <div className="cosmic-card-foot">
-            <span className="cosmic-card-note">Cada lição acende um novo ponto da sua jornada.</span>
-            <button type="button" className="cosmic-card-open" onClick={()=>onNavigate("trilha")}>Ver trilha <Icon name="arrow-right" size={15}/></button>
+            <span className="cosmic-card-note">{currentLesson?<><span className="cosmic-card-current">Lição {getLessonDisplayLabel(currentLesson)} · </span>sua missão atual já está destacada na trilha.</>:"Cada lição acende um novo ponto da sua jornada."}</span>
+            <button type="button" className="cosmic-card-open" onClick={()=>onNavigate("trilha",currentLesson?.id||null)}>Ir para a próxima lição <Icon name="arrow-right" size={15}/></button>
           </div>
         </div>
       )}
@@ -7796,9 +7917,9 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         />
       )}
 
-      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="materiais"&&studentFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
+      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="dashboard"?" student-dashboard-main":"")+(showStudentUi&&studentPage==="materiais"&&studentFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
         {showStudentUi&&(
-          <div style={{maxWidth:480,margin:"0 auto 12px",padding:"0 4px",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+          <div className="student-portal-context">
             <span className="role-pill role-pill-student">Portal do aluno</span>
             {isAdmin&&viewAsStudent&&(
               <span style={{fontSize:11,color:"#B45309",fontWeight:700}}>Pré-visualização · o que o aluno vê</span>
