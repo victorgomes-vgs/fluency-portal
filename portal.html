@@ -45,6 +45,37 @@
     .fc-host .fc{--fc-border-color:var(--divider);--fc-page-bg-color:transparent;--fc-neutral-bg-color:rgba(15,23,42,.04);--fc-button-bg-color:#0f766e;--fc-button-border-color:#0f766e;--fc-button-hover-bg-color:#0d9488;--fc-today-bg-color:rgba(20,184,166,.12);}
     .fc-host .fc-toolbar-title{font-size:1.05rem;font-weight:800;font-family:'Sora',sans-serif;}
     .fc-host .fc-event{cursor:pointer;font-size:11px;}
+
+    /* Google-Calendar-inspired skin */
+    .fc-host.gcal-skin .fc{
+      --fc-border-color:rgba(148,163,184,.35);
+      --fc-page-bg-color:transparent;
+      --fc-neutral-bg-color:rgba(15,23,42,.03);
+      --fc-today-bg-color:rgba(66,133,244,.10);
+      --fc-now-indicator-color:#ea4335;
+      --fc-button-bg-color:#1a73e8;
+      --fc-button-border-color:#1a73e8;
+      --fc-button-hover-bg-color:#1765cc;
+      --fc-button-hover-border-color:#1765cc;
+      --fc-button-active-bg-color:#174ea6;
+      --fc-event-border-color:transparent;
+      font-family:'Inter',system-ui,sans-serif;
+    }
+    .fc-host.gcal-skin .fc-toolbar-title{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;color:var(--font);}
+    .fc-host.gcal-skin .fc-button{border-radius:999px;text-transform:none;font-weight:600;box-shadow:none;padding:.35rem .85rem;}
+    .fc-host.gcal-skin .fc-button-primary:not(:disabled).fc-button-active,
+    .fc-host.gcal-skin .fc-button-primary:not(:disabled):active{background:#174ea6;border-color:#174ea6;}
+    .fc-host.gcal-skin .fc-col-header-cell-cushion{padding:10px 4px;font-size:12px;font-weight:700;color:var(--font-muted);text-transform:uppercase;letter-spacing:.04em;}
+    .fc-host.gcal-skin .fc-timegrid-slot{height:2.4em;}
+    .fc-host.gcal-skin .fc-timegrid-slot-label-cushion{font-size:11px;color:var(--font-muted);}
+    .fc-host.gcal-skin .fc-event{border-radius:8px;padding:2px 6px;border:none;box-shadow:0 1px 2px rgba(15,23,42,.12);font-size:12px;font-weight:600;}
+    .fc-host.gcal-skin .fc-event .fc-event-main{color:inherit;}
+    .fc-host.gcal-skin .fc-daygrid-event{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .fc-host.gcal-skin .fc-daygrid-day-number{padding:8px;font-weight:600;}
+    .fc-host.gcal-skin .fc-timegrid-now-indicator-line{border-width:2px;}
+    .fc-host.gcal-skin .fc-scrollgrid{border-radius:16px;overflow:hidden;}
+    [data-theme="light"] .fc-host.gcal-skin .fc{--fc-border-color:#e0e3e7;--fc-today-bg-color:rgba(66,133,244,.08);}
+
     /* ═══════════════════════════════════════════════════════════
        DESIGN SYSTEM — High-End Premium (WCAG 4.5:1+)
        Palette locked per platform overhaul directive
@@ -7901,14 +7932,21 @@ function normalizeAulasSemanais(raw,diasAulas,horarioAulas){
   return[blankAulaSemanal(1)];
 }
 function deriveScheduleFromAulas(aulas){
-  const list=(aulas||[]).filter(a=>a&&(a.dia||a.horario));
-  const dias=[...new Set(list.map(a=>a.dia).filter(Boolean))];
-  const horarios=[...new Set(list.map(a=>String(a.horario||"").slice(0,5)).filter(Boolean))];
+  // Keep empty editor rows (dia/horario blank) so "Adicionar aulas semanais" works.
+  const raw=(aulas||[]).map((a,i)=>({
+    id:a&&a.id!=null?a.id:(i+1),
+    dia:(a&&(a.dia||a.day))||"",
+    horario:String((a&&(a.horario||a.time))||"").slice(0,5),
+  }));
+  const filled=raw.filter(a=>a.dia||a.horario);
+  const complete=raw.filter(a=>a.dia&&a.horario);
+  const dias=[...new Set(complete.map(a=>a.dia).filter(Boolean))];
+  const horarios=[...new Set(complete.map(a=>a.horario).filter(Boolean))];
   return{
     diasAulas:dias,
     horarioAulas:horarios[0]||"",
-    aulasSemanais:list.length?list.map((a,i)=>({id:a.id!=null?a.id:(i+1),dia:a.dia||"",horario:String(a.horario||"").slice(0,5)})):[blankAulaSemanal(1)],
-    reposicoesGratuitasContrato:Math.max(1,list.filter(a=>a.dia&&a.horario).length||list.length||1),
+    aulasSemanais:raw.length?raw.map((a,i)=>({id:a.id!=null?a.id:(i+1),dia:a.dia||"",horario:a.horario||""})):[blankAulaSemanal(1)],
+    reposicoesGratuitasContrato:Math.max(1,complete.length||filled.length||1),
   };
 }
 function studentBlocksWeeklySlot(student){
@@ -8021,7 +8059,9 @@ function WeeklyClassesEditor({value,onChange,excludeUid=""}){
     const next=aulas.map((a,i)=>i===idx?{...a,...patch}:a);
     onChange(next);
   }
-  function addAula(){
+  function addAula(e){
+    if(e&&e.preventDefault)e.preventDefault();
+    if(aulas.length>=3){alert("Máximo de 3 aulas semanais por aluno.");return;}
     const nextId=aulas.reduce((m,a)=>Math.max(m,Number(a.id)||0),0)+1;
     onChange([...aulas,{id:nextId,dia:"",horario:""}]);
   }
@@ -8029,14 +8069,25 @@ function WeeklyClassesEditor({value,onChange,excludeUid=""}){
     if(aulas.length<=1){onChange([blankAulaSemanal(1)]);return;}
     onChange(aulas.filter((_,i)=>i!==idx).map((a,i)=>({...a,id:i+1})));
   }
-  const qtd=aulas.filter(a=>a.dia&&a.horario).length||aulas.length;
+  const qtd=aulas.filter(a=>a.dia&&a.horario).length;
   return(
-    <div style={{gridColumn:"1/-1"}}>
+    <div style={{gridColumn:"1 / -1",width:"100%"}}>
       <label className="form-label">Aulas semanais contratadas</label>
-      <p className="text-xs muted mb-2">Cada aula semanal dá direito a <strong>1 reposição gratuita</strong>. Dias e horários vêm da Agenda do estúdio; horários ocupados não aparecem. Agora: <strong>{qtd}</strong> reposição(ões) gratuita(s).</p>
+      <p className="text-xs muted mb-2">Cada aula semanal dá direito a <strong>1 reposição gratuita</strong>. Horários já ocupados por outros alunos <strong>não aparecem</strong> e não podem ser salvos. Agora: <strong>{qtd||aulas.length}</strong> aula(s) · até 3.</p>
       <div className="space-y-3">
-        {aulas.map((a,idx)=>(
-          <div key={a.id||idx} className="rounded-xl p-3" style={{border:"1px solid var(--divider)",background:"var(--badge)"}}>
+        {aulas.map((a,idx)=>{
+          const freeHours=availability.workingHours.filter(h=>{
+            if(!a.dia)return false;
+            const key=a.dia+"|"+h;
+            const usedHere=aulas.some((other,i)=>i!==idx&&other.dia===a.dia&&String(other.horario||"").slice(0,5)===h);
+            return !availability.occupied.has(key)&&!usedHere;
+          });
+          const currentStillValid=a.dia&&a.horario&&freeHours.includes(String(a.horario).slice(0,5));
+          const hourOptions=a.horario&&!currentStillValid&&availability.workingHours.includes(String(a.horario).slice(0,5))
+            ?[String(a.horario).slice(0,5),...freeHours.filter(h=>h!==String(a.horario).slice(0,5))]
+            :freeHours;
+          return(
+          <div key={String(a.id)+"-"+idx} className="rounded-xl p-3" style={{border:"1px solid var(--divider)",background:"var(--badge)"}}>
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="text-sm font-bold">Aula {idx+1}</div>
               {aulas.length>1&&<button type="button" className="btn btn-danger rounded-lg px-2 py-1 text-xs" onClick={()=>removeAula(idx)}>Remover</button>}
@@ -8044,32 +8095,30 @@ function WeeklyClassesEditor({value,onChange,excludeUid=""}){
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="form-label">Dia da semana</label>
-                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.dia||""} onChange={e=>setAula(idx,{dia:e.target.value})}>
+                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.dia||""} onChange={e=>setAula(idx,{dia:e.target.value,horario:""})}>
                   <option value="">— selecionar —</option>
                   {availability.workingDays.map(d=><option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
                 <label className="form-label">Horário disponível</label>
-                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.horario||""} onChange={e=>setAula(idx,{horario:e.target.value})}>
+                <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.horario||""} onChange={e=>setAula(idx,{horario:e.target.value})} disabled={!a.dia||availability.loading}>
                   <option value="">— selecionar —</option>
-                  {availability.workingHours.filter(h=>{
-                    const key=`${a.dia}|${h}`;
-                    const usedHere=aulas.some((other,i)=>i!==idx&&other.dia===a.dia&&other.horario===h);
-                    return !!a.dia&&!availability.occupied.has(key)&&!usedHere;
-                  }).map(h=><option key={h} value={h}>{h}</option>)}
+                  {hourOptions.map(h=><option key={h} value={h}>{h}{availability.occupied.has(a.dia+"|"+h)?" (ocupado)":""}</option>)}
                 </select>
                 {!a.dia&&<div className="text-xs muted mt-1">Selecione o dia para carregar os horários livres.</div>}
-                {a.dia&&a.horario&&(availability.occupied.has(`${a.dia}|${a.horario}`)||!availability.workingHours.includes(a.horario))&&<div style={{fontSize:11,color:"#B91C1C",marginTop:5}}>Este horário não está mais disponível. Selecione outro.</div>}
+                {a.dia&&!availability.loading&&freeHours.length===0&&<div style={{fontSize:11,color:"#B91C1C",marginTop:5}}>Não há horários livres neste dia. Escolha outro dia.</div>}
+                {a.dia&&a.horario&&availability.occupied.has(a.dia+"|"+String(a.horario).slice(0,5))&&<div style={{fontSize:11,color:"#B91C1C",marginTop:5}}>Este horário está ocupado. Selecione outro.</div>}
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
-      <button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold mt-3 inline-flex items-center gap-2" onClick={addAula}>
-        <Icon name="plus" size={14}/> Adicionar aulas semanais
+      <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold mt-3 inline-flex items-center gap-2" onClick={addAula} disabled={aulas.length>=3||availability.loading}>
+        <Icon name="plus" size={14}/> Adicionar 2ª / 3ª aula semanal
       </button>
-      <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:10}}>{availability.loading?"Sincronizando com a Agenda…":"Agenda sincronizada ao vivo"}</span>
+      <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:10}}>{availability.loading?"Sincronizando com a Agenda…":(aulas.length>=3?"Limite de 3 aulas atingido":"Agenda sincronizada ao vivo")}</span>
     </div>
   );
 }
@@ -8969,10 +9018,11 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
     if(isStudioClosed(iso)){current.setDate(current.getDate()+1);continue;}
     if(diasSet.has(current.getDay())){
       const diaNome=JS_TO_DIA[current.getDay()];
-      const slots=slotsPorDia[diaNome]?.length?slotsPorDia[diaNome]:[String(horarioAulas||"").slice(0,5)];
+      const slots=(slotsPorDia[diaNome]?.length?slotsPorDia[diaNome]:[String(horarioAulas||"").slice(0,5)]).filter(Boolean);
+      if(!slots.length){current.setDate(current.getDate()+1);continue;}
       for(const horario of slots){
         if(lessonNum>total)break;
-        if(horario&&blockedSlots?.has(`${iso}|${horario}`))continue;
+        if(blockedSlots?.has(`${iso}|${horario}`))continue;
         const id=lessonIdFromNum(lessonNum,courseObj);
         trilhaUpdates[id]={...(trilhaExistente[id]||{}),dataPrevista:iso};
         calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:diaNome,horario});
@@ -9070,25 +9120,55 @@ function printContractWithCalendar(student,calendarOverride){
 }
 function FullCourseCalendarModal({student,onClose}){
   const calendar=useMemo(()=>fullCalendarForStudent(student),[student]);
-  const grouped=useMemo(()=>calendar.reduce((acc,item)=>{const key=String(item.date||"").slice(0,7);(acc[key]||(acc[key]=[])).push(item);return acc;},{}),[calendar]);
   const first=calendar[0],last=calendar[calendar.length-1];
+  const [lessonPanel,setLessonPanel]=useState(null);
+  const fcEvents=useMemo(()=>calendar.filter(item=>item.date&&item.horario).map(item=>{
+    const t=String(item.horario||"").slice(0,5);
+    const [hh,mm]=t.split(":").map(Number);
+    const endDate=new Date(item.date+"T12:00:00");
+    endDate.setHours(hh,(mm||0)+60,0,0);
+    const end=item.date+"T"+String(endDate.getHours()).padStart(2,"0")+":"+String(endDate.getMinutes()).padStart(2,"0")+":00";
+    return{
+      id:"lesson-"+item.lessonNum+"-"+item.date+"-"+t,
+      title:"Lição "+item.lessonNum,
+      start:item.date+"T"+t+":00",
+      end,
+      backgroundColor:"#1a73e8",
+      borderColor:"#1a73e8",
+      textColor:"#fff",
+      extendedProps:{...item,type:"aula",studentName:student?.name||student?.nome||"",horario:t,lessonId:item.lessonId}
+    };
+  }),[calendar,student]);
+  function onEventClick(ev){
+    const xp=ev.extendedProps||{};
+    let lesson=null;
+    const trilha=student?.trilha||{};
+    if(xp.lessonId&&trilha[xp.lessonId]) lesson={id:xp.lessonId,...trilha[xp.lessonId],num:xp.lessonNum,title:trilha[xp.lessonId].title||("Lição "+xp.lessonNum)};
+    if(!lesson){
+      const hit=Object.entries(trilha).find(([id,L])=>Number(L.pos||L.num)===Number(xp.lessonNum)||id===("b1-l"+xp.lessonNum));
+      if(hit) lesson={id:hit[0],...hit[1],num:xp.lessonNum,title:hit[1].title||("Lição "+xp.lessonNum)};
+    }
+    if(!lesson) lesson={id:xp.lessonId||("b1-l"+xp.lessonNum),num:xp.lessonNum,title:"Lição "+xp.lessonNum,tema:"",objetivos:"",dataPrevista:xp.date};
+    setLessonPanel(lesson);
+  }
   return(
     <ModalOverlay onClose={onClose} labelledBy="full-calendar-title">
-      <div className="modal-box" style={{maxWidth:920}}>
-        <div className="modal-header" style={{background:"linear-gradient(135deg,#071b3b,#155e75)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}><Icon name="calendar-days" size={19}/><div><div id="full-calendar-title" style={{fontWeight:800,fontSize:15}}>Calendário completo do contrato</div><div style={{fontSize:11,opacity:.78}}>{student?.name||student?.nome||"Aluno"} · até a última aula</div></div></div>
+      <div className="modal-box" style={{maxWidth:1100,width:"min(1100px,96vw)"}}>
+        <div className="modal-header" style={{background:"linear-gradient(135deg,#0b57d0,#174ea6)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><Icon name="calendar-days" size={19}/><div><div id="full-calendar-title" style={{fontWeight:800,fontSize:15}}>Calendário do aluno</div><div style={{fontSize:11,opacity:.78}}>{student?.name||student?.nome||"Aluno"} · trilha + horários semanais</div></div></div>
           <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:7,color:"white",cursor:"pointer"}}><Icon name="x" size={16}/></button>
         </div>
-        <div className="modal-body">
+        <div className="modal-body" style={{paddingTop:12}}>
           {calendar.length?(
             <>
-              <div className="info-box" style={{marginBottom:14,display:"flex",gap:12,justifyContent:"space-between",flexWrap:"wrap"}}><strong>{calendar.length} aulas</strong><span>{formatDateBR(first.date)} → {formatDateBR(last.date)}</span><span>Feriados · pontes · recessos já descontados</span></div>
-              <div style={{display:"grid",gap:14}}>{Object.entries(grouped).map(([month,items])=><section key={month} className="premium-card" style={{padding:14}}><div style={{fontWeight:800,color:"#0f2c5c",marginBottom:8,textTransform:"capitalize"}}>{new Date(month+"-01T12:00:00").toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:7}}>{items.map(item=><div key={`${item.date}-${item.lessonNum}`} style={{padding:"8px 10px",borderRadius:9,background:"var(--detail,#eef7ff)",border:"1px solid var(--divider,#dbe7ef)",fontSize:12}}><strong>Lição {item.lessonNum}</strong><div style={{color:"var(--font-muted,#58718A)",marginTop:2}}>{formatDateBR(item.date)} · {item.diaSemana} · {item.horario||student?.horarioAulas||"—"}</div></div>)}</div></section>)}</div>
+              <div className="info-box" style={{marginBottom:12,display:"flex",gap:12,justifyContent:"space-between",flexWrap:"wrap"}}><strong>{calendar.length} aulas no contrato</strong><span>{formatDateBR(first.date)} → {formatDateBR(last.date)}</span><span>Clique em uma aula para abrir materiais da Trilha</span></div>
+              <FullCalendarBox events={fcEvents} height={640} initialView="timeGridWeek" onEventClick={onEventClick}/>
             </>
           ):<div className="err-box">Ainda não há um calendário completo. Preencha data de início e aulas semanais e salve o cadastro.</div>}
         </div>
         <div className="modal-footer"><button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Fechar</button><button type="button" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={!calendar.length} onClick={()=>printContractWithCalendar(student,calendar)}><Icon name="file-text" size={15}/> Imprimir contrato + calendário</button></div>
       </div>
+      {lessonPanel&&<LessonQuickPanel lesson={lessonPanel} title="Material da aula · Trilha" onClose={()=>setLessonPanel(null)}/>}
     </ModalOverlay>
   );
 }
@@ -9097,10 +9177,19 @@ function collectStudentLessonEvents(students,monthKey,onlyUid=null){
   (students||[]).forEach(s=>{
     if(onlyUid&&s.uid!==onlyUid)return;
     if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
+    const weekly=normalizeAulasSemanais(s.aulasSemanais,s.diasAulas,s.horarioAulas).filter(a=>a.dia&&a.horario);
+    const timeForDate=(iso,fallback="")=>{
+      const t=String(fallback||"").slice(0,5);
+      if(t)return t;
+      const dow=JS_TO_DIA[new Date(String(iso)+"T12:00:00").getDay()];
+      const hit=weekly.find(a=>a.dia===dow);
+      return String((hit&&hit.horario)||s.horarioAulas||"").slice(0,5);
+    };
     const push=(date,lessonNum,extra={})=>{
       if(!date||!date.startsWith(monthKey))return;
-      const resolvedTime=String(extra.time||extra.horario||s.horarioAulas||"").slice(0,5);
-      events.push({date,type:"aula",label:`${s.name||"Aluno"} · Lição ${lessonNum}`,time:resolvedTime,studentUid:s.uid,studentName:s.name||"Aluno",lessonNum,color:"#1e8fa8",...extra});
+      const resolvedTime=timeForDate(date, extra.time||extra.horario||"");
+      if(!resolvedTime)return; // never render floating "no time" cards
+      events.push({date,type:"aula",label:`${s.name||"Aluno"} · Lição ${lessonNum}`,time:resolvedTime,horario:resolvedTime,studentUid:s.uid,studentName:s.name||"Aluno",lessonNum,color:"#1a73e8",...extra});
     };
     (s.calendarioCompleto||[]).forEach(c=>{
       push(c.date,c.lessonNum,{lessonId:c.lessonId,horario:c.horario});
@@ -10122,15 +10211,24 @@ function AdminAgendaDashboard({students,onBack}){
       buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
         const t=String(e.time||"").slice(0,5);
         const start=t?`${e.date}T${t}:00`:e.date;
-        const colors={aula:"#0f766e",reposicao:"#7c3aed",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b",ponte:"#fb923c"};
+        let end=null;
+        if(t){
+          const [hh,mm]=t.split(":").map(Number);
+          const d=new Date(e.date+"T12:00:00");
+          d.setHours(hh,(mm||0)+60,0,0);
+          end=e.date+"T"+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+":00";
+        }
+        const colors={aula:"#1a73e8",reposicao:"#7c3aed",agenda:"#34a853",feriado:"#5f6368",recesso:"#9334e6",carnaval:"#f9ab00",ponte:"#fa7b17"};
         out.push({
-          id:(e.id||e.type)+"-"+e.date+"-"+(e.time||"")+"-"+e.label,
-          title:(t?t+" · ":"")+(e.label||e.type),
+          id:(e.id||e.type)+"-"+e.date+"-"+(e.time||"")+"-"+(e.studentUid||"")+"-"+e.label,
+          title:e.label||e.type,
           start,
+          end:end||undefined,
           allDay:!t,
           backgroundColor:colors[e.type]||"#334155",
           borderColor:colors[e.type]||"#334155",
-          extendedProps:{...e}
+          textColor:"#fff",
+          extendedProps:{...e,horario:t}
         });
       });
     }
@@ -10239,6 +10337,8 @@ function AdminAgendaDashboard({students,onBack}){
         <div style={{fontSize:12,color:"var(--font-muted)"}}>Fonte da verdade do estúdio — aulas dos alunos, reposições e bloqueios</div>
       </div>
       <FullCalendarBox
+        initialView="timeGridWeek"
+        height={680}
         events={adminFcEvents}
         height={560}
         onEventClick={(ev)=>{
@@ -10398,7 +10498,7 @@ function lessonForCalendarDate(trilhaData,schedule,course,dateISO,target={}){
   return null;
 }
 
-function FullCalendarBox({events,onEventClick,selectable,onDateSelect,height}){
+function FullCalendarBox({events,onEventClick,selectable,onDateSelect,height,initialView}){
   const ref=useRef(null);
   const calRef=useRef(null);
   useEffect(()=>{
@@ -10406,16 +10506,32 @@ function FullCalendarBox({events,onEventClick,selectable,onDateSelect,height}){
     if(calRef.current){calRef.current.destroy();calRef.current=null;}
     calRef.current=new FullCalendar.Calendar(ref.current,{
       locale:"pt-br",
-      initialView:"dayGridMonth",
-      height:height||520,
-      headerToolbar:{left:"prev,next today",center:"title",right:"dayGridMonth,timeGridWeek,listWeek"},
-      buttonText:{today:"Hoje",month:"Mês",week:"Semana",list:"Lista"},
+      initialView:initialView||"timeGridWeek",
+      height:height||"auto",
+      contentHeight:height||680,
+      expandRows:true,
+      stickyHeaderDates:true,
+      nowIndicator:true,
+      slotMinTime:"07:00:00",
+      slotMaxTime:"23:00:00",
+      slotDuration:"00:30:00",
+      slotLabelInterval:"01:00:00",
+      slotLabelFormat:{hour:"2-digit",minute:"2-digit",hour12:false},
+      eventTimeFormat:{hour:"2-digit",minute:"2-digit",hour12:false},
+      allDaySlot:true,
+      allDayText:"Dia todo",
+      weekends:true,
+      firstDay:1,
+      headerToolbar:{left:"prev,next today",center:"title",right:"dayGridMonth,timeGridWeek,timeGridDay,listWeek"},
+      buttonText:{today:"Hoje",month:"Mês",week:"Semana",day:"Dia",list:"Lista"},
       navLinks:true,
       editable:false,
       selectable:!!selectable,
       selectMirror:true,
-      dayMaxEvents:3,
+      dayMaxEvents:true,
+      moreLinkClick:"popover",
       events:events||[],
+      eventDisplay:"block",
       eventClick:(info)=>{
         info.jsEvent.preventDefault();
         onEventClick&&onEventClick(info.event);
@@ -10425,19 +10541,22 @@ function FullCalendarBox({events,onEventClick,selectable,onDateSelect,height}){
         calRef.current.unselect();
       },
       eventDidMount:(info)=>{
-        if(info.event.extendedProps?.blocked){
+        const xp=info.event.extendedProps||{};
+        if(xp.blocked){
           info.el.style.opacity=".45";
           info.el.style.pointerEvents="none";
         }
+        const tip=[info.event.title, xp.studentName, xp.lessonNum!=null?("Lição "+xp.lessonNum):"", xp.horario||""].filter(Boolean).join(" · ");
+        if(tip) info.el.setAttribute("title", tip);
       }
     });
     calRef.current.render();
     return()=>{if(calRef.current){calRef.current.destroy();calRef.current=null;}};
-  },[events,selectable,height]);
+  },[events,selectable,height,initialView]);
   if(typeof FullCalendar==="undefined"){
     return <div className="glass rounded-2xl p-6 text-center muted">FullCalendar não carregou. Verifique a conexão e recarregue a página.</div>;
   }
-  return <div className="fc-host glass rounded-2xl p-3" ref={ref}/>;
+  return <div className="fc-host gcal-skin glass rounded-2xl p-2 md:p-3" ref={ref}/>;
 }
 
 function LessonQuickPanel({lesson,onClose,title}){
@@ -10934,6 +11053,7 @@ function shouldShowPresenceConfirm(schedule){
 
 function StudentCalendarView({uid,trilhaData,schedule,studentName,profile}){
   const [showFullCalendar,setShowFullCalendar]=useState(false);
+  const [lessonPanel,setLessonPanel]=useState(null);
   const studentAsArray=useMemo(()=>[{
     uid,name:studentName||"Aluno",status:"ativo",
     diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
@@ -10949,8 +11069,44 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName,profile}){
         if(e.type==="aula"&&e.date>=today)out.push(e);
       });
     }
-    return out.sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+    return out.sort((a,b)=>a.date.localeCompare(b.date)||String(a.time||"").localeCompare(String(b.time||""))).slice(0,5);
   },[studentAsArray,agendaExtra]);
+  const fcEvents=useMemo(()=>{
+    const out=[];
+    for(let i=0;i<4;i++){
+      const mk=shiftMonthKey(getMonthKey(new Date()),i);
+      buildAgendaEventsForMonth(studentAsArray,mk,agendaExtra).forEach(e=>{
+        const t=String(e.time||"").slice(0,5);
+        if(!t)return;
+        const [hh,mm]=t.split(":").map(Number);
+        const endD=new Date(e.date+"T12:00:00"); endD.setHours(hh,(mm||0)+60,0,0);
+        const end=e.date+"T"+String(endD.getHours()).padStart(2,"0")+":"+String(endD.getMinutes()).padStart(2,"0")+":00";
+        out.push({
+          id:(e.studentUid||"s")+"-"+e.date+"-"+t+"-"+(e.lessonNum||e.type),
+          title:e.lessonNum!=null?("Lição "+e.lessonNum):(e.label||"Aula"),
+          start:e.date+"T"+t+":00",
+          end,
+          backgroundColor:e.type==="aula"?"#1a73e8":"#34a853",
+          borderColor:e.type==="aula"?"#1a73e8":"#34a853",
+          textColor:"#fff",
+          extendedProps:{...e,horario:t}
+        });
+      });
+    }
+    return out;
+  },[studentAsArray,agendaExtra]);
+  function openLessonFromEvent(ev){
+    const xp=ev.extendedProps||{};
+    const trilha=trilhaData||{};
+    let lesson=null;
+    if(xp.lessonId&&trilha[xp.lessonId]) lesson={id:xp.lessonId,...trilha[xp.lessonId],num:xp.lessonNum,title:(trilha[xp.lessonId].title||("Lição "+xp.lessonNum))};
+    if(!lesson&&xp.lessonNum!=null){
+      const hit=Object.entries(trilha).find(([id,L])=>Number(L.pos||L.num)===Number(xp.lessonNum)||id===("b1-l"+xp.lessonNum));
+      if(hit) lesson={id:hit[0],...hit[1],num:xp.lessonNum,title:hit[1].title||("Lição "+xp.lessonNum)};
+    }
+    if(!lesson) lesson={id:xp.lessonId||("b1-l"+(xp.lessonNum||"")),num:xp.lessonNum,title:xp.lessonNum!=null?("Lição "+xp.lessonNum):(xp.label||"Aula"),dataPrevista:xp.date};
+    setLessonPanel(lesson);
+  }
 
   return(
     <div className="space-y-4">
@@ -10962,6 +11118,7 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName,profile}){
             Início {formatDateBR(schedule.dataInicio)}
             {schedule.diasAulas?.length?` · ${schedule.diasAulas.join(", ")}`:""}
             {schedule.horarioAulas?` · ${schedule.horarioAulas}`:""}
+            {schedule.aulasSemanais?.length?` · ${schedule.aulasSemanais.filter(a=>a.dia&&a.horario).map(a=>a.dia+" "+a.horario).join(" · ")}`:""}
           </div>
           {schedule.calendarioResumo&&<div style={{fontSize:11,color:"var(--font-muted)",marginTop:6}}>{schedule.calendarioResumo.total} aulas previstas · até {formatDateBR(schedule.calendarioResumo.dataFim)}</div>}
           <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 mt-3" onClick={()=>setShowFullCalendar(true)}><Icon name="calendar-days" size={15}/> Ver calendário completo</button>
@@ -10971,13 +11128,17 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName,profile}){
         <div className="glass rounded-2xl p-4">
           <div style={{fontWeight:700,fontSize:13,marginBottom:10}}>Próximas Aulas</div>
           {proximas.map((e,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,padding:"6px 0",borderBottom:i<proximas.length-1?"1px solid var(--divider)":"none"}}>
-            <span style={{fontWeight:600}}>{e.label}</span>
+            <span style={{fontWeight:600}}>{e.label}{e.time?` · ${e.time}`:""}</span>
             <span style={{color:"var(--font-muted)"}}>{formatDateBR(e.date).slice(0,5)}</span>
           </div>)}
         </div>
       )}
-      <PlatformCalendar students={studentAsArray} agendaExtra={agendaExtra}/>
+      <div className="glass rounded-2xl p-3">
+        <div className="text-xs muted mb-2 px-1">Agenda estilo Google Calendar · clique na aula para abrir materiais da Trilha</div>
+        <FullCalendarBox initialView="timeGridWeek" height={620} events={fcEvents} onEventClick={openLessonFromEvent}/>
+      </div>
       {showFullCalendar&&<FullCourseCalendarModal student={{...profile,...studentAsArray[0],...schedule,name:studentName||profile?.name||"Aluno",trilha:trilhaData||{}}} onClose={()=>setShowFullCalendar(false)}/>}
+      {lessonPanel&&<LessonQuickPanel lesson={lessonPanel} title="Material da aula · Trilha / Diário" onClose={()=>setLessonPanel(null)}/>}
     </div>
   );
 }
