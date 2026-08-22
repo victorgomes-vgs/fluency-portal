@@ -34,7 +34,7 @@
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 15. Ask how to link Why and because.",
+    "welcome": "Olá! Sou a iVi da Lesson 15 — Why & because. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "Why…? / because…"

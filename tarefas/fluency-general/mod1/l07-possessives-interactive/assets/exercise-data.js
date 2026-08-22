@@ -34,7 +34,7 @@ window.EXERCISE_DATA = {
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 07. Ask about my/your/his/her/our/their.",
+    "welcome": "Olá! Sou a iVi da Lesson 07 — Possessives. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "Match dele/dela/nosso/deles to his/her/our/their."

@@ -34,7 +34,7 @@ window.EXERCISE_DATA = {
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 17. Ask about much/many and some/any.",
+    "welcome": "Olá! Sou a iVi da Lesson 17 — Quantifiers. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "How many vs How much; any in questions."

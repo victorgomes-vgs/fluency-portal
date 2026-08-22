@@ -141,11 +141,17 @@
     const helpButton = el("button", "help-button", "?");
     helpButton.type = "button";
     helpButton.setAttribute("aria-label", `Help for exercise ${exercise.number}`);
+    const askIviBtn = el("button", "ask-ivi-button", "Pergunte ao iVi");
+    askIviBtn.type = "button";
+    askIviBtn.setAttribute("aria-label", `Pergunte ao iVi sobre o exercício ${exercise.number}`);
+    askIviBtn.addEventListener("click", () => openIviForExercise(exercise));
     const helpPanel = el("div", "help-panel");
     helpPanel.hidden = true;
     helpPanel.setAttribute("aria-live", "polite");
     helpButton.addEventListener("click", () => toggleHelp(exercise, helpPanel));
-    headingRow.append(el("div", "question-number", String(exercise.number).padStart(2, "0")), heading, helpButton);
+    const tools = el("div", "question-tools");
+    tools.append(askIviBtn, helpButton);
+    headingRow.append(el("div", "question-number", String(exercise.number).padStart(2, "0")), heading, tools);
     card.append(top, headingRow, helpPanel);
 
     if (exercise.notice) {
@@ -439,16 +445,108 @@
     return payload;
   }
 
+  const FS_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
+    authDomain: "fluency-studio-portal.firebaseapp.com",
+    projectId: "fluency-studio-portal",
+    storageBucket: "fluency-studio-portal.firebasestorage.app",
+    messagingSenderId: "568224359300",
+    appId: "1:568224359300:web:6f4e283315deb93224b3d1"
+  };
+  const PROGRESS_CHANNEL = "fluency-exercise-progress";
+  let firebaseReady = null;
+  let resolvedStudentId = null;
+  let lastCloudSaveOk = false;
+
   function portalConfigured() {
     return typeof window.saveExerciseProgress === "function";
   }
 
+  function lessonDocId() {
+    const parts = String(data.firestorePath || "").split("/").filter(Boolean);
+    return parts[parts.length - 1] || data.lessonId;
+  }
+
+  function trilhaIdFromLesson() {
+    const lid = String(data.lessonId || lessonDocId() || "");
+    const m = lid.match(/ffg-m1-l(\d+)/i) || lid.match(/l(\d+)/i);
+    return m ? ("b1-l" + String(parseInt(m[1], 10))) : null;
+  }
+
+  function ensureFirebase() {
+    if (firebaseReady) return firebaseReady;
+    firebaseReady = (async () => {
+      if (!window.firebase || !firebase.auth || !firebase.firestore) return null;
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(FS_FIREBASE_CONFIG);
+      } catch (_) {}
+      const auth = firebase.auth();
+      const user = auth.currentUser || await new Promise(resolve => {
+        const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
+        setTimeout(() => { try { unsub(); } catch (_) {} resolve(auth.currentUser); }, 4000);
+      });
+      if (!user) return null;
+      let studentId = user.uid;
+      try {
+        const userSnap = await firebase.firestore().collection("users").doc(user.uid).get();
+        if (userSnap.exists && userSnap.data().studentId) studentId = userSnap.data().studentId;
+      } catch (_) {}
+      resolvedStudentId = studentId;
+      return { user, studentId, db: firebase.firestore() };
+    })();
+    return firebaseReady;
+  }
+
   function broadcastProgress(payload) {
+    const msg = { type: "fluency:exercise-progress", path: data.firestorePath, payload };
     try {
-      const msg = { type: "fluency:exercise-progress", path: data.firestorePath, payload };
       if (window.parent && window.parent !== window) window.parent.postMessage(msg, "*");
       if (window.opener && !window.opener.closed) window.opener.postMessage(msg, "*");
     } catch (_) {}
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        const ch = new BroadcastChannel(PROGRESS_CHANNEL);
+        ch.postMessage(msg);
+        ch.close();
+      }
+    } catch (_) {}
+    try {
+      localStorage.setItem("fluency:exercise-progress:ping", JSON.stringify({
+        ...msg,
+        ts: Date.now()
+      }));
+    } catch (_) {}
+  }
+
+  async function saveDirectToFirebase(payload) {
+    const ctx = await ensureFirebase();
+    if (!ctx) return false;
+    const docId = lessonDocId();
+    await ctx.db.collection("students").doc(ctx.studentId).collection("exercises").doc(docId).set(payload || {}, { merge: true });
+    const trilhaId = trilhaIdFromLesson();
+    if (trilhaId) {
+      const patch = {};
+      if (payload.accessed || payload.firstAccessAt) patch[`trilha.${trilhaId}.tarefaAccessed`] = true;
+      if (payload.firstAccessAt) patch[`trilha.${trilhaId}.tarefaFirstAccessAt`] = payload.firstAccessAt;
+      if (payload.attempts != null) patch[`trilha.${trilhaId}.tarefaAttempts`] = payload.attempts;
+      if (payload.score && payload.score.percentage != null) patch[`trilha.${trilhaId}.tarefaScore`] = payload.score.percentage;
+      if (payload.score && payload.score.grade10 != null) patch[`trilha.${trilhaId}.tarefaGrade10`] = payload.score.grade10;
+      if (payload.completed) {
+        patch[`trilha.${trilhaId}.tarefaFeita`] = true;
+        patch[`trilha.${trilhaId}.tarefaCompletedAt`] = payload.completedAt || Date.now();
+      }
+      if (Object.keys(patch).length) {
+        await ctx.db.collection("students").doc(ctx.studentId).set(patch, { merge: true });
+      }
+    }
+    return true;
+  }
+
+  async function loadDirectFromFirebase() {
+    const ctx = await ensureFirebase();
+    if (!ctx) return null;
+    const snap = await ctx.db.collection("students").doc(ctx.studentId).collection("exercises").doc(lessonDocId()).get();
+    return snap.exists ? snap.data() : null;
   }
 
   async function saveProgress(completed = state.completed, score = state.score) {
@@ -457,17 +555,25 @@
       localStorage.setItem(storageKey, JSON.stringify(payload));
     } catch (_) {}
     broadcastProgress(payload);
+    lastCloudSaveOk = false;
     if (portalConfigured()) {
       try {
         await window.saveExerciseProgress(data.firestorePath, payload);
-        autosaveText.textContent = "Progresso salvo";
+        lastCloudSaveOk = true;
+        autosaveText.textContent = "Progresso salvo no portal";
         return payload;
-      } catch (_) {
-        autosaveText.textContent = "Não foi possível salvar no portal";
+      } catch (_) {}
+    }
+    try {
+      if (await saveDirectToFirebase(payload)) {
+        lastCloudSaveOk = true;
+        autosaveText.textContent = "Progresso salvo (nota enviada ao admin)";
         return payload;
       }
+    } catch (err) {
+      console.warn("direct firebase save failed", err);
     }
-    autosaveText.textContent = "Prévia local — progresso não enviado";
+    autosaveText.textContent = "Prévia local — faça login no portal e reabra a tarefa para enviar a nota";
     return payload;
   }
 
@@ -475,6 +581,9 @@
     let saved = null;
     if (typeof window.loadExerciseProgress === "function") {
       try { saved = await window.loadExerciseProgress(data.firestorePath); } catch (_) { saved = null; }
+    }
+    if (!saved || !saved.answers) {
+      try { saved = await loadDirectFromFirebase(); } catch (_) { saved = null; }
     }
     if (!saved || !saved.answers) {
       try { saved = JSON.parse(localStorage.getItem(storageKey) || "null"); } catch (_) { saved = null; }
@@ -500,12 +609,12 @@
   }
 
   function saveNote(score) {
-    if (portalConfigured()) {
+    if (lastCloudSaveOk || portalConfigured() || resolvedStudentId) {
       return score
-        ? "Resultado enviado ao portal. A nota já pode aparecer no report card."
+        ? "Resultado enviado ao portal. A nota já pode aparecer no report card e no admin."
         : "Progresso enviado ao portal.";
     }
-    return "Resultado salvo neste navegador. Conecte o hook do Firebase no portal para gravar a nota.";
+    return "Resultado ficou só neste navegador. Entre no portal com a mesma conta e reabra a tarefa para sincronizar.";
   }
 
   function showResults(score) {
@@ -577,13 +686,99 @@
     return data.ivi.exercises[iviExercise.value] || fallback;
   }
 
-  function iviHintFor(question) {
-    const knowledge = selectedIviKnowledge();
-    const match = String(question || "").match(/(?:gap|lacuna|item|letra|#)\s*([a-z]|\d+)/i);
-    if (match && knowledge.steps && knowledge.steps[match[1].toLowerCase()]) {
-      return knowledge.steps[match[1].toLowerCase()];
+  function currentExercise() {
+    return data.exercises.find(ex => ex.id === iviExercise.value) || data.exercises[0];
+  }
+
+  function itemByLabel(exercise, label) {
+    if (!exercise || !Array.isArray(exercise.items)) return null;
+    const key = String(label || "").toLowerCase();
+    return exercise.items.find(it => String(it.label || "").toLowerCase() === key) || null;
+  }
+
+  function scaffoldForItem(exercise, item) {
+    if (!item) return null;
+    const answers = Array.isArray(item.answers) ? item.answers : (item.answer ? [item.answer] : []);
+    const sample = String(answers[0] || "").trim();
+    const promptBit = item.original || item.prompt || item.text || item.question || "";
+    if (!sample) {
+      return `Item ${item.label}: leia com atenção${promptBit ? ` (“${String(promptBit).slice(0, 80)}”)` : ""} e use a estrutura desta lição.`;
     }
-    return knowledge.hint;
+    const words = sample.split(/\s+/).filter(Boolean);
+    const first = words[0] || "";
+    const last = words.length > 1 ? words[words.length - 1] : "";
+    const blanks = words.map((w, idx) => (idx === 0 || idx === words.length - 1 ? w : "___")).join(" ");
+    if (exercise.mode === "choice" || exercise.mode === "multiple_choice") {
+      return `Item ${item.label}: compare as opções com a regra da lição. Comece eliminando o que quebra sujeito + verbo.`;
+    }
+    if (exercise.mode === "cloze") {
+      return `Item ${item.label}: a lacuna precisa de uma palavra da família gramatical desta aula. Pista de forma: começa com “${first.slice(0, Math.min(3, first.length))}…”.`;
+    }
+    return `Item ${item.label}: monte a frase com sujeito → verbo → complemento. Esqueleto: ${blanks}. Começa com “${first}” e fecha com “${last}".`;
+  }
+
+  function progressiveAnswer(exercise, item, strength) {
+    if (!item) return null;
+    const answers = Array.isArray(item.answers) ? item.answers : (item.answer ? [item.answer] : []);
+    const sample = String(answers[0] || "").trim();
+    if (!sample) return scaffoldForItem(exercise, item);
+    if (strength < 2) return scaffoldForItem(exercise, item);
+    if (strength < 3) {
+      const words = sample.split(/\s+/);
+      const half = Math.max(1, Math.ceil(words.length / 2));
+      return `Item ${item.label}: comece assim — “${words.slice(0, half).join(" ")} …”. Complete o resto com a gramática da lição.`;
+    }
+    return `Item ${item.label}: uma resposta aceita é “${sample}”. Agora escreva você (pode haver variações equivalentes).`;
+  }
+
+  function iviHintFor(question) {
+    const knowledge = selectedIviKnowledge() || {};
+    const exercise = currentExercise() || {};
+    const q = String(question || "").toLowerCase();
+    const match = String(question || "").match(/(?:gap|lacuna|item|letra|exerc[ií]cio|#)\s*([a-z]|\d+)/i);
+    const label = match ? match[1].toLowerCase() : null;
+    const item = label ? itemByLabel(exercise, label) : null;
+    if (label && knowledge.steps && knowledge.steps[label]) {
+      return knowledge.steps[label];
+    }
+    if (item && /resposta|gabarito|answer key|me diga a resposta|qual a resposta|mostra|reveal|completa/.test(q)) {
+      return progressiveAnswer(exercise, item, 3);
+    }
+    if (item && /mais|another|outra dica|nao entendi|não entendi|still|travado|stuck/.test(q)) {
+      return progressiveAnswer(exercise, item, 2);
+    }
+    if (item) {
+      return progressiveAnswer(exercise, item, 1) + " Se ainda travar, diga “mostra a resposta do item " + item.label + "”.";
+    }
+    if (/resposta|gabarito|answer key|me diga a resposta|qual a resposta/.test(q)) {
+      return "Posso ajudar item por item. Digite por exemplo: “dica do item b” ou “mostra a resposta do item b”.";
+    }
+    if (/passo|como comeco|como começo|o que fazer|explica|help|ajuda|strategy|estratégia|dica/.test(q)) {
+      const base = knowledge.hint || exercise.hint || "Leia o enunciado com calma, marque a gramática-alvo e responda uma lacuna por vez.";
+      const example = exercise.example ? ` Exemplo do material: ${exercise.example}` : "";
+      const first = Array.isArray(exercise.items) && exercise.items[0] ? ` Comece pelo item ${exercise.items[0].label}: ${scaffoldForItem(exercise, exercise.items[0])}` : "";
+      return base + example + first;
+    }
+    if (/grammar|gramática|estrutura|regra|tense|tempo verbal/.test(q)) {
+      return exercise.explanation || knowledge.hint || exercise.hint || "Foque na estrutura da lição (afirmativa/negativa/pergunta) e mantenha o sujeito alinhado ao verbo.";
+    }
+    if (/traduz|translate|português|em ingles|em inglês/.test(q)) {
+      return "Traduza ideia por ideia: sujeito → verbo → complemento. Se quiser ajuda de um item, diga a letra (ex.: item c).";
+    }
+    if (/exemplo|example|modelo/.test(q)) {
+      return exercise.example || exercise.explanation || knowledge.hint || exercise.hint || "Peça um item específico: “exemplo do item a”.";
+    }
+    return (knowledge.hint || exercise.hint || "Estou aqui.") +
+      " Use “Pergunte ao iVi” e fale a letra do item (a, b, c…). Exemplos: “dica do item b”, “explica a gramática”, “mostra a resposta do item a”.";
+  }
+
+  function openIviForExercise(exercise) {
+    if (!iviPanel || !iviExercise) return;
+    iviExercise.value = exercise.id;
+    iviPanel.hidden = false;
+    iviLauncher.setAttribute("aria-expanded", "true");
+    addIviMessage("ivi", `Vamos olhar o Exercise ${exercise.number}. ${exercise.hint || "Pergunte com suas palavras — estratégia, gramática ou uma letra."}`);
+    iviQuestion.focus();
   }
 
   function askIvi() {
@@ -601,7 +796,7 @@
       option.value = exercise.id;
       iviExercise.append(option);
     });
-    addIviMessage("ivi", data.ivi.welcome);
+    addIviMessage("ivi", data.ivi.welcome || "Olá! Sou a iVi desta tarefa. Em cada exercício use “Pergunte ao iVi”.");
     iviLauncher.addEventListener("click", () => {
       iviPanel.hidden = false;
       iviLauncher.setAttribute("aria-expanded", "true");
@@ -612,7 +807,7 @@
       iviLauncher.setAttribute("aria-expanded", "false");
     });
     document.getElementById("iviSend").addEventListener("click", askIvi);
-    document.getElementById("iviHintButton").addEventListener("click", () => addIviMessage("ivi", selectedIviKnowledge().hint));
+    document.getElementById("iviHintButton").addEventListener("click", () => addIviMessage("ivi", selectedIviKnowledge().hint || currentExercise().hint || "Leia o enunciado e tente uma resposta completa."));
     iviQuestion.addEventListener("keydown", event => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();

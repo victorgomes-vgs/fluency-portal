@@ -34,7 +34,7 @@ window.EXERCISE_DATA = {
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 21. Ask how to approach an exercise. I will not give the full answer on the first hint.",
+    "welcome": "Olá! Sou a iVi da Lesson 21 — To be affirmative & negative. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "Use am / is / are. Negative: am not / isn't / aren't."

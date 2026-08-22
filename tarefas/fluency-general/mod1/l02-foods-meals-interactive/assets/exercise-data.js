@@ -34,7 +34,7 @@ window.EXERCISE_DATA = {
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 02. Ask for a strategy — not the full key first.",
+    "welcome": "Olá! Sou a iVi da Lesson 02 — Foods & meals. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "What do you…? / Do you…?"

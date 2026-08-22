@@ -34,7 +34,7 @@ window.EXERCISE_DATA = {
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 11. Ask about -s endings.",
+    "welcome": "Olá! Sou a iVi da Lesson 11 — 3rd person affirmative. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "3rd person: has/needs/works/studies."

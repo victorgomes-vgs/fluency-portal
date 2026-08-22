@@ -3457,6 +3457,7 @@ const ICONS = {
   "credit-card":   <><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></>,
   "file-text":     <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></>,
   "home":          <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>,
+  "menu":          <><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></>,
   "map":           <><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></>,
   "zap":           <><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></>,
   "check-circle":  <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>,
@@ -5778,7 +5779,7 @@ function DiarioSection({uid,isAdmin,contrato}){
                       {opt.objetivos?<div className="muted mt-1">Objetivos: {opt.objetivos}</div>:null}
                       <div className="flex flex-wrap gap-2 mt-2">
                         {opt.linkAula?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkAula)} target="_blank" rel="noreferrer">Lição</a>:null}
-                        {opt.linkTarefa?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkTarefa)} target="_blank" rel="noreferrer">Tarefa</a>:null}
+                        {opt.linkTarefa?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkTarefa)} target="_blank" onClick={(e)=>openPortalTask(opt.linkTarefa,e)}>Tarefa</a>:null}
                         {opt.linkMaterial?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkMaterial)} target="_blank" rel="noreferrer">PDF</a>:null}
                       </div>
                     </div>
@@ -6734,9 +6735,15 @@ function StudentSideNav({page,onNavigate}){
     reposicoes:"Reposições",
     contato:"Falar com a escola",
   };
-  const items=[{id:"dashboard",label:"Início",sub:subs.dashboard}, ...STUDENT_NAV.map(n=>({id:n.id,label:n.label,sub:subs[n.id]||"Abrir",meta:n}))];
-  const seen=new Set();
-  const nav=items.filter(it=>{if(seen.has(it.id))return false;seen.add(it.id);return true;});
+  const nav=[];
+  const seen={};
+  function pushItem(id,label,meta){
+    if(seen[id])return;
+    seen[id]=true;
+    nav.push({id:id,label:label,sub:subs[id]||"Abrir",meta:meta||null});
+  }
+  pushItem("dashboard","Início",{image:"assets/icons/cosmic/trilha.webp",crop:1.1,color:"#55b8ff",label:"Início"});
+  (STUDENT_NAV||[]).forEach(n=>pushItem(n.id,n.label,n));
   return(
     <>
       <button type="button" className="student-side-toggle" onClick={()=>setOpen(true)} aria-label="Abrir menu do portal">
@@ -6753,10 +6760,10 @@ function StudentSideNav({page,onNavigate}){
         </div>
         <div className="student-side-hint">Este menu leva a todas as áreas do portal. No celular, use o botão flutuante com o pontinho azul.</div>
         {nav.map(it=>{
-          const meta=it.meta||STUDENT_NAV.find(n=>n.id===it.id)||{image:"assets/icons/cosmic/trilha.webp",crop:1.1,color:"#55b8ff",label:it.label};
-          const active=page===it.id||(page==="calendario"&&it.id==="agenda")||(page==="agendamento"&&it.id==="reposicoes")||(page==="dashboard"&&it.id==="dashboard");
+          const meta=it.meta||{image:"assets/icons/cosmic/trilha.webp",crop:1.1,color:"#55b8ff",label:it.label};
+          const active=page===it.id||(page==="calendario"&&it.id==="agenda")||(page==="agendamento"&&it.id==="reposicoes");
           return(
-            <button key={it.id} type="button" className={"student-side-item"+(active?" active":"")} onClick={()=>{onNavigate(it.id);setOpen(false);}}>
+            <button key={it.id} type="button" className={"student-side-item"+(active?" active":"")} onClick={()=>{try{onNavigate&&onNavigate(it.id);}catch(e){} setOpen(false);}}>
               <CosmicSectionImage meta={meta} className="side-ico"/>
               <span><div className="side-label">{it.label}</div><div className="side-sub">{it.sub}</div></span>
             </button>
@@ -6766,8 +6773,6 @@ function StudentSideNav({page,onNavigate}){
     </>
   );
 }
-
-
 function StudentStatsCard({licoesConcluidas,tarefasFeitas,paraRepor,totalLicoes,totalTarefas}){
   const lessonPct=Math.min(100,Math.round((licoesConcluidas/Math.max(1,totalLicoes||1))*100));
   const taskPct=Math.min(100,Math.round((tarefasFeitas/Math.max(1,totalTarefas||1))*100));
@@ -7081,7 +7086,7 @@ function MateriaisLinksSection({uid,isAdmin,trilhaData,materiaisData,modulosOcul
                     </button>
                     {isExp&&<div className="grid grid-cols-2 gap-2 py-2 pl-3">
                       {urlLicao&&<a href={urlLicao} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">📄 Lição Online</a>}
-                      {urlTarefa&&<a href={urlTarefa} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">📝 Tarefa Online</a>}
+                      {urlTarefa&&<a href={urlTarefa} target="_blank" onClick={(e)=>openPortalTask(urlTarefa,e)} className="btn rounded-lg py-2 text-xs text-center">📝 Tarefa Online</a>}
                       {urlExtra&&<a href={urlExtra} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">✨ Extra</a>}
                       {urlPdf&&<a href={urlPdf} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">📕 PDF Lição</a>}
                       {urlGravacao&&<a href={urlGravacao} target="_blank" rel="noreferrer" className="lesson-link-btn lesson-link-btn-gravacao col-span-2">🎥 Aulas Gravadas</a>}
@@ -7194,7 +7199,7 @@ function GeneralTasksDashboard({uid, profile, onOpenDetails}){
           {rows.map(r=>{
             const sc=r.done?"done":(current&&current.n===r.n?"active":"pending");
             return(
-              <a key={r.n} href={r.href} target="_blank" rel="noreferrer" className={"cosmic-orb cosmic-card-orb "+sc} title={"Tarefa L"+r.n+" · "+r.title} style={{textDecoration:"none",width:72,height:72}}>
+              <a key={r.n} href={r.href} target="_blank" onClick={(e)=>openPortalTask(r.href,e)} className={"cosmic-orb cosmic-card-orb "+sc} title={"Tarefa L"+r.n+" · "+r.title} style={{textDecoration:"none",width:72,height:72}}>
                 <span className="cosmic-orb-asset" aria-hidden="true"/>
                 <span className="cosmic-orb-copy">
                   <span className="cosmic-orb-kicker">Tarefa</span>
@@ -7428,7 +7433,20 @@ const IVI_TUTORIAL_STUDENT=`**Tutorial do portal — passo a passo**
 
 Com calma, estes são os principais espaços do seu portal:
 
-0. **Menu lateral** — no desktop fica à esquerda;
+0. **Menu lateral** — no desktop fica à esquerda; no celular use o botão flutuante com o **pontinho azul**. Ele aponta para todas as áreas abaixo.
+1. **Início** — resumo do dia: progresso, financeiro, atalhos e (no Fluency General) o card de **Tarefas** com constelação.
+2. **Trilha** — sua jornada por módulos e lições. Em cada lição: Lição Online, Tarefa, PDF e material. Status: Pendente, Em andamento, Concluída e, no dia da aula, **Atual**.
+3. **Materiais** — livro digital / flipbook do seu curso. Use o **slider de zoom** (até 250%) e, com zoom acima de 100%, **arraste a página** para ler (gesto de mão).
+4. **Diário** — histórico oficial: presença/falta, notas **F/A/L/E** (0 a 100%) e observações.
+5. **Report Card** — boletim de competências (F/A/L/E) e tarefas.
+6. **Agenda** — calendário estilo Google das aulas regulares; toque na aula para abrir materiais da Trilha.
+7. **Reposições** — o que está a fazer, agendado ou vencido, com as regras do contrato.
+8. **Financeiro** — parcelas, vencimentos, status e links de boleto/Pix.
+9. **Contato** — WhatsApp do professor Victor.
+
+**Dica de tema:** no topo, o ícone sol/lua alterna claro, escuro ou automático.
+
+Se quiser, peça: “menu lateral”, “zoom do livro”, “como agendar reposição” ou “o que é FALE”.`;
 
 const IVI_TUTORIAL_ADMIN=`**Tutorial admin — o que está no ar hoje**
 
@@ -12491,8 +12509,12 @@ function AdminRelatorioAluno({student,onBack}){
               <div className="space-y-2">
                 {b.items.filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card"&&(generalM1TaskForLessonNum(i.num)||i.linkTarefa)).map(item=>{
                   const ex=exerciseForTrilhaItem(item, exercisesMap)||null;
-                  const accessed=!!(ex&&(ex.accessed||ex.firstAccessAt));
+                  const accessed=!!(ex&&(ex.accessed||ex.firstAccessAt)||item.tarefaAccessed||item.tarefaFirstAccessAt);
                   const completed=!!(ex?.completed||isGeneralTaskCompleted(ex)||item.tarefaFeita);
+                  const score100=(ex?.score?.percentage!=null?ex.score.percentage:(item.tarefaScore!=null?item.tarefaScore:null));
+                  const score10=(ex?.score?.grade10!=null?ex.score.grade10:(item.tarefaGrade10!=null?item.tarefaGrade10:null));
+                  const attempts=(ex?.attempts!=null?ex.attempts:(item.tarefaAttempts!=null?item.tarefaAttempts:null));
+                  const firstAccess=ex?.firstAccessAt||item.tarefaFirstAccessAt||null;
                   const missing=!completed;
                   const href=resolvePortalAssetUrl(item.linkTarefa||"");
                   return(
@@ -12500,14 +12522,14 @@ function AdminRelatorioAluno({student,onBack}){
                       <div className="font-semibold text-sm mb-1">Lição {getLessonDisplayLabel(item)} — {item.title||item.interactiveTaskTitle||"Sem título"}</div>
                       <div className="grid gap-1" style={{gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))"}}>
                         <div>Acessou: <strong>{accessed?"sim":"não"}</strong></div>
-                        <div>1º acesso: {formatTs(ex?.firstAccessAt)}</div>
-                        <div>Tentativas: <strong>{ex?.attempts!=null?ex.attempts:"—"}</strong></div>
+                        <div>1º acesso: {formatTs(firstAccess)}</div>
+                        <div>Tentativas: <strong>{attempts!=null?attempts:"—"}</strong></div>
                         <div>Tempo até envio: {formatDuration(ex?.timeToCompleteMs)}</div>
                         <div>Concluída/enviada: <strong>{completed?"sim":"não"}</strong>{item.tarefaFeita?" · marcada na trilha":""}</div>
-                        <div>Nota /100: {ex?.score?.percentage!=null?ex.score.percentage:"—"}</div>
-                        <div>Nota /10: {ex?.score?.grade10!=null?ex.score.grade10:"—"}</div>
+                        <div>Nota /100: {score100!=null?score100:"—"}</div>
+                        <div>Nota /10: {score10!=null?score10:"—"}</div>
                       </div>
-                      {href&&<div className="mt-1"><a href={href} target="_blank" rel="noreferrer">Abrir tarefa online</a></div>}
+                      {href&&<div className="mt-1"><a href={href} target="_blank" onClick={(e)=>openPortalTask(href,e)}>Abrir tarefa online</a></div>}
                       {missing&&<div className="mt-1" style={{color:"#e5636b"}}>Tarefa não concluída / sem envio</div>}
                     </div>
                   );
@@ -12727,6 +12749,39 @@ function AdminRelatorios({students,onBack,onOpenStudentProfile}){
   );
 }
 
+function openPortalTask(url, event){
+  if(event&&event.preventDefault) event.preventDefault();
+  const href=resolvePortalAssetUrl(url||"");
+  if(!href) return false;
+  const w=window.open(href,"_blank");
+  if(!w){ window.location.href=href; }
+  return false;
+}
+function trilhaIdForGeneralExercise(exerciseId,payload){
+  const fromMap=(typeof GENERAL_M1_INPUT_TASKS_BY_EX==="object"&&GENERAL_M1_INPUT_TASKS_BY_EX[exerciseId])||null;
+  if(fromMap) return "b1-l"+fromMap.n;
+  const lid=String((payload&&payload.lessonId)||exerciseId||"");
+  const m=lid.match(/ffg-m1-l(\d+)/i)||lid.match(/l(\d+)/i);
+  if(m) return "b1-l"+String(parseInt(m[1],10));
+  return null;
+}
+async function syncTrilhaTaskFromExercise(studentId, exerciseDocId, payload){
+  if(!studentId||!payload)return;
+  const trilhaId=trilhaIdForGeneralExercise(exerciseDocId,payload);
+  if(!trilhaId)return;
+  const patch={};
+  if(payload.accessed||payload.firstAccessAt) patch[`trilha.${trilhaId}.tarefaAccessed`]=true;
+  if(payload.firstAccessAt) patch[`trilha.${trilhaId}.tarefaFirstAccessAt`]=payload.firstAccessAt;
+  if(payload.attempts!=null) patch[`trilha.${trilhaId}.tarefaAttempts`]=payload.attempts;
+  if(payload.score&&payload.score.percentage!=null) patch[`trilha.${trilhaId}.tarefaScore`]=payload.score.percentage;
+  if(payload.score&&payload.score.grade10!=null) patch[`trilha.${trilhaId}.tarefaGrade10`]=payload.score.grade10;
+  if(payload.completed){
+    patch[`trilha.${trilhaId}.tarefaFeita`]=true;
+    patch[`trilha.${trilhaId}.tarefaCompletedAt`]=payload.completedAt||Date.now();
+  }
+  if(!Object.keys(patch).length)return;
+  await db.collection("students").doc(studentId).set(patch,{merge:true});
+}
 function installExerciseBridge(studentId){
   if(!studentId)return;
   window.__fsExerciseStudentId=studentId;
@@ -12754,12 +12809,22 @@ function installExerciseBridge(studentId){
 
 if(typeof window!=="undefined"&&!window.__fsExerciseMsgHook){
   window.__fsExerciseMsgHook=true;
-  window.addEventListener("message",async(ev)=>{
-    const data=ev&&ev.data;
+  const __fsApplyExerciseProgress=async(data)=>{
     if(!data||data.type!=="fluency:exercise-progress")return;
     const sid=window.__fsExerciseStudentId;
     if(!sid||typeof window.saveExerciseProgress!=="function")return;
     try{await window.saveExerciseProgress(data.path,data.payload);}catch(e){console.warn("exercise progress bridge",e);}
+  };
+  window.addEventListener("message",async(ev)=>{ await __fsApplyExerciseProgress(ev&&ev.data); });
+  try{
+    if(typeof BroadcastChannel!=="undefined"&&!window.__fsExerciseBc){
+      window.__fsExerciseBc=new BroadcastChannel("fluency-exercise-progress");
+      window.__fsExerciseBc.onmessage=(ev)=>__fsApplyExerciseProgress(ev&&ev.data);
+    }
+  }catch(e){}
+  window.addEventListener("storage",(ev)=>{
+    if(!ev||ev.key!=="fluency:exercise-progress:ping"||!ev.newValue)return;
+    try{ __fsApplyExerciseProgress(JSON.parse(ev.newValue)); }catch(e){}
   });
 }
 

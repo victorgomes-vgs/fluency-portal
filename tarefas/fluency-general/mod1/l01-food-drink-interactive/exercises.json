@@ -34,7 +34,7 @@
     }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 01. Ask how to approach an exercise. I will not give the full answer on the first hint.",
+    "welcome": "Olá! Sou a iVi da Lesson 01 — Food & drink. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
       "q1": {
         "hint": "I/you + verb. Negative: don't + verb."

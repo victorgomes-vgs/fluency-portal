@@ -1046,6 +1046,27 @@ button { -webkit-tap-highlight-color: transparent; }
   background: #76e2d4;
 }
 
+.question-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ask-ivi-button {
+  border: 1px solid rgba(20, 163, 148, 0.35);
+  background: rgba(20, 163, 148, 0.12);
+  color: #0f766e;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ask-ivi-button:hover {
+  background: rgba(20, 163, 148, 0.2);
+}
+
 .ivi-launcher {
   position: fixed;
   z-index: 75;

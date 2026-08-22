@@ -12,20 +12,48 @@
   "heroImageAlt": "Travel bag, ticket and passport on a table",
   "heroCaption": "GETTING AROUND",
   "meta": [
-    { "icon": "▤", "value": "2", "label": "source pages" },
-    { "icon": "▦", "value": "6", "label": "exercises" },
-    { "icon": "⌁", "value": "A1", "label": "FF General" },
-    { "icon": "◷", "value": "29", "label": "responses" }
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
   ],
   "ivi": {
-    "welcome": "Hi! I'm iVi for Lesson 21. Ask how to approach an exercise. I will not give the full answer on the first hint.",
+    "welcome": "Olá! Sou a iVi da Lesson 21 — To be affirmative & negative. Em cada exercício clique em “Pergunte ao iVi”. Peça: “dica do item b”, “explica a gramática” ou “mostra a resposta do item a”.",
     "exercises": {
-      "q1": { "hint": "Use am / is / are. Negative: am not / isn't / aren't." },
-      "q2": { "hint": "Same with to be. Questions: Are you…? / Is the…?" },
-      "q3": { "hint": "Unscramble travel words from class." },
-      "q4": { "hint": "Model: I eat cheese. → I don't eat cheese." },
-      "q5": { "hint": "One bank word per blank. Read the whole sentence." },
-      "q6": { "hint": "Write on paper for your teacher, then tap Yes." }
+      "q1": {
+        "hint": "Use am / is / are. Negative: am not / isn't / aren't."
+      },
+      "q2": {
+        "hint": "Same with to be. Questions: Are you…? / Is the…?"
+      },
+      "q3": {
+        "hint": "Unscramble travel words from class."
+      },
+      "q4": {
+        "hint": "Model: I eat cheese. → I don't eat cheese."
+      },
+      "q5": {
+        "hint": "One bank word per blank. Read the whole sentence."
+      },
+      "q6": {
+        "hint": "Write on paper for your teacher, then tap Yes."
+      }
     }
   },
   "passages": [],
@@ -184,17 +212,47 @@
           "title": "Word scramble",
           "segments": [
             "a. i / t / f / g → ",
-            { "blank": "1", "answers": ["gift"] },
+            {
+              "blank": "1",
+              "answers": [
+                "gift"
+              ]
+            },
             "\nb. r / i / n / s / o / u / v / e → ",
-            { "blank": "2", "answers": ["souvenir"] },
+            {
+              "blank": "2",
+              "answers": [
+                "souvenir"
+              ]
+            },
             "\nc. e / k / t / t / i / c → ",
-            { "blank": "3", "answers": ["ticket"] },
+            {
+              "blank": "3",
+              "answers": [
+                "ticket"
+              ]
+            },
             "\nd. o / d / o / f → ",
-            { "blank": "4", "answers": ["food"] },
+            {
+              "blank": "4",
+              "answers": [
+                "food"
+              ]
+            },
             "\ne. e / c / i / p / r → ",
-            { "blank": "5", "answers": ["price"] },
+            {
+              "blank": "5",
+              "answers": [
+                "price"
+              ]
+            },
             "\nf. y / e / n / m / o → ",
-            { "blank": "6", "answers": ["money"] }
+            {
+              "blank": "6",
+              "answers": [
+                "money"
+              ]
+            }
           ]
         }
       ]
@@ -299,17 +357,48 @@
           "bank": "buy | want | a | Do | and | very",
           "segments": [
             "a. I ",
-            { "blank": "1", "answers": ["buy"] },
+            {
+              "blank": "1",
+              "answers": [
+                "buy"
+              ]
+            },
             " gift every morning.\nb. She doesn't ",
-            { "blank": "2", "answers": ["want", "buy"] },
+            {
+              "blank": "2",
+              "answers": [
+                "want",
+                "buy"
+              ]
+            },
             " souvenir at night.\nc. We need ",
-            { "blank": "3", "answers": ["a"] },
+            {
+              "blank": "3",
+              "answers": [
+                "a"
+              ]
+            },
             " ticket today.\nd. ",
-            { "blank": "4", "answers": ["Do"] },
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
             " you like food?\ne. They study English ",
-            { "blank": "5", "answers": ["and"] },
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
             " Portuguese.\nf. He is ",
-            { "blank": "6", "answers": ["very"] },
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
             " tired after work."
           ]
         }
@@ -327,7 +416,10 @@
       "items": [
         {
           "label": "I wrote 3–5 sentences about “getting around / travel” on paper and will hand them to my teacher.",
-          "options": ["Yes", "Not yet"],
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
           "answer": "Yes"
         }
       ]
