@@ -91,6 +91,15 @@
 
     /* Admin shell: deep slate sidebar + light main */
     .admin-shell { display: flex; min-height: 100vh; background: var(--ds-bg); }
+    .admin-shell.admin-universe {
+      position:relative;isolation:isolate;background-color:#020814;
+      background-image:linear-gradient(180deg,rgba(1,6,17,.20),rgba(1,8,22,.56) 62%,rgba(1,5,14,.82)),url('assets/portal-bg.jpg');
+      background-size:auto,cover;background-position:center top;background-repeat:no-repeat;background-attachment:fixed;
+    }
+    .admin-shell.admin-universe::before{
+      content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+      background:radial-gradient(circle at 78% 12%,rgba(32,174,255,.16),transparent 28%),linear-gradient(90deg,rgba(0,5,16,.42),transparent 44%,rgba(3,32,67,.12));
+    }
     .admin-shell.sidebar-collapsed .admin-sidebar {
       width: 0 !important; min-width: 0 !important; padding: 0 !important; border: none !important;
       overflow: hidden !important; opacity: 0; pointer-events: none;
@@ -120,6 +129,10 @@
       border-right: 1px solid rgba(203,213,225,.12);
       transition: width .2s ease, opacity .2s ease, padding .2s ease;
     }
+    .admin-universe .admin-sidebar{
+      background:rgba(2,15,37,.88);border-right-color:rgba(80,190,255,.20);
+      box-shadow:14px 0 42px rgba(0,5,18,.26);backdrop-filter:blur(22px) saturate(1.16);-webkit-backdrop-filter:blur(22px) saturate(1.16);
+    }
     .admin-sidebar-brand { padding: 0 20px 28px; border-bottom: 1px solid rgba(203,213,225,.12); margin-bottom: 16px; }
     .admin-sidebar-brand .brand-byline { color: var(--ds-sidebar-muted) !important; }
     .admin-sidebar-label {
@@ -134,17 +147,36 @@
     }
     .admin-nav-item:hover { background: rgba(255,255,255,.06); color: var(--ds-sidebar-text); }
     .admin-nav-item.active { background: rgba(79,70,229,.28); color: #FFFFFF; font-weight: 600; }
+    .admin-universe .admin-nav-item{position:relative;gap:10px;color:#BFD7EA;}
+    .admin-universe .admin-nav-item:hover{background:rgba(33,151,220,.12);color:#FFFFFF;}
+    .admin-universe .admin-nav-item.active{background:linear-gradient(90deg,rgba(17,118,190,.34),rgba(72,64,181,.22));box-shadow:inset 3px 0 0 var(--admin-nav-accent,#38bdf8);}
+    .admin-nav-cosmic{width:30px;height:30px;flex:0 0 30px;border:1px solid color-mix(in srgb,var(--nav-accent,var(--admin-nav-accent,#38bdf8)) 58%,white 12%);box-shadow:0 0 16px color-mix(in srgb,var(--nav-accent,var(--admin-nav-accent,#38bdf8)) 34%,transparent);}
     .admin-nav-item .nav-badge {
       margin-left: auto; background: #F59E0B; color: #1E1E1E; font-size: 10px; font-weight: 800;
       padding: 2px 7px; border-radius: 99px;
     }
     .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--ds-bg); }
+    .admin-universe .admin-main{background:transparent;position:relative;}
     .admin-main-header {
       background: #FFFFFF; border-bottom: 1px solid var(--ds-border);
       padding: 16px 28px; position: sticky; top: 0; z-index: 40;
       box-shadow: 0 1px 3px rgba(0,0,0,.04);
     }
+    .admin-universe .admin-main-header{
+      background:rgba(246,250,255,.88);border-bottom-color:rgba(119,205,255,.34);
+      box-shadow:0 12px 36px rgba(0,6,22,.24),inset 0 1px 0 rgba(255,255,255,.92);
+      backdrop-filter:blur(22px) saturate(1.14);-webkit-backdrop-filter:blur(22px) saturate(1.14);
+    }
     .admin-main-body { padding: 28px; max-width: 1200px; width: 100%; margin: 0 auto; }
+    .admin-universe .admin-main-body{
+      position:relative;width:calc(100% - 40px);margin:24px auto;
+      background:rgba(246,250,255,.78);border:1px solid rgba(255,255,255,.62);border-radius:28px;
+      box-shadow:0 24px 64px rgba(0,7,25,.25),inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .admin-universe .premium-card,.admin-universe .glass,.admin-universe .fin-kpi-card,.admin-universe .fin-chart-card,.admin-universe .fin-table-card{
+      background:rgba(248,251,255,.90);border-color:rgba(255,255,255,.78);box-shadow:0 18px 46px rgba(0,8,28,.22),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(1.10);-webkit-backdrop-filter:blur(20px) saturate(1.10);
+    }
+    .admin-header-cosmic{width:48px;height:48px;flex:0 0 48px;border:1px solid rgba(67,194,255,.46);box-shadow:0 0 24px color-mix(in srgb,var(--nav-accent,var(--admin-nav-accent,#38bdf8)) 38%,transparent),0 9px 22px rgba(0,12,38,.20);}
     .role-pill {
       font-size: 10px; font-weight: 800; letter-spacing: .08em; padding: 3px 10px;
       border-radius: 99px; text-transform: uppercase;
@@ -180,7 +212,10 @@
         border-top: none !important; border-left: 1px solid rgba(203,213,225,.12); flex-shrink: 0;
       }
       .admin-main-body { padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+      .admin-universe .admin-main-body{width:calc(100% - 20px);margin:10px auto;border-radius:20px;}
       .admin-main-header { padding: 12px 16px; }
+      .admin-shell.admin-universe{background-attachment:scroll;background-position:64% top;}
+      .admin-header-cosmic{width:40px;height:40px;flex-basis:40px;}
       .admin-shell.sidebar-collapsed .admin-sidebar { display: none !important; }
       .admin-clock { min-width: 110px; padding: 6px 10px; }
       .admin-clock-time { font-size: 15px; }
@@ -2175,16 +2210,16 @@ const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
 const STUDENT_PAGES=["dashboard","trilha","materiais","diario","reportcard","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
 const ADMIN_VIEWS=["dashboard","alunos","cadastros","pendencias","financeiro","agenda","relatorios","config"];
 const ADMIN_NAV_ITEMS=[
-  {id:"dashboard", icon:"layout-dashboard", label:"Painel", cor:"#0f172a"},
-  {id:"alunos", icon:"users", label:"Alunos", cor:"#0f2c5c"},
-  {id:"cadastros", icon:"clipboard-check", label:"Cadastros", cor:"#1e3a8a"},
-  {id:"pendencias", icon:"alert-circle", label:"Pendências", cor:"#b45309"},
-  {id:"financeiro", icon:"wallet", label:"Financeiro", cor:"#0f766e"},
-  {id:"agenda", icon:"calendar", label:"Agenda", cor:"#0e4d6e"},
-  {id:"relatorios", icon:"file-text", label:"Relatórios", cor:"#334155"},
-  {id:"config", icon:"settings", label:"Configurações", cor:"#1e293b"},
+  {id:"dashboard", icon:"layout-dashboard", image:"assets/icons/cosmic/trilha.webp",crop:1.03,label:"Painel", cor:"#38bdf8",color:"#38bdf8"},
+  {id:"alunos", icon:"users", image:"assets/icons/cosmic/contato.webp",crop:1.20,label:"Alunos", cor:"#22d3a7",color:"#22d3a7"},
+  {id:"cadastros", icon:"clipboard-check", image:"assets/icons/cosmic/diario.webp",crop:1.22,label:"Cadastros", cor:"#f6a93b",color:"#f6a93b"},
+  {id:"pendencias", icon:"alert-circle", image:"assets/icons/cosmic/reposicoes.webp",crop:1.20,label:"Pendências", cor:"#fb7185",color:"#fb7185"},
+  {id:"financeiro", icon:"wallet", image:"assets/icons/cosmic/financeiro.webp",crop:1.21,label:"Financeiro", cor:"#34d399",color:"#34d399"},
+  {id:"agenda", icon:"calendar", image:"assets/icons/cosmic/agenda.webp",crop:1.21,label:"Agenda", cor:"#55b8ff",color:"#55b8ff"},
+  {id:"relatorios", icon:"file-text", image:"assets/icons/cosmic/report-card.webp",crop:1.20,label:"Relatórios", cor:"#818cf8",color:"#818cf8"},
+  {id:"config", icon:"settings", image:"assets/icons/cosmic/materiais.webp",crop:1.22,label:"Configurações", cor:"#9b7dff",color:"#9b7dff"},
 ];
-const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","reportcard","financeiro","recursos"];
+const ADMIN_STUDENT_TABS=["overview","trilha","materiais","diario","reportcard","financeiro","calendario","recursos"];
 const PORTAL_ROUTE_SS_KEY="fs-portal-route-v1";
 
 function _normHash(h){
@@ -3360,7 +3395,31 @@ function AdminStudioClock(){
     </div>
   );
 }
-function formatCurrency(val){if(val===null||val===undefined||val===""||isNaN(val))return "—";return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(val);}
+function parseCurrencyValue(value){
+  if(typeof value==="number")return Number.isFinite(value)?value:0;
+  const raw=String(value??"").trim();
+  if(!raw)return 0;
+  const cleaned=raw.replace(/\s/g,"").replace(/^R\$/i,"");
+  const normalized=cleaned.includes(",")
+    ?cleaned.replace(/\./g,"").replace(",",".").replace(/[^0-9.-]/g,"")
+    :cleaned.replace(/[^0-9.-]/g,"");
+  const parsed=Number(normalized);
+  return Number.isFinite(parsed)?parsed:0;
+}
+function formatCurrency(val){
+  if(val===null||val===undefined||val==="")return "—";
+  if(typeof val==="string"&&!/\d/.test(val))return "—";
+  const amount=parseCurrencyValue(val);
+  return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:2}).format(amount);
+}
+function CurrencyInput({value,onChange,placeholder="R$ 0,00",disabled=false}){
+  const display=value===null||value===undefined||value===""?"":formatCurrency(parseCurrencyValue(value));
+  function handleChange(e){
+    const digits=String(e.target.value||"").replace(/\D/g,"");
+    onChange(digits?(Number(digits)/100).toFixed(2):"");
+  }
+  return <input type="text" inputMode="decimal" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder={placeholder} value={display} onChange={handleChange} onFocus={e=>e.target.select()} disabled={disabled} aria-label={placeholder}/>;
+}
 /** Nome completo limpo (perfil, ficha). */
 function getFullName(name){
   const n=String(name||"").trim().replace(/\s+/g," ");
@@ -3955,9 +4014,9 @@ function computeCashFlowSeries(transactions,expensesByMonth){
 }
 /** Upsert invoice (+ optional payment transaction) from a legacy parcela. Never deletes user data. */
 async function upsertInvoiceFromParcela(studentId,parcela,studentName){
-  if(!studentId||!parcela)return;
+  if(!studentId||!parcela)return{ok:false,skipped:true};
   const amount=getParcelValor(parcela);
-  if(!(amount>0))return; // não cria fatura fantasma sem valor
+  if(!(amount>0))return{ok:false,skipped:true}; // não cria fatura fantasma sem valor
   const invId=invoiceDocId(studentId,parcelaStableId(studentId,parcela,0));
   const status=mapParcelaToInvoiceStatus(parcela);
   const invPayload={
@@ -3986,13 +4045,17 @@ async function upsertInvoiceFromParcela(studentId,parcela,studentName){
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),
       },{merge:true});
     }
+    return{ok:true,id:invId};
   }catch(err){
     console.warn("upsertInvoiceFromParcela (check Firestore rules for invoices/transactions):",err&&err.message);
+    return{ok:false,error:err};
   }
 }
 async function syncStudentParcelasToInvoices(studentId,parcelas,studentName){
   const list=Array.isArray(parcelas)?parcelas:[];
-  for(const p of list){await upsertInvoiceFromParcela(studentId,p,studentName);}
+  const results=[];
+  for(const p of list){results.push(await upsertInvoiceFromParcela(studentId,p,studentName));}
+  return{total:list.length,synced:results.filter(r=>r?.ok).length,failed:results.filter(r=>r&&!r.ok&&!r.skipped).length,results};
 }
 
 /* ── Helpers de aluno (legado + auth) ─────────────────────────────────────── */
@@ -7400,7 +7463,9 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         setProfile({
           uid:n.uid,name:n.name,level:n.level,program:n.program,coach:n.coach,
           profession:n.profession,birthday:n.birthday,foto:n.foto,email:n.email,phone:n.phone,status:n.status,
-          contrato:n.contrato||"",
+          contrato:n.contrato||"",duracao:n.duracao||"",valorCheio:n.valorCheio||0,descontos:n.descontos||0,
+          valorFinal:n.valorFinal||0,diaVencimento:n.diaVencimento||"",dataInicio:n.dataInicio||"",licaoInicio:n.licaoInicio||1,
+          aulasSemanais:n.aulasSemanais||[],diasAulas:n.diasAulas||[],horarioAulas:n.horarioAulas||"",
         });
         setLinks(n.links);
         setTrilhaData(n.trilha);
@@ -7410,6 +7475,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         setLicoesOcultas(n.licoesOcultas);
         setStudentSchedule({
           dataInicio:n.dataInicio||"",diasAulas:n.diasAulas||[],horarioAulas:n.horarioAulas||"",
+          aulasSemanais:n.aulasSemanais||[],
           calendarioCompleto:n.calendarioCompleto||[],calendarioResumo:n.calendarioResumo||null,
           program:n.program||"",licaoInicio:n.licaoInicio||1,contrato:n.contrato||"",
         });
@@ -7456,6 +7522,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     {id:"diario",     label:"Diário",     icon:"book-open"},
     {id:"reportcard", label:"Report Card",icon:"file-check"},
     {id:"financeiro", label:"Financeiro", icon:"dollar-sign"},
+    {id:"calendario", label:"Calendário", icon:"calendar-days"},
     {id:"recursos",   label:"Recursos",   icon:"link"},
   ];
 
@@ -7592,6 +7659,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
             </div>
             {activeTab==="overview"&&<OverviewSection uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} onGoToTab={setActiveTabNav} hideGreeting/>}
             {activeTab==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={true} financeiro={financeiro||FINANCEIRO_DEFAULT}/>}
+            {activeTab==="calendario"&&<StudentCalendarView uid={uid} trilhaData={trilhaData} schedule={studentSchedule} studentName={profile.name} profile={profile}/>}
             {activeTab==="trilha"&&<TrilhaSection uid={uid} isAdmin={true} contrato={profile.contrato}/>}
             {activeTab==="materiais"&&<MateriaisSection uid={uid} isAdmin={true} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} licoesOcultas={licoesOcultas} contrato={profile.contrato}/>}
             {activeTab==="recursos"&&<RecursosSection uid={uid} isAdmin={true} links={links}/>}
@@ -7642,8 +7710,23 @@ const BLANK_TRIAGEM={
   hobbies:{},topicos:[],temasSemInteresse:"",
   expectativas:[],objetivo:"",horasSemana:"",prazo:"",observacoes:"",
 };
-const DIAS_SEMANA=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+const DIAS_SEMANA=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const HORARIOS_AULA_OPTS=["06:30","07:00","07:30","08:00","08:10","09:00","10:00","11:00","12:00","12:15","12:50","13:00","13:25","14:00","15:00","16:00","16:20","17:00","17:25","17:30","18:00","18:05","18:40","19:00","19:15","19:30","19:50","20:00","20:20","20:25","20:55","21:00"];
+const PROF_WORKING_DAYS_DEFAULT=["Segunda","Terça","Quarta","Quinta","Sexta"];
+const PROF_WORKING_HOURS_DEFAULT=["06:30","07:00","08:00","08:10","09:00","10:00","11:00","12:00","12:15","12:50","13:25","14:00","15:00","16:00","16:20","17:00","17:25","17:30","18:00","18:05","18:40","19:00","19:15","19:50","20:00","20:25"];
+const DURACAO_MESES_OPTIONS=Array.from({length:30},(_,i)=>`${i+1} ${i===0?"mês":"meses"}`);
+function normalizeDuracaoMeses(value){
+  const n=parseInt(String(value||"").match(/\d+/)?.[0]||"",10);
+  return n>=1&&n<=30?`${n} ${n===1?"mês":"meses"}`:"";
+}
+function DurationMonthsSelect({value,onChange}){
+  return(
+    <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={normalizeDuracaoMeses(value)} onChange={e=>onChange(e.target.value)}>
+      <option value="">— selecionar —</option>
+      {DURACAO_MESES_OPTIONS.map(v=><option key={v} value={v}>{v}</option>)}
+    </select>
+  );
+}
 function blankAulaSemanal(n){return{id:n||1,dia:"",horario:""};}
 function normalizeAulasSemanais(raw,diasAulas,horarioAulas){
   if(Array.isArray(raw)&&raw.length){
@@ -7669,8 +7752,112 @@ function deriveScheduleFromAulas(aulas){
     reposicoesGratuitasContrato:Math.max(1,list.filter(a=>a.dia&&a.horario).length||list.length||1),
   };
 }
-function WeeklyClassesEditor({value,onChange}){
+function studentBlocksWeeklySlot(student){
+  const status=normalizeStatus(student?.status,student||{});
+  return !["evadido","trancado","rejeitado"].includes(status);
+}
+function getScheduleWorkingDays(agendaDoc){
+  const configured=Array.isArray(agendaDoc?.workingDays)&&agendaDoc.workingDays.length?agendaDoc.workingDays:PROF_WORKING_DAYS_DEFAULT;
+  return DIAS_SEMANA.filter(day=>configured.includes(day));
+}
+function getScheduleWorkingHours(agendaDoc){
+  const configured=Array.isArray(agendaDoc?.workingHours)&&agendaDoc.workingHours.length?agendaDoc.workingHours:PROF_WORKING_HOURS_DEFAULT;
+  return [...new Set(configured.map(h=>String(h||"").slice(0,5)).filter(Boolean))].sort();
+}
+function getOccupiedWeeklySlotKeys(students,agendaDoc,excludeUid=""){
+  const occupied=new Set();
+  (students||[]).forEach(student=>{
+    const uid=student?.uid||student?.id||"";
+    if(uid&&uid===excludeUid)return;
+    if(!studentBlocksWeeklySlot(student))return;
+    const weekly=normalizeAulasSemanais(student.aulasSemanais,student.diasAulas,student.horarioAulas);
+    weekly.forEach(a=>{
+      if(a.dia&&a.horario)occupied.add(`${a.dia}|${String(a.horario).slice(0,5)}`);
+    });
+    if(!weekly.some(a=>a.dia&&a.horario)){
+      (student.calendarioCompleto||[]).forEach(c=>{
+        const day=c.diaSemana||JS_TO_DIA[new Date(String(c.date||"")+"T12:00:00").getDay()];
+        const time=String(c.horario||"").slice(0,5);
+        if(day&&time)occupied.add(`${day}|${time}`);
+      });
+    }
+  });
+  Object.entries(agendaDoc?.regularOccupied||{}).forEach(([slot,payload])=>{
+    if(payload?.studentUid&&payload.studentUid===excludeUid)return;
+    const m=String(slot).match(/^(\d{4}-\d{2}-\d{2})_(\d{2}:\d{2})/);
+    if(!m)return;
+    const day=JS_TO_DIA[new Date(m[1]+"T12:00:00").getDay()];
+    if(day&&day!=="Domingo")occupied.add(`${day}|${m[2]}`);
+  });
+  return occupied;
+}
+function useStudioSchedulingData(excludeUid=""){
+  const [students,setStudents]=useState([]);
+  const [agenda,setAgenda]=useState({});
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{
+    let studentsReady=false,agendaReady=false;
+    const done=()=>{if(studentsReady&&agendaReady)setLoading(false);};
+    const unsubStudents=db.collection("students").onSnapshot(snap=>{
+      setStudents(snap.docs.filter(d=>d.id!==COURSES_CATALOG_DOC).map(d=>({uid:d.id,...d.data()})));
+      studentsReady=true;done();
+    },()=>{studentsReady=true;done();});
+    const unsubAgenda=db.collection("studio").doc("agenda").onSnapshot(doc=>{
+      setAgenda(doc.exists?doc.data():{});agendaReady=true;done();
+    },()=>{agendaReady=true;done();});
+    return()=>{unsubStudents();unsubAgenda();};
+  },[excludeUid]);
+  const workingDays=useMemo(()=>getScheduleWorkingDays(agenda),[agenda]);
+  const workingHours=useMemo(()=>getScheduleWorkingHours(agenda),[agenda]);
+  const occupied=useMemo(()=>getOccupiedWeeklySlotKeys(students,agenda,excludeUid),[students,agenda,excludeUid]);
+  return{students,agenda,workingDays,workingHours,occupied,loading};
+}
+async function loadStudioSchedulingData(){
+  const [studentsSnap,agendaSnap]=await Promise.all([
+    db.collection("students").get(),
+    db.collection("studio").doc("agenda").get(),
+  ]);
+  return{
+    students:studentsSnap.docs.filter(d=>d.id!==COURSES_CATALOG_DOC).map(d=>({uid:d.id,...d.data()})),
+    agenda:agendaSnap.exists?agendaSnap.data():{},
+  };
+}
+async function validateWeeklyScheduleAvailability(aulas,excludeUid="",context=null){
+  const ctx=context||await loadStudioSchedulingData();
+  const occupied=getOccupiedWeeklySlotKeys(ctx.students,ctx.agenda,excludeUid);
+  const workingDays=getScheduleWorkingDays(ctx.agenda);
+  const workingHours=getScheduleWorkingHours(ctx.agenda);
+  const seen=new Set();
+  for(const aula of normalizeAulasSemanais(aulas).filter(a=>a.dia||a.horario)){
+    if(!aula.dia||!aula.horario)throw new Error("Complete o dia e o horário de todas as aulas semanais.");
+    const key=`${aula.dia}|${String(aula.horario).slice(0,5)}`;
+    if(aula.dia==="Domingo"||!workingDays.includes(aula.dia))throw new Error(`${aula.dia} não está disponível no calendário do estúdio.`);
+    if(!workingHours.includes(String(aula.horario).slice(0,5)))throw new Error(`O horário ${aula.horario} não está disponível no calendário do estúdio.`);
+    if(seen.has(key))throw new Error(`A aula de ${aula.dia} às ${aula.horario} foi selecionada mais de uma vez.`);
+    if(occupied.has(key))throw new Error(`${aula.dia} às ${aula.horario} acabou de ser ocupado. Escolha outro horário.`);
+    seen.add(key);
+  }
+  return ctx;
+}
+function getCalendarBlockedSlotKeys(students,agendaDoc,excludeUid=""){
+  const blocked=new Set();
+  const add=(date,time)=>{const d=String(date||"").slice(0,10),t=String(time||"").slice(0,5);if(d&&t)blocked.add(`${d}|${t}`);};
+  (students||[]).forEach(student=>{
+    const uid=student?.uid||student?.id||"";
+    if(uid&&uid===excludeUid)return;
+    (student.calendarioCompleto||[]).forEach(c=>add(c.date,c.horario||student.horarioAulas));
+  });
+  (agendaDoc?.eventos||[]).forEach(e=>add(e.data||e.date,e.hora||e.time));
+  [agendaDoc?.regularOccupied,agendaDoc?.bookedSlots].forEach(map=>Object.entries(map||{}).forEach(([slot,payload])=>{
+    if(payload?.studentUid&&payload.studentUid===excludeUid)return;
+    const m=String(slot).match(/^(\d{4}-\d{2}-\d{2})_(\d{2}:\d{2})/);
+    if(m)add(m[1],m[2]);
+  }));
+  return blocked;
+}
+function WeeklyClassesEditor({value,onChange,excludeUid=""}){
   const aulas=normalizeAulasSemanais(value);
+  const availability=useStudioSchedulingData(excludeUid);
   function setAula(idx,patch){
     const next=aulas.map((a,i)=>i===idx?{...a,...patch}:a);
     onChange(next);
@@ -7687,7 +7874,7 @@ function WeeklyClassesEditor({value,onChange}){
   return(
     <div style={{gridColumn:"1/-1"}}>
       <label className="form-label">Aulas semanais contratadas</label>
-      <p className="text-xs muted mb-2">Cada aula semanal dá direito a <strong>1 reposição gratuita</strong>. Agora: <strong>{qtd}</strong> reposição(ões) gratuita(s).</p>
+      <p className="text-xs muted mb-2">Cada aula semanal dá direito a <strong>1 reposição gratuita</strong>. Dias e horários vêm da Agenda do estúdio; horários ocupados não aparecem. Agora: <strong>{qtd}</strong> reposição(ões) gratuita(s).</p>
       <div className="space-y-3">
         {aulas.map((a,idx)=>(
           <div key={a.id||idx} className="rounded-xl p-3" style={{border:"1px solid var(--divider)",background:"var(--badge)"}}>
@@ -7700,15 +7887,21 @@ function WeeklyClassesEditor({value,onChange}){
                 <label className="form-label">Dia da semana</label>
                 <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.dia||""} onChange={e=>setAula(idx,{dia:e.target.value})}>
                   <option value="">— selecionar —</option>
-                  {DIAS_SEMANA.map(d=><option key={d} value={d}>{d}</option>)}
+                  {availability.workingDays.map(d=><option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
                 <label className="form-label">Horário disponível</label>
                 <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={a.horario||""} onChange={e=>setAula(idx,{horario:e.target.value})}>
                   <option value="">— selecionar —</option>
-                  {HORARIOS_AULA_OPTS.map(h=><option key={h} value={h}>{h}</option>)}
+                  {availability.workingHours.filter(h=>{
+                    const key=`${a.dia}|${h}`;
+                    const usedHere=aulas.some((other,i)=>i!==idx&&other.dia===a.dia&&other.horario===h);
+                    return !!a.dia&&!availability.occupied.has(key)&&!usedHere;
+                  }).map(h=><option key={h} value={h}>{h}</option>)}
                 </select>
+                {!a.dia&&<div className="text-xs muted mt-1">Selecione o dia para carregar os horários livres.</div>}
+                {a.dia&&a.horario&&(availability.occupied.has(`${a.dia}|${a.horario}`)||!availability.workingHours.includes(a.horario))&&<div style={{fontSize:11,color:"#B91C1C",marginTop:5}}>Este horário não está mais disponível. Selecione outro.</div>}
               </div>
             </div>
           </div>
@@ -7717,6 +7910,7 @@ function WeeklyClassesEditor({value,onChange}){
       <button type="button" className="btn rounded-xl px-4 py-2 text-sm font-semibold mt-3 inline-flex items-center gap-2" onClick={addAula}>
         <Icon name="plus" size={14}/> Adicionar aulas semanais
       </button>
+      <span style={{fontSize:11,color:"var(--font-muted)",marginLeft:10}}>{availability.loading?"Sincronizando com a Agenda…":"Agenda sincronizada ao vivo"}</span>
     </div>
   );
 }
@@ -7798,6 +7992,9 @@ function ModalCadastro({onClose,onSaved}){
     if(pass&&pass.length<6){setErr("A senha do portal deve ter pelo menos 6 caracteres.");return;}
     setSaving(true);setErr("");
     try{
+      const schedule=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));
+      const hasScheduleInput=schedule.aulasSemanais.some(a=>a.dia||a.horario);
+      const schedulingContext=hasScheduleInput?await validateWeeklyScheduleAvailability(schedule.aulasSemanais,""):null;
       let uid=null;
       if(pass){
         const secondary=getSecondaryAuth();
@@ -7817,7 +8014,13 @@ function ModalCadastro({onClose,onSaved}){
       const docRef=uid?db.collection("students").doc(uid):db.collection("students").doc();
       const studentUid=docRef.id;
       const programName=getCourseLabel(dados.contrato)||"Fluency General";
-      await docRef.set({
+      const calendarPrepared=dados.dataInicio&&hasScheduleInput
+        ?await prepareCalendarPersistence(studentUid,{...dados,...schedule,program:programName,trilha:{}},{},schedulingContext)
+        :null;
+      const parcelas=dados.dataInicio&&dados.diaVencimento&&parseCurrencyValue(dados.valorFinal)>0
+        ?(gerarParcelas(dados.dataInicio,dados.diaVencimento,dados.valorFinal,dados.numParcelas||18,[])||[])
+        :[];
+      const studentPayload={
         name:dados.nome.trim(),
         email,
         phone:dados.telefone.trim()||dados.whatsapp.trim(),
@@ -7831,14 +8034,15 @@ function ModalCadastro({onClose,onSaved}){
         foto:(dados.foto||"").trim(),
         dataCadastro:dados.dataCadastro,
         contrato:dados.contrato,
-        duracao:dados.duracao.trim(),
-        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
-        valorCheio:parseFloat(dados.valorCheio)||0,
-        descontos:parseFloat(dados.descontos)||0,
-        valorFinal:parseFloat(dados.valorFinal)||0,
+        duracao:normalizeDuracaoMeses(dados.duracao),
+        ...schedule,
+        valorCheio:parseCurrencyValue(dados.valorCheio),
+        descontos:parseCurrencyValue(dados.descontos),
+        valorFinal:parseCurrencyValue(dados.valorFinal),
         diaVencimento:parseInt(dados.diaVencimento)||1,
         dataInicio:dados.dataInicio||"",
         licaoInicio:parseInt(dados.licaoInicio,10)||1,
+        numParcelas:parseInt(dados.numParcelas,10)||18,
         status:dados.status||"lead",
         triagem,
         level:"A1",
@@ -7847,11 +8051,17 @@ function ModalCadastro({onClose,onSaved}){
         birthday:dados.dataNasc||"",
         profession:dados.profissao.trim(),
         links:[{id:1,label:"Materiais (Drive)",url:"https://drive.google.com/"},{id:2,label:"Tarefas (Classroom)",url:"https://classroom.google.com/"}],
-        trilha:{},financeiro:{...FINANCEIRO_DEFAULT,parcelas:[]},modulosOcultos:[],licoesOcultas:[],
+        trilha:{},financeiro:{...FINANCEIRO_DEFAULT,parcelas},modulosOcultos:[],licoesOcultas:[],
         authUid:uid||null,
         hasPortalLogin:!!uid,
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      });
+        ...(calendarPrepared?.fields||{}),
+      };
+      await docRef.set(studentPayload);
+      if(parcelas.length){
+        const financeSync=await syncStudentParcelasToInvoices(studentUid,parcelas,dados.nome.trim());
+        await docRef.set({financeiroSync:{...financeSync,results:[],at:new Date().toISOString()}},{merge:true});
+      }
       if(fotoFile){
         try{
           const fotoUrl=await uploadStudentFoto(fotoFile,studentUid);
@@ -7960,7 +8170,7 @@ function ModalCadastro({onClose,onSaved}){
                     {contratosAtivos.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
                   </select>
                 </div>
-                <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Ex: 18 meses" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
+                <div><label className="form-label">Duração</label><DurationMonthsSelect value={dados.duracao} onChange={v=>setDados(p=>({...p,duracao:v,numParcelas:parseInt(v,10)||p.numParcelas}))}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
                 <div><label className="form-label">Lição de Início ({getCourseLessonLabel(courseSel,1)||1}–{getCourseLessonLabel(courseSel,totalLicoesCurso)||totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
@@ -7968,10 +8178,11 @@ function ModalCadastro({onClose,onSaved}){
                   </select>
                 </div>
                 <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
-                <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
-                <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
-                <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="0,00" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
+                <div><label className="form-label">Valor Cheio</label><CurrencyInput value={dados.valorCheio} onChange={v=>setD("valorCheio",v)}/></div>
+                <div><label className="form-label">Desconto</label><CurrencyInput value={dados.descontos} onChange={v=>setD("descontos",v)}/></div>
+                <div><label className="form-label">Valor Final</label><CurrencyInput value={dados.valorFinal} onChange={v=>setD("valorFinal",v)}/></div>
                 <div><label className="form-label">Dia de Vencimento</label><input type="number" min="1" max="31" className="w-full input rounded-xl px-3 py-2.5 text-sm" placeholder="Ex: 10" value={dados.diaVencimento} onChange={e=>setD("diaVencimento",e.target.value)}/></div>
+                <div><label className="form-label">Nº de Parcelas</label><select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas||18} onChange={e=>setD("numParcelas",parseInt(e.target.value,10)||18)}>{Array.from({length:30},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}</select></div>
               </div>
 
               <div className="form-section-title" style={{marginTop:20}}>Status</div>
@@ -8185,6 +8396,12 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         : [];
       const financeiro={...FINANCEIRO_DEFAULT,parcelas};
       const programName=getCourseLabel(dados.contrato)||"Fluency General";
+      const schedule=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));
+      const hasScheduleInput=schedule.aulasSemanais.some(a=>a.dia||a.horario);
+      const schedulingContext=hasScheduleInput?await validateWeeklyScheduleAvailability(schedule.aulasSemanais,studentUid):null;
+      const calendarPrepared=dados.dataInicio&&hasScheduleInput
+        ?await prepareCalendarPersistence(studentUid,{...raw,...dados,...schedule,program:programName,trilha:raw.trilha||{}},raw.trilha||{},schedulingContext)
+        :null;
 
       await db.collection("students").doc(studentUid).update({
         name:dados.nome.trim(),email,
@@ -8193,11 +8410,11 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         dataNasc:dados.dataNasc,estadoCivil:dados.estadoCivil,
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:dados.foto.trim(),
-        contrato:dados.contrato,duracao:dados.duracao.trim(),
-        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
-        valorCheio:parseFloat(dados.valorCheio)||0,
-        descontos:parseFloat(dados.descontos)||0,
-        valorFinal:parseFloat(dados.valorFinal)||0,
+        contrato:dados.contrato,duracao:normalizeDuracaoMeses(dados.duracao),
+        ...schedule,
+        valorCheio:parseCurrencyValue(dados.valorCheio),
+        descontos:parseCurrencyValue(dados.descontos),
+        valorFinal:parseCurrencyValue(dados.valorFinal),
         diaVencimento:parseInt(dados.diaVencimento,10)||1,
         dataInicio:dados.dataInicio||"",
         licaoInicio:parseInt(dados.licaoInicio,10)||1,
@@ -8209,7 +8426,12 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
         alunoTerceirizado:isTerceirizado,
         aguardandoLancamento:false,
         autorizadoAt:firebase.firestore.FieldValue.serverTimestamp(),
+        ...(calendarPrepared?.fields||{}),
       });
+      if(parcelas.length){
+        const financeSync=await syncStudentParcelasToInvoices(studentUid,parcelas,dados.nome.trim());
+        await db.collection("students").doc(studentUid).set({financeiroSync:{...financeSync,results:[],at:new Date().toISOString()}},{merge:true});
+      }
       await db.collection("users").doc(studentUid).set({
         name:dados.nome.trim(),email,role:"student",studentId:studentUid,
         createdAt:firebase.firestore.FieldValue.serverTimestamp(),
@@ -8287,7 +8509,7 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                     {contratosAtivos.map(c=><option key={c.v} value={c.v}>{c.l}</option>)}
                   </select>
                 </div>
-                <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
+                <div><label className="form-label">Duração</label><DurationMonthsSelect value={dados.duracao} onChange={v=>setDados(p=>({...p,duracao:v,numParcelas:parseInt(v,10)||p.numParcelas}))}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
                 <div><label className="form-label">Lição de Início ({getCourseLessonLabel(courseSel,1)||1}–{getCourseLessonLabel(courseSel,totalLicoesCurso)||totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
@@ -8295,9 +8517,9 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                   </select>
                 </div>
                 <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
-                <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
-                <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
-                <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
+                <div><label className="form-label">Valor Cheio</label><CurrencyInput value={dados.valorCheio} onChange={v=>setD("valorCheio",v)}/></div>
+                <div><label className="form-label">Desconto</label><CurrencyInput value={dados.descontos} onChange={v=>setD("descontos",v)}/></div>
+                <div><label className="form-label">Valor Final</label><CurrencyInput value={dados.valorFinal} onChange={v=>setD("valorFinal",v)}/></div>
                 <div><label className="form-label">Dia Vencimento</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.diaVencimento} onChange={e=>setD("diaVencimento",e.target.value)}>
                     <option value="">—</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>Dia {i+1}</option>)}
@@ -8306,13 +8528,13 @@ function ModalAutorizarLancar({pendente,onClose,onLaunched}){
                 <div><label className="form-label">Nº Parcelas</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas} onChange={e=>setD("numParcelas",parseInt(e.target.value)||0)}>
                     {isTerceirizado&&<option value={0}>0 (sem parcelas)</option>}
-                    {Array.from({length:24},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
+                    {Array.from({length:30},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
                   </select>
                 </div>
               </div>
               {dados.dataInicio&&dados.diaVencimento&&dados.valorFinal&&(parseInt(dados.numParcelas,10)||0)>0&&(
                 <div style={{marginTop:14,padding:"12px 14px",borderRadius:12,background:"rgba(30,143,168,.08)",border:"1px solid rgba(30,143,168,.25)",fontSize:12}}>
-                  <Icon name="info" size={12} style={{display:"inline",marginRight:4}}/>Ao autorizar, serão geradas <strong>{dados.numParcelas||18} parcelas</strong> de {formatCurrency(parseFloat(dados.valorFinal)||0)} automaticamente.
+                  <Icon name="info" size={12} style={{display:"inline",marginRight:4}}/>Ao autorizar, serão geradas <strong>{dados.numParcelas||18} parcelas</strong> de {formatCurrency(parseCurrencyValue(dados.valorFinal))} automaticamente.
                 </div>
               )}
             </div>
@@ -8470,7 +8692,8 @@ function AdminCadastrosPendentes({onBack,onLaunched}){
 
 const DIAS_SEMANA_JS=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 function gerarParcelas(dataInicio,diaVenc,valorFinal,numParcelas,parcelasExistentes){
-  if(!dataInicio||!diaVenc||!valorFinal||!numParcelas)return null;
+  const amount=parseCurrencyValue(valorFinal);
+  if(!dataInicio||!diaVenc||!(amount>0)||!numParcelas)return null;
   const pagas=(parcelasExistentes||[]).filter(p=>p.status==="paga");
   const base=new Date(dataInicio+"T12:00:00");
   const parcelas=[];
@@ -8483,7 +8706,7 @@ function gerarParcelas(dataInicio,diaVenc,valorFinal,numParcelas,parcelasExisten
       id:Date.now().toString()+i,
       mes:mesStr,
       dataVencimento:dataVenc,
-      valor:parseFloat(valorFinal)||0,
+      valor:amount,
       valorDesconto:0,
       status:"a_vencer",
       comprovante:"",
@@ -8523,6 +8746,27 @@ const STUDIO_RECESS_RANGES=[
 ];
 const DIA_TO_JS={Domingo:0,Segunda:1,Terça:2,Quarta:3,Quinta:4,Sexta:5,Sábado:6};
 const JS_TO_DIA=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+function localDateISO(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;}
+function offsetDateISO(iso,days){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+days);return localDateISO(d);}
+function easterSundayISO(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3);
+  const h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+}
+function dynamicStudioClosures(year){
+  const easter=easterSundayISO(year);
+  return[
+    {d:`${year}-01-01`,l:"Confraternização Universal",t:"feriado"},{d:`${year}-01-25`,l:"Aniversário de São Paulo",t:"feriado"},
+    {d:offsetDateISO(easter,-48),l:"Carnaval",t:"carnaval"},{d:offsetDateISO(easter,-47),l:"Carnaval",t:"carnaval"},
+    {d:offsetDateISO(easter,-46),l:"Quarta-feira de Cinzas",t:"carnaval"},{d:offsetDateISO(easter,-2),l:"Sexta-feira Santa",t:"feriado"},
+    {d:`${year}-04-21`,l:"Tiradentes",t:"feriado"},{d:`${year}-05-01`,l:"Dia do Trabalho",t:"feriado"},
+    {d:offsetDateISO(easter,60),l:"Corpus Christi",t:"feriado"},{d:`${year}-07-09`,l:"Data Magna de SP",t:"feriado"},
+    {d:`${year}-09-07`,l:"Independência",t:"feriado"},{d:`${year}-10-12`,l:"N. Sra. Aparecida",t:"feriado"},
+    {d:`${year}-11-02`,l:"Finados",t:"feriado"},{d:`${year}-11-15`,l:"Proclamação da República",t:"feriado"},
+    {d:`${year}-11-20`,l:"Consciência Negra",t:"feriado"},{d:`${year}-12-25`,l:"Natal",t:"feriado"},
+  ];
+}
 const STUDIO_CLOSED_MAP=(()=>{
   const m={};
   STUDIO_HOLIDAY_ENTRIES.forEach(h=>{m[h.d]={type:h.t,label:h.l};});
@@ -8530,11 +8774,22 @@ const STUDIO_CLOSED_MAP=(()=>{
     const d=new Date(r.s+"T12:00:00"),end=new Date(r.e+"T12:00:00");
     while(d<=end){const iso=d.toISOString().slice(0,10);if(!m[iso])m[iso]={type:"recesso",label:r.l};d.setDate(d.getDate()+1);}
   });
+  for(let year=2025;year<=2035;year++){
+    dynamicStudioClosures(year).forEach(h=>{if(!m[h.d])m[h.d]={type:h.t,label:h.l};});
+    const recessStart=new Date(`${year}-12-20T12:00:00`),recessEnd=new Date(`${year+1}-01-03T12:00:00`);
+    while(recessStart<=recessEnd){const iso=localDateISO(recessStart);if(!m[iso])m[iso]={type:"recesso",label:"Recesso The Fluency Studio"};recessStart.setDate(recessStart.getDate()+1);}
+  }
+  Object.entries({...m}).forEach(([iso,info])=>{
+    if(info.type!=="feriado")return;
+    const dow=new Date(iso+"T12:00:00").getDay();
+    const bridge=dow===2?offsetDateISO(iso,-1):dow===4?offsetDateISO(iso,1):"";
+    if(bridge&&!m[bridge])m[bridge]={type:"ponte",label:`Ponte do estúdio · ${info.label}`};
+  });
   return m;
 })();
 function isStudioClosed(iso){return!!STUDIO_CLOSED_MAP[iso];}
 function getStudioDayInfo(iso){return STUDIO_CLOSED_MAP[iso]||null;}
-function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas="",aulasSemanais=null,course=null}){
+function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes=150,trilhaExistente={},horarioAulas="",aulasSemanais=null,course=null,blockedSlots=null}){
   const aulasNorm=normalizeAulasSemanais(aulasSemanais,diasAulas,horarioAulas).filter(a=>a.dia);
   const diasList=aulasNorm.length?aulasNorm.map(a=>a.dia):diasAulas;
   if(!dataInicio||!diasList?.length)return null;
@@ -8542,8 +8797,9 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
   const total=totalLicoes||getTotalLicoes(courseObj)||150;
   const diasSet=new Set(diasList.map(d=>DIA_TO_JS[d]).filter(v=>v!==undefined));
   if(!diasSet.size)return null;
-  const horarioPorDia={};
-  aulasNorm.forEach(a=>{if(a.dia&&a.horario)horarioPorDia[a.dia]=a.horario;});
+  const slotsPorDia={};
+  aulasNorm.forEach(a=>{if(!a.dia)return;(slotsPorDia[a.dia]||(slotsPorDia[a.dia]=[])).push(String(a.horario||horarioAulas||"").slice(0,5));});
+  Object.keys(slotsPorDia).forEach(day=>{slotsPorDia[day]=[...new Set(slotsPorDia[day])].sort();});
   let current=new Date(dataInicio+"T12:00:00");
   let lessonNum=parseInt(licaoInicio,10)||1;
   const trilhaUpdates={};
@@ -8553,12 +8809,16 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
     const iso=current.toISOString().slice(0,10);
     if(isStudioClosed(iso)){current.setDate(current.getDate()+1);continue;}
     if(diasSet.has(current.getDay())){
-      const id=lessonIdFromNum(lessonNum,courseObj);
       const diaNome=JS_TO_DIA[current.getDay()];
-      const horario=horarioPorDia[diaNome]||horarioAulas||"";
-      trilhaUpdates[id]={...(trilhaExistente[id]||{}),dataPrevista:iso};
-      calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:diaNome,horario});
-      lessonNum++;
+      const slots=slotsPorDia[diaNome]?.length?slotsPorDia[diaNome]:[String(horarioAulas||"").slice(0,5)];
+      for(const horario of slots){
+        if(lessonNum>total)break;
+        if(horario&&blockedSlots?.has(`${iso}|${horario}`))continue;
+        const id=lessonIdFromNum(lessonNum,courseObj);
+        trilhaUpdates[id]={...(trilhaExistente[id]||{}),dataPrevista:iso};
+        calendario.push({lessonNum,lessonId:id,date:iso,diaSemana:diaNome,horario});
+        lessonNum++;
+      }
     }
     current.setDate(current.getDate()+1);
   }
@@ -8566,7 +8826,25 @@ function gerarCalendarioCompleto({dataInicio,diasAulas,licaoInicio=1,totalLicoes
   const ultima=calendario[calendario.length-1];
   return{trilhaUpdates,calendario,total:calendario.length,dataFim:ultima.date,dataInicio:calendario[0].date};
 }
-async function aplicarCalendarioAluno(uid,student,trilhaExistente){
+function calendarPersistenceFields(result,trilhaExistente={}){
+  const trilha={};
+  Object.entries(trilhaExistente||{}).forEach(([id,data])=>{
+    const clean={...(data||{})};delete clean.dataPrevista;trilha[id]=clean;
+  });
+  Object.entries(result.trilhaUpdates).forEach(([id,data])=>{trilha[id]={...(trilha[id]||{}),...data};});
+  return{
+    trilha,calendarioCompleto:result.calendario,calendarioGeradoEm:new Date().toISOString(),
+    calendarioResumo:{total:result.total,dataInicio:result.dataInicio,dataFim:result.dataFim},
+  };
+}
+function clearCalendarPersistenceFields(trilhaExistente={}){
+  const trilha={};
+  Object.entries(trilhaExistente||{}).forEach(([id,data])=>{const clean={...(data||{})};delete clean.dataPrevista;trilha[id]=clean;});
+  return{trilha,calendarioCompleto:[],calendarioResumo:null,calendarioGeradoEm:null};
+}
+async function prepareCalendarPersistence(uid,student,trilhaExistente,context=null){
+  if(!student?.dataInicio||!normalizeAulasSemanais(student.aulasSemanais,student.diasAulas,student.horarioAulas).some(a=>a.dia&&a.horario))return null;
+  const ctx=await validateWeeklyScheduleAvailability(student.aulasSemanais||normalizeAulasSemanais(null,student.diasAulas,student.horarioAulas),uid||"",context);
   const course=getCourseById(student.contrato);
   const result=gerarCalendarioCompleto({
     dataInicio:student.dataInicio,diasAulas:student.diasAulas||[],
@@ -8575,15 +8853,85 @@ async function aplicarCalendarioAluno(uid,student,trilhaExistente){
     aulasSemanais:student.aulasSemanais||null,
     totalLicoes:getTotalLicoes(course),
     course,
+    blockedSlots:getCalendarBlockedSlotKeys(ctx.students,ctx.agenda,uid||""),
   });
   if(!result)return null;
-  const trilha={...(student.trilha||{})};
-  Object.entries(result.trilhaUpdates).forEach(([id,data])=>{trilha[id]={...(trilha[id]||{}),...data};});
-  await db.collection("students").doc(uid).update({
-    trilha,calendarioCompleto:result.calendario,calendarioGeradoEm:new Date().toISOString(),
-    calendarioResumo:{total:result.total,dataInicio:result.dataInicio,dataFim:result.dataFim},
-  });
+  return{result,fields:calendarPersistenceFields(result,trilhaExistente||student.trilha||{})};
+}
+async function aplicarCalendarioAluno(uid,student,trilhaExistente){
+  const prepared=await prepareCalendarPersistence(uid,student,trilhaExistente);
+  if(!prepared)return null;
+  await db.collection("students").doc(uid).update(prepared.fields);
+  const {result}=prepared;
   return result;
+}
+function fullCalendarForStudent(student){
+  if(Array.isArray(student?.calendarioCompleto)&&student.calendarioCompleto.length)return student.calendarioCompleto;
+  const course=getCourseById(student?.contrato);
+  const generated=gerarCalendarioCompleto({
+    dataInicio:student?.dataInicio,diasAulas:student?.diasAulas||[],licaoInicio:student?.licaoInicio||1,
+    totalLicoes:getTotalLicoes(course),trilhaExistente:student?.trilha||{},horarioAulas:student?.horarioAulas||"",
+    aulasSemanais:student?.aulasSemanais||null,course,
+  });
+  return generated?.calendario||[];
+}
+function escapePrintHtml(value){
+  return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+}
+function printContractWithCalendar(student,calendarOverride){
+  const calendar=Array.isArray(calendarOverride)?calendarOverride:fullCalendarForStudent(student);
+  if(!calendar.length){alert("Gere o calendário completo antes de imprimir.");return;}
+  const popup=window.open("","_blank","width=980,height=760");
+  if(!popup){alert("O navegador bloqueou a janela de impressão. Libere pop-ups para este portal.");return;}
+  try{popup.opener=null;}catch(e){}
+  const first=calendar[0],last=calendar[calendar.length-1];
+  const classes=normalizeAulasSemanais(student?.aulasSemanais,student?.diasAulas,student?.horarioAulas).filter(a=>a.dia&&a.horario);
+  const closures=Object.entries(STUDIO_CLOSED_MAP).filter(([date])=>date>=first.date&&date<=last.date).sort((a,b)=>a[0].localeCompare(b[0]));
+  const rows=calendar.map(c=>`<tr><td>${escapePrintHtml(c.lessonNum)}</td><td>${escapePrintHtml(c.lessonId||"")}</td><td>${escapePrintHtml(formatDateBR(c.date))}</td><td>${escapePrintHtml(c.diaSemana||JS_TO_DIA[new Date(c.date+"T12:00:00").getDay()])}</td><td>${escapePrintHtml(c.horario||student?.horarioAulas||"")}</td></tr>`).join("");
+  const closureRows=closures.map(([date,info])=>`<li><strong>${escapePrintHtml(formatDateBR(date))}</strong> · ${escapePrintHtml(eventTypeLabel(info.type))} · ${escapePrintHtml(info.label)}</li>`).join("");
+  const scheduleText=classes.map(a=>`${a.dia}, ${a.horario}`).join(" · ")||"—";
+  const field=(label,value)=>`<div class="field"><span>${escapePrintHtml(label)}</span><strong>${escapePrintHtml(value||"—")}</strong></div>`;
+  popup.document.open();
+  popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Contrato e calendário · ${escapePrintHtml(student?.name||student?.nome||"Aluno")}</title><style>
+    @page{size:A4;margin:14mm}*{box-sizing:border-box}body{margin:0;color:#14243a;font:11px Arial,sans-serif}.brand{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #18a6b3;padding-bottom:12px;margin-bottom:18px}.brand h1{font-size:22px;margin:0;color:#0f2c5c}.brand p{margin:4px 0 0;color:#577086}.tag{padding:6px 10px;border-radius:99px;background:#e9f8fb;color:#087f72;font-weight:700}.title{font-size:17px;color:#0f2c5c;margin:18px 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field{border:1px solid #d9e5ef;border-radius:8px;padding:9px;background:#f8fbfd}.field span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#6b7f92;margin-bottom:3px}.notice{margin-top:14px;padding:11px;border-left:4px solid #18a6b3;background:#eef9fb;line-height:1.45}.signature{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:52px}.signature div{border-top:1px solid #44576b;padding-top:6px;text-align:center}.appendix{page-break-before:always}.summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.summary span{padding:6px 9px;border-radius:7px;background:#edf7fb;color:#174568;font-weight:700}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#0f2c5c;color:white;text-align:left;padding:6px}td{border-bottom:1px solid #dfe8ef;padding:5px 6px}tr:nth-child(even) td{background:#f7fafc}.closures{columns:2;padding-left:18px;font-size:9px;line-height:1.5}.footer{margin-top:12px;color:#718397;font-size:9px;text-align:center}@media print{.appendix{page-break-before:always}tr{break-inside:avoid}}
+  </style></head><body>
+    <section><div class="brand"><div><h1>THE FLUENCY STUDIO</h1><p>Contrato pedagógico e cronograma integrado</p></div><div class="tag">Documento do aluno</div></div>
+    <h2 class="title">Dados do contrato</h2><div class="grid">
+      ${field("Aluno",student?.name||student?.nome)}${field("Curso",getCourseLabel(student?.contrato))}${field("Duração",normalizeDuracaoMeses(student?.duracao))}${field("Data de início",formatDateBR(student?.dataInicio))}
+      ${field("Aulas contratadas",scheduleText)}${field("Última aula prevista",formatDateBR(last.date))}${field("Valor cheio",formatCurrency(student?.valorCheio))}${field("Desconto",formatCurrency(student?.descontos))}${field("Valor final",formatCurrency(student?.valorFinal))}${field("Vencimento",student?.diaVencimento?`Dia ${student.diaVencimento}`:"—")}
+    </div><div class="notice"><strong>Calendário integrante do contrato.</strong> O cronograma completo anexado considera automaticamente feriados, Carnaval, recessos e pontes do estúdio. Alterações posteriores devem ser regeneradas no portal para manter Contrato, Agenda e Trilha sincronizados.</div>
+    <div class="signature"><div>Aluno(a) / responsável</div><div>The Fluency Studio</div></div></section>
+    <section class="appendix"><div class="brand"><div><h1>CALENDÁRIO COMPLETO</h1><p>Anexo inseparável do contrato · ${escapePrintHtml(student?.name||student?.nome||"Aluno")}</p></div><div class="tag">${calendar.length} aulas</div></div>
+      <div class="summary"><span>${escapePrintHtml(formatDateBR(first.date))} → ${escapePrintHtml(formatDateBR(last.date))}</span><span>${escapePrintHtml(scheduleText)}</span><span>${escapePrintHtml(getCourseLabel(student?.contrato))}</span></div>
+      <table><thead><tr><th>#</th><th>Lição</th><th>Data</th><th>Dia</th><th>Horário</th></tr></thead><tbody>${rows}</tbody></table>
+      <h2 class="title">Feriados, pontes e recessos considerados</h2><ul class="closures">${closureRows||"<li>Nenhuma pausa no período.</li>"}</ul>
+      <div class="footer">Gerado pelo portal The Fluency Studio em ${escapePrintHtml(new Date().toLocaleString("pt-BR"))}</div>
+    </section><script>window.addEventListener('load',()=>setTimeout(()=>window.print(),180));<\/script></body></html>`);
+  popup.document.close();
+}
+function FullCourseCalendarModal({student,onClose}){
+  const calendar=useMemo(()=>fullCalendarForStudent(student),[student]);
+  const grouped=useMemo(()=>calendar.reduce((acc,item)=>{const key=String(item.date||"").slice(0,7);(acc[key]||(acc[key]=[])).push(item);return acc;},{}),[calendar]);
+  const first=calendar[0],last=calendar[calendar.length-1];
+  return(
+    <ModalOverlay onClose={onClose} labelledBy="full-calendar-title">
+      <div className="modal-box" style={{maxWidth:920}}>
+        <div className="modal-header" style={{background:"linear-gradient(135deg,#071b3b,#155e75)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}><Icon name="calendar-days" size={19}/><div><div id="full-calendar-title" style={{fontWeight:800,fontSize:15}}>Calendário completo do contrato</div><div style={{fontSize:11,opacity:.78}}>{student?.name||student?.nome||"Aluno"} · até a última aula</div></div></div>
+          <button type="button" onClick={onClose} aria-label="Fechar" style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:8,padding:7,color:"white",cursor:"pointer"}}><Icon name="x" size={16}/></button>
+        </div>
+        <div className="modal-body">
+          {calendar.length?(
+            <>
+              <div className="info-box" style={{marginBottom:14,display:"flex",gap:12,justifyContent:"space-between",flexWrap:"wrap"}}><strong>{calendar.length} aulas</strong><span>{formatDateBR(first.date)} → {formatDateBR(last.date)}</span><span>Feriados · pontes · recessos já descontados</span></div>
+              <div style={{display:"grid",gap:14}}>{Object.entries(grouped).map(([month,items])=><section key={month} className="premium-card" style={{padding:14}}><div style={{fontWeight:800,color:"#0f2c5c",marginBottom:8,textTransform:"capitalize"}}>{new Date(month+"-01T12:00:00").toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:7}}>{items.map(item=><div key={`${item.date}-${item.lessonNum}`} style={{padding:"8px 10px",borderRadius:9,background:"var(--detail,#eef7ff)",border:"1px solid var(--divider,#dbe7ef)",fontSize:12}}><strong>Lição {item.lessonNum}</strong><div style={{color:"var(--font-muted,#58718A)",marginTop:2}}>{formatDateBR(item.date)} · {item.diaSemana} · {item.horario||student?.horarioAulas||"—"}</div></div>)}</div></section>)}</div>
+            </>
+          ):<div className="err-box">Ainda não há um calendário completo. Preencha data de início e aulas semanais e salve o cadastro.</div>}
+        </div>
+        <div className="modal-footer"><button type="button" className="btn rounded-xl px-4 py-2 text-sm" onClick={onClose}>Fechar</button><button type="button" className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2" disabled={!calendar.length} onClick={()=>printContractWithCalendar(student,calendar)}><Icon name="file-text" size={15}/> Imprimir contrato + calendário</button></div>
+      </div>
+    </ModalOverlay>
+  );
 }
 function collectStudentLessonEvents(students,monthKey,onlyUid=null){
   const events=[];
@@ -8592,15 +8940,16 @@ function collectStudentLessonEvents(students,monthKey,onlyUid=null){
     if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
     const push=(date,lessonNum,extra={})=>{
       if(!date||!date.startsWith(monthKey))return;
-      events.push({date,type:"aula",label:`${s.name||"Aluno"} · Lição ${lessonNum}`,time:s.horarioAulas||"",studentUid:s.uid,studentName:s.name||"Aluno",lessonNum,color:"#1e8fa8",...extra});
+      const resolvedTime=String(extra.time||extra.horario||s.horarioAulas||"").slice(0,5);
+      events.push({date,type:"aula",label:`${s.name||"Aluno"} · Lição ${lessonNum}`,time:resolvedTime,studentUid:s.uid,studentName:s.name||"Aluno",lessonNum,color:"#1e8fa8",...extra});
     };
+    (s.calendarioCompleto||[]).forEach(c=>{
+      push(c.date,c.lessonNum,{lessonId:c.lessonId,horario:c.horario});
+    });
     Object.entries(s.trilha||{}).forEach(([id,lesson])=>{
       const num=lesson.pos||parseInt((id.match(/l(\d+)/)||[])[1],10);
-      if(lesson.dataPrevista)push(lesson.dataPrevista,num,{lessonId:id,status:lesson.status});
-    });
-    (s.calendarioCompleto||[]).forEach(c=>{
-      if(!events.some(e=>e.date===c.date&&e.studentUid===s.uid&&e.lessonNum===c.lessonNum))
-        push(c.date,c.lessonNum,{horario:c.horario});
+      if(lesson.dataPrevista&&!events.some(e=>e.date===lesson.dataPrevista&&e.studentUid===s.uid&&e.lessonNum===num))
+        push(lesson.dataPrevista,num,{lessonId:id,status:lesson.status});
     });
   });
   return events.sort((a,b)=>a.date.localeCompare(b.date)||(a.time||"").localeCompare(b.time||""));
@@ -8613,16 +8962,18 @@ function findProximaAula(students){
     const scan=(date,lessonNum,lesson,extra={})=>{
       if(!date||date<today)return;
       if(lesson?.status==="concluida"||lesson?.status==="realizada")return;
-      if(!best||date<best.date||(date===best.date&&(s.horarioAulas||"").localeCompare(best.time||"")<0)){
-        best={date,time:s.horarioAulas||"",student:s,lessonNum,lesson,...extra};
+      const eventTime=String(extra.time||s.horarioAulas||"").slice(0,5);
+      if(!best||date<best.date||(date===best.date&&eventTime.localeCompare(best.time||"")<0)){
+        best={date,time:eventTime,student:s,lessonNum,lesson,...extra};
       }
     };
     Object.entries(s.trilha||{}).forEach(([id,lesson])=>{
       const num=lesson.pos||parseInt((id.match(/l(\d+)/)||[])[1],10);
-      if(lesson.dataPrevista)scan(lesson.dataPrevista,num,lesson,{lessonId:id});
+      const cal=(s.calendarioCompleto||[]).find(c=>c.lessonId===id||(c.lessonNum===num&&c.date===lesson.dataPrevista));
+      if(lesson.dataPrevista)scan(lesson.dataPrevista,num,lesson,{lessonId:id,time:cal?.horario||""});
     });
     if(!(s.trilha&&Object.keys(s.trilha).length)&&(s.calendarioCompleto||[]).length){
-      s.calendarioCompleto.forEach(c=>scan(c.date,c.lessonNum,null,{fromCalendario:true}));
+      s.calendarioCompleto.forEach(c=>scan(c.date,c.lessonNum,null,{fromCalendario:true,time:c.horario||""}));
     }
   });
   return best;
@@ -8631,7 +8982,7 @@ function getStudioEventsForMonth(monthKey){
   const events=[];
   Object.entries(STUDIO_CLOSED_MAP).forEach(([date,info])=>{
     if(!date.startsWith(monthKey))return;
-    const color=info.type==="recesso"?"#c0a0f8":info.type==="carnaval"?"#f0cc60":"#f09090";
+    const color=info.type==="recesso"?"#c0a0f8":info.type==="carnaval"?"#f0cc60":info.type==="ponte"?"#fb923c":"#f09090";
     events.push({date,type:info.type,label:info.label,time:"",color,studio:true,source:"studio"});
   });
   return events;
@@ -8643,6 +8994,7 @@ function collectRecurringClassEvents(students,monthKey,onlyUid=null){
   (students||[]).forEach(s=>{
     if(onlyUid&&s.uid!==onlyUid)return;
     if(!onlyUid&&(s.status||normalizeStatus(null,s))!=="ativo")return;
+    if(Array.isArray(s.calendarioCompleto)&&s.calendarioCompleto.length)return;
     const aulas=normalizeAulasSemanais(s.aulasSemanais,s.diasAulas,s.horarioAulas).filter(a=>a.dia);
     if(!aulas.length)return;
     for(let d=1;d<=daysInMonth;d++){
@@ -8724,8 +9076,8 @@ function getAulasDoDia(students,dateISO,agendaExtra={}){
     .filter(e=>e.date===dateISO&&(e.type==="aula"||e.type==="agenda"));
   return eventsToAulasCards(dayEvents,students);
 }
-function eventTypeLabel(type){return type==="aula"?"Aula":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type;}
-const FC_EV_CLS={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom"};
+function eventTypeLabel(type){return type==="aula"?"Aula":type==="agenda"?"Manual":type==="feriado"?"Feriado":type==="recesso"?"Recesso":type==="carnaval"?"Carnaval":type==="ponte"?"Ponte":type;}
+const FC_EV_CLS={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",ponte:"fc-ev-ponte",agenda:"fc-ev-custom"};
 function EventChip({e,full}){
   const cls=FC_EV_CLS[e.type]||"fc-ev-custom";
   if(full)return <div className={"fc-ev "+cls} title={e.label}>{e.time?e.time.split("–")[0].trim()+" · ":""}{e.label}</div>;
@@ -8775,6 +9127,7 @@ function PlatformCalendar({students,agendaExtra={},onlyUid,compact}){
       <span><span className="fc-ev fc-ev-feriado" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Feriado</span>
       <span><span className="fc-ev fc-ev-carnaval" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Carnaval</span>
       <span><span className="fc-ev fc-ev-recesso" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Recesso</span>
+      <span><span className="fc-ev fc-ev-ponte" style={{display:"inline-block",padding:"1px 6px"}}>■</span> Ponte</span>
     </div>
   );
   return(
@@ -8947,7 +9300,7 @@ function ModalEdicao({student,onClose,onSaved}){
     valorCheio:student.valorCheio||"",descontos:student.descontos||"",
     valorFinal:student.valorFinal||"",diaVencimento:student.diaVencimento||"",
     status:student.status||"lead",
-    dataInicio:student.dataInicio||"",licaoInicio:student.licaoInicio||"1",
+    dataInicio:student.dataInicio||"",licaoInicio:student.licaoInicio||"1",numParcelas:student.numParcelas||student.financeiro?.parcelas?.length||18,
   });
   const [triagem,setTriagem]=useState(student.triagem||BLANK_TRIAGEM);
   const [saving,setSaving]=useState(false);
@@ -9027,6 +9380,13 @@ function ModalEdicao({student,onClose,onSaved}){
         setD("foto",fotoUrl);
         setFotoPreview(fotoUrl);
       }
+      const schedule=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));
+      const hasScheduleInput=schedule.aulasSemanais.some(a=>a.dia||a.horario);
+      const schedulingContext=hasScheduleInput?await validateWeeklyScheduleAvailability(schedule.aulasSemanais,student.uid):null;
+      const calendarPrepared=dados.dataInicio&&hasScheduleInput
+        ?await prepareCalendarPersistence(student.uid,{...student,...dados,...schedule,trilha:student.trilha||{}},student.trilha||{},schedulingContext)
+        :null;
+      const calendarFields=calendarPrepared?.fields||(student.calendarioCompleto?.length&&(!hasScheduleInput||!dados.dataInicio)?clearCalendarPersistenceFields(student.trilha||{}):{});
       await db.collection("students").doc(student.uid).update({
         name:dados.nome.trim(),email,
         phone:dados.telefone.trim(),telefone2:dados.telefone2.trim(),
@@ -9035,23 +9395,25 @@ function ModalEdicao({student,onClose,onSaved}){
         profissao:dados.profissao.trim(),nacionalidade:dados.nacionalidade.trim(),
         endereco:dados.endereco.trim(),foto:fotoUrl,
         dataCadastro:dados.dataCadastro,contrato:dados.contrato,
-        duracao:dados.duracao.trim(),
-        ...(()=>{const der=deriveScheduleFromAulas(dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas));return{aulasSemanais:der.aulasSemanais,diasAulas:der.diasAulas,horarioAulas:der.horarioAulas,reposicoesGratuitasContrato:der.reposicoesGratuitasContrato};})(),
-        valorCheio:parseFloat(dados.valorCheio)||0,
-        descontos:parseFloat(dados.descontos)||0,
-        valorFinal:parseFloat(dados.valorFinal)||0,
+        duracao:normalizeDuracaoMeses(dados.duracao),
+        ...schedule,
+        valorCheio:parseCurrencyValue(dados.valorCheio),
+        descontos:parseCurrencyValue(dados.descontos),
+        valorFinal:parseCurrencyValue(dados.valorFinal),
         diaVencimento:parseInt(dados.diaVencimento)||1,
         status:dados.status,
         dataInicio:dados.dataInicio,
         licaoInicio:parseInt(dados.licaoInicio)||1,
+        numParcelas:parseInt(dados.numParcelas,10)||18,
         program:getCourseLabel(dados.contrato)||"Fluency Foundation General",
         birthday:dados.dataNasc||"",
         profession:dados.profissao.trim(),
         triagem,
+        ...calendarFields,
       });
       if(fotoPreview&&String(fotoPreview).indexOf("blob:")===0)try{URL.revokeObjectURL(fotoPreview);}catch(e){}
       setFotoFile(null);
-      notifySaveSuccess("Cadastro de "+(dados.nome||"aluno")+" salvo!");
+      notifySaveSuccess("Cadastro, Agenda e Trilha de "+(dados.nome||"aluno")+" sincronizados!");
       setEditing(false);
       if(onSaved)onSaved();
     }catch(e){
@@ -9133,7 +9495,7 @@ function ModalEdicao({student,onClose,onSaved}){
                 {sheetRow("Início",dados.dataInicio?formatDateBR(dados.dataInicio):"")}
                 {sheetRow("Dias",dias)}
                 {sheetRow("Horário",dados.horarioAulas)}
-                {sheetRow("Valor final",dados.valorFinal?formatCurrency(parseFloat(dados.valorFinal)||0):"")}
+                {sheetRow("Valor final",dados.valorFinal?formatCurrency(parseCurrencyValue(dados.valorFinal)):"")}
                 {sheetRow("Vencimento",dados.diaVencimento?"Dia "+dados.diaVencimento:"")}
               </div>
             </div>
@@ -9224,7 +9586,7 @@ function ModalEdicao({student,onClose,onSaved}){
                     {!contratosAtivos.find(c=>c.v===dados.contrato)&&dados.contrato&&<option value={dados.contrato}>{getCourseLabel(dados.contrato)} (inativo)</option>}
                   </select>
                 </div>
-                <div><label className="form-label">Duração</label><input className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.duracao} onChange={e=>setD("duracao",e.target.value)}/></div>
+                <div><label className="form-label">Duração</label><DurationMonthsSelect value={dados.duracao} onChange={v=>setDados(p=>({...p,duracao:v,numParcelas:parseInt(v,10)||p.numParcelas}))}/></div>
                 <div><label className="form-label">Data de Início</label><input type="date" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.dataInicio} onChange={e=>setD("dataInicio",e.target.value)}/></div>
                 <div><label className="form-label">Lição de Início ({getCourseLessonLabel(courseSel,1)||1}–{getCourseLessonLabel(courseSel,totalLicoesCurso)||totalLicoesCurso})</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.licaoInicio} onChange={e=>setD("licaoInicio",e.target.value)}>
@@ -9232,11 +9594,11 @@ function ModalEdicao({student,onClose,onSaved}){
                   </select>
                 </div>
                 <div style={{gridColumn:"1/-1"}}>
-                <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais}/>
+                <WeeklyClassesEditor value={dados.aulasSemanais||normalizeAulasSemanais(null,dados.diasAulas,dados.horarioAulas)} onChange={setAulasSemanais} excludeUid={student.uid}/>
                 </div>
-                <div><label className="form-label">Valor Cheio (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorCheio} onChange={e=>setD("valorCheio",e.target.value)}/></div>
-                <div><label className="form-label">Descontos (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.descontos} onChange={e=>setD("descontos",e.target.value)}/></div>
-                <div><label className="form-label">Valor Final (R$)</label><input type="number" className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.valorFinal} onChange={e=>setD("valorFinal",e.target.value)}/></div>
+                <div><label className="form-label">Valor Cheio</label><CurrencyInput value={dados.valorCheio} onChange={v=>setD("valorCheio",v)}/></div>
+                <div><label className="form-label">Desconto</label><CurrencyInput value={dados.descontos} onChange={v=>setD("descontos",v)}/></div>
+                <div><label className="form-label">Valor Final</label><CurrencyInput value={dados.valorFinal} onChange={v=>setD("valorFinal",v)}/></div>
                 <div><label className="form-label">Dia de Vencimento</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.diaVencimento} onChange={e=>setD("diaVencimento",e.target.value)}>
                     <option value="">Selecione...</option>
@@ -9245,7 +9607,7 @@ function ModalEdicao({student,onClose,onSaved}){
                 </div>
                 <div><label className="form-label">Nº de Parcelas</label>
                   <select className="w-full input rounded-xl px-3 py-2.5 text-sm" value={dados.numParcelas||18} onChange={e=>setD("numParcelas",parseInt(e.target.value))}>
-                    {Array.from({length:24},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
+                    {Array.from({length:30},(_,i)=><option key={i+1} value={i+1}>{i+1}x</option>)}
                   </select>
                 </div>
               </div>
@@ -9264,7 +9626,9 @@ function ModalEdicao({student,onClose,onSaved}){
                           if(!confirm(`Gerar ${novas.length} parcelas para ${student.name}?`))return;
                           try{
                             await db.collection("students").doc(student.uid).update({"financeiro.parcelas":novas});
-                            notifySaveSuccess("Parcelas geradas com sucesso!");
+                            const financeSync=await syncStudentParcelasToInvoices(student.uid,novas,dados.nome||student.name);
+                            await db.collection("students").doc(student.uid).set({financeiroSync:{...financeSync,results:[],at:new Date().toISOString()}},{merge:true});
+                            notifySaveSuccess(`${novas.length} parcelas lançadas no financeiro do aluno e do admin!`);
                           }catch(e){alert("Erro: "+e.message);}
                         }}
                         className="btn btn-primary rounded-xl px-5 py-2 text-sm font-semibold inline-flex items-center gap-2">
@@ -9278,6 +9642,7 @@ function ModalEdicao({student,onClose,onSaved}){
                           const preview=gerarCalendarioCompleto({
                             dataInicio:dados.dataInicio,diasAulas:dados.diasAulas,licaoInicio:dados.licaoInicio||1,
                             trilhaExistente:student.trilha||{},horarioAulas:dados.horarioAulas||"",
+                            aulasSemanais:dados.aulasSemanais||null,
                             totalLicoes:getTotalLicoes(courseCal),course:courseCal,
                           });
                           if(!preview){alert("Preencha Data de Início e selecione os Dias das Aulas.");return;}
@@ -9396,6 +9761,7 @@ const dashCSS=`
 .fc-ev-feriado{background:rgba(240,144,144,.2);color:#f09090;}
 .fc-ev-carnaval{background:rgba(240,204,96,.22);color:#f0cc60;}
 .fc-ev-recesso{background:rgba(192,160,248,.18);color:#c0a0f8;}
+.fc-ev-ponte{background:rgba(251,146,60,.18);color:#fb923c;}
 .fc-ev-custom{background:rgba(96,218,168,.18);color:#60daa8;}
 .fc-side{padding:14px 16px;border-top:1px solid var(--divider);max-height:180px;overflow-y:auto;}
 .fc-side-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--font-muted);margin-bottom:8px;}
@@ -9450,7 +9816,7 @@ function FluencyCalendar({monthKey,events,onMonthChange,selectedDate,onSelectDat
     cells.push({iso,day:d,events:(events||[]).filter(e=>e.date===iso)});
   }
   const selectedEvents=selectedDate?(dayDetailEvents||(events||[]).filter(e=>e.date===selectedDate)):[];
-  const evCls={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",agenda:"fc-ev-custom"};
+  const evCls={aula:"fc-ev-aula",feriado:"fc-ev-feriado",carnaval:"fc-ev-carnaval",recesso:"fc-ev-recesso",ponte:"fc-ev-ponte",agenda:"fc-ev-custom"};
   const inner=(
     <>
       <div className="fc-head">
@@ -9597,7 +9963,7 @@ function AdminAgendaDashboard({students,onBack}){
       buildAgendaEventsForMonth(students,mk,agendaExtra).forEach(e=>{
         const t=String(e.time||"").slice(0,5);
         const start=t?`${e.date}T${t}:00`:e.date;
-        const colors={aula:"#0f766e",reposicao:"#7c3aed",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b"};
+        const colors={aula:"#0f766e",reposicao:"#7c3aed",agenda:"#60daa8",feriado:"#64748b",recesso:"#94a3b8",carnaval:"#f59e0b",ponte:"#fb923c"};
         out.push({
           id:(e.id||e.type)+"-"+e.date+"-"+(e.time||"")+"-"+e.label,
           title:(t?t+" · ":"")+(e.label||e.type),
@@ -9722,7 +10088,7 @@ function AdminAgendaDashboard({students,onBack}){
           const st=(students||[]).find(x=>x.uid===xp.studentUid);
           if(!st)return;
           const course=getCourseById(st.contrato);
-          const lesson=lessonForCalendarDate(st.trilha||{},{calendarioCompleto:st.calendarioCompleto||[],diasAulas:st.diasAulas||[],horarioAulas:st.horarioAulas||"",aulasSemanais:st.aulasSemanais||null},course,xp.date||(ev.startStr||"").slice(0,10));
+          const lesson=lessonForCalendarDate(st.trilha||{},{calendarioCompleto:st.calendarioCompleto||[],diasAulas:st.diasAulas||[],horarioAulas:st.horarioAulas||"",aulasSemanais:st.aulasSemanais||null},course,xp.date||(ev.startStr||"").slice(0,10),xp);
           if(lesson)setPrepLesson({lesson,studentName:st.name});
         }}
       />
@@ -9741,8 +10107,6 @@ function AdminAgendaDashboard({students,onBack}){
 /* ── AGENDA DO ALUNO + REPOSIÇÕES (FullCalendar) ── */
 const REPO_STATUS={PENDENTE:"PENDENTE",AGENDADO:"AGENDADO",REPOSICAO_FEITA:"REPOSICAO_FEITA"};
 /* Must match JS_TO_DIA / DIAS_SEMANA names (NOT "seg"/"ter") */
-const PROF_WORKING_DAYS_DEFAULT=["Segunda","Terça","Quarta","Quinta","Sexta"];
-const PROF_WORKING_HOURS_DEFAULT=["06:30","07:00","08:00","08:10","09:00","10:00","11:00","12:00","12:15","12:50","13:25","14:00","15:00","16:00","16:20","17:00","17:25","17:30","18:00","18:05","18:40","19:00","19:15","19:50","20:00","20:25"];
 function getProfessorAvailability(agendaDoc){
   const d=agendaDoc||{};
   const days=Array.isArray(d.workingDays)&&d.workingDays.length?d.workingDays:PROF_WORKING_DAYS_DEFAULT;
@@ -9845,7 +10209,7 @@ function findNextClassEvent(uid,schedule,trilhaData){
   const arr=[{
     uid,name:"",status:"ativo",
     diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
-    dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
+    aulasSemanais:schedule?.aulasSemanais||null,dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
   }];
   for(let i=0;i<6;i++){
     const mk=shiftMonthKey(getMonthKey(new Date()),i);
@@ -9854,8 +10218,9 @@ function findNextClassEvent(uid,schedule,trilhaData){
   }
   return null;
 }
-function lessonForCalendarDate(trilhaData,schedule,course,dateISO){
-  const cal=(schedule?.calendarioCompleto||[]).find(c=>c.date===dateISO);
+function lessonForCalendarDate(trilhaData,schedule,course,dateISO,target={}){
+  const dayItems=(schedule?.calendarioCompleto||[]).filter(c=>c.date===dateISO);
+  const cal=(target?.lessonId&&dayItems.find(c=>c.lessonId===target.lessonId))||(target?.lessonNum&&dayItems.find(c=>c.lessonNum===target.lessonNum))||dayItems[0];
   if(cal?.lessonId){
     const books=mergeBooks(trilhaData||{},course);
     for(const b of books){const it=b.items.find(i=>i.id===cal.lessonId);if(it)return it;}
@@ -10165,6 +10530,7 @@ function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigat
   const [err,setErr]=useState("");
   const [selectedLesson,setSelectedLesson]=useState(null);
   const [showSched,setShowSched]=useState(false);
+  const [showFullCalendar,setShowFullCalendar]=useState(false);
   const today=new Date().toISOString().slice(0,10);
 
   useEffect(()=>{
@@ -10197,7 +10563,7 @@ function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigat
     const arr=[{
       uid,name:profile?.name||"Aluno",status:"ativo",
       diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
-      dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
+      aulasSemanais:schedule?.aulasSemanais||null,dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
     }];
     // generate ~12 months of regular classes
     for(let i=0;i<12;i++){
@@ -10211,9 +10577,9 @@ function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigat
             allDay:!e.time,
             backgroundColor:"#0f766e",
             borderColor:"#0f766e",
-            extendedProps:{kind:"aula",date:e.date,time:e.time||""}
+            extendedProps:{kind:"aula",date:e.date,time:e.time||"",lessonNum:e.lessonNum||null,lessonId:e.lessonId||null}
           });
-        }else if(e.type==="feriado"||e.type==="recesso"||e.type==="carnaval"){
+        }else if(e.type==="feriado"||e.type==="recesso"||e.type==="carnaval"||e.type==="ponte"){
           out.push({
             id:e.type+"-"+e.date+"-"+e.label,
             title:e.label||e.type,
@@ -10256,7 +10622,7 @@ function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigat
   function onEventClick(ev){
     const xp=ev.extendedProps||{};
     if(xp.blocked||xp.kind==="vencimento")return;
-    const lesson=lessonForCalendarDate(trilhaData,schedule,course,xp.date||(ev.startStr||"").slice(0,10));
+    const lesson=lessonForCalendarDate(trilhaData,schedule,course,xp.date||(ev.startStr||"").slice(0,10),xp);
     setSelectedLesson(lesson||{title:ev.title,tema:"",objetivos:""});
   }
 
@@ -10287,10 +10653,12 @@ function StudentAgendaPage({uid,profile,trilhaData,financeiro,schedule,onNavigat
       )}
       <div className="flex gap-2 flex-wrap">
         <button type="button" className="btn rounded-xl px-3 py-2 text-sm" onClick={()=>onNavigate&&onNavigate("reposicoes")}>Ver área de Reposições</button>
+        <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2" onClick={()=>setShowFullCalendar(true)}><Icon name="calendar-days" size={15}/> Ver calendário completo</button>
       </div>
       {loading?<div className="glass rounded-2xl p-8 text-center muted">Carregando calendário…</div>:<FullCalendarBox events={fcEvents} onEventClick={onEventClick}/>}
       {selectedLesson&&<LessonQuickPanel lesson={selectedLesson} onClose={()=>setSelectedLesson(null)}/>}
       {showSched&&<ScheduleReposicaoModal uid={uid} faltas={pendentes} onClose={()=>setShowSched(false)} onDone={()=>setShowSched(false)}/>}
+      {showFullCalendar&&<FullCourseCalendarModal student={{...profile,...schedule,uid,trilha:trilhaData||{}}} onClose={()=>setShowFullCalendar(false)}/>}
     </div>
   );
 }
@@ -10405,11 +10773,12 @@ function shouldShowPresenceConfirm(schedule){
 }
 
 
-function StudentCalendarView({uid,trilhaData,schedule,studentName}){
+function StudentCalendarView({uid,trilhaData,schedule,studentName,profile}){
+  const [showFullCalendar,setShowFullCalendar]=useState(false);
   const studentAsArray=useMemo(()=>[{
     uid,name:studentName||"Aluno",status:"ativo",
     diasAulas:schedule?.diasAulas||[],horarioAulas:schedule?.horarioAulas||"",
-    dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
+    aulasSemanais:schedule?.aulasSemanais||null,dataInicio:schedule?.dataInicio||"",trilha:trilhaData||{},calendarioCompleto:schedule?.calendarioCompleto||[],
   }],[uid,studentName,schedule,trilhaData]);
   const agendaExtra=useMemo(()=>({onlyUid:uid}),[uid]);
   const proximas=useMemo(()=>{
@@ -10436,6 +10805,7 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName}){
             {schedule.horarioAulas?` · ${schedule.horarioAulas}`:""}
           </div>
           {schedule.calendarioResumo&&<div style={{fontSize:11,color:"var(--font-muted)",marginTop:6}}>{schedule.calendarioResumo.total} aulas previstas · até {formatDateBR(schedule.calendarioResumo.dataFim)}</div>}
+          <button type="button" className="btn btn-primary rounded-xl px-4 py-2 text-sm font-semibold inline-flex items-center gap-2 mt-3" onClick={()=>setShowFullCalendar(true)}><Icon name="calendar-days" size={15}/> Ver calendário completo</button>
         </div>
       )}
       {proximas.length>0&&(
@@ -10448,6 +10818,7 @@ function StudentCalendarView({uid,trilhaData,schedule,studentName}){
         </div>
       )}
       <PlatformCalendar students={studentAsArray} agendaExtra={agendaExtra}/>
+      {showFullCalendar&&<FullCourseCalendarModal student={{...profile,...studentAsArray[0],...schedule,name:studentName||profile?.name||"Aluno",trilha:trilhaData||{}}} onClose={()=>setShowFullCalendar(false)}/>}
     </div>
   );
 }
@@ -12338,9 +12709,10 @@ function AdminApp({user}){
   };
   const headerTitle=selectedUid?"Ficha do aluno":(viewTitles[adminView]||"Painel");
   const diarioPendCount=diarioPendencias.length;
+  const activeAdminMeta=selectedUid?(ADMIN_NAV_ITEMS.find(n=>n.id==="alunos")||ADMIN_NAV_ITEMS[0]):(ADMIN_NAV_ITEMS.find(n=>n.id===adminView)||ADMIN_NAV_ITEMS[0]);
 
   return(
-    <div className={"admin-shell"+(sidebarOpen?"":" sidebar-collapsed")} data-admin-view="true">
+    <div className={"admin-shell admin-universe"+(sidebarOpen?"":" sidebar-collapsed")} data-admin-view="true">
       {showModal&&<ModalCadastro onClose={()=>setShowModal(false)} onSaved={()=>setShowModal(false)}/>}
       <aside className="admin-sidebar" aria-label="Navegação administrativa">
         <div className="admin-sidebar-brand">
@@ -12352,8 +12724,8 @@ function AdminApp({user}){
         </div>
         <div className="admin-sidebar-label">Gestão da escola</div>
         {ADMIN_NAV_ITEMS.map(n=>(
-          <button key={n.id} type="button" className={"admin-nav-item"+(!selectedUid&&adminView===n.id?" active":"")} onClick={()=>goAdminView(n.id)}>
-            <Icon name={n.icon} size={18}/>
+          <button key={n.id} type="button" className={"admin-nav-item"+(!selectedUid&&adminView===n.id?" active":"")} style={{"--admin-nav-accent":n.color||n.cor}} onClick={()=>goAdminView(n.id)}>
+            <CosmicSectionImage meta={n} className="admin-nav-cosmic"/>
             <span>{n.label}</span>
             {n.id==="cadastros"&&pendentesCount>0&&<span className="nav-badge">{pendentesCount}</span>}
             {n.id==="pendencias"&&diarioPendCount>0&&<span className="nav-badge" style={{background:"#F59E0B"}}>{diarioPendCount}</span>}
@@ -12380,6 +12752,7 @@ function AdminApp({user}){
                 <h1 style={{fontSize:22,fontWeight:800,color:"#1E1E1E",margin:0,fontFamily:"var(--ds-font)"}}>{headerTitle}</h1>
                 <p style={{fontSize:13,color:"#475569",margin:"4px 0 0"}}>Fluency Studio · Gestão premium</p>
               </div>
+              <CosmicSectionImage meta={activeAdminMeta} className="admin-header-cosmic"/>
             </div>
             <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
               <AdminStudioClock/>
