@@ -1,0 +1,16 @@
+{
+  "id": "fluency-general-mod1",
+  "title": "Fluency General",
+  "subtitle": "Módulo 1 · Input lessons 1–48",
+  "pages": 32,
+  "logo": "logo.png",
+  "pagePattern": "pages/page-{nn}.jpg",
+  "viewer": {
+    "pageTurn": "magazine-3d-page-flip",
+    "engine": "St.PageFlip",
+    "paper": "soft-with-verso-transparency",
+    "shadows": true,
+    "thumbnails": "hover-only",
+    "zoomMax": 160
+  }
+}

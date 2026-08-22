@@ -1,0 +1,622 @@
+{
+  "lessons": [
+    {
+      "n": 1,
+      "title": "Food & drink · Present simple +/−",
+      "short": "food & drink",
+      "start": 1,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-01"
+    },
+    {
+      "n": 2,
+      "title": "Foods & meals · Do…? / What",
+      "short": "foods & meals",
+      "start": 2,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-02"
+    },
+    {
+      "n": 4,
+      "title": "Food & place · we/they · in/on/at",
+      "short": "food & place",
+      "start": 3,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-04"
+    },
+    {
+      "n": 5,
+      "title": "Languages & countries · Wh- questions",
+      "short": "languages",
+      "start": 4,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-05"
+    },
+    {
+      "n": 7,
+      "title": "Possessive adjectives",
+      "short": "possessives",
+      "start": 5,
+      "kinds": [
+        "a",
+        "b"
+      ],
+      "count": 2,
+      "type": "lesson",
+      "key": "licao-07"
+    },
+    {
+      "n": 8,
+      "title": "Intensifiers (very / really)",
+      "short": "intensifiers",
+      "start": 7,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-08"
+    },
+    {
+      "n": 11,
+      "title": "3rd person affirmative",
+      "short": "3rd +",
+      "start": 8,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-11"
+    },
+    {
+      "n": 12,
+      "title": "3rd person negative",
+      "short": "3rd −",
+      "start": 9,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-12"
+    },
+    {
+      "n": 14,
+      "title": "3rd person questions",
+      "short": "3rd ?",
+      "start": 10,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-14"
+    },
+    {
+      "n": 15,
+      "title": "Why & because",
+      "short": "why/because",
+      "start": 11,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-15"
+    },
+    {
+      "n": 17,
+      "title": "Quantifiers · how much/many",
+      "short": "quantifiers",
+      "start": 12,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-17"
+    },
+    {
+      "n": 18,
+      "title": "Adverbs of frequency",
+      "short": "frequency",
+      "start": 13,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-18"
+    },
+    {
+      "n": 21,
+      "title": "To be — affirmative & negative",
+      "short": "to be +/−",
+      "start": 14,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-21"
+    },
+    {
+      "n": 22,
+      "title": "To be — questions · whose",
+      "short": "to be ?",
+      "start": 15,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-22"
+    },
+    {
+      "n": 24,
+      "title": "Demonstratives · Imperative",
+      "short": "this/that",
+      "start": 16,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-24"
+    },
+    {
+      "n": 25,
+      "title": "Studies & opinions · practice",
+      "short": "studies",
+      "start": 17,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-25"
+    },
+    {
+      "n": 27,
+      "title": "Present continuous",
+      "short": "continuous",
+      "start": 18,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-27"
+    },
+    {
+      "n": 28,
+      "title": "There is / There are",
+      "short": "there is/are",
+      "start": 19,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-28"
+    },
+    {
+      "n": 31,
+      "title": "Simple past — affirmative",
+      "short": "past +",
+      "start": 20,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-31"
+    },
+    {
+      "n": 32,
+      "title": "Simple past — negative",
+      "short": "past −",
+      "start": 21,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-32"
+    },
+    {
+      "n": 34,
+      "title": "Simple past — questions",
+      "short": "past ?",
+      "start": 22,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-34"
+    },
+    {
+      "n": 35,
+      "title": "Was / were · There was/were",
+      "short": "was/were",
+      "start": 23,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-35"
+    },
+    {
+      "n": 37,
+      "title": "Past continuous",
+      "short": "past cont.",
+      "start": 24,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-37"
+    },
+    {
+      "n": 38,
+      "title": "Modal can",
+      "short": "can",
+      "start": 25,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-38"
+    },
+    {
+      "n": 41,
+      "title": "Object pronouns",
+      "short": "object pronouns",
+      "start": 26,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-41"
+    },
+    {
+      "n": 42,
+      "title": "some/any/every/no + thing",
+      "short": "indefinites",
+      "start": 27,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-42"
+    },
+    {
+      "n": 44,
+      "title": "some/any/every/no + where/body",
+      "short": "indefinites 2",
+      "start": 28,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-44"
+    },
+    {
+      "n": 45,
+      "title": "Future with will",
+      "short": "will",
+      "start": 29,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-45"
+    },
+    {
+      "n": 47,
+      "title": "Future with going to",
+      "short": "going to",
+      "start": 30,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-47"
+    },
+    {
+      "n": 48,
+      "title": "Present continuous for arrangements",
+      "short": "arrangements",
+      "start": 31,
+      "kinds": [
+        "a"
+      ],
+      "count": 1,
+      "type": "lesson",
+      "key": "licao-48"
+    }
+  ],
+  "pages": [
+    {
+      "index": 1,
+      "kind": "cover",
+      "label": "Capa",
+      "lesson": null
+    },
+    {
+      "index": 2,
+      "kind": "a",
+      "label": "L1",
+      "lesson": 1,
+      "source": "lesson-01.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 3,
+      "kind": "a",
+      "label": "L2",
+      "lesson": 2,
+      "source": "lesson-02.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 4,
+      "kind": "a",
+      "label": "L4",
+      "lesson": 4,
+      "source": "lesson-04.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 5,
+      "kind": "a",
+      "label": "L5",
+      "lesson": 5,
+      "source": "lesson-05.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 6,
+      "kind": "a",
+      "label": "L7",
+      "lesson": 7,
+      "source": "lesson-07.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 7,
+      "kind": "b",
+      "label": "7B",
+      "lesson": 7,
+      "source": "lesson-07.pdf",
+      "sourcePage": 2
+    },
+    {
+      "index": 8,
+      "kind": "a",
+      "label": "L8",
+      "lesson": 8,
+      "source": "lesson-08.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 9,
+      "kind": "a",
+      "label": "L11",
+      "lesson": 11,
+      "source": "lesson-11.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 10,
+      "kind": "a",
+      "label": "L12",
+      "lesson": 12,
+      "source": "lesson-12.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 11,
+      "kind": "a",
+      "label": "L14",
+      "lesson": 14,
+      "source": "lesson-14.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 12,
+      "kind": "a",
+      "label": "L15",
+      "lesson": 15,
+      "source": "lesson-15.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 13,
+      "kind": "a",
+      "label": "L17",
+      "lesson": 17,
+      "source": "lesson-17.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 14,
+      "kind": "a",
+      "label": "L18",
+      "lesson": 18,
+      "source": "lesson-18.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 15,
+      "kind": "a",
+      "label": "L21",
+      "lesson": 21,
+      "source": "lesson-21.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 16,
+      "kind": "a",
+      "label": "L22",
+      "lesson": 22,
+      "source": "lesson-22.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 17,
+      "kind": "a",
+      "label": "L24",
+      "lesson": 24,
+      "source": "lesson-24.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 18,
+      "kind": "a",
+      "label": "L25",
+      "lesson": 25,
+      "source": "lesson-25.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 19,
+      "kind": "a",
+      "label": "L27",
+      "lesson": 27,
+      "source": "lesson-27.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 20,
+      "kind": "a",
+      "label": "L28",
+      "lesson": 28,
+      "source": "lesson-28.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 21,
+      "kind": "a",
+      "label": "L31",
+      "lesson": 31,
+      "source": "lesson-31.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 22,
+      "kind": "a",
+      "label": "L32",
+      "lesson": 32,
+      "source": "lesson-32.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 23,
+      "kind": "a",
+      "label": "L34",
+      "lesson": 34,
+      "source": "lesson-34.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 24,
+      "kind": "a",
+      "label": "L35",
+      "lesson": 35,
+      "source": "lesson-35.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 25,
+      "kind": "a",
+      "label": "L37",
+      "lesson": 37,
+      "source": "lesson-37.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 26,
+      "kind": "a",
+      "label": "L38",
+      "lesson": 38,
+      "source": "lesson-38.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 27,
+      "kind": "a",
+      "label": "L41",
+      "lesson": 41,
+      "source": "lesson-41.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 28,
+      "kind": "a",
+      "label": "L42",
+      "lesson": 42,
+      "source": "lesson-42.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 29,
+      "kind": "a",
+      "label": "L44",
+      "lesson": 44,
+      "source": "lesson-44.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 30,
+      "kind": "a",
+      "label": "L45",
+      "lesson": 45,
+      "source": "lesson-45.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 31,
+      "kind": "a",
+      "label": "L47",
+      "lesson": 47,
+      "source": "lesson-47.pdf",
+      "sourcePage": 1
+    },
+    {
+      "index": 32,
+      "kind": "a",
+      "label": "L48",
+      "lesson": 48,
+      "source": "lesson-48.pdf",
+      "sourcePage": 1
+    }
+  ],
+  "totalPages": 32
+}

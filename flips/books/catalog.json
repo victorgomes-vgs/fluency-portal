@@ -10,6 +10,15 @@
       "folder": "books/empower-b1"
     },
     {
+      "id": "fluency-general-mod1",
+      "title": "Fluency General",
+      "subtitle": "Módulo 1 · Input lessons 1–48",
+      "pages": 32,
+      "cover": "books/fluency-general-mod1/pages/page-01.jpg",
+      "logo": "books/fluency-general-mod1/logo.png",
+      "folder": "books/fluency-general-mod1"
+    },
+    {
       "id": "pocket-mod2",
       "title": "Pocket Fluency",
       "subtitle": "Módulo 2 · Lições 61–98",

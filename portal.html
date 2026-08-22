@@ -6630,10 +6630,17 @@ function hasReflectiveFlipbook(profile){
   // fallback name cues
   return /reflective|reflexive/.test(name) || email.includes("reflective") || email.includes("reflexive");
 }
+function hasGeneralFlipbook(profile){
+  // Course-scoped: every student enrolled in Fluency General (foundation_general / legacy fluency_foundation)
+  // — current and future — gets the Module 1 student book in Materiais.
+  const contrato=resolveContratoId(profile?.contrato||profile?.courseId||profile?.curso||"");
+  return contrato==="foundation_general";
+}
 function studentFlipbook(profile){
   if(hasReflectiveFlipbook(profile)) return {src:"flips/books/reflexive-mind-m1/index.html?embed=1", title:"Reflexive Mind — Módulo 1"};
   if(hasPocketFlipbook(profile)) return {src:"flips/books/pocket-mod2/index.html?embed=1", title:"Pocket Fluency — Módulo 2"};
   if(hasObjectiveFlipbook(profile)) return {src:"flips/books/objective-proficiency/index.html?embed=1", title:"Objective Proficiency — Units 1–3"};
+  if(hasGeneralFlipbook(profile)) return {src:"flips/books/fluency-general-mod1/index.html?embed=1", title:"Fluency General — Módulo 1"};
   return null;
 }
 const POCKET_FLIP_SRC="flips/books/pocket-mod2/index.html?embed=1";
@@ -7048,7 +7055,7 @@ const IVI_KB=[
   {keys:["tutorial admin","como usar admin","painel admin","mapa admin","ajuda admin"],audience:["admin"],answer:IVI_TUTORIAL_ADMIN},
   {keys:["trilha","progresso","módulo","modulo","lição","licao","aula online","onde estao minhas licoes","cadê a próxima lição","proxima licao","status atual","licao atual"],audience:["student","all"],answer:"Na **Trilha** você acompanha a jornada por módulos. Ao abrir uma lição, aparecem os links disponíveis (Lição Online, Tarefa, PDF, material de aula). Status usuais: Pendente, Em andamento, Concluída. No **dia da aula**, a próxima lição pode ficar como **Atual**, liberando o conteúdo do card. Siga com calma, lição a lição."},
   {keys:["tarefa","homework","dever","tarefa de casa","nao encontro homework","tarefa nao aparece","exercicio","exercício"],audience:["student","all"],answer:"As tarefas ficam na **Trilha**: abra a lição e use **Tarefa Online**. Se o botão não aparecer, o professor ainda não liberou aquela atividade. Quando concluir, a nota pode entrar no Report Card — principalmente em **Leitura (L)** e **Escrita (E)**."},
-  {keys:["material","pdf","drive","materiais","baixar pdf","material completo","preciso do material","flipbook","livro digital","objective proficiency","proficiency","units"],audience:["student","all"],answer:"Em **Materiais** você encontra o conteúdo do seu curso. Se o seu contrato for **Proficiency FF**, o portal abre o flipbook **Objective Proficiency — Units 1–3** (páginas em revista, com zoom). Outros cursos podem ter links de PDF na Trilha (**Lição PDF** / **Material Completo**) ou outro flipbook correspondente."},
+  {keys:["material","pdf","drive","materiais","baixar pdf","material completo","preciso do material","flipbook","livro digital","objective proficiency","proficiency","units","fluency general","foundation"],audience:["student","all"],answer:"Em **Materiais** você encontra o conteúdo do seu curso. No **Fluency General**, o portal abre o flipbook **Fluency General — Módulo 1** (lições input 1–48, virada de página em revista, zoom e índice). Em **Proficiency FF**, abre o flipbook **Objective Proficiency — Units 1–3**. Outros cursos podem ter o flipbook correspondente ou links de PDF na Trilha (**Lição PDF** / **Material Completo**)."},
   {keys:["diário","diario","presença","presenca","falta","historico de aulas","minhas faltas","avaliacao da aula","status do diario"],audience:["student","all"],answer:"O **Diário** é o histórico oficial: data, status da aula e avaliações. Status principais: **Presença**; **Ausência com reposição**; **Falta do aluno com reposição**; **Falta do aluno sem reposição**; **Falta do professor**. As notas usam **F/A/L/E** de 0 a 100%. Faltas com direito a repor alimentam a área **Reposições**."},
   {keys:["fale","f/a/l/e","fluencia","fluência oral","compreensao auditiva","leitura nota","escrita nota","nota 0 a 100","percentual","report card","boletim","grafico","gráfico competências","pesos"],audience:["student","admin","all"],answer:IVI_RULES_FALE},
   {keys:["financeiro","pagamento","mensalidade","boleto","pix","parcela","vencimento","pagar mensalidade","parcela atrasada","atraso"],audience:["student","all"],answer:"Em **Financeiro** você vê parcelas, vencimentos, status e links de boleto/Pix. A **Agenda** também destaca o próximo vencimento. Eu não consulto valores individuais da sua conta; para negociar prazos ou valores, fale com o Victor com tranquilidade pelo WhatsApp."},
