@@ -1,0 +1,362 @@
+{
+  "lessonId": "ffg-m1-l14-3rd-questions",
+  "unit": 14,
+  "unitTitle": "3rd person questions",
+  "lessonTitle": "Lesson 14 — 3rd person questions",
+  "badge": "FF GENERAL · MÓDULO 1 · L14",
+  "subtitle": "3rd person questions (Does…?) + Who · routine & city.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l14-3rd-questions",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-routine.jpg",
+  "heroImageAlt": "City street with bank, office and church signs",
+  "heroCaption": "ROUTINE & CITY",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 14. Ask about Does vs Who.",
+    "exercises": {
+      "q1": {
+        "hint": "Does + base verb; Who + -s."
+      },
+      "q2": {
+        "hint": "Keep Does/Who/Where/When."
+      },
+      "q3": {
+        "hint": "Unscramble place words."
+      },
+      "q4": {
+        "hint": "Look at the answer to build the question."
+      },
+      "q5": {
+        "hint": "Use the bank."
+      },
+      "q6": {
+        "hint": "Notebook for the teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "Does he/she…? Who + verb-s…?",
+      "explanation": "Does he wake up…? Where does she work? Who works…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Ele acorda cedo?",
+          "answers": [
+            "Does he wake up early?",
+            "Does he get up early?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Onde ela trabalha?",
+          "answers": [
+            "Where does she work?"
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Quem trabalha na farmácia?",
+          "answers": [
+            "Who works at the pharmacy?",
+            "Who works in the drugstore?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Ele estuda alemão ou inglês?",
+          "answers": [
+            "Does he study German or English?"
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Quando ela vê os amigos?",
+          "answers": [
+            "When does she see her friends?",
+            "When does she see friends?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "Who + -s; Does + base verb.",
+      "explanation": "Who sleeps…? Does she prefer…? Where does he study?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Quem dorme tarde na sua casa?",
+          "answers": [
+            "Who sleeps late in your house?",
+            "Who sleeps late at your house?"
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Ela prefere ir à igreja com a família?",
+          "answers": [
+            "Does she prefer to go to church with her family?",
+            "Does she prefer going to church with her family?"
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Onde ele estuda?",
+          "answers": [
+            "Where does he study?"
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Quem trabalha no posto de gasolina?",
+          "answers": [
+            "Who works at the gas station?",
+            "Who works at the petrol station?"
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Ele gosta de levantar cedo?",
+          "answers": [
+            "Does he like to get up early?",
+            "Does he like getting up early?",
+            "Does he like to wake up early?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "City places.",
+      "explanation": "company · office · bank · church · drugstore · grocery store",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. a / y / n / c / o / m / p → ",
+            {
+              "blank": "1",
+              "answers": [
+                "company"
+              ]
+            },
+            "\nb. c / i / e / o / f / f → ",
+            {
+              "blank": "2",
+              "answers": [
+                "office"
+              ]
+            },
+            "\nc. a / k / n / b → ",
+            {
+              "blank": "3",
+              "answers": [
+                "bank"
+              ]
+            },
+            "\nd. c / r / h / c / h / u → ",
+            {
+              "blank": "4",
+              "answers": [
+                "church"
+              ]
+            },
+            "\ne. r / o / e / d / r / u / g / s / t → ",
+            {
+              "blank": "5",
+              "answers": [
+                "drugstore",
+                "drug store"
+              ]
+            },
+            "\nf. r / o / e / g / r / o / c / e / r / y / s / t → ",
+            {
+              "blank": "6",
+              "answers": [
+                "grocery store",
+                "grocerystore"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Write Does…? / Who…? questions for the answers.",
+      "hint": "Does + subject + base verb. Who + verb-s.",
+      "explanation": "Does he…? Where does she…? Who works…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Answer: Yes, he wakes up early.",
+          "answers": [
+            "Does he wake up early?",
+            "Does he wake up early",
+            "Does he wake up early."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Answer: She works at a hospital.",
+          "answers": [
+            "Where does she work?",
+            "Does she work at a hospital?"
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Answer: Ana works at the pharmacy.",
+          "answers": [
+            "Who works at the pharmacy?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Answer: He studies English.",
+          "answers": [
+            "Does he study English?",
+            "What does he study?",
+            "Does he study German or English?"
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Answer: She sees her friends on Friday.",
+          "answers": [
+            "When does she see her friends?",
+            "When does she see her friends",
+            "When does she see her friends."
+          ]
+        },
+        {
+          "label": "f",
+          "original": "Answer: My brother sleeps late.",
+          "answers": [
+            "Who sleeps late?",
+            "Who sleeps late in your house?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "work / visit + places.",
+      "explanation": "work · visit · the · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "work"
+              ]
+            },
+            " at a company every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "visit"
+              ]
+            },
+            " the office at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "the"
+              ]
+            },
+            " bank today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like this church?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "work | visit | the | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “routine and city” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

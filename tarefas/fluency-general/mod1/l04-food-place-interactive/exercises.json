@@ -1,0 +1,384 @@
+{
+  "lessonId": "ffg-m1-l04-food-place",
+  "unit": 4,
+  "unitTitle": "Food & place",
+  "lessonTitle": "Lesson 04 — Food & place",
+  "badge": "FF GENERAL · MÓDULO 1 · L04",
+  "subtitle": "we / they + prepositions in / on / at · food & place.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l04-food-place",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-food.jpg",
+  "heroImageAlt": "Vegetables and plates on a kitchen table",
+  "heroCaption": "FOOD & PLACE",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 04. Ask how to choose in/on/at.",
+    "exercises": {
+      "q1": {
+        "hint": "We/They + base verb. Check in/on/at."
+      },
+      "q2": {
+        "hint": "in + city; at + places like school."
+      },
+      "q3": {
+        "hint": "Unscramble the food words."
+      },
+      "q4": {
+        "hint": "Change the subject; pick the preposition."
+      },
+      "q5": {
+        "hint": "Use the word bank once per gap."
+      },
+      "q6": {
+        "hint": "Write on paper for your teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "We/They + verb. Prepositions: in / on / at.",
+      "explanation": "We eat… at home. They drink… at work. We are at the restaurant.",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Nós comemos vegetais em casa.",
+          "answers": [
+            "We eat vegetables at home",
+            "We eat vegetables at home."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Eles bebem café no trabalho.",
+          "answers": [
+            "They drink coffee at work",
+            "They drink coffee at work."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Nós estamos no restaurante.",
+          "answers": [
+            "We are at the restaurant",
+            "We are at the restaurant.",
+            "We're at the restaurant",
+            "We're at the restaurant."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Eles comem bacon e ovos na mesa.",
+          "answers": [
+            "They eat bacon and eggs at the table",
+            "They eat bacon and eggs at the table.",
+            "They eat bacon and eggs on the table",
+            "They eat bacon and eggs on the table."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Nós colocamos o tomate no prato.",
+          "answers": [
+            "We put the tomato on the plate",
+            "We put the tomato on the plate.",
+            "We put tomato on the plate",
+            "We put tomato on the plate."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "in + city; at + school/work; on + surface.",
+      "explanation": "They live in São Paulo. We study… at school.",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Eles vivem em São Paulo.",
+          "answers": [
+            "They live in São Paulo",
+            "They live in São Paulo.",
+            "They live in Sao Paulo",
+            "They live in Sao Paulo."
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Nós estudamos inglês na escola.",
+          "answers": [
+            "We study English at school",
+            "We study English at school."
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Eles estão no mercado agora.",
+          "answers": [
+            "They are at the market now",
+            "They are at the market now.",
+            "They're at the supermarket now",
+            "They're at the supermarket now.",
+            "They are at the supermarket now",
+            "They are at the supermarket now."
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Nós comemos salsicha no café da manhã.",
+          "answers": [
+            "We eat sausage for breakfast",
+            "We eat sausage for breakfast.",
+            "We eat sausages for breakfast",
+            "We eat sausages for breakfast."
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Eles trabalham na cidade.",
+          "answers": [
+            "They work in the city",
+            "They work in the city."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "Food words: vegetables, bacon, sausage…",
+      "explanation": "vegetables · bacon · sausage · tomato · rice · beans",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. l / s / e / v / e / g / e / t / a / b → ",
+            {
+              "blank": "1",
+              "answers": [
+                "vegetables"
+              ]
+            },
+            "\nb. n / o / c / b / a → ",
+            {
+              "blank": "2",
+              "answers": [
+                "bacon"
+              ]
+            },
+            "\nc. a / e / g / s / a / u / s → ",
+            {
+              "blank": "3",
+              "answers": [
+                "sausage"
+              ]
+            },
+            "\nd. t / a / o / t / o / m → ",
+            {
+              "blank": "4",
+              "answers": [
+                "tomato"
+              ]
+            },
+            "\ne. i / e / c / r → ",
+            {
+              "blank": "5",
+              "answers": [
+                "rice"
+              ]
+            },
+            "\nf. s / n / a / b / e → ",
+            {
+              "blank": "6",
+              "answers": [
+                "beans"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Change to we/they and choose in / on / at.",
+      "hint": "We/They replace I/he. Place: in city, at restaurant/school, on plate.",
+      "explanation": "We eat… / They drink… / on the plate / at the restaurant / in São Paulo",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "I eat vegetables at home. → we",
+          "answers": [
+            "We eat vegetables at home",
+            "We eat vegetables at home."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "He drinks coffee at work. → they",
+          "answers": [
+            "They drink coffee at work",
+            "They drink coffee at work."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "The tomato is _____ the plate. (in / on / at)",
+          "answers": [
+            "The tomato is on the plate",
+            "The tomato is on the plate.",
+            "on the plate",
+            "on the plate."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "We are _____ the restaurant. (in / on / at)",
+          "answers": [
+            "We are at the restaurant",
+            "We are at the restaurant.",
+            "at the restaurant",
+            "at the restaurant."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "They live _____ São Paulo. (in / on / at)",
+          "answers": [
+            "They live in São Paulo",
+            "They live in São Paulo.",
+            "They live in Sao Paulo",
+            "They live in Sao Paulo.",
+            "in São Paulo",
+            "in São Paulo.",
+            "in Sao Paulo",
+            "in Sao Paulo."
+          ]
+        },
+        {
+          "label": "f",
+          "original": "I study English at school. → we",
+          "answers": [
+            "We study English at school",
+            "We study English at school."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "Use the food words and small grammar words.",
+      "explanation": "prefer · eat · some · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "prefer"
+              ]
+            },
+            " vegetables every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "eat"
+              ]
+            },
+            " bacon at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "some"
+              ]
+            },
+            " sausage today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like tomato?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "prefer | eat | some | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “food and place” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "lessonId": "ffg-m1-l12-3rd-negative",
+  "unit": 12,
+  "unitTitle": "3rd person negative",
+  "lessonTitle": "Lesson 12 — 3rd person negative",
+  "badge": "FF GENERAL · MÓDULO 1 · L12",
+  "subtitle": "3rd person singular negative (doesn't) · email & city places.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l12-3rd-negative",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-routine.jpg",
+  "heroImageAlt": "City cafe with laptop and coffee",
+  "heroCaption": "EMAIL & CITY",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 12. Ask about doesn't + base verb.",
+    "exercises": {
+      "q1": {
+        "hint": "doesn't + base verb."
+      },
+      "q2": {
+        "hint": "No -s after doesn't."
+      },
+      "q3": {
+        "hint": "Unscramble city/media words."
+      },
+      "q4": {
+        "hint": "Affirmative → doesn't + base verb."
+      },
+      "q5": {
+        "hint": "Use the bank."
+      },
+      "q6": {
+        "hint": "Notebook for the teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "doesn't + base verb (no -s).",
+      "explanation": "He doesn't send… She doesn't read… doesn't use… doesn't have…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Ele não envia e-mails no fim de semana.",
+          "answers": [
+            "He doesn't send emails on the weekend",
+            "He doesn't send emails on the weekend.",
+            "He does not send emails on the weekend",
+            "He does not send emails on the weekend.",
+            "He doesn't send e-mails at the weekend",
+            "He doesn't send e-mails at the weekend."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Ela não lê as notícias no celular.",
+          "answers": [
+            "She doesn't read the news on her cell phone",
+            "She doesn't read the news on her cell phone.",
+            "She doesn't read the news on her phone",
+            "She doesn't read the news on her phone.",
+            "She does not read the news on her cellphone",
+            "She does not read the news on her cellphone."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Meu professor não usa tablet na aula.",
+          "answers": [
+            "My teacher doesn't use a tablet in class",
+            "My teacher doesn't use a tablet in class.",
+            "My teacher does not use a tablet in class",
+            "My teacher does not use a tablet in class."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Ela não tem uma senha fácil.",
+          "answers": [
+            "She doesn't have an easy password",
+            "She doesn't have an easy password.",
+            "She does not have an easy password",
+            "She does not have an easy password."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Ele não trabalha no restaurante.",
+          "answers": [
+            "He doesn't work at the restaurant",
+            "He doesn't work at the restaurant.",
+            "He does not work in the restaurant",
+            "He does not work in the restaurant.",
+            "He doesn't work in the restaurant",
+            "He doesn't work in the restaurant."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "doesn't + base verb.",
+      "explanation": "doesn't live · doesn't like · doesn't prefer · doesn't study · doesn't go",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Minha amiga não mora perto do shopping.",
+          "answers": [
+            "My friend doesn't live near the mall",
+            "My friend doesn't live near the mall.",
+            "My friend doesn't live near the shopping mall",
+            "My friend doesn't live near the shopping mall.",
+            "My friend does not live near the mall",
+            "My friend does not live near the mall."
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Ele não gosta de revistas.",
+          "answers": [
+            "He doesn't like magazines",
+            "He doesn't like magazines.",
+            "He does not like magazines",
+            "He does not like magazines."
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Ela não prefere o coffee shop.",
+          "answers": [
+            "She doesn't prefer the coffee shop",
+            "She doesn't prefer the coffee shop.",
+            "She does not prefer the coffee shop",
+            "She does not prefer the coffee shop."
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Meu irmão não estuda à noite.",
+          "answers": [
+            "My brother doesn't study at night",
+            "My brother doesn't study at night.",
+            "My brother does not study at night",
+            "My brother does not study at night."
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Ela não vai ao cinema sozinha.",
+          "answers": [
+            "She doesn't go to the cinema alone",
+            "She doesn't go to the cinema alone.",
+            "She doesn't go to the movies alone",
+            "She doesn't go to the movies alone.",
+            "She does not go to the cinema alone",
+            "She does not go to the cinema alone."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "City / media words.",
+      "explanation": "the news · magazine · coffee shop · restaurant · mall · email",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. e / s / w / t / h / e / n → ",
+            {
+              "blank": "1",
+              "answers": [
+                "the news",
+                "news"
+              ]
+            },
+            "\nb. e / n / i / m / a / g / a / z → ",
+            {
+              "blank": "2",
+              "answers": [
+                "magazine"
+              ]
+            },
+            "\nc. h / p / o / c / o / f / f / e / e / s → ",
+            {
+              "blank": "3",
+              "answers": [
+                "coffee shop",
+                "coffeeshop"
+              ]
+            },
+            "\nd. a / t / n / r / e / s / t / a / u / r → ",
+            {
+              "blank": "4",
+              "answers": [
+                "restaurant"
+              ]
+            },
+            "\ne. a / l / l / m → ",
+            {
+              "blank": "5",
+              "answers": [
+                "mall"
+              ]
+            },
+            "\nf. l / i / a / e / m → ",
+            {
+              "blank": "6",
+              "answers": [
+                "email",
+                "e-mail"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Change the sentences into the negative form.",
+      "example": "He works every day. → He doesn't work every day.",
+      "hint": "doesn't/does not + base verb (drop the -s).",
+      "explanation": "She doesn't send… He doesn't live… doesn't need… doesn't study… doesn't like… doesn't use…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "She sends emails every morning.",
+          "answers": [
+            "She doesn't send emails every morning",
+            "She doesn't send emails every morning.",
+            "She does not send emails every morning",
+            "She does not send emails every morning."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "He lives near the mall.",
+          "answers": [
+            "He doesn't live near the mall",
+            "He doesn't live near the mall.",
+            "He does not live near the mall",
+            "He does not live near the mall."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "My friend needs a new computer.",
+          "answers": [
+            "My friend doesn't need a new computer",
+            "My friend doesn't need a new computer.",
+            "My friend does not need a new computer",
+            "My friend does not need a new computer."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "She studies English at night.",
+          "answers": [
+            "She doesn't study English at night",
+            "She doesn't study English at night.",
+            "She does not study English at night",
+            "She does not study English at night."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "He likes this restaurant.",
+          "answers": [
+            "He doesn't like this restaurant",
+            "He doesn't like this restaurant.",
+            "He does not like this restaurant",
+            "He does not like this restaurant."
+          ]
+        },
+        {
+          "label": "f",
+          "original": "The teacher uses a tablet.",
+          "answers": [
+            "The teacher doesn't use a tablet",
+            "The teacher doesn't use a tablet.",
+            "The teacher does not use a tablet",
+            "The teacher does not use a tablet."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "read / visit + places.",
+      "explanation": "read · visit · a · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "read"
+              ]
+            },
+            " the news every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "visit"
+              ]
+            },
+            " the coffee shop at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "a"
+              ]
+            },
+            " magazine today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like this restaurant?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "read | visit | a | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “email and city places” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

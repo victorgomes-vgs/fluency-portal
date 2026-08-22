@@ -3139,6 +3139,57 @@ const STUDENT_NAV = [
 ];
 const TASK_COSMIC_ICON={image:"assets/icons/cosmic/tarefa.webp",crop:1.2,label:"Tarefa",color:"#55b8ff"};
 
+/** Fluency General M1 — interactive homework (input lessons through 21). */
+const GENERAL_M1_INPUT_TASKS=[
+  {n:1, exerciseId:"ffg-m1-l01-food-drink", folder:"l01-food-drink-interactive", title:"Food & drink"},
+  {n:2, exerciseId:"ffg-m1-l02-foods-meals", folder:"l02-foods-meals-interactive", title:"Foods & meals"},
+  {n:4, exerciseId:"ffg-m1-l04-food-place", folder:"l04-food-place-interactive", title:"Food & place"},
+  {n:5, exerciseId:"ffg-m1-l05-languages-countries", folder:"l05-languages-countries-interactive", title:"Languages & countries"},
+  {n:7, exerciseId:"ffg-m1-l07-possessives", folder:"l07-possessives-interactive", title:"Possessives"},
+  {n:8, exerciseId:"ffg-m1-l08-intensifiers", folder:"l08-intensifiers-interactive", title:"Intensifiers"},
+  {n:11, exerciseId:"ffg-m1-l11-3rd-affirmative", folder:"l11-3rd-affirmative-interactive", title:"3rd person affirmative"},
+  {n:12, exerciseId:"ffg-m1-l12-3rd-negative", folder:"l12-3rd-negative-interactive", title:"3rd person negative"},
+  {n:14, exerciseId:"ffg-m1-l14-3rd-questions", folder:"l14-3rd-questions-interactive", title:"3rd person questions"},
+  {n:15, exerciseId:"ffg-m1-l15-why-because", folder:"l15-why-because-interactive", title:"Why & because"},
+  {n:17, exerciseId:"ffg-m1-l17-quantifiers", folder:"l17-quantifiers-interactive", title:"Quantifiers"},
+  {n:18, exerciseId:"ffg-m1-l18-frequency", folder:"l18-frequency-interactive", title:"Adverbs of frequency"},
+  {n:21, exerciseId:"ffg-m1-l21-to-be", folder:"l21-to-be-interactive", title:"To be affirmative & negative"},
+];
+const GENERAL_M1_INPUT_TASKS_BY_NUM=GENERAL_M1_INPUT_TASKS.reduce((acc,t)=>{acc[t.n]=t;return acc;},{});
+const GENERAL_M1_INPUT_TASKS_BY_EX=GENERAL_M1_INPUT_TASKS.reduce((acc,t)=>{acc[t.exerciseId]=t;return acc;},{});
+function generalM1TaskPath(task){
+  return "tarefas/fluency-general/mod1/"+task.folder+"/exercise.html";
+}
+function generalM1TaskForLessonNum(num){
+  return GENERAL_M1_INPUT_TASKS_BY_NUM[Number(num)]||null;
+}
+function applyGeneralM1TaskLink(courseId, lesson){
+  if(resolveContratoId(courseId||"")!=="foundation_general"||!lesson)return lesson;
+  const task=generalM1TaskForLessonNum(lesson.num);
+  if(!task)return lesson;
+  if(!String(lesson.linkTarefa||"").trim()){
+    lesson.linkTarefa=generalM1TaskPath(task);
+  }
+  lesson.interactiveTaskId=task.exerciseId;
+  lesson.interactiveTaskTitle=task.title;
+  return lesson;
+}
+function exerciseForTrilhaItem(item, exercisesMap){
+  if(!item||!exercisesMap)return null;
+  const task=generalM1TaskForLessonNum(item.num);
+  if(task&&exercisesMap[task.exerciseId])return exercisesMap[task.exerciseId];
+  if(item.interactiveTaskId&&exercisesMap[item.interactiveTaskId])return exercisesMap[item.interactiveTaskId];
+  if(exercisesMap[item.id])return exercisesMap[item.id];
+  const vals=Object.values(exercisesMap);
+  const byLessonId=vals.find(x=>x&&x.lessonId&&task&&x.lessonId===task.exerciseId);
+  if(byLessonId)return byLessonId;
+  return null;
+}
+function isGeneralTaskCompleted(ex){
+  return !!(ex&&(ex.completed||(ex.score&&(ex.score.percentage!=null||ex.score.grade10!=null))));
+}
+
+
 function CosmicSectionImage({meta,className="",decorative=true}){
   if(!meta?.image)return null;
   return(
@@ -3708,6 +3759,7 @@ function generateBooks(course){
       });
       if(mod.tipoLivre&&lesson.lessonType!=="review"){lesson.lessonType="lesson";lesson.type="lesson";}
       lesson.type=lesson.lessonType==="review"?"review":"lesson";
+      applyGeneralM1TaskLink(c.id, lesson);
       items.push(lesson);
       // Regra (metadado na lição): fim de unidade — NÃO cria card na Trilha
       const unitSize=c.unitReportCards?(parseInt(c.unitSize,10)||10):0;
@@ -3782,6 +3834,7 @@ function mergeBooks(trilhaData,course){
           merged[k]=shared[k];
         }
       });
+      applyGeneralM1TaskLink(course&&course.id, merged);
       merged.type=merged.lessonType==="review"?"review":"lesson";
       // Preenche tema/objetivos oficiais se o aluno ainda não tiver valor salvo
       if(!merged.tema&&i.tema)merged.tema=i.tema;
@@ -6835,6 +6888,97 @@ function StatCard({ icon, iconColor, label, value, onClick }) {
   );
 }
 
+
+function GeneralTasksDashboard({uid, profile, onOpenDetails}){
+  const contrato=resolveContratoId(profile?.contrato||"");
+  const [exercisesMap,setExercisesMap]=useState({});
+  const [showDetails,setShowDetails]=useState(false);
+  useEffect(()=>{
+    if(!uid)return;
+    return db.collection("students").doc(uid).collection("exercises").onSnapshot(snap=>{
+      const map={};
+      snap.docs.forEach(d=>{map[d.id]=d.data();});
+      setExercisesMap(map);
+    });
+  },[uid]);
+  if(contrato!=="foundation_general")return null;
+  const tasks=GENERAL_M1_INPUT_TASKS;
+  const rows=tasks.map(t=>{
+    const ex=exercisesMap[t.exerciseId]||null;
+    const pct=taskPercentFromExercise(ex);
+    const done=isGeneralTaskCompleted(ex);
+    const accessed=!!(ex&&(ex.accessed||ex.firstAccessAt));
+    return {...t, ex, pct, done, accessed, href:resolvePortalAssetUrl(generalM1TaskPath(t))};
+  });
+  const total=rows.length;
+  const doneCount=rows.filter(r=>r.done).length;
+  const scored=rows.filter(r=>r.pct!=null);
+  const avg=scored.length?Math.round(scored.reduce((s,r)=>s+(r.pct||0),0)/scored.length):null;
+  const current=rows.find(r=>!r.done)||rows[rows.length-1];
+  return(
+    <div className="glass rounded-2xl p-4 space-y-3" style={{border:"1px solid rgba(85,184,255,.28)"}}>
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <CosmicSectionImage meta={TASK_COSMIC_ICON} className="w-12 h-12 rounded-xl"/>
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide" style={{color:"#55b8ff",fontWeight:800}}>Tarefas · Fluency General</div>
+            <div className="font-bold text-base">Módulo 1 · Input até L21</div>
+          </div>
+        </div>
+        <button type="button" className="btn rounded-xl px-3 py-2 text-xs font-semibold" onClick={()=>{setShowDetails(true); onOpenDetails&&onOpenDetails();}}>Detalhes</button>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-xl p-3" style={{background:"rgba(85,184,255,.08)"}}><div className="text-xs muted">Total</div><div className="text-xl font-extrabold">{total}</div></div>
+        <div className="rounded-xl p-3" style={{background:"rgba(52,211,153,.08)"}}><div className="text-xs muted">Feitas</div><div className="text-xl font-extrabold">{doneCount}</div></div>
+        <div className="rounded-xl p-3" style={{background:"rgba(129,140,248,.08)"}}><div className="text-xs muted">Média /100</div><div className="text-xl font-extrabold">{avg!=null?avg:"—"}</div></div>
+      </div>
+      <div className="rounded-xl p-3" style={{background:"rgba(2,8,20,.35)"}}>
+        <div className="text-xs muted mb-2">Progresso das notas</div>
+        <div style={{display:"flex",alignItems:"flex-end",gap:4,height:64}}>
+          {rows.map(r=>(
+            <div key={r.n} title={"L"+r.n+(r.pct!=null?(" · "+r.pct+"/100"):"")} style={{flex:1,minWidth:0,height:Math.max(6, Math.round(((r.pct!=null?r.pct:0)/100)*58)),borderRadius:4,background:r.done?"#34d399":(r.accessed?"#55b8ff":"rgba(255,255,255,.12)")}}/>
+          ))}
+        </div>
+      </div>
+      <div className="cosmic-card-orbit" style={{position:"relative",minHeight:210,borderRadius:18,overflow:"hidden",background:"radial-gradient(ellipse at center, rgba(8,24,48,.55), rgba(2,8,20,.92)), url('assets/constellation/space-background.webp') center/cover"}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",padding:"18px 12px"}}>
+          {rows.map(r=>{
+            const sc=r.done?"done":(current&&current.n===r.n?"active":"pending");
+            return(
+              <a key={r.n} href={r.href} target="_blank" rel="noreferrer" className={"cosmic-orb cosmic-card-orb "+sc} title={"Tarefa L"+r.n+" · "+r.title} style={{textDecoration:"none",width:72,height:72}}>
+                <span className="cosmic-orb-asset" aria-hidden="true"/>
+                <span className="cosmic-orb-copy">
+                  <span className="cosmic-orb-kicker">Tarefa</span>
+                  <span className="cosmic-orb-num">{r.n}</span>
+                  <span className="cosmic-orb-status">{r.done?"Feita":(r.accessed?"Em andamento":"Pendente")}</span>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+      {showDetails&&(
+        <div className="rounded-xl p-3 space-y-2" style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)"}}>
+          <div className="flex items-center justify-between"><div className="font-semibold text-sm">Detalhes das tarefas</div><button type="button" className="text-xs muted" onClick={()=>setShowDetails(false)}>Fechar</button></div>
+          {rows.map(r=>(
+            <div key={r.n} className="flex items-start justify-between gap-2 text-xs" style={{borderBottom:"1px solid rgba(255,255,255,.06)",padding:"6px 0"}}>
+              <div className="min-w-0">
+                <div className="font-semibold">L{r.n} · {r.title}</div>
+                <div className="muted">1º acesso: {r.ex?.firstAccessAt?new Date(r.ex.firstAccessAt).toLocaleString():"—"} · tentativas: {r.ex?.attempts!=null?r.ex.attempts:"—"}</div>
+              </div>
+              <div style={{textAlign:"right"}}>
+                <div className="font-bold">{r.pct!=null?(r.pct+"/100"):"—"}</div>
+                <a href={r.href} target="_blank" rel="noreferrer" className="muted">Abrir</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 // ── MODIFICAÇÃO 2: OverviewSection ─────────────────────────────────────────
 function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab, hideGreeting=false }) {
   const courses = useCourses();
@@ -6851,13 +6995,26 @@ function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab, hide
 
   const totalLicoes = getTotalLicoes(course) || books.reduce((s,b)=>s+b.items.length,0) || 1;
 
+  const [exercisesMap, setExercisesMap] = useState({});
+  useEffect(() => {
+    if (!uid) return;
+    return db.collection("students").doc(uid).collection("exercises").onSnapshot(snap => {
+      const map = {};
+      snap.docs.forEach(d => { map[d.id] = d.data(); });
+      setExercisesMap(map);
+    });
+  }, [uid]);
+
   const tarefasFeitas = useMemo(() => {
     let count = 0;
     books.forEach(b => b.items.forEach(i => {
-      if (!i.isReview && i.tarefaFeita) count++;
+      if (i.type === "report_card" || i.lessonType === "report_card") return;
+      if (i.type === "review" || i.lessonType === "review") return;
+      const ex = exerciseForTrilhaItem(i, exercisesMap);
+      if (i.tarefaFeita || isGeneralTaskCompleted(ex)) count++;
     }));
     return count;
-  }, [books]);
+  }, [books, exercisesMap]);
 
   const [diarioStats, setDiarioStats] = useState({ realizadas: 0, paraRepor: 0 });
   useEffect(() => {
@@ -6915,6 +7072,8 @@ function OverviewSection({ uid, profile, trilhaData, financeiro, onGoToTab, hide
           onClick={() => onGoToTab("trilha")}
         />
       </div>
+
+      <GeneralTasksDashboard uid={uid} profile={profile} />
 
       {/* Cards de estatística */}
       <div className="grid grid-cols-2 gap-3">
@@ -11769,7 +11928,7 @@ function buildReportCardPayload({student,course,moduleBook,exercisesMap,diarioEn
   const lessons=[];
   (moduleBook.items||[]).forEach(item=>{
     if(item.type==="report_card"||item.lessonType==="report_card")return;
-    const ex=exercisesMap[item.id]||Object.values(exercisesMap).find(x=>x&&x.lessonId&&String(x.lessonId).includes(String(item.num)))||null;
+    const ex=exerciseForTrilhaItem(item, exercisesMap)||null;
     const presence=(diarioEntries||[]).filter(e=>e.licaoId===item.id||Number(e.licaoNum)===Number(item.num));
     const taskPct=taskPercentFromExercise(ex);
     const grades={
@@ -11799,12 +11958,14 @@ function buildReportCardPayload({student,course,moduleBook,exercisesMap,diarioEn
       task:{
         accessed:!!(ex&&(ex.accessed||ex.firstAccessAt)),
         firstAccessAt:ex?.firstAccessAt||null,
-        completed:!!(ex?.completed||item.tarefaFeita),
+        completed:!!(ex?.completed||item.tarefaFeita||isGeneralTaskCompleted(ex)),
         completedAt:ex?.completedAt||null,
         timeToCompleteMs:ex?.timeToCompleteMs??null,
+        attempts:ex?.attempts??null,
         grade10:ex?.score?.grade10??null,
         percentage:ex?.score?.percentage??null,
         manualTarefaFeita:!!item.tarefaFeita,
+        exerciseId:ex?.lessonId||item.interactiveTaskId||null,
       },
       presence:presence.map(p=>({id:p.id,num:p.num,date:p.date,status:normalizeDiarioStatus(p),ocorrido:p.ocorrido||"",obs:p.obs||""})),
       raw:{status:item.status||"",dataPrevista:item.dataPrevista||""}
@@ -11953,22 +12114,25 @@ function AdminRelatorioAluno({student,onBack}){
             <div key={b.bookIdx} className="glass rounded-2xl p-4">
               <h4 className="font-bold text-sm mb-3">Módulo {b.bookIdx}</h4>
               <div className="space-y-2">
-                {b.items.filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card").map(item=>{
-                  const ex=exercisesMap[item.id]||null;
+                {b.items.filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card"&&(generalM1TaskForLessonNum(i.num)||i.linkTarefa)).map(item=>{
+                  const ex=exerciseForTrilhaItem(item, exercisesMap)||null;
                   const accessed=!!(ex&&(ex.accessed||ex.firstAccessAt));
-                  const completed=!!(ex?.completed);
+                  const completed=!!(ex?.completed||isGeneralTaskCompleted(ex)||item.tarefaFeita);
                   const missing=!completed;
+                  const href=resolvePortalAssetUrl(item.linkTarefa||"");
                   return(
                     <div key={item.id} className="rounded-xl p-3 text-xs" style={{border:"1px solid var(--divider)",background:missing?"rgba(229,99,107,.06)":"var(--badge)"}}>
-                      <div className="font-semibold text-sm mb-1">Lição {getLessonDisplayLabel(item)} — {item.title||"Sem título"}</div>
+                      <div className="font-semibold text-sm mb-1">Lição {getLessonDisplayLabel(item)} — {item.title||item.interactiveTaskTitle||"Sem título"}</div>
                       <div className="grid gap-1" style={{gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))"}}>
                         <div>Acessou: <strong>{accessed?"sim":"não"}</strong></div>
                         <div>1º acesso: {formatTs(ex?.firstAccessAt)}</div>
+                        <div>Tentativas: <strong>{ex?.attempts!=null?ex.attempts:"—"}</strong></div>
                         <div>Tempo até envio: {formatDuration(ex?.timeToCompleteMs)}</div>
                         <div>Concluída/enviada: <strong>{completed?"sim":"não"}</strong>{item.tarefaFeita?" · marcada na trilha":""}</div>
-                        <div>Nota: {ex?.score?.grade10!=null?ex.score.grade10:"—"}</div>
-                        <div>Aproveitamento: {ex?.score?.percentage!=null?ex.score.percentage+"%":"—"}</div>
+                        <div>Nota /100: {ex?.score?.percentage!=null?ex.score.percentage:"—"}</div>
+                        <div>Nota /10: {ex?.score?.grade10!=null?ex.score.grade10:"—"}</div>
                       </div>
+                      {href&&<div className="mt-1"><a href={href} target="_blank" rel="noreferrer">Abrir tarefa online</a></div>}
                       {missing&&<div className="mt-1" style={{color:"#e5636b"}}>Tarefa não concluída / sem envio</div>}
                     </div>
                   );

@@ -1,0 +1,379 @@
+{
+  "lessonId": "ffg-m1-l15-why-because",
+  "unit": 15,
+  "unitTitle": "Why & because",
+  "lessonTitle": "Lesson 15 — Why & because",
+  "badge": "FF GENERAL · MÓDULO 1 · L15",
+  "subtitle": "Why / Because · dishes, house & time.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l15-why-because",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-lifestyle.jpg",
+  "heroImageAlt": "Kitchen table with soup, pasta and a clock",
+  "heroCaption": "WHY & BECAUSE",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 15. Ask how to link Why and because.",
+    "exercises": {
+      "q1": {
+        "hint": "Why…? / because…"
+      },
+      "q2": {
+        "hint": "Because answers don't need Why."
+      },
+      "q3": {
+        "hint": "Unscramble kitchen words."
+      },
+      "q4": {
+        "hint": "Join reason with because."
+      },
+      "q5": {
+        "hint": "Use the bank."
+      },
+      "q6": {
+        "hint": "Notebook for the teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "Why…? / … because …",
+      "explanation": "Why do you eat…? I eat… because… Why does she…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Por que você come arroz e feijão?",
+          "answers": [
+            "Why do you eat rice and beans?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Eu como salada porque é saudável.",
+          "answers": [
+            "I eat salad because it is healthy",
+            "I eat salad because it is healthy.",
+            "I eat salad because it's healthy",
+            "I eat salad because it's healthy."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Por que ela limpa a cozinha agora?",
+          "answers": [
+            "Why does she clean the kitchen now?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Ela limpa porque tem visita à noite.",
+          "answers": [
+            "She cleans because she has visitors tonight",
+            "She cleans because she has visitors tonight.",
+            "She cleans because she has a visitor at night",
+            "She cleans because she has a visitor at night.",
+            "She cleans because she has company tonight",
+            "She cleans because she has company tonight."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Por que você pergunta as horas?",
+          "answers": [
+            "Why do you ask the time?",
+            "Why do you ask what time it is?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "Because answers; Why questions.",
+      "explanation": "Because I have a meeting… Why do they buy…? Because their house…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Porque eu tenho uma reunião às seis.",
+          "answers": [
+            "Because I have a meeting at six",
+            "Because I have a meeting at six.",
+            "Because I have a meeting at 6",
+            "Because I have a meeting at 6."
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Por que eles compram pratos novos?",
+          "answers": [
+            "Why do they buy new plates?",
+            "Why do they buy new dishes?"
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Porque a casa deles é nova.",
+          "answers": [
+            "Because their house is new",
+            "Because their house is new."
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Por que você faz as tarefas de casa?",
+          "answers": [
+            "Why do you do housework?",
+            "Why do you do the housework?",
+            "Why do you do household chores?"
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Porque eu quero um apartamento organizado.",
+          "answers": [
+            "Because I want an organized apartment",
+            "Because I want an organized apartment.",
+            "Because I want a tidy apartment",
+            "Because I want a tidy apartment."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "Kitchen / dishes words.",
+      "explanation": "soup · pasta · kitchen · some · table · couch",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. o / p / u / s → ",
+            {
+              "blank": "1",
+              "answers": [
+                "soup"
+              ]
+            },
+            "\nb. a / t / s / p / a → ",
+            {
+              "blank": "2",
+              "answers": [
+                "pasta"
+              ]
+            },
+            "\nc. h / n / e / k / i / t / c → ",
+            {
+              "blank": "3",
+              "answers": [
+                "kitchen"
+              ]
+            },
+            "\nd. o / e / m / s → ",
+            {
+              "blank": "4",
+              "answers": [
+                "some"
+              ]
+            },
+            "\ne. e / l / b / t / a → ",
+            {
+              "blank": "5",
+              "answers": [
+                "table"
+              ]
+            },
+            "\nf. h / c / u / c / o → ",
+            {
+              "blank": "6",
+              "answers": [
+                "couch"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Join with because or make a Why-question.",
+      "hint": "Why + do/does…? Answer with because.",
+      "explanation": "… because … / Why do you…? / Why does she…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Why do you eat salad? / It is healthy.",
+          "answers": [
+            "I eat salad because it is healthy",
+            "I eat salad because it is healthy.",
+            "Because it is healthy",
+            "Because it is healthy.",
+            "I eat salad because it's healthy",
+            "I eat salad because it's healthy."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Why does she clean the kitchen? / She has visitors tonight.",
+          "answers": [
+            "She cleans the kitchen because she has visitors tonight",
+            "She cleans the kitchen because she has visitors tonight.",
+            "Because she has visitors tonight",
+            "Because she has visitors tonight."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Why do you ask the time? / I have a meeting at six.",
+          "answers": [
+            "I ask the time because I have a meeting at six",
+            "I ask the time because I have a meeting at six.",
+            "Because I have a meeting at six",
+            "Because I have a meeting at six."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Why do they buy new plates? / Their house is new.",
+          "answers": [
+            "They buy new plates because their house is new",
+            "They buy new plates because their house is new.",
+            "Because their house is new",
+            "Because their house is new."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Make a Why-question: you / do housework",
+          "answers": [
+            "Why do you do housework?",
+            "Why do you do the housework?"
+          ]
+        },
+        {
+          "label": "f",
+          "original": "Make a Why-question: she / clean the kitchen now",
+          "answers": [
+            "Why does she clean the kitchen now?",
+            "Why is she cleaning the kitchen now?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "cook / eat + kitchen words.",
+      "explanation": "cook · eat · some · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "cook"
+              ]
+            },
+            " soup every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "eat"
+              ]
+            },
+            " pasta at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "some"
+              ]
+            },
+            " help in the kitchen today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like soup?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "cook | eat | some | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “why and because” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

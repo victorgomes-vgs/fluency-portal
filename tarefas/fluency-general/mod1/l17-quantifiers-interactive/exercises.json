@@ -1,0 +1,374 @@
+{
+  "lessonId": "ffg-m1-l17-quantifiers",
+  "unit": 17,
+  "unitTitle": "Quantifiers",
+  "lessonTitle": "Lesson 17 — Quantifiers",
+  "badge": "FF GENERAL · MÓDULO 1 · L17",
+  "subtitle": "Countable/uncountable + some/any + How much/How many · week & home.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l17-quantifiers",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-lifestyle.jpg",
+  "heroImageAlt": "Calendar week planner with home and beach icons",
+  "heroCaption": "WEEK & HOME",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 17. Ask about much/many and some/any.",
+    "exercises": {
+      "q1": {
+        "hint": "How many vs How much; any in questions."
+      },
+      "q2": {
+        "hint": "some in affirmative; any in negative/question."
+      },
+      "q3": {
+        "hint": "Unscramble place/day words."
+      },
+      "q4": {
+        "hint": "Pick some/any/much/many."
+      },
+      "q5": {
+        "hint": "Use the bank."
+      },
+      "q6": {
+        "hint": "Notebook for the teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "How many + countable; How much + uncountable; some/any.",
+      "explanation": "How many days…? How much coffee…? any milk…? don't have any sugar…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Quantos dias você trabalha na semana?",
+          "answers": [
+            "How many days do you work in a week?",
+            "How many days a week do you work?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Quanto café você bebe por dia?",
+          "answers": [
+            "How much coffee do you drink a day?",
+            "How much coffee do you drink per day?"
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Você tem algum leite na geladeira?",
+          "answers": [
+            "Do you have any milk in the fridge?",
+            "Do you have any milk in the refrigerator?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Eu não tenho nenhum açúcar em casa.",
+          "answers": [
+            "I don't have any sugar at home",
+            "I don't have any sugar at home.",
+            "I do not have any sugar at home",
+            "I do not have any sugar at home."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Quantas colheres você precisa?",
+          "answers": [
+            "How many spoons do you need?",
+            "How many tablespoons do you need?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "How much time…? some / any / no.",
+      "explanation": "How much time…? some fruit… any homework… How many hours…? don't have any appointments…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Quanto tempo você tem na segunda-feira?",
+          "answers": [
+            "How much time do you have on Monday?"
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Eles querem algumas frutas no domingo.",
+          "answers": [
+            "They want some fruits on Sunday",
+            "They want some fruits on Sunday.",
+            "They want some fruit on Sunday",
+            "They want some fruit on Sunday."
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Você tem alguma tarefa na sexta-feira?",
+          "answers": [
+            "Do you have any homework on Friday?",
+            "Do you have any tasks on Friday?",
+            "Do you have any assignments on Friday?"
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Quantas horas você estuda no sábado?",
+          "answers": [
+            "How many hours do you study on Saturday?"
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Eu não tenho nenhum compromisso na quarta-feira.",
+          "answers": [
+            "I don't have any appointments on Wednesday",
+            "I don't have any appointments on Wednesday.",
+            "I don't have any commitments on Wednesday",
+            "I don't have any commitments on Wednesday.",
+            "I do not have any appointments on Wednesday",
+            "I do not have any appointments on Wednesday."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "Places and days.",
+      "explanation": "countryside · beach · home · apartment · Sunday · Monday",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. e / d / i / c / o / u / n / t / r / y / s → ",
+            {
+              "blank": "1",
+              "answers": [
+                "countryside"
+              ]
+            },
+            "\nb. h / c / a / b / e → ",
+            {
+              "blank": "2",
+              "answers": [
+                "beach"
+              ]
+            },
+            "\nc. o / e / m / h → ",
+            {
+              "blank": "3",
+              "answers": [
+                "home"
+              ]
+            },
+            "\nd. n / e / t / a / p / a / r / t / m → ",
+            {
+              "blank": "4",
+              "answers": [
+                "apartment"
+              ]
+            },
+            "\ne. a / d / y / s / u / n → ",
+            {
+              "blank": "5",
+              "answers": [
+                "Sunday"
+              ]
+            },
+            "\nf. a / d / y / m / o / n → ",
+            {
+              "blank": "6",
+              "answers": [
+                "Monday"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Transform with some / any / How much / How many.",
+      "hint": "any in questions/negatives; some in affirmatives; much = uncountable; many = countable.",
+      "explanation": "Do you have any…? There isn't any… How many days…? How much coffee…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "I have milk. (question with any)",
+          "answers": [
+            "Do you have any milk?",
+            "Have you got any milk?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "There is sugar. (negative with any)",
+          "answers": [
+            "There isn't any sugar",
+            "There isn't any sugar.",
+            "There is not any sugar",
+            "There is not any sugar.",
+            "I don't have any sugar",
+            "I don't have any sugar.",
+            "I do not have any sugar",
+            "I do not have any sugar."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "days / you work in a week (How many…?)",
+          "answers": [
+            "How many days do you work in a week?",
+            "How many days a week do you work?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "coffee / you drink a day (How much…?)",
+          "answers": [
+            "How much coffee do you drink a day?",
+            "How much coffee do you drink per day?"
+          ]
+        },
+        {
+          "label": "e",
+          "original": "They want fruits on Sunday. (some)",
+          "answers": [
+            "They want some fruits on Sunday",
+            "They want some fruits on Sunday.",
+            "They want some fruit on Sunday",
+            "They want some fruit on Sunday."
+          ]
+        },
+        {
+          "label": "f",
+          "original": "hours / you study on Saturday (How many…?)",
+          "answers": [
+            "How many hours do you study on Saturday?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "stay / visit + places.",
+      "explanation": "stay · visit · an · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "stay"
+              ]
+            },
+            " in the countryside every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "visit"
+              ]
+            },
+            " the beach at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "an"
+              ]
+            },
+            " apartment today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like your home?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "stay | visit | an | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “week and home” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,382 @@
+{
+  "lessonId": "ffg-m1-l01-food-drink",
+  "unit": 1,
+  "unitTitle": "Food & drink",
+  "lessonTitle": "Lesson 01 — Food & drink",
+  "badge": "FF GENERAL · MÓDULO 1 · L01",
+  "subtitle": "Simple Present affirmative/negative (I/you) · food & drink. Auto-saves grade for the report card.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l01-food-drink",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-food.jpg",
+  "heroImageAlt": "Breakfast table with coffee, bread and fruit",
+  "heroCaption": "FOOD & DRINK",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 01. Ask how to approach an exercise. I will not give the full answer on the first hint.",
+    "exercises": {
+      "q1": {
+        "hint": "I/you + verb. Negative: don't + verb."
+      },
+      "q2": {
+        "hint": "Questions: Do you + verb…?"
+      },
+      "q3": {
+        "hint": "Unscramble food/drink words."
+      },
+      "q4": {
+        "hint": "He/she/my friend need -s on the verb."
+      },
+      "q5": {
+        "hint": "Read the whole sentence before choosing."
+      },
+      "q6": {
+        "hint": "Write on paper for your teacher, then tap Yes."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "Use I/you + base verb. Negative = don't + verb.",
+      "explanation": "I drink / You eat / I don't drink / You don't eat…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Eu bebo café todas as manhãs.",
+          "answers": [
+            "I drink coffee every morning",
+            "I drink coffee every morning."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Você come pão e queijo.",
+          "answers": [
+            "You eat bread and cheese",
+            "You eat bread and cheese."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Eu não bebo refrigerante.",
+          "answers": [
+            "I don't drink soda",
+            "I don't drink soda.",
+            "I don't drink soft drinks",
+            "I don't drink soft drinks.",
+            "I do not drink soda",
+            "I do not drink soda.",
+            "I don't drink pop",
+            "I don't drink pop."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Você não come panquecas no café da manhã.",
+          "answers": [
+            "You don't eat pancakes for breakfast",
+            "You don't eat pancakes for breakfast.",
+            "You do not eat pancakes for breakfast",
+            "You do not eat pancakes for breakfast.",
+            "You don't eat pancakes at breakfast",
+            "You don't eat pancakes at breakfast."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Eu bebo água e chá.",
+          "answers": [
+            "I drink water and tea",
+            "I drink water and tea."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "Keep Simple Present. For questions, use Do you…?",
+      "explanation": "You eat… and I eat… / I don't eat… / Do you drink…? No, I drink…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Você come biscoitos e eu como presunto.",
+          "answers": [
+            "You eat cookies and I eat ham",
+            "You eat cookies and I eat ham.",
+            "You eat biscuits and I eat ham",
+            "You eat biscuits and I eat ham."
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Eu não como manteiga.",
+          "answers": [
+            "I don't eat butter",
+            "I don't eat butter.",
+            "I do not eat butter",
+            "I do not eat butter."
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Você bebe suco? Não, eu bebo leite.",
+          "answers": [
+            "Do you drink juice? No, I drink milk",
+            "Do you drink juice? No, I drink milk.",
+            "Do you drink juice? No I drink milk",
+            "Do you drink juice? No I drink milk."
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Eu como panquecas e bebo café com leite.",
+          "answers": [
+            "I eat pancakes and drink coffee with milk",
+            "I eat pancakes and drink coffee with milk.",
+            "I eat pancakes and I drink coffee with milk",
+            "I eat pancakes and I drink coffee with milk."
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Você come bolachas, e eu?",
+          "answers": [
+            "You eat cookies, and me?",
+            "You eat biscuits, and me?",
+            "You eat cookies, and I?",
+            "Do you eat cookies, and me?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "Put the letters in order. Food and drink words from class.",
+      "explanation": "water · coffee · milk · tea · juice · bread",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. r / e / t / w / a → ",
+            {
+              "blank": "1",
+              "answers": [
+                "water"
+              ]
+            },
+            "\nb. e / f / e / c / o / f → ",
+            {
+              "blank": "2",
+              "answers": [
+                "coffee"
+              ]
+            },
+            "\nc. i / k / l / m → ",
+            {
+              "blank": "3",
+              "answers": [
+                "milk"
+              ]
+            },
+            "\nd. e / t / a → ",
+            {
+              "blank": "4",
+              "answers": [
+                "tea"
+              ]
+            },
+            "\ne. e / c / i / j / u → ",
+            {
+              "blank": "5",
+              "answers": [
+                "juice"
+              ]
+            },
+            "\nf. d / a / e / b / r → ",
+            {
+              "blank": "6",
+              "answers": [
+                "bread"
+              ]
+            }
+          ],
+          "title": "Word scramble"
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Fluency — change the subject as indicated.",
+      "example": "I eat cheese. (you) → You eat cheese.",
+      "hint": "Change the subject. For he/she/my friend, add -s/-es to the verb.",
+      "explanation": "You study… / He drinks… / She works… / They like… / We need… / My friend goes…",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "I study English. (you)",
+          "answers": [
+            "You study English",
+            "You study English."
+          ]
+        },
+        {
+          "label": "b",
+          "original": "I drink water. (he)",
+          "answers": [
+            "He drinks water",
+            "He drinks water."
+          ]
+        },
+        {
+          "label": "c",
+          "original": "I work at home. (she)",
+          "answers": [
+            "She works at home",
+            "She works at home."
+          ]
+        },
+        {
+          "label": "d",
+          "original": "I like this idea. (they)",
+          "answers": [
+            "They like this idea",
+            "They like this idea."
+          ]
+        },
+        {
+          "label": "e",
+          "original": "I need help. (we)",
+          "answers": [
+            "We need help",
+            "We need help."
+          ]
+        },
+        {
+          "label": "f",
+          "original": "I go to school. (my friend)",
+          "answers": [
+            "My friend goes to school",
+            "My friend goes to school."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "Use each idea once. Think drink / eat / Do / and / very.",
+      "explanation": "drink · eat · some · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "drink"
+              ]
+            },
+            " water every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "eat"
+              ]
+            },
+            " cheese at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "some"
+              ]
+            },
+            " milk today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like tea?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "drink | eat | some | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “food and drink” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}

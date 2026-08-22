@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102343">
+  <title>Fluency Studio</title>
+  <link rel="stylesheet" href="assets/base.css">
+</head>
+<body>
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-main">
+        <div class="brand-lockup" aria-label="Fluency Studio by Victor Gomes">
+          <div class="fs-mark">Fs</div>
+          <div>
+            <div class="brand-name">FLUENCY STUDIO</div>
+            <div class="brand-byline">By Victor Gomes</div>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="module-badge" id="moduleBadge">OBJECTIVE PROFICIENCY</div>
+          <h1 class="hero-title" id="heroTitle">Lesson</h1>
+          <p class="hero-subtitle" id="heroSubtitle"></p>
+        </div>
+
+        <figure class="hero-figure" id="heroFigure" data-caption="">
+          <img id="heroImage" alt="">
+        </figure>
+      </div>
+
+      <div class="meta-grid" id="metaGrid" aria-label="Detalhes da atividade"></div>
+    </div>
+  </header>
+
+  <div class="status-ribbon" role="status">
+    <div class="save-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="autosaveText">Preparando atividade…</span>
+    </div>
+    <div class="response-status" id="progressText">0 respostas</div>
+    <div class="autocorrect-status">✓ Autocorreção ativa</div>
+  </div>
+
+  <main class="exercise-shell" id="exerciseShell"></main>
+
+  <section class="submit-panel" aria-labelledby="finish-title">
+    <h2 id="finish-title">Encerrar atividade</h2>
+    <p>O botão será liberado quando todas as respostas estiverem preenchidas. Ao encerrar, a nota é calculada e fica pronta para o report card.</p>
+    <button class="submit-button" id="submitButton" type="button" disabled>Encerrar atividade e ver nota</button>
+    <div class="completion-summary" id="completionSummary" hidden></div>
+  </section>
+
+  <div class="results-modal" id="resultsModal" role="dialog" aria-modal="true" aria-labelledby="resultsTitle" hidden>
+    <div class="results-card">
+      <button class="modal-close" id="closeResults" type="button" aria-label="Fechar resultado">×</button>
+      <div class="results-kicker" id="resultsKicker">FINAL RESULT</div>
+      <h2 id="resultsTitle">Atividade encerrada</h2>
+      <div class="results-score" id="resultScore">0%</div>
+      <div class="results-metrics">
+        <div><strong id="resultGrade">0.0</strong><span>nota / 10</span></div>
+        <div><strong id="resultCorrect">0</strong><span>corretas</span></div>
+        <div><strong id="resultTotal">0</strong><span>respostas</span></div>
+      </div>
+      <div class="result-breakdown" id="resultBreakdown"></div>
+      <p class="result-save-note" id="resultSaveNote"></p>
+      <div class="result-actions">
+        <button class="result-secondary" id="reviewResults" type="button">Continuar revisando</button>
+        <button class="result-primary" id="copyResults" type="button">Copiar resumo</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="ivi-launcher" id="iviLauncher" type="button" aria-controls="iviPanel" aria-expanded="false">
+    <span class="ivi-launcher-mark">iVi</span>
+    <span>Help iVi</span>
+  </button>
+
+  <aside class="ivi-panel" id="iviPanel" aria-label="Help iVi" hidden>
+    <div class="ivi-header">
+      <div class="ivi-identity">
+        <span class="ivi-avatar">iVi</span>
+        <span><strong>Help iVi</strong><small>Fluency Studio learning assistant</small></span>
+      </div>
+      <button class="ivi-close" id="iviClose" type="button" aria-label="Fechar Help iVi">×</button>
+    </div>
+    <div class="ivi-context">
+      <label for="iviExercise">I need help with</label>
+      <select id="iviExercise"></select>
+      <button id="iviHintButton" type="button">Give me a hint</button>
+    </div>
+    <div class="ivi-messages" id="iviMessages" aria-live="polite"></div>
+    <div class="ivi-composer">
+      <label class="sr-only" for="iviQuestion">Ask iVi a question</label>
+      <textarea id="iviQuestion" rows="2" placeholder="Ex.: How do I start gap 4?"></textarea>
+      <button id="iviSend" type="button">Ask iVi</button>
+    </div>
+  </aside>
+
+  <footer class="footer">FS · FLUENCY STUDIO · BY VICTOR GOMES</footer>
+
+  <script src="assets/exercise-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

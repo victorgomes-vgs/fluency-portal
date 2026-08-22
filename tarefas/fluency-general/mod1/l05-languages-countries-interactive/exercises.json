@@ -1,0 +1,353 @@
+{
+  "lessonId": "ffg-m1-l05-languages-countries",
+  "unit": 5,
+  "unitTitle": "Languages & countries",
+  "lessonTitle": "Lesson 05 — Languages & countries",
+  "badge": "FF GENERAL · MÓDULO 1 · L05",
+  "subtitle": "Question words Where / Who / When · languages & countries.",
+  "firestorePath": "students/{studentId}/exercises/ffg-m1-l05-languages-countries",
+  "level": "A1",
+  "sourcePages": 2,
+  "heroImage": "assets/illustrations/hero-languages.jpg",
+  "heroImageAlt": "World map with language books and flags",
+  "heroCaption": "LANGUAGES & COUNTRIES",
+  "meta": [
+    {
+      "icon": "▤",
+      "value": "2",
+      "label": "source pages"
+    },
+    {
+      "icon": "▦",
+      "value": "6",
+      "label": "exercises"
+    },
+    {
+      "icon": "⌁",
+      "value": "A1",
+      "label": "FF General"
+    },
+    {
+      "icon": "◷",
+      "value": "29",
+      "label": "responses"
+    }
+  ],
+  "ivi": {
+    "welcome": "Hi! I'm iVi for Lesson 05. Ask which question word fits.",
+    "exercises": {
+      "q1": {
+        "hint": "Where / Who / When + do."
+      },
+      "q2": {
+        "hint": "Keep the question word from Portuguese."
+      },
+      "q3": {
+        "hint": "Unscramble language names."
+      },
+      "q4": {
+        "hint": "Match the answer to Where, Who or When."
+      },
+      "q5": {
+        "hint": "Use the bank once per gap."
+      },
+      "q6": {
+        "hint": "Notebook for the teacher."
+      }
+    }
+  },
+  "passages": [],
+  "exercises": [
+    {
+      "id": "q1",
+      "number": 1,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (a–e)",
+      "hint": "Where / Who / When + do/does.",
+      "explanation": "Where do you study…? Who speaks…? When do you study…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Onde você estuda inglês?",
+          "answers": [
+            "Where do you study English?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Quem fala português na sua casa?",
+          "answers": [
+            "Who speaks Portuguese in your house?",
+            "Who speaks Portuguese at home?"
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Quando você estuda espanhol?",
+          "answers": [
+            "When do you study Spanish?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Onde eles moram: no Brasil ou nos Estados Unidos?",
+          "answers": [
+            "Where do they live: in Brazil or in the United States?",
+            "Where do they live, in Brazil or in the United States?"
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Quem ensina francês na sua escola?",
+          "answers": [
+            "Who teaches French at your school?",
+            "Who teaches French in your school?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "section": "Grammar",
+      "prompt": "Write the sentences in English. (f–j)",
+      "hint": "Keep Where / Who / When.",
+      "explanation": "When do you speak…? Where do you learn…? Who lives…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "f",
+          "original": "Quando você fala inglês no trabalho?",
+          "answers": [
+            "When do you speak English at work?"
+          ]
+        },
+        {
+          "label": "g",
+          "original": "Onde você aprende o alfabeto em inglês?",
+          "answers": [
+            "Where do you learn the alphabet in English?",
+            "Where do you learn the English alphabet?"
+          ]
+        },
+        {
+          "label": "h",
+          "original": "Quem mora no Canadá?",
+          "answers": [
+            "Who lives in Canada?"
+          ]
+        },
+        {
+          "label": "i",
+          "original": "Quando é a sua aula de idiomas?",
+          "answers": [
+            "When is your language class?",
+            "When is your languages class?"
+          ]
+        },
+        {
+          "label": "j",
+          "original": "Onde você fala inglês: em casa ou na escola?",
+          "answers": [
+            "Where do you speak English: at home or at school?",
+            "Where do you speak English, at home or at school?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "section": "Vocabulary",
+      "prompt": "Unscramble the letters and write the words.",
+      "notice": "Also write one sentence with each word in your notebook (not scored here).",
+      "hint": "Language names.",
+      "explanation": "Portuguese · English · French · Spanish · Italian · German",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. e / e / s / p / o / r / t / u / g / u → ",
+            {
+              "blank": "1",
+              "answers": [
+                "Portuguese"
+              ]
+            },
+            "\nb. i / h / s / e / n / g / l → ",
+            {
+              "blank": "2",
+              "answers": [
+                "English"
+              ]
+            },
+            "\nc. c / n / h / f / r / e → ",
+            {
+              "blank": "3",
+              "answers": [
+                "French"
+              ]
+            },
+            "\nd. i / h / s / s / p / a / n → ",
+            {
+              "blank": "4",
+              "answers": [
+                "Spanish"
+              ]
+            },
+            "\ne. i / n / a / i / t / a / l → ",
+            {
+              "blank": "5",
+              "answers": [
+                "Italian"
+              ]
+            },
+            "\nf. a / m / n / g / e / r → ",
+            {
+              "blank": "6",
+              "answers": [
+                "German"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "section": "Grammar",
+      "prompt": "Write questions with Where / Who / When for the answers.",
+      "hint": "Where = place, Who = person, When = time.",
+      "explanation": "Where do you live? Where does she work? When…? Who…?",
+      "mode": "rewrite",
+      "items": [
+        {
+          "label": "a",
+          "original": "Answer: I live in Brazil.",
+          "answers": [
+            "Where do you live?"
+          ]
+        },
+        {
+          "label": "b",
+          "original": "Answer: She works at a hospital.",
+          "answers": [
+            "Where does she work?"
+          ]
+        },
+        {
+          "label": "c",
+          "original": "Answer: We study in the morning.",
+          "answers": [
+            "When do you study?",
+            "When do we study?"
+          ]
+        },
+        {
+          "label": "d",
+          "original": "Answer: Carlos teaches French.",
+          "answers": [
+            "Who teaches French?",
+            "Who teaches French at your school?"
+          ]
+        },
+        {
+          "label": "e",
+          "original": "Answer: They go to the mall on Saturday.",
+          "answers": [
+            "When do they go to the mall?",
+            "Where do they go on Saturday?"
+          ]
+        },
+        {
+          "label": "f",
+          "original": "Answer: My friend needs a computer.",
+          "answers": [
+            "Who needs a computer?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "section": "Vocabulary",
+      "prompt": "Complete the sentences with words from the box.",
+      "hint": "Language names + speak / Do / and / very.",
+      "explanation": "speak · need · some · Do · and · very",
+      "mode": "cloze",
+      "groups": [
+        {
+          "segments": [
+            "a. I ",
+            {
+              "blank": "1",
+              "answers": [
+                "speak"
+              ]
+            },
+            " Portuguese every morning.\nb. She doesn't ",
+            {
+              "blank": "2",
+              "answers": [
+                "need"
+              ]
+            },
+            " English at night.\nc. We need ",
+            {
+              "blank": "3",
+              "answers": [
+                "some"
+              ]
+            },
+            " French practice today.\nd. ",
+            {
+              "blank": "4",
+              "answers": [
+                "Do"
+              ]
+            },
+            " you like Spanish?\ne. They study English ",
+            {
+              "blank": "5",
+              "answers": [
+                "and"
+              ]
+            },
+            " Portuguese.\nf. He is ",
+            {
+              "blank": "6",
+              "answers": [
+                "very"
+              ]
+            },
+            " tired after work."
+          ],
+          "bank": "speak | need | some | Do | and | very"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "section": "Vocabulary",
+      "mode": "choice",
+      "prompt": "Personal production (notebook)",
+      "notice": "Write 3–5 sentences about this lesson on a sheet of notebook paper. Use today's grammar and at least 4 new words from class. Hand the paper to your teacher for feedback. This item is only a confirmation — the writing itself is not auto-scored.",
+      "hint": "Do the writing on paper first. Then mark Yes here so your progress is complete.",
+      "explanation": "Yes — after you wrote on paper and will give it to your teacher.",
+      "items": [
+        {
+          "label": "I wrote 3–5 sentences about “languages and countries” on paper and will hand them to my teacher.",
+          "options": [
+            "Yes",
+            "Not yet"
+          ],
+          "answer": "Yes"
+        }
+      ]
+    }
+  ]
+}
