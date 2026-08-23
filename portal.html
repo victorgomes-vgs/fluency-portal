@@ -486,6 +486,7 @@
       font-family:var(--font-family-ui);padding:14px 16px;min-height:48px;
     }
     .slv-btn:hover{filter:brightness(1.08);transform:translateY(-1px);color:#fff!important;}
+    .slv-btn-task-done{background:linear-gradient(159deg,#064E3B 0%,#16A574 100%)!important;box-shadow:0 8px 22px rgba(6,78,59,.24);}
     .slv-btn-live{width:100%;max-width:100%;font-size:15px;padding:16px 18px;min-height:56px;border-radius:16px;}
     .slv-btn-pair{flex:1;min-width:0;font-size:12px;padding:12px 10px;min-height:46px;}
     .slv-btn-row{display:flex;gap:10px;width:100%;}
@@ -1195,7 +1196,7 @@
     .sd-nav-card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;}
     .sd-nav-card-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:900;color:#123C62;}
     .sd-nav-card-sub{font-size:11px;font-weight:600;color:#58718A;text-align:right;}
-    .sd-nav-grid-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 10px;width:100%;}
+    .sd-nav-grid-wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;width:100%;}
     .sd-nav-grid-wrap .sd-nav-carousel{width:100%;min-width:0;padding:7px 3px;border-radius:14px;}
     .sd-nav-grid-wrap .sd-nav-carousel:hover{background:rgba(43,139,255,.07);}
     .sd-nav-grid-wrap .sd-nav-label{font-size:10px;max-width:100%;overflow-wrap:anywhere;}
@@ -1223,7 +1224,7 @@
       .student-dashboard-main .sd-card-fin{padding:18px 20px;}
       .student-dashboard-main .sd-fin-status-band{padding:14px 18px;}
       .student-dashboard-main .sd-nav-card{padding:22px 26px 24px;}
-      .student-dashboard-main .sd-nav-grid-wrap{grid-template-columns:repeat(8,minmax(0,1fr));gap:12px;}
+      .student-dashboard-main .sd-nav-grid-wrap{grid-template-columns:repeat(9,minmax(0,1fr));gap:10px;}
       .student-dashboard-main .sd-nav-icon.cosmic-image-crop{width:60px;height:60px;flex-basis:60px;}
       .student-dashboard-main .sd-nav-grid-wrap .sd-nav-label{font-size:11px;}
       .student-dashboard-main .cosmic-card{padding:22px 26px 24px;min-height:290px;}
@@ -1245,8 +1246,93 @@
       .cosmic-card-foot{align-items:flex-start;flex-direction:column;}
       .cosmic-card-open{width:100%;justify-content:center;}
     }
-    @media (max-width:350px){
-      .sd-nav-grid-wrap{grid-template-columns:repeat(3,minmax(0,1fr));}
+    /* ── TAREFAS — Saturn Mission ── */
+    .student-tasks-main{width:100%;max-width:1280px!important;margin-left:auto!important;margin-right:auto!important;}
+    .student-tasks-main .student-portal-context{max-width:1180px;}
+    .student-tasks-main .student-section-page{max-width:1180px;margin-left:auto;margin-right:auto;}
+    .tasks-universe{display:flex;flex-direction:column;gap:18px;padding-bottom:42px;}
+    .tasks-hero{
+      position:relative;min-height:270px;display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,.72fr);align-items:center;
+      overflow:hidden;border-radius:28px;padding:30px 34px;color:#F7FBFF;
+      background-image:radial-gradient(circle at 79% 48%,rgba(126,113,255,.25),transparent 28%),linear-gradient(120deg,rgba(2,10,28,.96),rgba(8,27,61,.88)),url('assets/constellation/space-background.webp');
+      background-size:auto,auto,cover;background-position:center;border:1px solid rgba(102,210,255,.32);
+      box-shadow:0 26px 64px rgba(0,7,24,.38),inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    .tasks-hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,rgba(28,190,235,.12),transparent 46%,rgba(139,92,246,.10));}
+    .tasks-hero-copy{position:relative;z-index:3;max-width:620px;}
+    .tasks-kicker{display:flex;align-items:center;gap:8px;color:#8DEBFF;font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
+    .tasks-title{font-family:'Sora',sans-serif;font-size:clamp(28px,4.2vw,48px);font-weight:900;line-height:1.02;margin-top:10px;letter-spacing:-.045em;color:#FFFFFF!important;}
+    .tasks-lead{font-size:13px;line-height:1.55;color:#BAD4E8;margin-top:12px;max-width:520px;}
+    .tasks-progress-row{display:flex;align-items:center;gap:12px;margin-top:22px;max-width:480px;}
+    .tasks-progress-track{height:9px;flex:1;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.4);}
+    .tasks-progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#24D7FA,#8175FF,#E879F9);box-shadow:0 0 18px rgba(75,205,255,.62);transition:width .55s ease;}
+    .tasks-progress-copy{font-size:11px;font-weight:900;color:#DDF8FF;white-space:nowrap;}
+    .tasks-saturn-scene{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:210px;}
+    .tasks-saturn-scene::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(89,196,255,.18),transparent 67%);filter:blur(3px);}
+    .task-saturn-mark{--saturn:#5BBDF7;--saturn-ring:#A9EAFF;position:relative;display:inline-block;width:74px;height:56px;flex:0 0 74px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--saturn) 48%,transparent));}
+    .task-saturn-mark.large{width:210px;height:154px;flex-basis:210px;filter:drop-shadow(0 0 27px color-mix(in srgb,var(--saturn) 58%,transparent));animation:saturnFloat 5s ease-in-out infinite;}
+    .task-saturn-ring{position:absolute;z-index:1;left:3px;top:17px;width:68px;height:25px;border:4px solid var(--saturn-ring);border-radius:50%;transform:rotate(-13deg);box-shadow:0 0 12px color-mix(in srgb,var(--saturn-ring) 60%,transparent);}
+    .task-saturn-body{position:absolute;z-index:2;left:22px;top:7px;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#FFFFFF 0 4%,#D9F5FF 8%,var(--saturn) 44%,#3945A9 100%);box-shadow:inset -7px -5px 10px rgba(4,8,35,.38),0 0 17px color-mix(in srgb,var(--saturn) 65%,transparent);}
+    .task-saturn-mark::after{content:'';position:absolute;z-index:3;left:3px;top:17px;width:68px;height:25px;border-bottom:4px solid #E4FAFF;border-radius:50%;transform:rotate(-13deg);}
+    .task-saturn-mark.large .task-saturn-ring,.task-saturn-mark.large::after{left:8px;top:47px;width:196px;height:66px;border-width:9px;}
+    .task-saturn-mark.large .task-saturn-body{left:68px;top:18px;width:92px;height:92px;box-shadow:inset -18px -13px 24px rgba(4,8,35,.42),0 0 44px color-mix(in srgb,var(--saturn) 66%,transparent);}
+    .task-saturn-mark.done{--saturn:#34D399;--saturn-ring:#B8FFE5;}
+    .task-saturn-mark.current{--saturn:#8B7CFF;--saturn-ring:#D7D1FF;}
+    @keyframes saturnFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+    .tasks-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+    .tasks-kpi{padding:18px 20px;border-radius:18px;background:rgba(239,248,255,.84);border:1px solid rgba(255,255,255,.78);box-shadow:0 14px 34px rgba(0,8,28,.19),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(20px);}
+    .tasks-kpi-label{font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:#58718A;}
+    .tasks-kpi-value{font-family:'Sora',sans-serif;font-size:29px;font-weight:900;line-height:1;color:#123C62;margin-top:7px;}
+    .tasks-kpi-note{font-size:11px;color:#6B8298;margin-top:5px;}
+    .tasks-list-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 2px 0;}
+    .tasks-list-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:900;color:#F7FBFF;text-shadow:0 2px 16px rgba(0,7,24,.58);}
+    .tasks-list-note{font-size:11px;color:#B6D1E6;text-align:right;}
+    .tasks-module{display:flex;flex-direction:column;gap:12px;}
+    .tasks-module-title{display:flex;align-items:center;gap:10px;color:#9DEAFF;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin:5px 2px 0;}
+    .tasks-module-title::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,rgba(93,218,255,.45),transparent);}
+    .tasks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
+    .task-link-card{position:relative;display:flex;align-items:center;gap:14px;min-height:126px;padding:17px 18px;border-radius:20px;background:linear-gradient(145deg,rgba(7,25,54,.92),rgba(3,13,32,.96));border:1px solid rgba(100,196,255,.22);box-shadow:0 16px 38px rgba(0,7,25,.28),inset 0 1px 0 rgba(255,255,255,.07);overflow:hidden;}
+    .task-link-card::after{content:'';position:absolute;inset:auto -34px -56px auto;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(85,184,255,.15),transparent 68%);pointer-events:none;}
+    .task-link-card.done{border-color:rgba(52,211,153,.35);background:linear-gradient(145deg,rgba(5,44,50,.90),rgba(3,19,34,.97));}
+    .task-link-card.current{border-color:rgba(139,124,255,.52);box-shadow:0 18px 42px rgba(37,28,112,.25),0 0 0 2px rgba(139,124,255,.10),inset 0 1px 0 rgba(255,255,255,.08);}
+    .task-card-copy{position:relative;z-index:2;min-width:0;flex:1;}
+    .task-card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:9px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#8FDDF7;}
+    .task-card-status{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:#BFD4E6;border:1px solid rgba(255,255,255,.10);}
+    .task-link-card.done .task-card-status{background:rgba(52,211,153,.13);color:#83F2C4;border-color:rgba(52,211,153,.24);}
+    .task-link-card.current .task-card-status{background:rgba(139,124,255,.15);color:#D8D2FF;border-color:rgba(139,124,255,.28);}
+    .task-card-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:900;color:#F7FBFF;line-height:1.22;margin-top:7px;}
+    .task-card-theme{font-size:11px;color:#9FB9CE;line-height:1.35;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .task-card-link{display:inline-flex;align-items:center;gap:7px;min-height:34px;margin-top:10px;padding:0 11px;border-radius:10px;text-decoration:none!important;font-size:10px;font-weight:900;color:#E7FAFF;background:rgba(45,185,229,.13);border:1px solid rgba(85,215,255,.28);}
+    .task-card-link:hover{background:rgba(45,185,229,.24);color:#FFFFFF;}
+    .task-card-link.done{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.27);color:#A8F5D4;}
+    .task-card-missing{display:inline-flex;align-items:center;min-height:34px;margin-top:10px;padding:0 11px;border-radius:10px;font-size:10px;font-weight:800;color:#94AFC6;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);}
+    .tasks-empty{padding:28px;text-align:center;border-radius:20px;color:#C1D8EA;background:rgba(4,20,46,.72);border:1px solid rgba(85,184,255,.20);}
+    .student-tasks-main .page-back{color:#CBE7F8;background:linear-gradient(180deg,rgba(2,8,20,.96) 70%,transparent);}
+    .student-tasks-main .page-back:hover{color:#FFFFFF;}
+    @media (min-width:900px){
+      .student-tasks-main{padding-left:clamp(24px,3.2vw,48px)!important;padding-right:clamp(24px,3.2vw,48px)!important;}
+      .student-tasks-main .student-portal-context{margin-bottom:16px;}
+    }
+    @media (max-width:720px){
+      .tasks-hero{grid-template-columns:1fr;min-height:390px;padding:24px 22px 18px;text-align:left;}
+      .tasks-saturn-scene{min-height:170px;order:-1;}
+      .task-saturn-mark.large{transform:scale(.82);animation:none;}
+      .tasks-kpis{gap:9px;}
+      .tasks-kpi{padding:14px 12px;}
+      .tasks-kpi-value{font-size:23px;}
+      .tasks-kpi-note{font-size:9px;}
+      .tasks-grid{grid-template-columns:1fr;}
+    }
+    @media (max-width:420px){
+      .tasks-hero{border-radius:21px;padding:20px 17px 16px;min-height:370px;}
+      .tasks-title{font-size:30px;}
+      .tasks-lead{font-size:12px;}
+      .tasks-kpi-label{font-size:8px;letter-spacing:.07em;}
+      .tasks-kpi-value{font-size:21px;}
+      .task-link-card{padding:15px 13px;gap:10px;}
+      .task-saturn-mark{transform:scale(.88);margin-left:-4px;margin-right:-4px;}
+      .tasks-list-head{align-items:flex-start;flex-direction:column;gap:4px;}
+      .tasks-list-note{text-align:left;}
     }
     .student-universe .cosmic-stage{border-color:rgba(77,176,255,.24);}
     .student-universe .cosmic-card{
@@ -2431,7 +2517,7 @@ const FOTO_MAX_STORE_BYTES = 180*1024; // ~180KB — cabe no Firestore com folga
    Mantém a navegação interna no histórico do navegador e restaura
    a tela atual após F5 / pull-to-refresh no mobile.
    ═══════════════════════════════════════════════════════════════════ */
-const STUDENT_PAGES=["dashboard","trilha","materiais","diario","reportcard","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
+const STUDENT_PAGES=["dashboard","trilha","tarefas","materiais","diario","reportcard","financeiro","agenda","reposicoes","calendario","contato","agendamento","presenca"];
 const ADMIN_VIEWS=["dashboard","alunos","cadastros","pendencias","financeiro","agenda","relatorios","config"];
 const ADMIN_NAV_ITEMS=[
   {id:"dashboard", icon:"layout-dashboard", image:"assets/icons/cosmic/trilha.webp",crop:1.03,label:"Painel", cor:"#38bdf8",color:"#38bdf8"},
@@ -3353,6 +3439,7 @@ function slugifyCourseId(nome){
 
 const STUDENT_NAV = [
   {id:"trilha",      icon:"route",          image:"assets/icons/cosmic/trilha.webp",      crop:1.03,label:"Trilha",      grad:"linear-gradient(145deg,rgba(0,217,192,.28),rgba(0,150,130,.12))",  color:"#f6a93b"},
+  {id:"tarefas",     icon:"check-square",   image:"assets/icons/cosmic/tarefa.webp",      crop:1.20,label:"Tarefas",     grad:"linear-gradient(145deg,rgba(85,184,255,.30),rgba(63,81,181,.14))", color:"#55b8ff"},
   {id:"materiais",   icon:"folder-open",    image:"assets/icons/cosmic/materiais.webp",   crop:1.22,label:"Materiais",   grad:"linear-gradient(145deg,rgba(91,155,232,.28),rgba(60,120,210,.12))", color:"#9b7dff"},
   {id:"diario",      icon:"clipboard-list", image:"assets/icons/cosmic/diario.webp",      crop:1.22,label:"Diário",      grad:"linear-gradient(145deg,rgba(232,169,76,.28),rgba(200,130,40,.12))", color:"#f56bc5"},
   {id:"reportcard",  icon:"file-check",     image:"assets/icons/cosmic/report-card.webp", crop:1.20,label:"Report Card", grad:"linear-gradient(145deg,rgba(99,102,241,.28),rgba(67,56,202,.12))", color:"#818cf8"},
@@ -3411,6 +3498,35 @@ function exerciseForTrilhaItem(item, exercisesMap){
 }
 function isGeneralTaskCompleted(ex){
   return !!(ex&&(ex.completed||(ex.score&&(ex.score.percentage!=null||ex.score.grade10!=null))));
+}
+
+function useStudentExercisesMap(uid){
+  const [map,setMap]=useState({});
+  useEffect(()=>{
+    if(!uid){setMap({});return;}
+    return db.collection("students").doc(uid).collection("exercises").onSnapshot(snap=>{
+      const next={};
+      snap.docs.forEach(doc=>{next[doc.id]=doc.data();});
+      setMap(next);
+    },err=>console.warn("student exercises:",err));
+  },[uid]);
+  return map;
+}
+
+function isUnifiedTaskCompleted(item,exercisesMap){
+  return !!(item?.tarefaFeita||isGeneralTaskCompleted(exerciseForTrilhaItem(item,exercisesMap)));
+}
+
+function isInputTaskLesson(item){
+  if(!item||item.type==="report_card"||item.lessonType==="report_card"||item.reportCard)return false;
+  if(item.type==="review"||item.lessonType==="review"||item.lessonType==="output")return false;
+  return !item.lessonType||item.lessonType==="input"||item.lessonType==="lesson";
+}
+
+function mergeUnifiedTaskStatus(books,exercisesMap){
+  return (books||[]).map(book=>({...book,items:(book.items||[]).map(item=>
+    isUnifiedTaskCompleted(item,exercisesMap)&&!item.tarefaFeita?{...item,tarefaFeita:true}:item
+  )}));
 }
 
 
@@ -4800,7 +4916,7 @@ function StudentLessonView({item}){
   const hasEval=EVAL_SKILLS.some(sk=>parseEvalPercent(item[sk.f])!=null);
   const pairBtns=[
     urlLicao&&{href:urlLicao,icon:"zap",label:"Lição Online"},
-    urlTarefa&&{href:urlTarefa,icon:"check-square",label:"Tarefa Online"},
+    urlTarefa&&{href:urlTarefa,icon:item.tarefaFeita?"check-circle":"check-square",label:item.tarefaFeita?"Tarefa feita":"Tarefa Online",taskDone:!!item.tarefaFeita,isTask:true},
     urlMaterial&&{href:urlMaterial,icon:"file-text",label:"Lição PDF"},
     urlLivroDigital&&{href:urlLivroDigital,icon:"book-open",label:"Livro Digital"},
     urlExtra&&{href:urlExtra,icon:"sparkles",label:"Extra"},
@@ -4834,7 +4950,7 @@ function StudentLessonView({item}){
       {pairs.map((row,ri)=>(
         <div key={ri} className="slv-btn-row" style={{marginBottom:10}}>
           {row.map(b=>(
-            <a key={b.label} href={b.href} target="_blank" rel="noreferrer" className="slv-btn slv-btn-pair">
+            <a key={b.label} href={b.href} target="_blank" rel={b.isTask?taskLinkRel(b.href):"noopener noreferrer"} onClick={b.isTask?(e)=>openPortalTask(b.href,e):undefined} className={"slv-btn slv-btn-pair"+(b.taskDone?" slv-btn-task-done":"")}>
               <Icon name={b.icon} size={14}/> {b.label}
             </a>
           ))}
@@ -5346,6 +5462,7 @@ function StudentTrilhaJourney({uid,visibleModules,books,modulosOcultos,licoesOcu
 
 function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,onOpenLesson,contrato}){
   const courses=useCourses();
+  const exercisesMap=useStudentExercisesMap(uid);
   const [trilhaData,setTrilhaData]=useState(null);
   const [modulosOcultos,setModulosOcultos]=useState([]);
   const [licoesOcultas,setLicoesOcultas]=useState([]);
@@ -5359,7 +5476,7 @@ function TrilhaSection({uid,isAdmin,focusLessonId,onLessonFocused,onOpenLesson,c
     if(d.contrato)setStudentContrato(d.contrato);
   }),[uid]);
   const course=useMemo(()=>getCourseById(contrato||studentContrato),[courses,contrato,studentContrato]);
-  const books=useMemo(()=>trilhaData?mergeBooks(trilhaData,course):[],[trilhaData,course]);
+  const books=useMemo(()=>trilhaData?mergeUnifiedTaskStatus(mergeBooks(trilhaData,course),exercisesMap):[],[trilhaData,course,exercisesMap]);
   const visibleModules=getVisibleModules(modulosOcultos,isAdmin,course);
   const journeyBooks=useMemo(()=>isAdmin?books:books
     .filter(book=>!isModuleHidden(modulosOcultos,book.bookIdx))
@@ -5825,7 +5942,7 @@ function DiarioSection({uid,isAdmin,contrato}){
                       {opt.objetivos?<div className="muted mt-1">Objetivos: {opt.objetivos}</div>:null}
                       <div className="flex flex-wrap gap-2 mt-2">
                         {opt.linkAula?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkAula)} target="_blank" rel="noreferrer">Lição</a>:null}
-                        {opt.linkTarefa?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkTarefa)} target="_blank" onClick={(e)=>openPortalTask(opt.linkTarefa,e)}>Tarefa</a>:null}
+                        {opt.linkTarefa?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkTarefa)} target="_blank" rel={taskLinkRel(resolvePortalAssetUrl(opt.linkTarefa))} onClick={(e)=>openPortalTask(opt.linkTarefa,e)}>Tarefa</a>:null}
                         {opt.linkMaterial?<a className="btn rounded-lg px-2 py-1" href={resolvePortalAssetUrl(opt.linkMaterial)} target="_blank" rel="noreferrer">PDF</a>:null}
                       </div>
                     </div>
@@ -6888,6 +7005,7 @@ function StudentFinanceCard({financeiro,onGo}){
 
 function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate,modulosOcultos,licoesOcultas}){
   const courses=useCourses();
+  const exercisesMap=useStudentExercisesMap(uid);
   const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
   const books=useMemo(()=>mergeBooks(trilhaData,course),[trilhaData,course]);
   const visibleBooks=useMemo(()=>books.filter(b=>!isModuleHidden(modulosOcultos,b.bookIdx)).map(b=>({...b,items:getVisibleLessonItems(b.items,licoesOcultas,false)})),[books,modulosOcultos,licoesOcultas]);
@@ -6901,10 +7019,10 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
     let c=0;visibleBooks.forEach(b=>b.items.forEach(i=>{if(i.status==="concluida"||i.status==="realizada")c++;}));return c;
   },[visibleBooks]);
   const tarefasFeitas=useMemo(()=>{
-    let c=0;visibleBooks.forEach(b=>b.items.forEach(i=>{if(i.tarefaFeita)c++;}));return c;
-  },[visibleBooks]);
+    let c=0;visibleBooks.forEach(b=>b.items.forEach(i=>{if(isInputTaskLesson(i)&&String(i.linkTarefa||"").trim()&&isUnifiedTaskCompleted(i,exercisesMap))c++;}));return c;
+  },[visibleBooks,exercisesMap]);
   const totalLicoes=visibleBooks.reduce((s,b)=>s+b.items.filter(i=>i.type!=="report_card"&&i.lessonType!=="report_card"&&!i.reportCard).length,0)||1;
-  const totalTarefas=visibleBooks.reduce((s,b)=>s+b.items.filter(isHomeworkLessonItem).length,0)||1;
+  const totalTarefas=visibleBooks.reduce((s,b)=>s+b.items.filter(i=>isInputTaskLesson(i)&&String(i.linkTarefa||"").trim()).length,0)||1;
   const progressGeral=Math.round((licoesConcluidas/totalLicoes)*100);
   const currentRouteItems=useMemo(()=>currentBook?currentBook.items.filter(it=>it.type!=="report_card"&&it.lessonType!=="report_card"&&!it.reportCard):[],[currentBook]);
   const currentModuleComplete=currentRouteItems.length>0&&currentRouteItems.every(item=>item.status==="concluida"||item.status==="realizada");
@@ -7029,6 +7147,100 @@ function StudentDashboard({uid,profile,trilhaData,financeiro,schedule,onNavigate
   );
 }
 
+function TaskSaturnMark({state="pending",large=false}){
+  return(
+    <span className={"task-saturn-mark "+state+(large?" large":"")} aria-hidden="true">
+      <span className="task-saturn-ring"/>
+      <span className="task-saturn-body"/>
+    </span>
+  );
+}
+
+function StudentTasksDashboard({uid,profile,trilhaData,modulosOcultos,licoesOcultas}){
+  const courses=useCourses();
+  const exercisesMap=useStudentExercisesMap(uid);
+  const course=useMemo(()=>getCourseById(profile?.contrato),[courses,profile?.contrato]);
+  const books=useMemo(()=>mergeBooks(trilhaData,course)
+    .filter(book=>!isModuleHidden(modulosOcultos,book.bookIdx))
+    .map(book=>({...book,items:getVisibleLessonItems(book.items,licoesOcultas,false)})),[trilhaData,course,modulosOcultos,licoesOcultas]);
+  const tasks=useMemo(()=>books.flatMap(book=>(book.items||[]).filter(item=>isInputTaskLesson(item)&&String(item.linkTarefa||"").trim()).map(item=>{
+    const exercise=exerciseForTrilhaItem(item,exercisesMap)||null;
+    const done=isUnifiedTaskCompleted(item,exercisesMap);
+    const accessed=!!(exercise&&(exercise.accessed||exercise.firstAccessAt));
+    return{
+      ...item,bookIdx:book.bookIdx,bookName:book.name||("Módulo "+book.bookIdx),exercise,done,accessed,
+      href:resolvePortalAssetUrl(item.linkTarefa||""),
+    };
+  })),[books,exercisesMap]);
+  const doneCount=tasks.filter(task=>task.done).length;
+  const pendingCount=Math.max(0,tasks.length-doneCount);
+  const progress=tasks.length?Math.round((doneCount/tasks.length)*100):0;
+  const currentTask=tasks.find(task=>!task.done&&task.href)||tasks.find(task=>task.href)||null;
+  const grouped=useMemo(()=>{
+    const map=new Map();
+    tasks.forEach(task=>{
+      if(!map.has(task.bookIdx))map.set(task.bookIdx,{id:task.bookIdx,name:task.bookName,items:[]});
+      map.get(task.bookIdx).items.push(task);
+    });
+    return Array.from(map.values());
+  },[tasks]);
+  return(
+    <div className="tasks-universe">
+      <section className="tasks-hero">
+        <div className="tasks-hero-copy">
+          <div className="tasks-kicker"><Icon name="check-square" size={14}/> Saturn Mission · Tarefas Input</div>
+          <h2 className="tasks-title">Sua central de tarefas</h2>
+          <p className="tasks-lead">Cada aula Input tem uma missão. O link é exatamente o mesmo da Trilha e a conclusão fica sincronizada automaticamente nos dois lugares.</p>
+          <div className="tasks-progress-row">
+            <div className="tasks-progress-track" aria-label={progress+"% das tarefas concluídas"}><div className="tasks-progress-fill" style={{width:progress+"%"}}/></div>
+            <div className="tasks-progress-copy">{progress}% concluído</div>
+          </div>
+        </div>
+        <div className="tasks-saturn-scene"><TaskSaturnMark state={progress===100?"done":"current"} large/></div>
+      </section>
+
+      <div className="tasks-kpis">
+        <div className="tasks-kpi"><div className="tasks-kpi-label">Missões Input</div><div className="tasks-kpi-value">{tasks.length}</div><div className="tasks-kpi-note">tarefas na sua trilha</div></div>
+        <div className="tasks-kpi"><div className="tasks-kpi-label">Feitas</div><div className="tasks-kpi-value">{doneCount}</div><div className="tasks-kpi-note">sincronizadas</div></div>
+        <div className="tasks-kpi"><div className="tasks-kpi-label">Pendentes</div><div className="tasks-kpi-value">{pendingCount}</div><div className="tasks-kpi-note">próximas missões</div></div>
+      </div>
+
+      <div className="tasks-list-head">
+        <div className="tasks-list-title">Links das tarefas</div>
+        <div className="tasks-list-note">Concluiu aqui ou pela Trilha? O status será o mesmo.</div>
+      </div>
+
+      {grouped.length?grouped.map(group=>(
+        <section className="tasks-module" key={group.id}>
+          <div className="tasks-module-title">{group.name||("Módulo "+group.id)}</div>
+          <div className="tasks-grid">
+            {group.items.map(task=>{
+              const isCurrent=!!currentTask&&currentTask.id===task.id&&!task.done;
+              const state=task.done?"done":isCurrent?"current":"pending";
+              const status=task.done?"Feita":task.accessed?"Em andamento":task.href?"Disponível":"Aguardando link";
+              const title=task.interactiveTaskTitle||task.tema||task.title||("Tarefa da lição "+getLessonDisplayLabel(task));
+              return(
+                <article className={"task-link-card "+state} key={task.id}>
+                  <TaskSaturnMark state={state}/>
+                  <div className="task-card-copy">
+                    <div className="task-card-meta"><span>Input · Lição {getLessonDisplayLabel(task)}</span><span className="task-card-status">{status}</span></div>
+                    <div className="task-card-title">Tarefa da lição {getLessonDisplayLabel(task)}</div>
+                    <div className="task-card-theme" title={title}>{title}</div>
+                    {task.href
+                      ?<a className={"task-card-link"+(task.done?" done":"")} href={task.href} target="_blank" rel={taskLinkRel(task.href)} onClick={(e)=>openPortalTask(task.href,e)}><Icon name={task.done?"check-circle":"external-link"} size={13}/>{task.done?"Abrir tarefa feita":"Abrir tarefa"}</a>
+                      :<span className="task-card-missing">Link será liberado na Trilha</span>
+                    }
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )):<div className="tasks-empty">As tarefas Input aparecerão aqui assim que a programação do curso for liberada.</div>}
+    </div>
+  );
+}
+
 function hasPocketFlipbook(profile){
   const name=(profile?.name||profile?.nome||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
   const email=(profile?.email||"").toString().toLowerCase();
@@ -7140,7 +7352,7 @@ function MateriaisLinksSection({uid,isAdmin,trilhaData,materiaisData,modulosOcul
                     </button>
                     {isExp&&<div className="grid grid-cols-2 gap-2 py-2 pl-3">
                       {urlLicao&&<a href={urlLicao} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">📄 Lição Online</a>}
-                      {urlTarefa&&<a href={urlTarefa} target="_blank" onClick={(e)=>openPortalTask(urlTarefa,e)} className="btn rounded-lg py-2 text-xs text-center">📝 Tarefa Online</a>}
+                      {urlTarefa&&<a href={urlTarefa} target="_blank" rel={taskLinkRel(urlTarefa)} onClick={(e)=>openPortalTask(urlTarefa,e)} className="btn rounded-lg py-2 text-xs text-center">📝 Tarefa Online</a>}
                       {urlExtra&&<a href={urlExtra} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">✨ Extra</a>}
                       {urlPdf&&<a href={urlPdf} target="_blank" rel="noreferrer" className="btn rounded-lg py-2 text-xs text-center">📕 PDF Lição</a>}
                       {urlGravacao&&<a href={urlGravacao} target="_blank" rel="noreferrer" className="lesson-link-btn lesson-link-btn-gravacao col-span-2">🎥 Aulas Gravadas</a>}
@@ -7253,7 +7465,7 @@ function GeneralTasksDashboard({uid, profile, onOpenDetails}){
           {rows.map(r=>{
             const sc=r.done?"done":(current&&current.n===r.n?"active":"pending");
             return(
-              <a key={r.n} href={r.href} target="_blank" onClick={(e)=>openPortalTask(r.href,e)} className={"cosmic-orb cosmic-card-orb "+sc} title={"Tarefa L"+r.n+" · "+r.title} style={{textDecoration:"none",width:72,height:72}}>
+              <a key={r.n} href={r.href} target="_blank" rel={taskLinkRel(r.href)} onClick={(e)=>openPortalTask(r.href,e)} className={"cosmic-orb cosmic-card-orb "+sc} title={"Tarefa L"+r.n+" · "+r.title} style={{textDecoration:"none",width:72,height:72}}>
                 <span className="cosmic-orb-asset" aria-hidden="true"/>
                 <span className="cosmic-orb-copy">
                   <span className="cosmic-orb-kicker">Tarefa</span>
@@ -7276,7 +7488,7 @@ function GeneralTasksDashboard({uid, profile, onOpenDetails}){
               </div>
               <div style={{textAlign:"right"}}>
                 <div className="font-bold">{r.pct!=null?(r.pct+"/100"):"—"}</div>
-                <a href={r.href} target="_blank" rel="noreferrer" className="muted">Abrir</a>
+                <a href={r.href} target="_blank" rel={taskLinkRel(r.href)} onClick={(e)=>openPortalTask(r.href,e)} className="muted">Abrir</a>
               </div>
             </div>
           ))}
@@ -8001,7 +8213,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
     {id:"recursos",   label:"Recursos",   icon:"link"},
   ];
 
-  const pageTitles={trilha:"Trilha",materiais:"Materiais",diario:"Diário",reportcard:"Report Card",agenda:"Agenda",reposicoes:"Reposições",calendario:"Agenda",contato:"Contato",agendamento:"Reposições",financeiro:"Financeiro",presenca:"Confirmar aula"};
+  const pageTitles={trilha:"Trilha",tarefas:"Tarefas",materiais:"Materiais",diario:"Diário",reportcard:"Report Card",agenda:"Agenda",reposicoes:"Reposições",calendario:"Agenda",contato:"Contato",agendamento:"Reposições",financeiro:"Financeiro",presenca:"Confirmar aula"};
 
   function renderStudentPage(){
     if(studentPage==="dashboard")return <StudentDashboard uid={uid} profile={profile} trilhaData={trilhaData} financeiro={financeiro} schedule={studentSchedule} onNavigate={navigateStudent} modulosOcultos={modulosOcultos} licoesOcultas={licoesOcultas}/>;
@@ -8013,7 +8225,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
         {sectionMeta&&<CosmicSectionImage meta={sectionMeta} className="student-section-watermark"/>}
         <div className="student-section-content">
         <button type="button" className="page-back" onClick={goStudentBack}><Icon name="arrow-left" size={16}/> Voltar</button>
-        <StudentSectionHero meta={sectionMeta} title={sectionTitle}/>
+        {studentPage!=="tarefas"&&<StudentSectionHero meta={sectionMeta} title={sectionTitle}/>}
         {studentPage==="trilha"&&(
           <TrilhaSection
             uid={uid}
@@ -8025,6 +8237,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
           />
         )}
         {studentPage==="materiais"&&<MateriaisSection uid={uid} isAdmin={false} profile={profile} trilhaData={trilhaData} materiaisData={materiaisData} modulosOcultos={modulosOcultos} licoesOcultas={licoesOcultas} contrato={profile.contrato}/>}
+        {studentPage==="tarefas"&&<StudentTasksDashboard uid={uid} profile={profile} trilhaData={trilhaData} modulosOcultos={modulosOcultos} licoesOcultas={licoesOcultas}/>}
         {studentPage==="diario"&&<DiarioSection uid={uid} isAdmin={false} contrato={profile.contrato}/>}
         {studentPage==="reportcard"&&<StudentReportCardsSection uid={uid} profile={profile} contrato={profile.contrato} isAdmin={false}/>}
         {studentPage==="financeiro"&&<FinanceiroSection uid={uid} isAdmin={false} financeiro={financeiro||FINANCEIRO_DEFAULT} />}
@@ -8082,7 +8295,7 @@ function StudentDetail({uid,isAdmin,onBack,initialTab}){
       )}
 
       {showStudentUi&&<StudentSideNav page={studentPage} onNavigate={(id)=>navigateStudent(id==="dashboard"?"dashboard":id)} />}
-      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="dashboard"?" student-dashboard-main":"")+(showStudentUi&&studentPage==="materiais"&&studentFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
+      <main id="portal-main" className={"max-w-3xl mx-auto "+(showStudentUi?"student-dash-wrap":"px-4 pt-6")+(showStudentUi&&studentPage==="dashboard"?" student-dashboard-main":"")+(showStudentUi&&studentPage==="tarefas"?" student-tasks-main":"")+(showStudentUi&&studentPage==="materiais"&&studentFlipbook(profile)?" materiais-fullbleed":"")} tabIndex={-1}>
         {showStudentUi&&(
           <div className="student-portal-context">
             <span className="role-pill role-pill-student">Portal do aluno</span>
@@ -11445,6 +11658,16 @@ function resolvePortalAssetUrl(url){
     return new URL(u, base).href;
   }catch(e){
     return u;
+  }
+}
+
+/** Mantém o opener somente para tarefas locais, permitindo que o exercício devolva o progresso ao portal. */
+function taskLinkRel(url){
+  try{
+    const target=new URL(String(url||""),location.href);
+    return target.origin===location.origin?"opener":"noopener noreferrer";
+  }catch(e){
+    return"noopener noreferrer";
   }
 }
 
