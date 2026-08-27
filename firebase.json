@@ -14,7 +14,11 @@
     "trailingSlash": false,
     "rewrites": [
       {
-        "source": "**",
+        "source": "/portal",
+        "destination": "/portal.html"
+      },
+      {
+        "source": "/portal/**",
         "destination": "/portal.html"
       }
     ]
