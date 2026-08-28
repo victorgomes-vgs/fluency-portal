@@ -7397,6 +7397,11 @@ function StudentTasksDashboard({uid,profile,trilhaData,modulosOcultos,licoesOcul
   );
 }
 
+function hasBrunoEmpowerFlipbook(profile){
+  const name=(profile?.name||profile?.nome||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const email=(profile?.email||"").toString().toLowerCase();
+  return (/\bbruno\b/.test(name) && /\bandrade\b/.test(name) && /\bbatista\b/.test(name)) || email.includes("brunodeandradebatista");
+}
 function hasPocketFlipbook(profile){
   const name=(profile?.name||profile?.nome||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
   const email=(profile?.email||"").toString().toLowerCase();
@@ -7429,6 +7434,7 @@ function hasGeneralFlipbook(profile){
   return contrato==="foundation_general";
 }
 function studentFlipbook(profile){
+  if(hasBrunoEmpowerFlipbook(profile)) return {src:"https://heyzine.com/flip-book/bfc33e9a20.html", title:"Empower — Flipbook", external:true};
   if(hasReflectiveFlipbook(profile)) return {src:"flips/books/reflexive-mind-m1/index.html?embed=1", title:"Reflexive Mind — Módulo 1"};
   if(hasPocketFlipbook(profile)) return {src:"flips/books/pocket-mod2/index.html?embed=1", title:"Pocket Fluency — Módulo 2"};
   if(hasObjectiveFlipbook(profile)) return {src:"flips/books/objective-proficiency/index.html?embed=1", title:"Objective Proficiency — Units 1–3"};
@@ -7443,7 +7449,7 @@ function MateriaisSection(props){
     return(
       <div className={props.isAdmin?"admin-materiais-flip":undefined}>
         <div className="materiais-flip-shell">
-          <iframe title={flip.title} src={flip.src} allow="fullscreen" allowFullScreen/>
+          <iframe title={flip.title} src={flip.src} allow={flip.external?"autoplay; fullscreen; clipboard-write":"fullscreen"} allowFullScreen scrolling={flip.external?"no":undefined}/>
         </div>
       </div>
     );
