@@ -12,20 +12,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <!-- O Firebase anterior foi desativado; o portal usa Supabase. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyARQfoifySDycd37gXw4sofwPu7tHkiip0",
-      authDomain: "fluency-studio-portal.firebaseapp.com",
-      projectId: "fluency-studio-portal",
-      storageBucket: "fluency-studio-portal.firebasestorage.app",
-      messagingSenderId: "568224359300",
-      appId: "1:568224359300:web:6f4e283315deb93224b3d1",
-    });
+    window.__SUPABASE_URL__ = "https://kqnjdooctmkusoozxcrh.supabase.co";
+    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtxbmpkb29jdG1rdXNvb3p4Y3JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5NDkyNjksImV4cCI6MjEwMzUyNTI2OX0.1UA6hc_c-tEZA5LeKjoNY5gFjhfgc_uXNaYcl5Fqgvg";
   </script>
+  <script src="supabase-compat.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- FullCalendar v6 (Agenda do Aluno + Reposições) — plugins: daygrid, timegrid, interaction, list + locale pt-br -->
@@ -2603,11 +2596,10 @@
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 console.info("Fluency Portal v2026.07.26-view-as-student");
-const auth = firebase.auth();
-const db   = firebase.firestore();
+const auth = window.SupabaseCompat.auth;
+const db   = window.SupabaseCompat.db;
 let storage=null;
-try{storage=firebase.storage();}catch(e){console.warn("Firebase Storage indisponível:",e);}
-const ADMIN_UID  = "58fjgMCI2aV7NQpXo3TcReUjHRF3";
+const ADMIN_UID  = "8c7e8c8a-bf3b-4232-a025-74221d9eda10";
 /** Catálogo de cursos: doc especial em students (admin consegue gravar; coleção `courses` costuma estar bloqueada nas regras). */
 const COURSES_CATALOG_DOC = "__system_courses";
 const COURSES_LS_KEY = "fs_courses_catalog_v1";
@@ -4778,13 +4770,13 @@ function LoadingScreen(){
 }
 
 function Login(){
-  const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
+  const [email,setEmail]=useState("");
+  const [err,setErr]=useState("");
+  const [loading,setLoading]=useState(false);
   const [info,setInfo]=useState("");
   const emailRef=useRef(null);
-  const passRef=useRef(null);
   const errRef=useRef(null);
   useEffect(()=>{
-    // Foco inicial no email (melhor usabilidade teclado/celular)
     const t=setTimeout(()=>{try{emailRef.current&&emailRef.current.focus({preventScroll:true});}catch(e){}},120);
     return()=>clearTimeout(t);
   },[]);
@@ -4793,35 +4785,26 @@ function Login(){
   },[err]);
   async function handleLogin(e){
     if(e&&e.preventDefault)e.preventDefault();
-    if(!email||!pass){
-      setErr("Preencha email e senha.");
-      if(!email){try{emailRef.current&&emailRef.current.focus();}catch(x){}}
-      else{try{passRef.current&&passRef.current.focus();}catch(x){}}
+    const em=email.trim().toLowerCase();
+    if(!em){
+      setErr("Digite seu email para receber o link de acesso.");
+      try{emailRef.current&&emailRef.current.focus();}catch(x){}
       return;
     }
     setLoading(true);setErr("");setInfo("");
     try{
-      await auth.signInWithEmailAndPassword(email.trim().toLowerCase(),pass);
+      const redirectTo=window.location.origin+window.location.pathname;
+      const result=await window.__sb.auth.signInWithOtp({
+        email:em,
+        options:{emailRedirectTo:redirectTo,shouldCreateUser:false}
+      });
+      if(result.error)throw result.error;
+      setInfo("Link enviado para "+em+". Abra o email e clique em Entrar no Portal. Confira também a caixa de spam.");
     }catch(e){
-      let msg="Email ou senha incorretos.";
-      if(e.code==="auth/user-not-found"||e.code==="auth/invalid-credential")msg="Conta não encontrada ou senha incorreta. Peça ao Victor para criar/vincular seu login.";
-      else if(e.code==="auth/wrong-password")msg="Senha incorreta.";
-      else if(e.code==="auth/too-many-requests")msg="Muitas tentativas. Aguarde um pouco e tente de novo.";
-      else if(e.code==="auth/network-request-failed")msg="Sem conexão com a internet.";
-      setErr(msg);setLoading(false);
-      try{passRef.current&&passRef.current.focus();}catch(x){}
-    }
-  }
-  async function handleReset(){
-    const em=email.trim().toLowerCase();
-    if(!em){setErr("Digite seu email para recuperar a senha.");try{emailRef.current&&emailRef.current.focus();}catch(x){}return;}
-    setLoading(true);setErr("");setInfo("");
-    try{
-      await auth.sendPasswordResetEmail(em);
-      setInfo("Enviamos um link de redefinição para "+em+" (confira spam).");
-    }catch(e){
-      if(e.code==="auth/user-not-found")setErr("Não há conta com este email. Peça ao Victor para criar seu acesso.");
-      else setErr("Não foi possível enviar o email. Tente de novo ou fale com o Victor.");
+      const msg=String((e&&e.message)||"").toLowerCase();
+      if(msg.includes("rate")||msg.includes("too many"))setErr("Muitas tentativas. Aguarde um pouco e tente de novo.");
+      else if(msg.includes("fetch")||msg.includes("network"))setErr("Sem conexão com a internet.");
+      else setErr("Não foi possível enviar o link. Confirme se este email possui acesso cadastrado.");
     }
     setLoading(false);
   }
@@ -4831,53 +4814,37 @@ function Login(){
         <BrandLogo large/>
       </div>
       <div className="w-full max-w-md glass rounded-2xl p-7">
-          <div className="text-center mb-6">
-            <h1 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Bem-vindo ao Portal</h1>
-            <p className="muted text-sm mt-1">Student Portal · Fluency Studio</p>
+        <div className="text-center mb-6">
+          <h1 className="text-xl font-bold" style={{fontFamily:"'Sora',sans-serif"}}>Bem-vindo ao Portal</h1>
+          <p className="muted text-sm mt-1">Acesso sem senha · Fluency Studio</p>
+        </div>
+        <form className="space-y-3" onSubmit={handleLogin} noValidate>
+          <div>
+            <label className="block text-sm muted mb-1" htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              ref={emailRef}
+              type="email"
+              inputMode="email"
+              enterKeyHint="go"
+              className="w-full input rounded-xl px-4 py-3"
+              placeholder="seuemail@exemplo.com"
+              value={email}
+              onChange={e=>setEmail(e.target.value)}
+              autoComplete="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              disabled={loading}
+            />
           </div>
-          <form className="space-y-3" onSubmit={handleLogin} noValidate>
-            <div>
-              <label className="block text-sm muted mb-1" htmlFor="login-email">Email</label>
-              <input
-                id="login-email"
-                ref={emailRef}
-                type="email"
-                inputMode="email"
-                enterKeyHint="next"
-                className="w-full input rounded-xl px-4 py-3"
-                placeholder="seuemail@exemplo.com"
-                value={email}
-                onChange={e=>setEmail(e.target.value)}
-                autoComplete="email"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                disabled={loading}
-                onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();try{passRef.current&&passRef.current.focus();}catch(x){}}}}
-              />
-            </div>
-            <div>
-              <label className="block text-sm muted mb-1" htmlFor="login-pass">Senha</label>
-              <input
-                id="login-pass"
-                ref={passRef}
-                type="password"
-                enterKeyHint="go"
-                className="w-full input rounded-xl px-4 py-3"
-                placeholder="••••••••"
-                value={pass}
-                onChange={e=>setPass(e.target.value)}
-                autoComplete="current-password"
-                disabled={loading}
-              />
-            </div>
-            {err&&<div ref={errRef} className="err-box" role="alert" aria-live="assertive">{err}</div>}
-            {info&&<div role="status" aria-live="polite" style={{background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.35)",borderRadius:12,padding:"10px 14px",fontSize:13,color:"#60daa8"}}>{info}</div>}
-            <button type="submit" className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" disabled={loading}>
-              {loading?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="log-in" size={16}/>}{loading?"Entrando...":"Entrar"}
-            </button>
-            <button type="button" className="w-full btn rounded-xl px-4 py-2.5 text-sm" onClick={handleReset} disabled={loading}>Esqueci a senha</button>
-          </form>
+          {err&&<div ref={errRef} className="err-box" role="alert" aria-live="assertive">{err}</div>}
+          {info&&<div role="status" aria-live="polite" style={{background:"rgba(30,160,110,.12)",border:"1px solid rgba(30,160,110,.35)",borderRadius:12,padding:"10px 14px",fontSize:13,color:"#60daa8"}}>{info}</div>}
+          <button type="submit" className="w-full btn btn-primary rounded-xl px-4 py-3 font-semibold inline-flex items-center justify-center gap-2" disabled={loading}>
+            {loading?<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>:<Icon name="mail" size={16}/>}{loading?"Enviando...":"Receber link de acesso"}
+          </button>
+          <p className="muted text-xs text-center" style={{lineHeight:1.5}}>Não é necessário digitar senha. O link recebido confirma sua identidade e abre o portal.</p>
+        </form>
       </div>
     </div>
   );
